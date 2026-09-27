@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoRemove;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
+import dev.nandi0813.api.Event.Spectate.End.MatchSpectateEndEvent;
 import dev.nandi0813.api.Event.Spectate.Start.MatchSpectateStartEvent;
 import dev.nandi0813.practice.ZonePractice;
 import dev.nandi0813.practice.manager.backend.ConfigManager;
@@ -19,6 +20,7 @@ import dev.nandi0813.practice.manager.profile.enums.ProfileStatus;
 import dev.nandi0813.practice.manager.server.ServerManager;
 import dev.nandi0813.practice.manager.server.WorldEnum;
 import dev.nandi0813.practice.util.Common;
+import dev.nandi0813.practice.util.NameFormatUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -182,6 +184,22 @@ public class PlayerHider implements Listener {
         for (Player matchPlayer : match.getPlayers())
             showPlayer(player, matchPlayer);
 
+        // Show the spectator in the tab list of the fighters, with the configured prefix in front of the
+        // name. Sent per viewer, because the tab list name of a player is global.
+        if (!e.isCancelled() && ConfigManager.isShowSpectatorsInTab()) {
+            Component tabName = NametagManager.getInstance().getTabListName(player);
+            String prefix = ConfigManager.getSpectatorTabPrefix();
+
+            if (!prefix.isEmpty()) {
+                tabName = NameFormatUtil
+                        .parseConfiguredComponent(prefix.replace("%player%", player.getName()))
+                        .append(tabName);
+            }
+
+            for (Player matchPlayer : match.getPlayers())
+                showTabEntry(matchPlayer, player, tabName);
+        }
+
         // Hide other players.
         if (match instanceof Match) {
             for (Player hide : MatchManager.getInstance().getHidePlayers((Match) match)) {
@@ -190,6 +208,26 @@ public class PlayerHider implements Listener {
         }
     }
 
+
+    /**
+     * Takes the spectator back out of the tab list of the fighters once they stopped spectating. The
+     * global tab list name only updates the name and keeps the entry listed, so it has to be undone here.
+     */
+    @EventHandler
+    public void onSpectatingEnd(MatchSpectateEndEvent e) {
+        boolean keepInTab = ConfigManager.isShowPlayersInTab();
+        Player spectator = e.getPlayer();
+
+        for (Player fighter : e.getMatch().getPlayers()) {
+            if (fighter.equals(spectator)) continue;
+
+            if (keepInTab) {
+                showTabEntry(fighter, spectator);
+            } else {
+                removeTabEntry(fighter, spectator);
+            }
+        }
+    }
 
     /**
      * If the player is in the lobby, hide or show all players in the lobby
@@ -290,18 +328,26 @@ public class PlayerHider implements Listener {
         if (showPlayersInTab) {
             showTabEntry(observer, target);
         } else {
-            WrapperPlayServerPlayerInfoUpdate.PlayerInfo playerInfo =
-                    new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(target.getUniqueId());
-            playerInfo.setListed(false);
-
-            WrapperPlayServerPlayerInfoUpdate playerInfoUpdate =
-                    new WrapperPlayServerPlayerInfoUpdate(
-                            WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LISTED,
-                            playerInfo
-                    );
-
-            PacketEvents.getAPI().getPlayerManager().sendPacket(observer, playerInfoUpdate);
+            removeTabEntry(observer, target);
         }
+    }
+
+    /**
+     * Takes the tab list entry of {@code target} away from {@code observer} without touching the
+     * entity visibility, so the caller stays in charge of who can see the player.
+     */
+    public void removeTabEntry(Player observer, Player target) {
+        WrapperPlayServerPlayerInfoUpdate.PlayerInfo playerInfo =
+                new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(target.getUniqueId());
+        playerInfo.setListed(false);
+
+        WrapperPlayServerPlayerInfoUpdate playerInfoUpdate =
+                new WrapperPlayServerPlayerInfoUpdate(
+                        WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LISTED,
+                        playerInfo
+                );
+
+        PacketEvents.getAPI().getPlayerManager().sendPacket(observer, playerInfoUpdate);
     }
 
     public void showPlayer(Player observer, Player target) {
@@ -309,6 +355,15 @@ public class PlayerHider implements Listener {
     }
 
     public void showTabEntry(Player observer, Player target) {
+        showTabEntry(observer, target, NametagManager.getInstance().getTabListName(target));
+    }
+
+    /**
+     * Sends the tab list entry of {@code target} to {@code observer} only, using the given
+     * display name. The name stays viewer specific, so it does not overwrite the global
+     * tab list name other viewers see.
+     */
+    public void showTabEntry(Player observer, Player target, Component tabName) {
         List<TextureProperty> properties = target.getPlayerProfile().getProperties().stream()
                 .map(property -> new TextureProperty(
                         property.getName(),
@@ -316,8 +371,6 @@ public class PlayerHider implements Listener {
                         property.getSignature()
                 ))
                 .toList();
-
-        Component tabName = NametagManager.getInstance().getTabListName(target);
 
         WrapperPlayServerPlayerInfoUpdate packet = new WrapperPlayServerPlayerInfoUpdate(
                 EnumSet.of(
