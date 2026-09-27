@@ -1,6 +1,7 @@
 # ZonePractice Pro
 
-Minecraft PvP practice plugin for Paper, written in Java 25 and built with Maven.
+Minecraft PvP practice plugin for Paper
+This project is a fork of [ZonePractice-Pro](https://github.com/ZoneDevelopement/ZonePractice-Pro)
 
 ## Features
 
