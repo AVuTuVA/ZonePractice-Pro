@@ -296,7 +296,7 @@ MATCH-SETTINGS:
     LOW-HEALTH-THRESHOLD: 4.0
     SCALE: 20 # The scale setting defines the health display range between 10 and 100 with a default value of 20.
     SYMBOL: "♥" # The symbol displayed after the health value in the below-name display.
-    TEXT-SHADOW: true # If true, a drop shadow is drawn behind the above-head nametag.
+    TEXT-SHADOW: false # If true, a drop shadow is drawn behind the above-head nametag.
     BACKGROUND: 0 # Background of the above-head nametag as an ARGB value, 0 for none.
     TOP-LINE: "" # Line drawn above the nametag, supports PlaceholderAPI placeholders.
     BOTTOM-LINE: "" # Line drawn below the nametag, supports PlaceholderAPI placeholders.
