@@ -13,6 +13,7 @@ import dev.nandi0813.practice.manager.fight.match.MatchManager;
 import dev.nandi0813.practice.manager.fight.match.enums.TeamEnum;
 import dev.nandi0813.practice.manager.fight.match.util.KitUtil;
 import dev.nandi0813.practice.manager.fight.util.Stats.Statistic;
+import dev.nandi0813.practice.manager.nametag.NametagManager;
 import dev.nandi0813.practice.manager.gui.GUIItem;
 import dev.nandi0813.practice.manager.inventory.Inventory;
 import dev.nandi0813.practice.manager.inventory.InventoryManager;
@@ -168,6 +169,7 @@ public class FFA implements Spectatable, dev.nandi0813.api.Interface.FFA {
         dev.nandi0813.practice.manager.fight.util.PlayerUtil.setAttackSpeed(player, ladder.getAttackCooldownModifier());
 
         ProfileManager.getInstance().getProfile(player).setStatus(ProfileStatus.FFA);
+        NametagManager.getInstance().updateNametag(player);
         SpectatorManager.getInstance().getSpectatorMenuGui().update();
     }
 

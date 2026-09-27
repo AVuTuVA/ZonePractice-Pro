@@ -9,6 +9,7 @@ import dev.nandi0813.practice.manager.fight.match.Match;
 import dev.nandi0813.practice.manager.fight.match.MatchManager;
 import dev.nandi0813.practice.manager.fight.match.enums.TeamEnum;
 import dev.nandi0813.practice.manager.fight.match.interfaces.Team;
+import dev.nandi0813.practice.manager.fight.util.PlayerUtil;
 import dev.nandi0813.practice.manager.inventory.InventoryUtil;
 import dev.nandi0813.practice.manager.ladder.LadderManager;
 import dev.nandi0813.practice.manager.ladder.abstraction.normal.NormalLadder;
@@ -61,6 +62,11 @@ public class PlayerExpansion extends PlaceholderExpansion implements Relational 
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
+        if ("ping".equalsIgnoreCase(params)) {
+            Player onlinePlayer = player.getPlayer();
+            return onlinePlayer != null ? String.valueOf(PlayerUtil.getPing(onlinePlayer)) : "N/A";
+        }
+
         if ("nametag_color".equalsIgnoreCase(params)) {
             return resolveNametagColor(player);
         }
