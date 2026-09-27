@@ -55,6 +55,7 @@ public enum GUIType {
     Event_BracketsKitSelector,
 
     Spectator_Menu,
+    Spectator_Targets,
 
     // Custom ladders
     CustomLadder_EditorMenu,

@@ -1,4 +1,4 @@
-VERSION: 3
+VERSION: 4
 
 #
 # Spawn inventories
@@ -189,6 +189,11 @@ SPECTATOR:
         ITEM:
           NAME: "<light_purple>Spectate Random Match <gray>(Right-Click)"
           MATERIAL: COMPASS
+      TARGETS:
+        SLOT: 3
+        ITEM:
+          NAME: "<yellow>Fighters <gray>(Right-Click)"
+          MATERIAL: ENDER_EYE
       SHOW-SPECTATORS:
         SLOT: 0
         ITEM:

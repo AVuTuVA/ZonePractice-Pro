@@ -247,6 +247,8 @@ permissions:
     description: Spectate menu use.
   zpp.spectate.random:
     description: Spectate random match.
+  zpp.spectate.targets:
+    description: Open the fighter list and teleport to a single fighter while spectating.
   zpp.statistics:
     default: true
   zpp.statistics.other:

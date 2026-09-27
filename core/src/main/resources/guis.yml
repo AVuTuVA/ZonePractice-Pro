@@ -1,4 +1,4 @@
-VERSION: 43
+VERSION: 44
 
 GENERAL-FILLER-ITEM:
   NAME: " "
@@ -1555,6 +1555,17 @@ GUIS:
           - "<yellow>Spectators: <white>%spectators%"
           - ""
           - "<green>» Click to spectate «"
+  SPECTATOR-TARGETS:
+    TITLE: "<dark_gray>Fighters"
+    ICONS:
+      TARGET-ITEM:
+        NAME: "<yellow>%player%"
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Team: <white>%team%"
+          - "<gray>Health: <white>%health%"
+          - ""
+          - "<green>» Click to teleport «"
   SETUP:
     HUB:
       TITLE: "<red>Server Manager"
