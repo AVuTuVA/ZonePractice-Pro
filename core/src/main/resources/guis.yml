@@ -1,0 +1,3785 @@
+VERSION: 43
+
+GENERAL-FILLER-ITEM:
+  NAME: " "
+  MATERIAL: BLACK_STAINED_GLASS_PANE
+GUIS:
+  ARENA-CREATE:
+    TITLE: "<gold>What type for <red>%arena%<gold>?"
+  LADDER-CREATE:
+    TITLE: "<gold>What type for <red>%ladder%<gold>?"
+  VALIDATION-GUI:
+    TITLE: "<dark_gray>Validation"
+    ICONS:
+      CANCEL:
+        NAME: "<red>Cancel"
+        MATERIAL: RED_STAINED_GLASS_PANE
+      APPROVE:
+        NAME: "<green>Approve"
+        MATERIAL: LIME_STAINED_GLASS_PANE
+  KIT-EDITOR: # %ladder% display the Display Name of the ladder (official icon name), but you can also use %ladderOriginal% which is the given name of the ladder.
+    EDITOR-MENU:
+      TITLE: "<gold><bold>Select what to edit"
+      ICONS:
+        FILLER-ITEM:
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+        PREMADE-LADDER:
+          NAME: "<gold><bold>Premade Ladder"
+          MATERIAL: GOLDEN_SWORD
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to edit a <gold>premade"
+            - "<gray>ladder."
+            - "<dark_gray><st>------------------------"
+        PLAYER-LADDER:
+          NAME: "<green><bold>Own Ladder"
+          MATERIAL: FIRE_CHARGE
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to edit your <green>own"
+            - "<gray>ladder."
+            - "<dark_gray><st>------------------------"
+    PLAYER-CUSTOM-KIT-SELECTOR:
+      TITLE: "<dark_gray>Select a kit to edit"
+      ICONS:
+        KIT:
+          NAME: "<gray>[<white>%kit%<gray>]"
+          MATERIAL: WRITABLE_BOOK
+        UNSELECTED:
+          NAME: "<gray>[<white>Unselected<gray>]"
+          MATERIAL: CYAN_TERRACOTTA
+        SELECTED:
+          NAME: "<gray>[<green>Selected<gray>]"
+          MATERIAL: LIME_TERRACOTTA
+        GUIDE:
+          NAME: "<aqua>Guide"
+          MATERIAL: PAPER
+          LORE:
+            - "<white>After selecting a kit, you can"
+            - "<white>play with it by dueling other"
+            - "<white>players or play in parties."
+    LADDER-SELECTOR:
+      TITLE: "<blue><bold>Select a kit to edit."
+      ICONS:
+        NAME: "%ladder%"
+        LORE:
+          - ""
+          - "<green>Click here to select <yellow>%ladder%<green>."
+        PAGE-LEFT:
+          NAME: "<gold>Go to Page %page%"
+          MATERIAL: ARROW
+        PAGE-RIGHT:
+          NAME: "<gold>Go to Page %page%"
+          MATERIAL: ARROW
+    DUEL-ROUND-SELECTOR:
+      TITLE: "<dark_gray>Select the amount of rounds"
+      ICONS:
+        BACK-TO:
+          NAME: "<red>Back to"
+          MATERIAL: ARROW
+        ROUND-SELECTOR:
+          NAME: "<gray>Rounds: <gold>%rounds%"
+          MATERIAL: FIREWORK_STAR
+          LORE:
+            - ""
+            - "<gray>The first player/team to reach"
+            - "<gray>the, winning rounds wins."
+            - ""
+            - "<gray>Recommended: <yellow>%recommended_rounds% rounds<gray>."
+            - ""
+            - "<green><bold>LEFT-CLICK <green>to reduce the rounds."
+            - "<aqua><bold>RIGHT-CLICK <aqua>to increase the rounds."
+        SHOW-ARENA:
+          NAME: "<yellow>Selected Arena: %arena%"
+          MATERIAL: DIRT # In case the arena doesn't have an icon
+          LORE:
+            - ""
+            - "<gray>You've selected this arena for the match."
+        SHOW-LADDER:
+          NAME: "<yellow>Selected Ladder: %ladder%"
+          MATERIAL: DIRT # In case the ladder doesn't have an icon
+          LORE:
+            - ""
+            - "<gray>You've selected this ladder for the match."
+        START-MATCH:
+          NAME: "<green>Start Match"
+          MATERIAL: EMERALD
+          LORE:
+            - ""
+            - "<gray>Click here to start the match."
+            - "<gray>The match will start with the selected"
+            - "<gray>arena and ladder."
+    KIT-SELECTOR:
+      TITLE: "<dark_gray>Viewing %ladder% kits"
+      ICONS:
+        BACK-TO-KIT-SELECTOR:
+          NAME: "<red>Back to kit selector"
+          MATERIAL: ARROW
+        CREATE-KIT:
+          NAME: "<green><bold>Create Kit"
+          MATERIAL: STONE_SWORD
+        EXISTING-KIT:
+          NAME: "<gold><bold>Kit %kit%"
+          MATERIAL: GOLDEN_SWORD
+        EDIT-KIT:
+          NAME: "<green><bold>Edit Kit"
+          MATERIAL: BOOK
+        DELETE-KIT:
+          NAME: "<red><bold>Delete Kit"
+          MATERIAL: REDSTONE
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<red><bold>You won't be able to"
+            - "<red>recover this kit."
+            - "<dark_gray><st>------------------------"
+        NO-PERMISSION:
+          NAME: "<red>You don't have permission"
+          MATERIAL: WOODEN_SWORD
+        FILLER-ITEM-1:
+          NAME: " "
+          MATERIAL: RED_STAINED_GLASS_PANE
+        FILLER-ITEM-2:
+          NAME: " "
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+    KIT-EDITOR:
+      TITLE: "<dark_gray>Editing Kit %kit%" # Also available: %weightClass%
+      ICONS:
+        INFO:
+          NAME: "<dark_green>Informations"
+          MATERIAL: NAME_TAG
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - " <yellow>» <gray>Ladder: <yellow>%ladder%"
+            - " <yellow>» <gray>Kit: <yellow>%kit%"
+            - " <yellow>» <gray>WeightClass: <yellow>%weightClass%"
+            - "<dark_gray><st>------------------------"
+        SAVE:
+          NAME: "<green><bold>Save"
+          MATERIAL: LIME_WOOL
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<yellow><bold>Click here <yellow>to save"
+            - "<yellow>the custom kit."
+            - "<dark_gray><st>------------------------"
+        LOAD-DEFAULT:
+          NAME: "<yellow><bold>Load Default Kit"
+          MATERIAL: YELLOW_WOOL
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<yellow><bold>Click here <yellow>to load the default"
+            - "<yellow>kit to your inventory."
+            - "<dark_gray><st>------------------------"
+        CANCEL:
+          NAME: "<red><bold>Cancel"
+          MATERIAL: RED_WOOL
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<yellow><bold>Click here <yellow>to abort editing the"
+            - "<yellow>kit, and return to the kit menu."
+            - "<dark_gray><st>------------------------"
+        FILLER-ITEM:
+          NAME: " "
+          MATERIAL: ORANGE_STAINED_GLASS_PANE
+        SWITCH-TO-UNRANKED:
+          NAME: "<green>Switch to %weightClass%"
+          MATERIAL: WOODEN_SWORD
+        SWITCH-TO-RANKED:
+          NAME: "<green>Switch to %weightClass%"
+          MATERIAL: IRON_SWORD
+        ONLY-UNRANKED:
+          NAME: "<red>This ladder is only %weightClass%"
+          MATERIAL: REDSTONE
+        ONLY-RANKED:
+          NAME: "<red>This ladder is only %weightClass%"
+          MATERIAL: REDSTONE
+        NO-EFFECT:
+          NAME: "<dark_purple>Effects"
+          MATERIAL: POTION
+          DAMAGE: 8233
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>This ladder has no effects."
+            - "<dark_gray><st>------------------------"
+        HAS-EFFECT:
+          FORMAT: "<light_purple>%name% %amplifier% <gray>for %time%"
+          ICON:
+            NAME: "<dark_purple>Effects"
+            MATERIAL: POTION
+            DAMAGE: 8233
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<yellow>You will get these effects,"
+              - "<yellow>when the game starts."
+              - ""
+              - "%effects%"
+              - "<dark_gray><st>------------------------"
+  STATISTICS:
+    SELECTOR:
+      TITLE: "<red>Select statistics to view"
+      ICONS:
+        FILLER-ITEM:
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+        OWN-PLAYER-STATS:
+          NAME: "<red>%player% <gray>- <white>Statistic"
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to view your personal"
+            - "<gray>statistics for each kit."
+            - "<dark_gray><st>------------------------"
+        PLAYER-STATS:
+          NAME: "<red>%target% <gray>- <white>Statistic"
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to view"
+            - "<red>%target%'s <gray>kit statistics."
+            - "<dark_gray><st>------------------------"
+        ELO-LEADERBOARD:
+          NAME: "<yellow>ELO Leaderboards"
+          MATERIAL: SNOWBALL
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to view the"
+            - "<yellow>elo <gray>leaderboards."
+            - "<dark_gray><st>------------------------"
+        TOP-WIN-LEADERBOARD:
+          NAME: "<gold>Top Win Leaderboard"
+          MATERIAL: SLIME_BALL
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to view the"
+            - "<gold>top win <gray>leaderboards."
+            - "<dark_gray><st>------------------------"
+        VIEW-DIVISIONS:
+          HAS-NEXT:
+            NAME: "<red>Divisions"
+            MATERIAL: BOOK
+            LORE:
+              - ""
+              - " <red>┃ <white>Current Division: %division_fullName%"
+              - " <red>┃ <white>Experience: <red>%exp%"
+              - " <red>┃ <white>Wins: <red>%wins%"
+              - " <red>┃ <white>Elo: <red>%elo%"
+              - ""
+              - " <red>┃ <white>Next Division: %nextDivision_fullName%"
+              - " <red>┃ <white>Progress: <green>%progress_bar% <white>(%progress_percent%%)"
+              - ""
+              - "<green>Left Click <gray>to view all division."
+          NO-NEXT:
+            NAME: "<red>Divisions"
+            MATERIAL: BOOK
+            LORE:
+              - ""
+              - " <red>┃ <white>Your Division: %division_fullName%"
+              - " <red>┃ <white>Experience: <red>%exp%"
+              - " <red>┃ <white>Wins: <red>%wins%"
+              - " <red>┃ <white>Elo: <red>%elo%"
+              - ""
+              - "<yellow>You have reached the last division."
+    ELO-LEADERBOARD:
+      TITLE: "<yellow>Top ELO Leaderboard"
+      ICONS:
+        FILLER-ITEM:
+          NAME: " "
+          MATERIAL: YELLOW_STAINED_GLASS_PANE
+        BACK-TO-HUB:
+          NAME: "<yellow>Back to hub"
+          MATERIAL: ARROW
+        REFRESH-ITEM:
+          NAME: "<red>Refresh"
+          MATERIAL: CLAY_BALL
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to refresh"
+            - "<gray>the leaderboard"
+            - ""
+            - "<red><bold>NOTE: <gray>The leaderboards automatically"
+            - "<gray>refresh every time you open the GUI."
+            - "<dark_gray><st>------------------------"
+        GLOBAL-LEADERBOARD:
+          NAME: "<yellow>Global Elo Leaderboard <gray>- <white>Top %number%"
+          MATERIAL: "NETHER_STAR"
+          LORE:
+            FORMAT: "<gold>%number%. %division% | %player%<dark_gray>: <yellow>%global_elo%"
+            FORMAT-NULL: "<gold>%number%. <gray>| <red>N/A"
+            LEADERBOARD:
+              - "<dark_gray><st>------------------------"
+              - "%top%"
+              - "<dark_gray><st>------------------------"
+            NO-LEADERBOARD:
+              - "<dark_gray><st>------------------------"
+              - "<red>There is no leaderboard to display"
+              - "<dark_gray><st>------------------------"
+        LADDER-LEADERBOARD:
+          NAME: "%ladder% <yellow>ELO <gray>- <white>Top %number%"
+          LORE:
+            FORMAT: "<gold>%number%. %division% | %player%<dark_gray>: <yellow>%ladder_elo%"
+            FORMAT-NULL: "<gold>%number%. <gray>| <red>N/A"
+            LEADERBOARD:
+              - "<dark_gray><st>------------------------"
+              - "%top%"
+              - "<dark_gray><st>------------------------"
+            NO-LEADERBOARD:
+              - "<dark_gray><st>------------------------"
+              - "<red>There is no leaderboard to display"
+              - "<dark_gray><st>------------------------"
+    WIN-LEADERBOARD:
+      TITLE: "<gold>Top Wins Leaderboards"
+      ICONS:
+        FILLER-ITEM:
+          NAME: " "
+          MATERIAL: ORANGE_STAINED_GLASS_PANE
+        BACK-TO-HUB:
+          NAME: "<yellow>Back to hub"
+          MATERIAL: ARROW
+        GLOBAL-LEADERBOARD:
+          NAME: "<yellow>Global Win Leaderboard <gray>- <white>Top %number%"
+          MATERIAL: "NETHER_STAR"
+          LORE:
+            FORMAT: "<gold>%number%. %division% | %player%<dark_gray>: <yellow>%global_win%"
+            FORMAT-NULL: "<gold>%number%. <gray>| <red>N/A"
+            LEADERBOARD:
+              - "<dark_gray><st>------------------------"
+              - "%top%"
+              - "<dark_gray><st>------------------------"
+            NO-LEADERBOARD:
+              - "<dark_gray><st>------------------------"
+              - "<red>There is no leaderboard to display"
+              - "<dark_gray><st>------------------------"
+        LADDER-LEADERBOARD:
+          NAME: "%ladder% <gold>Win <gray>- <white>Top %number%"
+          LORE:
+            FORMAT: "<gold>%number%. <gray>| <yellow>%player%<dark_gray>: <white>%ladder_win%"
+            FORMAT-NULL: "<gold>%number%. <gray>| <red>N/A"
+            LEADERBOARD:
+              - "<dark_gray><st>------------------------"
+              - "%top%"
+              - "<dark_gray><st>------------------------"
+            NO-LEADERBOARD:
+              - "<dark_gray><st>------------------------"
+              - "<red>There is no leaderboard to display"
+              - "<dark_gray><st>------------------------"
+    PLAYER-STATISTICS:
+      TITLE: "<red>%player%'s <dark_gray>Stats"
+      ICONS:
+        FILLER-ITEM:
+          NAME: " "
+          MATERIAL: ORANGE_STAINED_GLASS_PANE
+        BACK-TO-HUB:
+          NAME: "<yellow>Back to hub"
+          MATERIAL: ARROW
+        ALL-STAT:
+          NAME: "<red>%player% <gray>- <white>Statistics"
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<yellow>Unranked Wins: <white>%unranked_wins%"
+            - "<yellow>Unranked Losses: <white>%unranked_losses%"
+            - "<yellow>Unranked W/L Ratio: <white>%unranked_w/l_ratio%"
+            - ""
+            - "<yellow>Ranked Wins: <white>%ranked_wins%"
+            - "<yellow>Ranked Losses: <white>%ranked_losses%"
+            - "<yellow>Ranked W/L Ratio: <white>%ranked_w/l_ratio%"
+            - ""
+            - "<yellow>Wins: <white>%global_wins%"
+            - "<yellow>Losses: <white>%global_losses%"
+            - "<yellow>W/L Ratio: <white>%w/l_ratio%"
+            - ""
+            - "<yellow>Global ELO: <white>%global_elo%"
+            - "<yellow>Division: %division%"
+            - "<dark_gray><st>------------------------"
+        UNRANKED-LADDER-STATS:
+          NAME: "%ladder%"
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<yellow>Unranked Wins: <white>%unranked_wins%"
+            - "<yellow>Unranked Losses: <white>%unranked_losses%"
+            - "<yellow>Unranked W/L Ratio: <white>%unranked_w/l_ratio%"
+            - "<dark_gray><st>------------------------"
+        RANKED-LADDER-STATS:
+          NAME: "%ladder%"
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<yellow>Ranked Wins: <white>%ranked_wins%"
+            - "<yellow>Ranked Losses: <white>%ranked_losses%"
+            - "<yellow>Ranked W/L Ratio: <white>%ranked_w/l_ratio%"
+            - ""
+            - "<yellow>ELO: <white>%elo%"
+            - "<dark_gray><st>------------------------"
+        UNRANKED-RANKED-STATS:
+          NAME: "%ladder%"
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<yellow>Unranked Wins: <white>%unranked_wins%"
+            - "<yellow>Unranked Losses: <white>%unranked_losses%"
+            - "<yellow>Unranked W/L Ratio: <white>%unranked_w/l_ratio%"
+            - ""
+            - "<yellow>Ranked Wins: <white>%ranked_wins%"
+            - "<yellow>Ranked Losses: <white>%ranked_losses%"
+            - "<yellow>Ranked W/L Ratio: <white>%ranked_w/l_ratio%"
+            - ""
+            - "<yellow>ELO: <white>%elo%"
+            - ""
+            - "<yellow>Overall W/L Ratio: <white>%overall_w/l_ratio%"
+            - "<yellow>Division: %division%"
+            - "<dark_gray><st>------------------------"
+  PARTY:
+    PARTY-GAMES:
+      TITLE: "<dark_gray>Party Games"
+      ICONS:
+        FILLER-ITEM:
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+        PARTY_SPLIT:
+          NAME: "<aqua>Split Fight"
+          MATERIAL: FIREWORK_STAR
+        PARTY_FFA:
+          NAME: "<green>Party FFA"
+          MATERIAL: SLIME_BALL
+    PARTY-SETTINGS:
+      TITLE: "<dark_gray>Party Settings"
+      ICONS:
+        FILLER-ITEM:
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+        PLAYER-LIMIT:
+          NAME: "<yellow>Player Limit: <red>%limit%"
+          MATERIAL: PLAYER_HEAD
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>That many player can join"
+            - "<gray>your party maximum."
+            - ""
+            - "<green><bold>LEFT-CLICK <green>to decrease the limit."
+            - "<aqua><bold>RIGHT-CLICK <aqua>to increase the limit."
+            - "<dark_gray><st>------------------------"
+        ACCESS-MODIFIERS:
+          PUBLIC:
+            NAME: "<yellow>Public: <green>True"
+            MATERIAL: CHEST
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>The party is <green>public"
+              - "<gray>anyone can join."
+              - ""
+              - "<yellow><bold>Click here <gray>to change the status."
+              - "<dark_gray><st>------------------------"
+          PRIVATE:
+            NAME: "<yellow>Public: <red>False"
+            MATERIAL: CHEST
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>The party is <red>private <gray>only"
+              - "<gray>players with invite can join."
+              - ""
+              - "<yellow><bold>Click here <gray>to change the status."
+              - "<dark_gray><st>------------------------"
+        BROADCAST:
+          ENABLED:
+            NAME: "<yellow>Broadcast Party: <green>On"
+            MATERIAL: PAPER
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>The party is broadcasting"
+              - "<gray>to the players of the server."
+              - ""
+              - "<yellow><bold>Click here <gray>to <red>turn off <gray>broadcasting."
+              - "<dark_gray><st>------------------------"
+          DISABLED:
+            NAME: "<yellow>Broadcast Party: <red>Off"
+            MATERIAL: PAPER
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>The party isn't broadcasting."
+              - ""
+              - "<yellow><bold>Click here <gray>to <green>turn on <gray>broadcasting."
+              - "<dark_gray><st>------------------------"
+        ALL-INVITE:
+          ENABLED:
+            NAME: "<yellow>All Invite: <green>True"
+            MATERIAL: NAME_TAG
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Everyone can invite players"
+              - "<gray>to the party."
+              - ""
+              - "<yellow><bold>Click here <gray>to change the status."
+              - "<dark_gray><st>------------------------"
+          DISABLED:
+            NAME: "<yellow>All Invite: <red>False"
+            MATERIAL: NAME_TAG
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Only the party leader can invite"
+              - "<gray>players to the party."
+              - ""
+              - "<yellow><bold>Click here <gray>to change the status."
+              - "<dark_gray><st>------------------------"
+        DUEL-REQUESTS:
+          ENABLED:
+            NAME: "<yellow>Duel Requests: <green>True"
+            MATERIAL: DIAMOND_SWORD
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Players can send duel requests"
+              - "<gray>to the party."
+              - ""
+              - "<yellow><bold>Click here <gray>to change the status."
+              - "<dark_gray><st>------------------------"
+          DISABLED:
+            NAME: "<yellow>Duel Requests: <red>False"
+            MATERIAL: DIAMOND_SWORD
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Players can't send duel requests"
+              - "<gray>to the party."
+              - ""
+              - "<yellow><bold>Click here <gray>to change the status."
+              - "<dark_gray><st>------------------------"
+        PARTY-CHAT:
+          ENABLED:
+            NAME: "<yellow>Party Chat: <green>On"
+            MATERIAL: NOTE_BLOCK
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Party members can use"
+              - "<gray>the party chat."
+              - ""
+              - "<yellow><bold>Click here <gray>to <red>turn off <gray>party chat."
+              - "<dark_gray><st>------------------------"
+          DISABLED:
+            NAME: "<yellow>Party Chat: <red>Off"
+            MATERIAL: NOTE_BLOCK
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Party members can't use"
+              - "<gray>the party chat."
+              - ""
+              - "<yellow><bold>Click here <gray>to <green>turn on <gray>party chat."
+              - "<dark_gray><st>------------------------"
+    OTHER-PARTIES:
+      TITLE: "<dark_gray>Other Parties"
+      ICONS:
+        FILLER-ITEM:
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+        PARTY-ITEM:
+          NAME: "<aqua>%leader%'s Party <gray>(<white>%partySize%<gray>)"
+          LORE:
+            MEMBER-FORMAT: " <gray>- <aqua>%player%"
+            LORE:
+              - "<gray><st>------------------------"
+              - "%members%"
+              - ""
+              - "<white><bold>Click here <white>to duel this party."
+              - "<gray><st>------------------------"
+    PARTY-SPLIT:
+      TITLE: "<dark_gray>Party Split"
+      ICONS:
+        FILLER-ITEM:
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+        PLAYER-ITEM:
+          UNASSIGNED:
+            NAME: "<white>%player%"
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Team: <white>Not selected"
+              - ""
+              - "<blue><bold>LEFT-CLICK <blue>to assign to the Blue team."
+              - "<red><bold>RIGHT-CLICK <red>to assign to the Red team."
+              - "<dark_gray><st>------------------------"
+          BLUE:
+            NAME: "<aqua>%player%"
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Team: <blue>Blue"
+              - ""
+              - "<red><bold>RIGHT-CLICK <red>to move to the Red team."
+              - "<dark_gray><st>------------------------"
+          RED:
+            NAME: "<red>%player%"
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Team: <red>Red"
+              - ""
+              - "<blue><bold>LEFT-CLICK <blue>to move to the Blue team."
+              - "<dark_gray><st>------------------------"
+        RANDOM-SPLIT:
+          NAME: "<yellow>Random Split"
+          MATERIAL: NAME_TAG
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Randomly assigns every player"
+            - "<gray>to a team."
+            - ""
+            - "<yellow><bold>Click here <gray>to randomize."
+            - "<dark_gray><st>------------------------"
+        START-MATCH:
+          NAME: "<green><bold>Start Match"
+          MATERIAL: EMERALD
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Starts the match with the"
+            - "<gray>current team assignments."
+            - ""
+            - "<green><bold>Click here <green>to start."
+            - "<dark_gray><st>------------------------"
+        TEAM-SETUP:
+          NAME: "<aqua><bold>Setup Teams"
+          MATERIAL: WRITABLE_BOOK
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Opens the team setup to"
+            - "<gray>assign players to the"
+            - "<blue>Blue <gray>and <red>Red <gray>teams."
+            - ""
+            - "<aqua><bold>Click here <gray>to continue."
+            - "<dark_gray><st>------------------------"
+        BACK-TO-SELECTOR:
+          NAME: "<red><bold>Back"
+          MATERIAL: ARROW
+  FFA:
+    ARENA-SELECTOR:
+      TITLE: "<dark_gray>Select an <gold>FFA Arena"
+      ROWS: 3
+      ICONS:
+        ARENA:
+          BUILD-STATUS:
+            ENABLED: "<green>Enabled"
+            DISABLED: "<red>Disabled"
+          NAME: "<gold>%arena%"
+          LORE:
+            - ""
+            - "<yellow>Build: <white>%build_status%"
+            - "<yellow>Re-Kit After Kill: <white>%rekit_after_kill%"
+            - "<yellow>Health Reset On Kill: <white>%health_reset_on_kill%"
+            - "<yellow>Lobby After Death: <white>%lobby_after_death%"
+            - "<yellow>Ladders: <white>%ladders%"
+            - "<yellow>Players: <white>%players%"
+            - ""
+            - "<green>Click to join this arena!"
+        FILLER:
+          MATERIAL: ORANGE_STAINED_GLASS_PANE
+    LADDER-SELECTOR:
+      TITLE: "<dark_gray>Select a <gold>ladder <dark_gray>to join"
+      ICONS:
+        LADDER:
+          NAME: "%ladder%"
+          LORE:
+            - ""
+            - "<green>Click here to select %ladder%<green>."
+        FILLER:
+          MATERIAL: ORANGE_STAINED_GLASS_PANE
+  DIVISION:
+    TITLE: "<dark_gray>Division"
+    ICONS:
+      BACK-TO:
+        NAME: "<red>Back to"
+        MATERIAL: ARROW
+      FILLER-ITEM:
+        MATERIAL: BLACK_STAINED_GLASS_PANE
+      FILLER-ITEM2:
+        MATERIAL: ORANGE_STAINED_GLASS_PANE
+      PAST-DIVISION:
+        NAME: "%fullName% <red>(Past)"
+        LORE:
+          - ""
+          - " %color%┃ <white>Progress: <green>%progress_bar% <white>(%progress_percent%%)"
+          - ""
+          - " <red>┃ <white>You have passed this division."
+      CURRENT-DIVISION:
+        NAME: "%fullName% <green>(Current)"
+        LORE:
+          - ""
+          - " %color%┃ <white>Progress: <green>%progress_bar% <white>(%progress_percent%%)"
+          - ""
+          - " <red>┃ <white>This is your current division."
+      NEXT-DIVISION:
+        NAME: "%fullName%"
+        LORE:
+          - ""
+          - " %color%┃ <white>Wins: %color%%current_wins%/%required_wins% <white>(%win_progress_percent%%)"
+          - " %color%┃ <white>Elo: %color%%current_elo%/%required_elo% <white>(%elo_progress_percent%%)"
+          - " %color%┃ <white>Experience: %color%%current_exp%/%required_exp% <white>(%exp_progress_percent%%)"
+          - ""
+          - " %color%┃ <white>Progress: <green>%progress_bar% <white>(%progress_percent%%)"
+          - ""
+  PLAYER-SETTINGS:
+    TITLE: "<dark_gray>Player Settings" # %player%
+    ICONS:
+      FILLER-ITEM:
+        NAME: " "
+        MATERIAL: BLACK_STAINED_GLASS_PANE
+      DUEL-REQUEST:
+        ENABLED:
+          NAME: "<red>Toggle Duel Requests"
+          MATERIAL: DIAMOND_SWORD
+          LORE:
+            - "<dark_gray><st>--------------------------------"
+            - "<gray>If enabled, player will be"
+            - "<gray>able to send you duel requests."
+            - ""
+            - " <green><bold>► <gray>Allow other players to duel you."
+            - " <gray><bold>► <gray>Don't allow other players to duel you."
+            - "<dark_gray><st>--------------------------------"
+        DISABLED:
+          NAME: "<red>Toggle Duel Requests"
+          MATERIAL: DIAMOND_SWORD
+          LORE:
+            - "<dark_gray><st>--------------------------------"
+            - "<gray>If enabled, player will be"
+            - "<gray>able to send you duel requests."
+            - ""
+            - " <gray><bold>► <gray>Allow other players to duel you."
+            - " <red><bold>► <gray>Don't allow other players to duel you."
+            - "<dark_gray><st>--------------------------------"
+      SIDEBAR:
+        ENABLED:
+          NAME: "<gold>Toggle Scoreboard"
+          MATERIAL: PAINTING
+          LORE:
+            - "<dark_gray><st>--------------------------------"
+            - "<gray>If enabled, you will be able"
+            - "<gray>to see the scoreboard."
+            - ""
+            - " <green><bold>► <gray>Show scoreboard."
+            - " <gray><bold>► <gray>Hide scoreboard."
+            - "<dark_gray><st>--------------------------------"
+        DISABLED:
+          NAME: "<gold>Toggle Scoreboard"
+          MATERIAL: PAINTING
+          LORE:
+            - "<dark_gray><st>--------------------------------"
+            - "<gray>If enabled, you will be able"
+            - "<gray>to see the scoreboard."
+            - ""
+            - " <gray><bold>► <gray>Show scoreboard."
+            - " <red><bold>► <gray>Hide scoreboard."
+            - "<dark_gray><st>--------------------------------"
+        PARTY-INVITE:
+          ENABLED:
+            NAME: "<light_purple>Party Invite Requests"
+            MATERIAL: FEATHER
+            LORE:
+              - "<dark_gray><st>--------------------------------"
+              - "<gray>If enabled, players will be able"
+              - "<gray>to send you party invites."
+              - ""
+              - " <green><bold>► <gray>Allow party leaders to invite you."
+              - " <gray><bold>► <gray>Don't allow party leaders to invite you."
+              - "<dark_gray><st>--------------------------------"
+          DISABLED:
+            NAME: "<light_purple>Party Invite Requests"
+            MATERIAL: FEATHER
+            LORE:
+              - "<dark_gray><st>--------------------------------"
+              - "<gray>If enabled, players will be able"
+              - "<gray>to send you party invites."
+              - ""
+              - " <gray><bold>► <gray>Allow party leaders to invite you."
+              - " <red><bold>► <gray>Don't allow party leaders to invite you."
+              - "<dark_gray><st>--------------------------------"
+        PRIVATE-MESSAGE:
+          ENABLED:
+            NAME: "<blue>Private Messages"
+            MATERIAL: PAPER
+            LORE:
+              - "<dark_gray><st>--------------------------------"
+              - "<gray>If enabled, players will be"
+              - "<gray>able to message you."
+              - ""
+              - " <green><bold>► <gray>Let players send messages to you."
+              - " <gray><bold>► <gray>Don't let players send messages to you."
+              - "<dark_gray><st>--------------------------------"
+          DISABLED:
+            NAME: "<blue>Private Messages"
+            MATERIAL: PAPER
+            LORE:
+              - "<dark_gray><st>--------------------------------"
+              - "<gray>If enabled, players will be"
+              - "<gray>able to message you."
+              - ""
+              - " <gray><bold>► <gray>Let players send messages to you."
+              - " <red><bold>► <gray>Don't let players send messages to you."
+              - "<dark_gray><st>--------------------------------"
+        HIDE-PLAYERS:
+          ENABLED:
+            NAME: "<blue>Player Visibility"
+            MATERIAL: GHAST_TEAR
+            LORE:
+              - "<dark_gray><st>--------------------------------"
+              - "<gray>If enabled, you will be able to"
+              - "<gray>see other players in the lobby."
+              - ""
+              - " <green><bold>► <gray>See players in the lobby."
+              - " <gray><bold>► <gray>Don't see players in the lobby."
+              - "<dark_gray><st>--------------------------------"
+          DISABLED:
+            NAME: "<blue>Player Visibility"
+            MATERIAL: GHAST_TEAR
+            LORE:
+              - "<dark_gray><st>--------------------------------"
+              - "<gray>If enabled, you will be able to"
+              - "<gray>see other players in the lobby."
+              - ""
+              - " <gray><bold>► <gray>See players in the lobby."
+              - " <red><bold>► <gray>Don't see players in the lobby."
+              - "<dark_gray><st>--------------------------------"
+        ALLOW-SPECTATORS:
+          ENABLED:
+            NAME: "<gray>Allow Spectators"
+            MATERIAL: EMERALD
+            LORE:
+              - "<dark_gray><st>--------------------------------"
+              - "<gray>If enabled, players can"
+              - "<gray>spectate your matches."
+              - ""
+              - " <green><bold>► <gray>Let players spectate your matches."
+              - " <gray><bold>► <gray>Don't let players spectate your matches."
+              - "<dark_gray><st>--------------------------------"
+          DISABLED:
+            NAME: "<gray>Allow Spectators"
+            MATERIAL: EMERALD
+            LORE:
+              - "<dark_gray><st>--------------------------------"
+              - "<gray>If enabled, players can"
+              - "<gray>spectate your matches."
+              - ""
+              - " <gray><bold>► <gray>Let players spectate your matches."
+              - " <red><bold>► <gray>Don't let players spectate your matches."
+              - "<dark_gray><st>--------------------------------"
+        FLYING:
+          ENABLED:
+            NAME: "<gray>Flying"
+            MATERIAL: ELYTRA
+            LORE:
+              - "<dark_gray><st>--------------------------------"
+              - "<gray>If enabled, you can fly in the lobby."
+              - ""
+              - " <green><bold>► <gray>Enabled."
+              - " <gray><bold>► <gray>Disabled."
+              - "<dark_gray><st>--------------------------------"
+          DISABLED:
+            NAME: "<gray>Flying"
+            MATERIAL: ELYTRA
+            LORE:
+              - "<dark_gray><st>--------------------------------"
+              - "<gray>If enabled, you can fly in the lobby."
+              - ""
+              - " <gray><bold>► <gray>Enabled."
+              - " <red><bold>► <gray>Disabled."
+              - "<dark_gray><st>--------------------------------"
+        WORLD-TIME:
+          NAME: "<yellow>World Time: <green>%worldTime%"
+          MATERIAL: BLAZE_POWDER
+          LORE:
+            - "<dark_gray><st>--------------------------------"
+            - "<gray>Click here to change time."
+            - "<dark_gray><st>--------------------------------"
+        PREFIX-VISIBILITY:
+          NAME: "<light_purple>Name Decorations: <white>%prefixVisibility%"
+          MATERIAL: NAME_TAG
+          LORE:
+            - "<dark_gray><st>--------------------------------"
+            - "<gray>Choose what to show from your"
+            - "<gray>chat/tab/sidebar/nametag decorations."
+            - ""
+            - "<green>Modes: NONE, PREFIX, SUFFIX, BOTH"
+            - "<dark_gray><st>--------------------------------"
+  PLAYER-INFORMATION: # /prac info <name> command
+    MAIN-PAGE:
+      TITLE: "<red>%player%'s <dark_gray>info"
+      ICONS:
+        REFRESH:
+          NAME: "<green>Refresh Page"
+          MATERIAL: NETHER_STAR
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to refresh the page."
+            - "<dark_gray><st>------------------------"
+        BASIC-INFO:
+          NAME: "<gold>Basic Informations"
+          ONLINE-STATUS: "<green>Online"
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<yellow>Name: <gray>%player%"
+            - "<yellow>UUID: <gray>%uuid%"
+            - ""
+            - "<yellow>First Played: <gray>%first_played%"
+            - "<yellow>Last Joined: <gray>%last_played%"
+            - ""
+            - "<yellow>Unranked Left: <gray>%unranked_left%"
+            - "<yellow>Ranked Left: <gray>%ranked_left%"
+            - ""
+            - "<yellow>Division: <gray>%division_fullName%"
+            - "<dark_gray><st>------------------------"
+        RANKED-BAN:
+          NAME: "<gold>%player% <gray>is banned from playing ranked."
+          MATERIAL: EMERALD
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<yellow>Banner: <gray>%banner%"
+            - "<yellow>Reason: <gray>%reason%"
+            - "<yellow>Banned at: <gray>%time%"
+            - "<dark_gray><st>------------------------"
+            - "<green>Click here <gray>to <yellow>unban <gray>the player."
+            - "<dark_gray><st>------------------------"
+        ONLINE-INFO:
+          PLAYER-OFFLINE:
+            NAME: "<red>Player is not online!"
+            MATERIAL: FEATHER
+          PLAYER-ONLINE:
+            NAME: "<gold>Online Players Information's"
+            MATERIAL: FEATHER
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<yellow>In World: <gray>%world%"
+              - "<yellow>Gamemode: <gray>%gamemode%"
+              - "<yellow>Flying: <gray>%flying%"
+              - "<yellow>Tablist Name: <gray>%tablist_name%"
+              - "<yellow>Health: <gray>%health%"
+              - "<yellow>Food Level: <gray>%food%"
+              - "<yellow>Hit Delay: <gray>%hit_delay%"
+              - "<yellow>Ping: <gray>%ping%ms"
+              - "<dark_gray><st>------------------------"
+          GAME:
+            OFFLINE:
+              NAME: "<red>Player is offline"
+              MATERIAL: REDSTONE
+            IN-MATCH:
+              NAME: "<yellow>Player is in a match."
+              MATERIAL: CLOCK
+              LORE:
+                - "<dark_gray><st>------------------------"
+                - "<yellow>Left-Click <gray>to start spectating the match."
+                - "<gold>Right-Click <gray>to get the player out of the match."
+                - "<dark_gray><st>------------------------"
+            IN-EVENT:
+              NAME: "<yellow>Player is in a event."
+              MATERIAL: CLOCK
+              LORE:
+                - "<dark_gray><st>------------------------"
+                - "<yellow>Left-Click <gray>to start spectating the event."
+                - "<gold>Right-Click <gray>to get the player out of the event."
+                - "<dark_gray><st>------------------------"
+            IN-FFA:
+              NAME: "<yellow>Player is in a FFA."
+              MATERIAL: CLOCK
+              LORE:
+                - "<dark_gray><st>------------------------"
+                - "<yellow>Left-Click <gray>to start spectating the FFA."
+                - "<gold>Right-Click <gray>to get the player out of the FFA."
+                - "<dark_gray><st>------------------------"
+            SPECTATING:
+              NAME: "<yellow>Player is spectating."
+              MATERIAL: CLOCK
+              LORE:
+                - "<dark_gray><st>------------------------"
+                - "<yellow>Left-Click <gray>to start spectating the same thing."
+                - "<gold>Right-Click <gray>to end the spectating."
+                - "<dark_gray><st>------------------------"
+            NOTHING:
+              NAME: "<red>Player does nothing"
+              MATERIAL: REDSTONE
+              LORE:
+                - "<dark_gray><st>------------------------"
+                - "<gray>Player does not play in a"
+                - "<gray>match or event and does not"
+                - "<gray>spectate anything."
+                - "<dark_gray><st>------------------------"
+        PARTY:
+          IN-PARTY:
+            NAME: "<green>Player is in a party."
+            MATERIAL: NAME_TAG
+          NOT-IN-PARTY:
+            NAME: "<red>Player is not in a party."
+            MATERIAL: NAME_TAG
+        STATISTICS:
+          NAME: "<red>Statistics"
+          MATERIAL: FIREWORK_STAR
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to view the"
+            - "<gray>player's statistics."
+            - "<dark_gray><st>------------------------"
+    LADDER-STATS:
+      TITLE: "<dark_gray>%player% ladder stats"
+      ICONS:
+        BACK-TO-HUB:
+          NAME: "<yellow>Back to hub"
+          MATERIAL: ARROW
+        REFRESH:
+          NAME: "<green>Refresh Page"
+          MATERIAL: NETHER_STAR
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to refresh the page."
+            - "<dark_gray><st>------------------------"
+        RESET-ALL-STATS:
+          NAME: "<red>Reset ALL Stats"
+          MATERIAL: GHAST_TEAR
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to restart all"
+            - "<gray>the player's ladder statistics."
+            - "<dark_gray><st>------------------------"
+        PAGE-LEFT:
+          NAME: "<gold>Go to Page %page%"
+          MATERIAL: ARROW
+        PAGE-RIGHT:
+          NAME: "<gold>Go to Page %page%"
+          MATERIAL: ARROW
+        LADDER:
+          NULL-STAT: "<red>N/A"
+          UNRANKED-LADDER-STATS:
+            NAME: "<yellow>%ladder% ladder"
+            DEFAULT-MATERIAL: BEDROCK
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<yellow>Wins: <white>%wins%"
+              - "<yellow>Losses: <white>%losses%"
+              - ""
+              - "<yellow>Custom Kits: <white>%custom_kits%"
+              - "<dark_gray><st>------------------------"
+              - "<red>Click here <gray>to reset the ladder stats."
+              - "<dark_gray><st>------------------------"
+          RANKED-LADDER-STATS:
+            NAME: "<yellow>%ladder% ladder"
+            DEFAULT-MATERIAL: BEDROCK
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<yellow>Unranked Wins: <white>%unranked_wins%"
+              - "<yellow>Unranked Losses: <white>%unranked_losses%"
+              - "<yellow>Unranked Custom Kits: <white>%unranked_custom_kits%"
+              - ""
+              - "<yellow>Ranked Wins: <white>%ranked_wins%"
+              - "<yellow>Ranked Losses: <white>%ranked_losses%"
+              - "<yellow>Ranked Custom Kits: <white>%ranked_custom_kits%"
+              - ""
+              - "<yellow>ELO: <white>%elo%"
+              - "<dark_gray><st>------------------------"
+              - "<red>Click here <gray>to reset the ladder stats."
+              - "<dark_gray><st>------------------------"
+  SELECTORS:
+    ARENA-SELECTOR:
+      TITLE: "%matchType% <dark_gray>- Arena"
+      ICONS:
+        BACK-TO-SELECTOR:
+          NAME: "<yellow>Back to kit selector"
+          MATERIAL: ARROW
+        RANDOM-ARENA:
+          NAME: "<gold>Random Arena"
+          MATERIAL: NETHER_STAR
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to pick a"
+            - "<yellow>random <gray>arena for the match."
+            - "<dark_gray><st>------------------------"
+        ARENA-ICON:
+          NAME: "%arena%"
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to select"
+            - "<gray>arena %arena%<gray>."
+            - "<dark_gray><st>------------------------"
+        PAGE-LEFT:
+          NAME: "<gold>Go to Page %page%"
+          MATERIAL: ARROW
+        PAGE-RIGHT:
+          NAME: "<gold>Go to Page %page%"
+          MATERIAL: ARROW
+    LADDER-SELECTOR:
+      TITLE: "%matchType% <dark_gray>- Kit"
+      ICONS:
+        LADDER:
+          NAME: "%ladder%"
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to select"
+            - "<gray>ladder %ladder%<gray>."
+            - "<dark_gray><st>------------------------"
+        FILLER-ITEM:
+          MATERIAL: GRAY_STAINED_GLASS_PANE
+        BASE-CUSTOM-PLAYER-KIT-ICON:
+          NAME: "<gold>Custom Kit"
+          MATERIAL: DIAMOND_SWORD
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Click here to play"
+            - "<gray>with your own custom kit."
+            - "<dark_gray><st>------------------------"
+        PAGE-LEFT:
+          NAME: "<gold>Go to Page %page%"
+          MATERIAL: ARROW
+        PAGE-RIGHT:
+          NAME: "<gold>Go to Page %page%"
+          MATERIAL: ARROW
+  EVENT-HOST: # You can set each event icon in the game.
+    TITLE: "<dark_red>Host Event"
+  BRACKETS-KIT-SELECTOR:
+    TITLE: "<dark_gray>Brackets Kit Source"
+    ICONS:
+      DEFAULT-KIT:
+        NAME: "<gold>Use Admin Preset"
+        MATERIAL: CHEST
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Start Brackets with the"
+          - "<gray>configured admin event kit."
+          - ""
+          - "<green>Click to select"
+          - "<dark_gray><st>------------------------"
+      CUSTOM-KIT:
+        NAME: "<green>%kitName%"
+        MATERIAL: BOOK
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Use this custom player kit"
+          - "<gray>for the entire Brackets event."
+          - ""
+          - "<green>Click to select"
+          - "<dark_gray><st>------------------------"
+      NO-CUSTOM-KIT:
+        NAME: "<red>No available custom kits"
+        MATERIAL: BARRIER
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Enable and configure your"
+          - "<gray>custom kits in the player kit menu"
+          - "<gray>to list them here."
+          - "<dark_gray><st>------------------------"
+  LADDER-PREVIEW:
+    TITLE: "<dark_gray>Preview of %ladder%"
+    ICONS:
+      NO-EFFECT:
+        NAME: "<dark_purple>Ladder Effects"
+        MATERIAL: POTION
+        DAMAGE: 8233
+        FLAGS:
+          - HIDE_POTION_EFFECTS
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>This ladder has no effects."
+          - "<dark_gray><st>------------------------"
+      HAS-EFFECT:
+        FORMAT: "<light_purple>%name% %amplifier% <gray>for %time%"
+        ICON:
+          NAME: "<dark_purple>Ladder Effects"
+          MATERIAL: POTION
+          DAMAGE: 8233
+          FLAGS:
+          - HIDE_POTION_EFFECTS
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<yellow>You will get these effects,"
+            - "<yellow>when the game starts."
+            - ""
+            - "%effects%"
+            - "<dark_gray><st>------------------------"
+  MATCH-STATISTICS:
+    TITLE:
+      MULTIPLE-ROUND: "<dark_gray>%player%'s Stat - R: %round%"
+      SINGLE-ROUND: "<dark_gray>%player%'s Stat"
+    ICONS:
+      POTION:
+        NAME: "<red>Health Potions: <white>%potion_left%"
+        MATERIAL: POTION
+        DAMAGE: 16421
+        LORE:
+          - "<dark_gray><st>--------------------"
+          - "<red>Potions Thrown: <white>%potion_thrown%"
+          - "<red>Potions Missed: <white>%potion_missed%"
+          - "<red>Potion Accuracy: <white>%potion_accuracy%"
+          - "<dark_gray><st>--------------------"
+      HEALTH:
+        NAME: "<red>Health: <white>20/%end_hearth% <red>♥"
+        MATERIAL: PLAYER_HEAD
+      HUNGER:
+        NAME: "<red>Hunger: <white>20/%end_hunger%"
+        MATERIAL: COOKED_BEEF
+      EFFECT:
+        NO-EFFECT:
+          NAME: "<red>Potion Effects"
+          MATERIAL: BREWING_STAND
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<red>Player didn't have any effects"
+            - "<red>left at the end of the game."
+            - "<dark_gray><st>------------------------"
+        HAS-EFFECT:
+          FORMAT: " <white>✱ <red>%name% %amplifier% <gray>- <white> %time%"
+          ICON:
+            NAME: "<red>Potion Effects"
+            MATERIAL: POTION
+            DAMAGE: 8233
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "%effects%"
+              - "<dark_gray><st>------------------------"
+      STATS:
+        NAME: "<red>Match Statistics"
+        MATERIAL: DIAMOND_SWORD
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - " <white>✱ <red>Total Hits: <white>%total_hits%"
+          - " <white>✱ <red>Total Hits Received: <white>%total_hits_received%"
+          - ""
+          - " <white>✱ <red>Longest Combo: <white>%longest_combo%"
+          - " <white>✱ <red>Avarage CPS: <white>%avarage_cps%"
+          - "<dark_gray><st>------------------------"
+      VIEW-ROUND:
+        NAME: "<gray><bold>Click-here <gray>to view your round <red>%round% <gray>statstics."
+        MATERIAL: PAPER
+  PLAYER-INVENTORY:
+    TITLE: "<red>%player%'s <dark_gray>inventory"
+    ICONS:
+      FILLER-ITEM:
+        NAME: " "
+        MATERIAL: BLACK_STAINED_GLASS_PANE
+      HEALTH:
+        NAME: "<red>Health: <white>20/%health% <red>♥"
+        MATERIAL: REDSTONE
+      HUNGER:
+        NAME: "<red>Hunger: <white>20/%hunger%"
+        MATERIAL: COOKED_BEEF
+      EFFECT:
+        FORMAT: " <white>✱ <red>%name% %amplifier% <gray>- <white> %time%"
+        ICON:
+          NAME: "<red>Potion Effects"
+          MATERIAL: POTION
+          DAMAGE: 8233
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "%effects%"
+            - "<dark_gray><st>------------------------"
+  UNRANKED-GUI:
+    LB-FORMAT: "<yellow>%placement%# <white>%player% <gray>» <white>%score%"
+    TITLE: "%weight_class% Queue <dark_gray>- <aqua>%category%"
+    ICONS:
+      FILLER-ITEM:
+        MATERIAL: BLACK_STAINED_GLASS_PANE
+      CATEGORY-SELECTOR:
+        NAME: "<gray>%category%"
+        MATERIAL: BOOK
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Browse ladders in this category"
+          - "<gray>Find your favorite queue faster"
+          - ""
+          - "<gray>Ladders"
+          - "<white>%category_ladders%"
+          - ""
+          - "<yellow>Click to select this category"
+          - "<dark_gray><st>------------------------"
+      SELECTED-CATEGORY-SELECTOR:
+        NAME: "<aqua>%category%"
+        MATERIAL: ENCHANTED_BOOK
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Browse ladders in this category"
+          - "<gray>Find your favorite queue faster"
+          - ""
+          - "<gray>Ladders"
+          - "<white>%category_ladders%"
+          - ""
+          - "<red>Already selected"
+          - "<dark_gray><st>------------------------"
+      QUICK-MATCH:
+        NAME: "<green><bold>Quick Match"
+        MATERIAL: NETHER_STAR
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Instantly pick a random kit"
+          - "<gray>from the selected category"
+          - ""
+          - "<yellow>Click to queue immediately"
+          - "<dark_gray><st>------------------------"
+      SWITCH-TO-RANKED:
+        NAME: "<red>Switch to Ranked"
+        MATERIAL: IRON_SWORD
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Switch to the ranked"
+          - "<gray>queue selector"
+          - ""
+          - "<yellow>Click to switch"
+          - "<dark_gray><st>------------------------"
+      CUSTOM-KIT-QUEUE:
+        NAME: "<gold><bold>Custom Kit Queue"
+        MATERIAL: BOOK
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Host your own custom kit"
+          - "<gray>or join someone else's"
+          - ""
+          - "<yellow>Click to open"
+          - "<dark_gray><st>------------------------"
+      LADDER:
+        NAME: "%ladder%"
+        LORE: # Options: %elo%, %win%, %kills%, %deaths%, %win_streak%, %best_win_streak%, %lose_streak%, %best_lose_streak%
+          - " <red><bold>» <yellow>Unranked"
+          - "     <white>Fighting: <yellow>%in_fight%"
+          - "     <white>Queueing: <yellow>%in_queue%"
+          - ""
+          - "<yellow>Winstreak Top 3"
+          - "%lb_win_streak_1%"
+          - "%lb_win_streak_2%"
+          - "%lb_win_streak_3%"
+          - ""
+          - "<yellow>Click here to join the %weight_class% %ladder% <yellow>queue."
+      FROZEN-LADDER-ITEM: # You can set different material and damage for this item.
+        NAME: "%ladder%"
+        LORE:
+          - ""
+          - "<yellow>This ladder is <aqua>frozen<yellow>."
+      DISABLED-LADDER-ITEM: # You can set different material and damage for this item.
+        NAME: "%ladder%"
+        LORE:
+          - ""
+          - "<yellow>This ladder is <red>disabled<yellow>."
+  RANKED-GUI:
+    LB-FORMAT: "<yellow>%placement%# <white>%player% <gray>» <white>%score%"
+    TITLE: "%weight_class% Queue <dark_gray>- <red>%category%"
+    ICONS:
+      FILLER-ITEM:
+        MATERIAL: BLACK_STAINED_GLASS_PANE
+      CATEGORY-SELECTOR:
+        NAME: "<gray>%category%"
+        MATERIAL: BOOK
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Browse ladders in this category"
+          - "<gray>Find your favorite queue faster"
+          - ""
+          - "<gray>Ladders"
+          - "<white>%category_ladders%"
+          - ""
+          - "<yellow>Click to select this category"
+          - "<dark_gray><st>------------------------"
+      SELECTED-CATEGORY-SELECTOR:
+        NAME: "<red>%category%"
+        MATERIAL: ENCHANTED_BOOK
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Browse ladders in this category"
+          - "<gray>Find your favorite queue faster"
+          - ""
+          - "<gray>Ladders"
+          - "<white>%category_ladders%"
+          - ""
+          - "<red>Already selected"
+          - "<dark_gray><st>------------------------"
+      QUICK-MATCH:
+        NAME: "<green><bold>Quick Match"
+        MATERIAL: NETHER_STAR
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Instantly pick a random kit"
+          - "<gray>from the selected category"
+          - ""
+          - "<yellow>Click to queue immediately"
+          - "<dark_gray><st>------------------------"
+      SWITCH-TO-UNRANKED:
+        NAME: "<green>Switch to Unranked"
+        MATERIAL: WOODEN_SWORD
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Switch to the unranked"
+          - "<gray>queue selector"
+          - ""
+          - "<yellow>Click to switch"
+          - "<dark_gray><st>------------------------"
+      CUSTOM-KIT-QUEUE:
+        NAME: "<gold><bold>Custom Kit Queue"
+        MATERIAL: BOOK
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Host your own custom kit"
+          - "<gray>or join someone else's"
+          - ""
+          - "<yellow>Click to open"
+          - "<dark_gray><st>------------------------"
+      LADDER:
+        NAME: "%ladder%"
+        LORE: # Options: %elo%, %win%, %kills%, %deaths%, %win_streak%, %best_win_streak%, %lose_streak%, %best_lose_streak%
+          - " <red><bold>» <red>Ranked"
+          - "     <white>Fighting: <yellow>%in_fight%"
+          - "     <white>Queueing: <yellow>%in_queue%"
+          - ""
+          - "<yellow>Elo Top 3"
+          - "%lb_elo_1%"
+          - "%lb_elo_2%"
+          - "%lb_elo_3%"
+          - ""
+          - "<yellow>Click here to join the %weight_class% %ladder% <yellow>queue."
+      FROZEN-LADDER-ITEM: # You can set different material and damage for this item.
+        NAME: "%ladder%"
+        LORE:
+          - ""
+          - "<yellow>This ladder is <aqua>frozen<yellow>."
+      DISABLED-LADDER-ITEM: # You can set different material and damage for this item.
+        NAME: "%ladder%"
+        LORE:
+          - ""
+          - "<yellow>This ladder is <red>disabled<yellow>."
+  CUSTOM-KIT-QUEUE:
+    CHOOSE-TYPE:
+      TITLE: "<dark_gray>Custom Kit Queue"
+      SIZE: 3
+      SLOTS:
+        HOST-OWN: 11
+        JOIN-OTHERS: 15
+        BACK: 18
+      ICONS:
+        FILLER-ITEM:
+          NAME: " "
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+        QUEUE-OWN-KIT:
+          NAME: "<green>Queue Your Own Kit"
+          MATERIAL: WRITABLE_BOOK
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Select one of your saved"
+            - "<gray>custom kits and host it"
+            - ""
+            - "<yellow>Click to continue"
+            - "<dark_gray><st>------------------------"
+        QUEUE-OTHERS-KITS:
+          NAME: "<yellow>Queue Others Kits"
+          MATERIAL: BOOK
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Join the first available"
+            - "<gray>hosted custom-kit queue"
+            - ""
+            - "<yellow>Click to search"
+            - "<dark_gray><st>------------------------"
+        BACK:
+          NAME: "<red>Back"
+          MATERIAL: ARROW
+    HOST-SELECTOR:
+      TITLE: "<dark_gray>Select Custom Kit To Host"
+      SIZE: 3
+      SLOTS:
+        BACK: 22
+        NO-KITS: 13
+        KIT-SLOTS:
+          - 10
+          - 11
+          - 12
+          - 13
+          - 14
+          - 15
+          - 16
+      ICONS:
+        FILLER-ITEM:
+          NAME: " "
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+        NO-KITS:
+          NAME: "<red>No Saved Custom Kits"
+          MATERIAL: BARRIER
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>Create and enable a custom kit"
+            - "<gray>first, then come back here."
+            - ""
+            - "<yellow>Use custom kit editor"
+            - "<dark_gray><st>------------------------"
+        BACK:
+          NAME: "<red>Back"
+          MATERIAL: ARROW
+    QUEUE-OTHERS:
+      TITLE: "<dark_gray>Join Custom Kit Queue"
+      SIZE: 3
+      SLOTS:
+        NO-HOSTED: 13
+        BACK: 22
+      ICONS:
+        FILLER-ITEM:
+          NAME: " "
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+        NO-HOSTED:
+          NAME: "<red>No One Hosting"
+          MATERIAL: BARRIER
+          LORE:
+            - "<dark_gray><st>------------------------"
+            - "<gray>There are no custom kit"
+            - "<gray>queues available at the moment."
+            - ""
+            - "<yellow>Wait for others to host"
+            - "<dark_gray><st>------------------------"
+        BACK:
+          NAME: "<red>Back"
+          MATERIAL: ARROW
+  SPECTATOR-MENU:
+    TITLE: "<dark_gray>Spectator Menu - Page %page%"
+    ICONS:
+      PAGE-LEFT:
+        NAME: "<gold>Go to Page %page%"
+        MATERIAL: ARROW
+      CLOSE:
+        NAME: "<red>Close Spectator Menu"
+        MATERIAL: ARROW
+      PAGE-RIGHT:
+        NAME: "<gold>Go to Page %page%"
+        MATERIAL: ARROW
+      FILLER-ITEM:
+        NAME: " "
+        MATERIAL: BLACK_STAINED_GLASS_PANE
+      MATCH-ICON:
+        NAME: "%match_type%"
+        LORE:
+          - "<dark_gray>#%match_id%"
+          - "%weight_class%"
+          - ""
+          - "<yellow>Match Type: <white>%match_type%"
+          - "<yellow>Kit: <white>%ladder%"
+          - "<yellow>Arena: <white>%arena%"
+          - "<yellow>Round: <white>%round%"
+          - "<yellow>Duration: <white>%roundDuration%"
+          - "<yellow>Spectators: <white>%spectators%"
+          - ""
+          - "<green>» Click to spectate «"
+      EVENT-ICON:
+        NAME: "<yellow>%event_type%"
+        LORE:
+          - "<yellow>Duration: <white>%event_duration%"
+          - "<yellow>Players: <white>%players%"
+          - "<yellow>Spectators: <white>%spectators%"
+          - ""
+          - "<green>» Click to spectate «"
+      FFA-ICON:
+        BUILD-STATUS:
+          ENABLED: "<green>Enabled"
+          DISABLED: "<red>Disabled"
+        NAME: "<gold>FFA"
+        LORE:
+          - "<yellow>Build: <white>%build_status%"
+          - "<yellow>Arena: <white>%arena%"
+          - "<yellow>Players: <white>%players%"
+          - "<yellow>Spectators: <white>%spectators%"
+          - ""
+          - "<green>» Click to spectate «"
+  SETUP:
+    HUB:
+      TITLE: "<red>Server Manager"
+      ICONS:
+        GENERAL-FILLER-ITEM:
+          NAME: " "
+          MATERIAL: ORANGE_STAINED_GLASS_PANE
+        ARENA-MANAGER:
+          NAME: "<gold>Arena Manager"
+          MATERIAL: NETHER_STAR
+        LADDER-MANAGER:
+          NAME: "<yellow>Ladder Manager"
+          MATERIAL: GOLDEN_SWORD
+        HOLOGRAM-MANAGER:
+          NAME: "<aqua>Hologram Manager"
+          MATERIAL: PAPER
+        EVENT-MANAGER:
+          NAME: "<dark_green>Event Manager"
+          MATERIAL: IRON_HELMET
+        SERVER-MANAGER:
+          NAME: "<red>Server Manager"
+          MATERIAL: NAME_TAG
+    FFA-ARENA:
+      MAIN:
+        TITLE: "<blue>%arenaName% <dark_gray>- Arena"
+        ICONS:
+          GO-BACK:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          DELETE:
+            NAME: "<red>Delete Arena"
+            MATERIAL: RED_DYE
+          ARENA-NAME:
+            NAME: "<gold>%arenaDisplayName%"
+            MATERIAL: BEDROCK
+            LORE:
+              - ""
+              - "<yellow>Arena Type: <aqua>%arenaType%"
+              - ""
+              - "<yellow><bold>Left-Click here <gray>to get detailed information."
+              - "<gold><bold>Right-Click here <gray>to get a setup item for the arena."
+              - ""
+              - "<gray>You can set the arenas icon by using the"
+              - "<gray><bold>/arena set icon %arenaName% <gray>command."
+              - ""
+              - "<red><bold>Note: <gray>You have to hold the item in your hand"
+              - "<gray>and name it first with the <gray><bold>/prac rename <gray>command."
+          SETTINGS:
+            NAME: "<dark_purple>Settings"
+            MATERIAL: REDSTONE
+            LORE:
+              - ""
+              - "<yellow><bold>Click here <gray>to open the settings gui."
+              - ""
+              - "<red><bold>Note: <gray>You can change the build setting,"
+              - "<gray>re-kit after kill, health reset on kill"
+              - "<gray>and the lobby after death setting."
+          STATUS:
+            ENABLED:
+              NAME: "<gray>Status: <green>Enabled"
+              MATERIAL: LIME_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>the arena."
+                - ""
+                - "<red><bold>Note: <gray>This will remove all the"
+                - "<gray>players from the arena."
+            DISABLED:
+              NAME: "<gray>Status: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>the arena."
+                - ""
+                - "<red><bold>Note: <gray>The arena has to meet some"
+                - "<gray>requirements to be enable:"
+                - " <dark_gray>» <yellow>Mark all the corners."
+                - " <dark_gray>» <yellow>Add spawn positions."
+                - " <dark_gray>» <yellow>Set an icon."
+          LOCATION:
+            NAME: "<dark_purple>Locations"
+            MATERIAL: COMPASS
+            LORE:
+              - ""
+              - "<dark_purple><bold>Currently Marked:"
+              - " <dark_purple>» <light_purple>Corner 1: <gray>%corner1%"
+              - " <dark_purple>» <light_purple>Corner 2: <gray>%corner2%"
+              - ""
+              - " <dark_purple>» <light_purple>Spawn Positions: <gray>%ffa_pos_num%"
+          LADDER:
+            NAME: "<red>Ladder Types"
+            MATERIAL: GOLDEN_SWORD
+            LORE:
+              - ""
+              - "<yellow><bold>Click here <gray>to open the ladder assign gui."
+              - ""
+              - "<red><bold>Note: <gray>You can only assign basic or build"
+              - "<gray>ladders to your FFA arena depending on the arenas"
+              - "<gray>build setting."
+              - ""
+              - "<red><bold>Note: <gray>You have to assign at least"
+              - "<gray>one ladder before enabling."
+          OPEN-STATUS:
+            OPEN:
+              NAME: "<gray>The <yellow>FFA <gray>is currently <green>open"
+              MATERIAL: LIME_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<gray>This means that players can join"
+                - "<gray>and play in the arena."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>CLOSE <gray>the arena."
+                - ""
+                - "<red><bold>Note: <gray>This will remove all the"
+                - "<gray>players from the arena."
+            CLOSE:
+              NAME: "<gray>The <yellow>FFA <gray>is currently <red>closed"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                  - ""
+                  - "<yellow><bold>Click here <gray>to <green>OPEN <gray>the arena."
+                  - ""
+                  - "<red><bold>Note: <gray>The arena has to be enabled."
+      SETTINGS:
+        TITLE: "<dark_red>%arenaName% <dark_gray>- Settings"
+        ICONS:
+          GO-BACK:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          FILLER:
+            MATERIAL: BLACK_STAINED_GLASS_PANE
+          BUILD:
+            ENABLED:
+              NAME: "<gray>Build: <green>Enabled"
+              MATERIAL: IRON_PICKAXE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>the"
+                - "<dark_green>building <gray>in the arena."
+                - ""
+                - "<red><bold>Note: <gray>This will remove all the"
+                - "<gray>assigned ladders from the arena."
+            DISABLED:
+              NAME: "<gray>Build: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>the"
+                - "<dark_green>building <gray>in the arena."
+                - ""
+                - "<red><bold>Note: <gray>This will remove all the"
+                - "<gray>assigned ladders from the arena."
+          MAP-BLOWABLE:
+            ENABLED:
+              NAME: "<gray>Blowable: <green>Enabled"
+              MATERIAL: TNT
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>map"
+                - "<dark_green>blowable <gray>in the arena."
+                - ""
+                - "<gray>When enabled, explosions can"
+                - "<gray>blow up the entire arena map."
+            DISABLED:
+              NAME: "<gray>Blowable: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>map"
+                - "<dark_green>blowable <gray>in the arena."
+                - ""
+                - "<gray>When enabled, explosions can"
+                - "<gray>blow up the entire arena map."
+          RE-KIT-AFTER-KILL:
+            ENABLED:
+              NAME: "<gray>Re-Kit After Kill: <green>Enabled"
+              MATERIAL: DIAMOND_SWORD
+              LORE:
+                - ""
+                - "<yellow>After a player kills somebody"
+                - "<yellow>they get a new kit."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>the"
+                - "<dark_green>re-kit after kill <gray>in the arena."
+            DISABLED:
+              NAME: "<gray>Re-Kit After Kill: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow>After a player kills somebody"
+                - "<yellow>they get a new kit."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>the"
+                - "<dark_green>re-kit after kill <gray>in the arena."
+          ALLOW-DROP-ITEMS:
+            ENABLED:
+              NAME: "<gray>Allow Drop Items: <green>Enabled"
+              MATERIAL: CHEST
+              LORE:
+                - ""
+                - "<yellow>Players can drop items"
+                - "<yellow>from their inventory."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>the"
+                - "<dark_green>allow drop items <gray>in the arena."
+            DISABLED:
+              NAME: "<gray>Allow Drop Items: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow>Players can drop items"
+                - "<yellow>from their inventory."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>the"
+                - "<dark_green>allow drop items <gray>in the arena."
+          HEALTH-RESET-ON-KILL:
+            ENABLED:
+              NAME: "<gray>Health Reset On Kill: <green>Enabled"
+              MATERIAL: GOLDEN_APPLE
+              LORE:
+                - ""
+                - "<yellow>After a player kills somebody"
+                - "<yellow>they are fully healed."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>the"
+                - "<dark_green>health reset on kill <gray>in the arena."
+            DISABLED:
+              NAME: "<gray>Health Reset On Kill: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow>After a player kills somebody"
+                - "<yellow>they are fully healed."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>the"
+                - "<dark_green>health reset on kill <gray>in the arena."
+          HEALTH-BELOW-NAME:
+            ENABLED:
+              NAME: "<gray>Health Below Name: <green>Enabled"
+              MATERIAL: PLAYER_HEAD
+              LORE:
+                - ""
+                - "<yellow>Shows players' health under"
+                - "<yellow>their name tags in this FFA."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>this setting."
+            DISABLED:
+              NAME: "<gray>Health Below Name: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow>Shows players' health under"
+                - "<yellow>their name tags in this FFA."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>this setting."
+          LOBBY-AFTER-DEATH:
+            ENABLED:
+              NAME: "<gray>Lobby After Death: <green>Enabled"
+              MATERIAL: DIAMOND_SWORD
+              LORE:
+                - ""
+                - "<yellow>After a player dies they get"
+                - "<yellow>teleported back to the arena."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>the"
+                - "<dark_green>lobby after death <gray>setting in the arena."
+            DISABLED:
+              NAME: "<gray>Lobby After Death: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow>After a player dies they get"
+                - "<yellow>teleported back to the arena."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>the"
+                - "<dark_green>lobby after death <gray>setting in the arena."
+      ARENA-LADDERS-SINGLE:
+        TITLE: "<dark_red>%arenaName% <dark_gray>- Ladders"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          PAGE-LEFT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          PAGE-RIGHT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          LADDER-ICONS:
+            ASSIGNED:
+              NAME: "<green>%ladderDisplayName%"
+              MATERIAL: LIME_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<gray>This ladder is <green>assigned<gray> for the arena."
+                - ""
+                - "<yellow>Click here <gray>to <red>unassign<gray>."
+            NOT-ASSIGNED:
+              NAME: "<red>%ladderDisplayName%"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<gray>This ladder is <red>unassigned<gray> for the arena."
+                - ""
+                - "<yellow>Click here <gray>to <green>assign<gray>."
+            DISABLED:
+              NAME: "<gray>%ladderDisplayName%"
+              MATERIAL: GRAY_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<gray>This ladder or it's ladder type"
+                - "<gray>is currently <red>disabled<gray>."
+    ARENA:
+      ARENA-MANAGER:
+        TITLE: "<dark_gray>Arena Manager - Page %page%"
+        ICONS:
+          PAGE-LEFT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          BACK-TO:
+            NAME: "<red>Back to Server Manager"
+            MATERIAL: ARROW
+          PAGE-RIGHT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          ARENA-ICON:
+            STATUS-NAMES:
+              ENABLED: "<green>Enabled"
+              DISABLED: "<red>Disabled"
+            BUILD:
+              NAME: "<gold>%arenaName%"
+              MATERIAL: BEDROCK
+              LORE:
+                - ""
+                - "<gold>Arena Information:"
+                - " <gray>» <yellow>Type: <aqua>%type%"
+                - " <gray>» <yellow>State: <aqua>%state%"
+                - " <gray>» <yellow>Copies: <gray>%copies%/64"
+                - " <gray>» <yellow>Ladders: <gray>%assigned_ladders%/%assignable_ladders%"
+                - ""
+                - "<green><bold>Left-Click <green>to open arena settings."
+                - "<aqua><bold>Right-Click <aqua>to to teleport to arena."
+            NON-BUILD:
+              NAME: "<gold>%arenaName%"
+              MATERIAL: BEDROCK
+              LORE:
+                - ""
+                - "<gold>Arena Information:"
+                - " <gray>» <yellow>Type: <aqua>%type%"
+                - " <gray>» <yellow>State: <aqua>%state%"
+                - " <gray>» <yellow>Ladders: <gray>%assigned_ladders%/%assignable_ladders%"
+                - ""
+                - "<green><bold>Left-Click <green>to open arena settings."
+                - "<aqua><bold>Right-Click <aqua>to to teleport to arena."
+            FFA:
+              NAME: "<gold>%arenaName%"
+              MATERIAL: BEDROCK
+              LORE:
+                  - ""
+                  - "<gold>Arena Information:"
+                  - " <gray>» <yellow>Type: <aqua>FFA"
+                  - " <gray>» <yellow>State: <aqua>%state%"
+                  - " <gray>» <yellow>Build: <aqua>%build%"
+                  - ""
+                  - "<green><bold>Left-Click <green>to open arena settings."
+                  - "<aqua><bold>Right-Click <aqua>to to teleport to arena."
+      ARENA-MAIN:
+        TITLE: "<dark_red>%arenaName% <dark_gray>- Arena"
+        ICONS:
+          GO-BACK:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          DELETE:
+            NAME: "<red>Delete Arena"
+            MATERIAL: RED_DYE
+          ARENA-NAME:
+            NAME: "<gold>%arenaDisplayName%"
+            MATERIAL: BEDROCK
+            LORE:
+              - ""
+              - "<yellow>Arena Type: <aqua>%arenaType%"
+              - ""
+              - "<yellow><bold>Left-Click here <gray>to get detailed information."
+              - "<gold><bold>Right-Click here <gray>to get a setup item for the arena."
+              - ""
+              - "<gray>You can set the arenas icon by using the"
+              - "<gray><bold>/arena set icon %arenaName% <gray>command."
+              - ""
+              - "<red><bold>Note: <gray>You have to hold the item in your hand"
+              - "<gray>and name it first with the <gray><bold>/prac rename <gray>command."
+          STATUS:
+            ENABLED:
+              NAME: "<gray>Status: <green>Enabled"
+              MATERIAL: LIME_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>the arena."
+            DISABLED:
+              NAME: "<gray>Status: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>the arena."
+                - ""
+                - "<red><bold>Note: <gray>The arena has to meet some"
+                - "<gray>requirements to be enable:"
+                - " <dark_gray>» <yellow>Mark all the corners."
+                - " <dark_gray>» <yellow>Set all the positions."
+                - " <dark_gray>» <yellow>Set an icon."
+          LOCATION:
+            BUILD:
+              NAME: "<dark_purple>Locations"
+              MATERIAL: COMPASS
+              LORE:
+                - ""
+                - "<dark_purple><bold>Currently Marked:"
+                - " <dark_purple>» <light_purple>Corner 1: <gray>%corner1%"
+                - " <dark_purple>» <light_purple>Corner 2: <gray>%corner2%"
+                - ""
+                - " <dark_purple>» <light_purple>Side Build Limit: <gray>%sideBuildLimit%"
+                - " <dark_purple>» <light_purple>Build Max Y: <gray>%buildMaxY%"
+                - " <dark_purple>» <light_purple>Death Zone Y: <gray>%deathZoneY%"
+                - ""
+                - " <dark_purple>» <light_purple>Player 1 Position: <gray>%position1%"
+                - " <dark_purple>» <light_purple>Player 2 Position: <gray>%position2%"
+                - ""
+                - " <dark_purple>» <light_purple>Bed 1: <gray>%bed1%"
+                - " <dark_purple>» <light_purple>Bed 2: <gray>%bed2%"
+                - " <dark_purple>» <light_purple>Portal 1: <gray>%portal1%"
+                - " <dark_purple>» <light_purple>Portal 2: <gray>%portal2%"
+            NOT-BUILD:
+              NAME: "<dark_purple>Locations"
+              MATERIAL: COMPASS
+              LORE:
+                - ""
+                - "<dark_purple><bold>Currently Marked:"
+                - " <dark_purple>» <light_purple>Corner 1: <gray>%corner1%"
+                - " <dark_purple>» <light_purple>Corner 2: <gray>%corner2%"
+                - ""
+                - " <dark_purple>» <light_purple>Death Zone Y: <gray>%deathZoneY%"
+                - ""
+                - " <dark_purple>» <light_purple>Player 1 Position: <gray>%position1%"
+                - " <dark_purple>» <light_purple>Player 2 Position: <gray>%position2%"
+          LADDER:
+            NAME: "<red>Ladder Types"
+            MATERIAL: GOLDEN_SWORD
+            LORE:
+              - ""
+              - "<yellow><bold>Click here <gray>to open the ladder type setup gui."
+              - ""
+              - "<red><bold>Note: <gray>You won't be able to enable"
+              - "<gray>non-build ladders for build arenas and vice versa."
+              - ""
+              - "<red><bold>Note: <gray>You have to add at least"
+              - "<gray>one ladder before enabling."
+          COPIES:
+            NAME: "<yellow>Arena Copies"
+            MATERIAL: HOPPER
+            LORE:
+              - ""
+              - "<yellow><bold>Click here <gray>to complete the following"
+              - "<gray>tasks with the arena copies:"
+              - " <dark_gray>» <gray>Create"
+              - " <dark_gray>» <gray>Delete"
+              - " <dark_gray>» <gray>Look through"
+              - " <dark_gray>» <gray>Teleport"
+          FREEZE:
+            FROZEN:
+              NAME: "<yellow>The arena is <aqua>frozen<yellow>."
+              MATERIAL: SNOWBALL
+              LORE:
+                - ""
+                - "<gray>Click here to <green>defrost<gray>."
+                - ""
+                - "<gray>The players will be able to"
+                - "<gray>play in this arena again."
+            NOT-FROZEN:
+              NAME: "<yellow>The arena is <green>not frozen<yellow>."
+              MATERIAL: SUNFLOWER
+              LORE:
+                - ""
+                - "<yellow>Click here to <aqua>freeze <yellow>it."
+                - ""
+                - "<gray>This means that the players won't be"
+                - "<gray>able to start a new match in this arena."
+      ARENA-COPY:
+        TITLE: "<dark_red>%arenaName% <dark_gray>- Copies, Page %page%"
+        ICONS:
+          NAV-MAIN:
+            NAME: "<red>%arenaDisplayName% <gray>Arena Copies Manager"
+            MATERIAL: REDSTONE
+            LORE:
+              - ""
+              - "<gray>Copies: <yellow>%copies%<gray>/64"
+              - ""
+              - "<red>Note: <gray>You can't change anything in the"
+              - "<gray>copies, nor the arena, if it has copies."
+          COPY-ARENA:
+            NAME: "<red>%arenaDisplayName% <gray>(<yellow>%copyNumber%<gray>)"
+            MATERIAL: HOPPER
+            LORE:
+              - ""
+              - "<yellow><bold>Click here <gray>to teleport to the copy arena."
+          PAGE-LEFT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          BACK-TO:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          PAGE-RIGHT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          DELETE:
+            NAME: "<yellow>Click here to <red>delete <yellow>the <gold>last <yellow>copy."
+            MATERIAL: ARROW
+          GENERATE:
+            NAME: "<yellow>Click here to <green>generate <yellow>a <gold>new <yellow>copy."
+            MATERIAL: ARROW
+      ARENA-LADDERS-TYPE:
+        TITLE: "<dark_red>%arenaName% <dark_gray>- Ladders"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          GO-TO-LADDERS:
+            NAME: "<red>Ladders"
+            MATERIAL: GOLDEN_CARROT
+            LORE:
+              - ""
+              - "<yellow><bold>Click here <gray>to open the ladder setup gui."
+              - ""
+              - "<red><bold>Note: <gray>The plugin automatically assign"
+              - "<gray>every ladder of which type is enabled."
+          LADDER-TYPE-ICONS:
+            ENABLED:
+              NAME: "<green>%ladderTypeName%"
+              LORE:
+                - ""
+                - "<gray>Ladder type is <green>enabled<gray>."
+                - ""
+                - "<yellow>Click here <gray>to <red>disable <gray>it."
+            DISABLED:
+              NAME: "<red>%ladderTypeName%"
+              LORE:
+                - ""
+                - "<gray>Ladder type is <red>disabled<gray>."
+                - ""
+                - "<yellow>Click here <gray>to <green>enable <gray>it."
+          CUSTOM-KIT-ICONS:
+            ICON:
+              NAME: "<yellow>Custom Kit: %status%"
+              MATERIAL: ARROW
+              LORE:
+                - ""
+                - "<gray>This setting decides if the players"
+                - "<gray>can use their custom kits in this arena."
+      ARENA-LADDERS-SINGLE:
+        TITLE: "<dark_red>%arenaName% <dark_gray>- Ladders"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          PAGE-LEFT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          PAGE-RIGHT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          LADDER-ICONS:
+            ASSIGNED:
+              NAME: "<green>%ladderDisplayName%"
+              MATERIAL: LIME_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<gray>This ladder is <green>assigned<gray> for the arena."
+                - ""
+                - "<yellow>Click here <gray>to <red>unassign<gray>."
+            NOT-ASSIGNED:
+              NAME: "<red>%ladderDisplayName%"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<gray>This ladder is <red>unassigned<gray> for the arena."
+                - ""
+                - "<yellow>Click here <gray>to <green>assign<gray>."
+            DISABLED:
+              NAME: "<gray>%ladderDisplayName%"
+              MATERIAL: GRAY_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<gray>This ladder or it's ladder type"
+                - "<gray>is currently <red>disabled<gray>."
+            NOT-COMPATIBLE:
+              NAME: "<gray>%ladderDisplayName%"
+              MATERIAL: GRAY_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<gray>This ladder is <red>not compatible"
+                - "<gray>with the arena because of the"
+                - "<gray>build status."
+    LADDER:
+      LADDER-MANAGER:
+        TITLE: "<dark_gray>Ladder Manager"
+        ICONS:
+          PAGE-LEFT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          BACK-TO:
+            NAME: "<red>Back to Server Manager"
+            MATERIAL: ARROW
+          PAGE-RIGHT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          LADDER-ICON:
+            STATUS-NAMES:
+              ENABLED: "<green>Enabled"
+              DISABLED: "<red>Disabled"
+            NAME: "<gold>%ladder%"
+            MATERIAL: BEDROCK
+            LORE:
+              - ""
+              - "<gold>Ladder Information:"
+              - " <gray>» <yellow>Type: <aqua>%type%"
+              - " <gray>» <yellow>State: %ladderState%"
+              - " <gray>» <yellow>Ranked: %rankedState%"
+              - " <gray>» <yellow>Freeze: %freezeState%"
+              - ""
+              - "<aqua><bold>Click here <aqua>to open ladder settings."
+      LADDER-MAIN:
+        TITLE: "<dark_blue>%ladder% <dark_gray>- Ladder"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          LADDER-NAME:
+            NAME: "<gold>%ladder%"
+            MATERIAL: BEDROCK
+            LORE:
+              - ""
+              - "<yellow>Ladder Type: <aqua>%type%"
+              - ""
+              - "<gray>You can set the ladders icon by using the"
+              - "<gray><bold>/ladder set icon %ladder% <gray>command."
+              - ""
+              - "<aqua><bold>Note: <gray>You have to hold the item in your hand and"
+              - "<gray>you have to name it first with the <bold>/prac rename <gray>command."
+          STATUS:
+            ENABLED:
+              NAME: "<gray>Status: <green>Enabled"
+              MATERIAL: LIME_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>the ladder."
+                - ""
+                - "<red><bold>Note: <red>This will delete all the players"
+                - "<red>custom kits with this ladder."
+                - "<red><bold>You won't be able to reverse this action."
+            DISABLED:
+              NAME: "<gray>Status: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>the ladder."
+                - ""
+                - "<red><bold>Note: <gray>The ladder has to meet some"
+                - "<gray>requirements to be enable:"
+                - " <dark_gray>» <yellow>Set an icon."
+                - " <dark_gray>» <yellow>Set the inventory."
+          FREEZE:
+            FROZEN:
+              NAME: "<yellow>The ladder is <aqua>frozen<yellow>."
+              MATERIAL: SNOWBALL
+              LORE:
+                - ""
+                - "<gray>Click here to <green>defrost<gray>."
+                - ""
+                - "<gray>The players will be able to edit"
+                - "<gray>and play with this ladder again."
+            NOT-FROZEN:
+              NAME: "<yellow>The ladder is <green>not frozen<yellow>."
+              MATERIAL: SUNFLOWER
+              LORE:
+                - ""
+                - "<yellow>Click here to <aqua>freeze <yellow>it."
+                - ""
+                - "<gray>This means that the players"
+                - "<gray>won't be able to start a new match"
+                - "<gray>and edit this ladder."
+          INVENTORY:
+            NAME: "<dark_aqua>Inventory & Armor"
+            MATERIAL: DIAMOND_CHESTPLATE
+            LORE:
+              - ""
+              - "<aqua><bold>Click here <gray>to edit the inventory"
+              - "<gray>and armor content of the ladder."
+              - "<gray>You can also view the added effects as well."
+          DESTROYABLE-BLOCKS:
+            NAME: "<red>Destroyable Blocks"
+            MATERIAL: END_STONE
+            LORE:
+              - ""
+              - "<red><bold>Click here <gray>to edit the blocks"
+              - "<gray>that can be destroyed during the game"
+              - "<gray>and are already placed in the arena."
+          SETTINGS:
+            NAME: "<dark_red>Settings"
+            MATERIAL: REDSTONE
+            LORE:
+              - ""
+              - "<yellow><bold>Click here <gray>to adjust the ladders"
+              - "<gray>other settings, such as:"
+              - " <dark_gray>» <red>Rounds"
+              - " <dark_gray>» <red>Ranked"
+              - " <dark_gray>» <red>Player Regeneration"
+              - " <dark_gray>» <red>Player Hunger"
+              - "   <red>etc..."
+          MATCH-TYPE:
+            NAME: "<gold>Match Types"
+            MATERIAL: BOOK
+            LORE:
+              - ""
+              - "<gold><bold>Click here <gray>to set which"
+              - "<gray>match types should be available"
+              - "<gray>for the ladder."
+          DELETE:
+            NAME: "<red>Delete Ladder"
+            MATERIAL: RED_DYE
+      SETTINGS:
+        TITLE: "<dark_blue>%ladder% <dark_gray>- Settings"
+        ICONS:
+          GO-BACK:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          REGENERATION:
+            ENABLED:
+              NAME: "<gray>Regeneration: <green>Enabled"
+              MATERIAL: GLOWSTONE_DUST
+              LORE:
+                - ""
+                - "<gray>Players health is automatically regenerate (normally)."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Regeneration: <red>Disabled"
+              MATERIAL: GLOWSTONE_DUST
+              LORE:
+                - ""
+                - "<gray>Players health is not regenerate."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          HUNGER:
+            ENABLED:
+              NAME: "<gray>Hunger: <green>Enabled"
+              MATERIAL: COOKED_BEEF
+              LORE:
+                - ""
+                - "<gray>Players starve during the game."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>."
+            DISABLED:
+              NAME: "<gray>Hunger: <red>Disabled"
+              MATERIAL: COOKED_BEEF
+              LORE:
+                - ""
+                - "<gray>Players don't starve."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>."
+          ROUNDS:
+            NAME: "<gray>Rounds: <gold>%rounds%"
+            MATERIAL: FIREWORK_STAR
+            LORE:
+              - ""
+              - "<gray>The first player/team to reach"
+              - "<gray>the, winning rounds wins."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the rounds."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the rounds."
+          HEARTS:
+            NAME: "<gray>Hearts: <red>%hearts%"
+            MATERIAL: RED_DYE
+            LORE:
+              - ""
+              - "<gray>Sets the maximum hearts players"
+              - "<gray>can have in this ladder."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce hearts."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase hearts."
+          KNOCKBACK:
+            NAME: "<yellow>Knockback Modifier"
+            MATERIAL: STICK
+            LORE:
+              - ""
+              - "%knockbackTypes%"
+              - ""
+              - "<red><bold>Note: <gray>Default won't change the knockback."
+              - "<gray>You can change the normal and combo knockbacks"
+              - "<gray>in the config file."
+          ATTACKCOOLDOWN:
+            NAME: "<gray>Attack Cooldown: <gold>%attackcooldown%x"
+            MATERIAL: DIAMOND_SWORD
+            LORE:
+              - ""
+              - "<gray>Adjust the speed at which the"
+              - "<gray>attack strength bar recharges."
+              - ""
+              - "<yellow>Current Multiplier: <white>%attackcooldown%x"
+              - "<gray>(Lower = Faster swinging)"
+              - ""
+              - "<green><bold>LEFT-CLICK <gray>to decrease by <red>0.1"
+              - "<aqua><bold>RIGHT-CLICK <gray>to increase by <aqua>0.1"
+          MAX-DURATION:
+            NAME: "<gray>Max Duration: <gold>%maxDuration% sec"
+            MATERIAL: CLOCK
+            LORE:
+              - ""
+              - "<gray>The maximum time the match can last."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the time."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+          TNT-FUSE-TIME:
+            NAME: "<gray>TNT Fuse Time: <gold>%tntFuseTime% sec"
+            MATERIAL: TNT
+            LORE:
+              - ""
+              - "<gray>The time until the tnt explodes."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the time."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+          EDITABLE:
+            ENABLED:
+              NAME: "<gray>Editable: <green>Enabled"
+              MATERIAL: BOOK
+              LORE:
+                - ""
+                - "<gray>Players can customize the ladder."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Editable: <red>Disabled"
+              MATERIAL: BOOK
+              LORE:
+                - ""
+                - "<gray>Players can't customize the ladder."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          WEIGHT-CLASS:
+            NAME: "<yellow>Weight Class Selector"
+            MATERIAL: SUNFLOWER
+            LORE:
+              - ""
+              - "%weightClassTypes%"
+          START-COUNTDOWN:
+            NAME: "<gray>Start Countdown: <gold>%startCountdown%"
+            MATERIAL: CLOCK
+            LORE:
+              - ""
+              - "<gray>When the match/round starts the server"
+              - "<gray>counts down this amount of time."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the time."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+          START-MOVING:
+            ENABLED:
+              NAME: "<gray>Start moving: <green>Enabled"
+              MATERIAL: DIRT
+              LORE:
+                - ""
+                - "<gray>Players can move during"
+                - "<gray>round start countdown."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Start moving: <red>Disabled"
+              MATERIAL: DIRT
+              LORE:
+                - ""
+                - "<gray>Players can't move during"
+                - "<gray>round start countdown."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          HEALTH-BELOW-NAME:
+            ENABLED:
+              NAME: "<gray>Health Below Name: <green>Enabled"
+              MATERIAL: RED_DYE
+              LORE:
+                - ""
+                - "<gray>Players will display their hearts"
+                - "<gray>during the match."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Health Below Name: <red>Disabled"
+              MATERIAL: RED_DYE
+              LORE:
+                - ""
+                - "<gray>Players will display their hearts"
+                - "<gray>during the match."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          RESET-BUILD-AFTER-ROUND:
+            ENABLED:
+              NAME: "<gray>Reset Build After Round: <green>Enabled"
+              MATERIAL: GRASS_BLOCK
+              LORE:
+                - ""
+                - "<gray>The arena will be reset after each"
+                - "<gray>round, before the next one starts."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Reset Build After Round: <red>Disabled"
+              MATERIAL: GRASS_BLOCK
+              LORE:
+                - ""
+                - "<gray>The arena will not be reset between"
+                - "<gray>rounds. Placed blocks persist."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          BREAK-ALL-BLOCKS:
+            ENABLED:
+              NAME: "<gray>Break All Blocks: <green>Enabled"
+              MATERIAL: DIAMOND_PICKAXE
+              LORE:
+                - ""
+                - "<gray>Players can break any block in the arena,"
+                - "<gray>not just blocks they placed themselves."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Break All Blocks: <red>Disabled"
+              MATERIAL: WOODEN_PICKAXE
+              LORE:
+                - ""
+                - "<gray>Players can only break blocks they"
+                - "<gray>placed during the match."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          FIREBALL-BLOCK-DESTROY:
+            ENABLED:
+              NAME: "<gray>Fireball Block Destroy: <green>Enabled"
+              MATERIAL: FIRE_CHARGE
+              LORE:
+                - ""
+                - "<gray>Fireball explosions will destroy"
+                - "<gray>blocks placed by players."
+                - "<dark_gray>(Arena blocks are not affected)"
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Fireball Block Destroy: <red>Disabled"
+              MATERIAL: FIRE_CHARGE
+              LORE:
+                - ""
+                - "<gray>Fireball explosions will not"
+                - "<gray>destroy any blocks."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          SPLEEF-SNOWBALL-MODE:
+            ENABLED:
+              NAME: "<gray>Snowball Mode: <green>Enabled"
+              MATERIAL: SNOWBALL
+              LORE:
+                - ""
+                - "<gray>Breaking a snow block gives a snowball."
+                - "<gray>Throw snowballs to destroy snow blocks"
+                - "<gray>beneath other players."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Snowball Mode: <red>Disabled"
+              MATERIAL: SNOWBALL
+              LORE:
+                - ""
+                - "<gray>Enable to let players collect and throw"
+                - "<gray>snowballs that destroy snow blocks."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          ENDERPEARL-COOLDOWN:
+            NAME: "<gray>EnderPearl Cooldown: <gold>%epCooldown% sec"
+            MATERIAL: ENDER_PEARL
+            LORE:
+              - ""
+              - "<gray>Players must wait this long before"
+              - "<gray>they can throw the next enderpearl."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the cooldown."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the cooldown."
+          GOLDENAPPLE-COOLDOWN:
+            NAME: "<gray>Golden Apple Cooldown: <gold>%golden_apple_cooldown%"
+            MATERIAL: GOLDEN_APPLE
+            LORE:
+              - ""
+              - "<gray>Players must wait this long before"
+              - "<gray>they can consume the next golden apple."
+              - ""
+              - "<gray>This setting includes both enchanted"
+              - "<gray>and non-enchanted golden apples."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the cooldown."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the cooldown."
+          WIND-CHARGE-COOLDOWN:
+            NAME: "<gray>Wind Charge Cooldown: <gold>%windChargeCooldown% sec"
+            MATERIAL: WIND_CHARGE
+            LORE:
+              - ""
+              - "<gray>Players must wait this long before"
+              - "<gray>they can launch the next wind charge."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the cooldown."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the cooldown."
+          DROP-INVENTORY-PARTY-GAMES:
+            ENABLED:
+              NAME: "<gray>Drop Inventory: <green>Enabled"
+              MATERIAL: GHAST_TEAR
+              LORE:
+                - ""
+                - "<gray>When several players are playing a"
+                - "<gray>party match and someone dies, should"
+                - "<gray>the inventory be dropped out or not."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Drop Inventory: <red>Disabled"
+              MATERIAL: GHAST_TEAR
+              LORE:
+                - ""
+                - "<gray>When several players are playing a"
+                - "<gray>party match and someone dies, should"
+                - "<gray>the inventory be dropped out or not."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          MULTI-ROUND-START-COUNTDOWN:
+            ENABLED:
+              NAME: "<gray>Multi Round Start Countdown: <green>Enabled"
+              MATERIAL: NETHER_WART
+              LORE:
+                - ""
+                - "<gray>If a ladder has several rounds,"
+                - "<gray>you have the option to turn off"
+                - "<gray>the start counter before the"
+                - "<gray>round with this setting."
+                - ""
+                - "<red><bold>Note: <gray>At the start of the match,"
+                - "<gray>the counter will work the same way."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Multi Round Start Countdown: <red>Disabled"
+              MATERIAL: NETHER_WART
+              LORE:
+                - ""
+                - "<gray>If a ladder has several rounds,"
+                - "<gray>you have the option to turn off"
+                - "<gray>the start counter before the"
+                - "<gray>round with this setting."
+                - ""
+                - "<red><bold>Note: <gray>At the start of the match,"
+                - "<gray>the counter will work the same way."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          SKYWARS:
+            NAME: "<gold>SkyWars Chest Loot"
+            MATERIAL: CHEST
+            LORE:
+              - ""
+              - "<yellow><bold>Click here <gray>to edit the"
+              - "<gray>loot which the players get when"
+              - "<gray>they open chests during the game."
+          BLOCK-RETURN-DELAY:
+            NAME: "<gray>%blockReturnDelayTarget% Return Delay: <gold>%blockReturnDelay%"
+            MATERIAL: BLUE_TERRACOTTA
+            LORE:
+              - ""
+              - "<gray>This controls the %blockReturnDelayTarget%"
+              - "<gray>return delay after placement."
+              - "<gray>Set to <yellow>-1 <gray>to disable auto return."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the delay."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the delay."
+          TEMP-BUILD-RETURN-DELAY:
+            NAME: "<gray>Temporary Block Return Delay: <gold>%tempBuildReturnDelay%"
+            MATERIAL: RED_TERRACOTTA
+            LORE:
+              - ""
+              - "<gray>This controls how long placed"
+              - "<gray>temporary blocks stay before"
+              - "<gray>they automatically disappear."
+              - "<gray>Set to <yellow>-1 <gray>to disable auto return."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the delay."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the delay."
+          ROUND-END-DELAY:
+            NAME: "<gray>Round End Delay: <gold>%roundEndDelay% sec"
+            MATERIAL: CLOCK
+            LORE:
+              - ""
+              - "<gray>Time to wait after a round ends before"
+              - "<gray>starting the next transition. Allows"
+              - "<gray>death effects to complete."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the delay."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the delay."
+          ROUND-STATUS-TITLES:
+            ENABLED:
+              NAME: "<gray>Round Status Titles: <green>Enabled"
+              MATERIAL: WRITTEN_BOOK
+              LORE:
+                - ""
+                - "<gray>Shows green <green>VICTORY! <gray>and red"
+                - "<red>DEFEAT <gray>titles when a round ends."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Round Status Titles: <red>Disabled"
+              MATERIAL: WRITTEN_BOOK
+              LORE:
+                - ""
+                - "<gray>Shows green <green>VICTORY! <gray>and red"
+                - "<red>DEFEAT <gray>titles when a round ends."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          COUNTDOWN-TITLES:
+            ENABLED:
+              NAME: "<gray>Countdown Titles: <green>Enabled"
+              MATERIAL: CLOCK
+              LORE:
+                - ""
+                - "<gray>Displays <gold>3, 2, 1, FIGHT! <gray>titles"
+                - "<gray>during the round start countdown."
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable<gray>."
+            DISABLED:
+              NAME: "<gray>Countdown Titles: <red>Disabled"
+              MATERIAL: CLOCK
+              LORE:
+                - ""
+                - "<gray>Displays <gold>3, 2, 1, FIGHT! <gray>titles"
+                - "<gray>during the round start countdown."
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable<gray>."
+          BOXING:
+            NAME: "<gray>Boxing Strokes to Win: <gold>%boxingWinHits%"
+            MATERIAL: LEVER
+            LORE:
+              - ""
+              - "<gray>A player or team wins if they have"
+              - "<gray>gained that many strokes."
+              - "<gray>In a team match, player's"
+              - "<gray>strokes are added together."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the strokes."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the strokes."
+          RESPAWN:
+            NAME: "<gray>Respawn Time: <gold>%respawnTime%"
+            MATERIAL: RED_BED
+            LORE:
+              - ""
+              - "<gray>That's how long it takes"
+              - "<gray>for a player to come back to life"
+              - "<gray>when he dies without his bed being broken"
+              - "<gray>or when the ladder type is battle rush / bridges."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the time."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+          FIREBALL-COOLDOWN:
+            NAME: "<gray>Fireball Cooldown: <gold>%cooldown% sec"
+            MATERIAL: FIRE_CHARGE
+            LORE:
+              - ""
+              - "<gray>Players must wait this long before"
+              - "<gray>they throw another fireball."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the cooldown."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the cooldown."
+      INVENTORY:
+        TITLE: "<dark_blue>%ladder% <dark_gray>- Inventory"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          CUSTOM-KIT-EDITOR:
+            EDITABLE:
+              NAME: "<gold>Custom Kit <gray>Editor"
+              MATERIAL: BOOK
+              LORE:
+                - ""
+                - "<gold><bold>Click here <gray>to customize"
+                - "<gray>what extra items the players"
+                - "<gray>can add to the custom kit."
+            NOT-EDITABLE:
+              NAME: "<gold>Custom Kit <gray>Editor"
+              MATERIAL: BOOK
+              LORE:
+                - ""
+                - "<red>This ladder is not editable"
+                - "<red>by the players."
+          EFFECTS:
+            HAS-EFFECT:
+              EFFECT-FORMAT: "<light_purple>%name% %amplifier% <gray>for %time%"
+              NAME: "<dark_purple>Effects"
+              MATERIAL: POTION
+              DAMAGE: 8233
+              LORE:
+                - "<dark_gray><st>------------------------"
+                - "<red><bold>Note: <gray>You can set the effects by using"
+                - "<gray>the <gray><bold>/ladder seteffects %ladder% <gray>command."
+                - ""
+                - "<green>Currently set effects:"
+                - "%effects%"
+                - "<dark_gray><st>------------------------"
+            NO-EFFECT:
+              NAME: "<dark_purple>Effects"
+              MATERIAL: POTION
+              DAMAGE: 8233
+              LORE:
+                - "<dark_gray><st>------------------------"
+                - "<gray>This ladder has no effects."
+                - "<dark_gray><st>------------------------"
+      DESTROYABLE-BLOCKS:
+        TITLE: "<dark_blue>%ladder% <dark_gray>- D-Blocks"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+      CUSTOM-KIT:
+        TITLE: "<dark_blue>%ladder% <dark_gray>- Custom Kit"
+        ICONS:
+          GO-BACK:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          SAVE:
+            NAME: "<green><bold>Save"
+            MATERIAL: LIME_WOOL
+            LORE:
+              - ""
+              - "<red>This is just a showcase item, which"
+              - "<red>currently has no functionality, but"
+              - "<red>it demonstrates how the kit editor will look like."
+          LOAD:
+            NAME: "<yellow><bold>Load default kit"
+            MATERIAL: YELLOW_WOOL
+            LORE:
+              - ""
+              - "<red>This is just a showcase item, which"
+              - "<red>currently has no functionality, but"
+              - "<red>it demonstrates how the kit editor will look like."
+          CANCEL:
+            NAME: "<red><bold>Cancel"
+            MATERIAL: RED_WOOL
+            LORE:
+              - ""
+              - "<red>This is just a showcase item, which"
+              - "<red>currently has no functionality, but"
+              - "<red>it demonstrates how the kit editor will look like."
+          SWITCH-WEIGHTCLASS:
+            ONLY-UNRANKED:
+              NAME: "<red>This ladder is only %weightClass%."
+              MATERIAL: REDSTONE
+            ONLY-RANKED:
+              NAME: "<red>This ladder is only %weightClass%."
+              MATERIAL: REDSTONE
+            SWITCH-TO-UNRANKED:
+              NAME: "<green>Switch to %weightClass%"
+              MATERIAL: WOODEN_SWORD
+            SWITCH-TO-RANKED:
+              NAME: "<green>Switch to %weightClass%"
+              MATERIAL: IRON_SWORD
+      MATCH-TYPE:
+        TITLE: "<dark_blue>%ladder% <dark_gray>- Match Types"
+        ICONS:
+          GO-BACK:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          ENABLED:
+            NAME: "%matchType%"
+            MATERIAL: LIME_DYE
+            LORE:
+              - ""
+              - "<yellow>Click here <gray>to <red>disable %matchType%"
+              - "<gray>match type for the ladder."
+          DISABLED:
+            NAME: "%matchType%"
+            MATERIAL: GRAY_DYE
+            LORE:
+              - ""
+              - "<yellow>Click here <gray>to <green>enable %matchType%"
+              - "<gray>match type for the ladder."
+      SKYWARS-LOOT:
+        TITLE: "<dark_blue>%ladder% <dark_gray>- SkyWars loot"
+        ICONS:
+          GO-BACK:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+    EVENT:
+      EVENT-MANAGER:
+        TITLE: "<dark_gray>Event Manager"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Back to Server Manager"
+            MATERIAL: ARROW
+          EVENT-ICON:
+            STATUS-NAMES:
+              ENABLED: "<green>Enabled"
+              DISABLED: "<red>Disabled"
+            NAME: "<yellow>%eventName%"
+            LORE:
+              - ""
+              - "<gold>Event Information:"
+              - " <gray>» <yellow>State: %state%"
+              - ""
+              - "<aqua><bold>LEFT-CLICK <aqua>to open event settings."
+              - "<green><bold>RIGHT-CLICK <green>to teleport to the event."
+      EVENT-MAIN:
+        TITLE: "%eventName% <dark_gray>- Event"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          EVENT-NAME:
+            NAME: "<yellow>%eventName%"
+            LORE:
+              - ""
+              - "<gray><bold>Icon Customization:"
+              - "<aqua>» LEFT-CLICK <gray>with an item to set as icon"
+              - ""
+              - "<gray><bold>Quick Teleport:"
+              - "<aqua>» RIGHT-CLICK <gray>to teleport to event arena"
+              - ""
+              - "<gray>Change the visual icon shown in the"
+              - "<gray>Event Host GUI by clicking with any item."
+          SETTINGS:
+            NAME: "<dark_red>Settings"
+            MATERIAL: REDSTONE
+            LORE:
+              - ""
+              - "<yellow><bold>CLICK <gray>to configure event settings:"
+              - ""
+              - " <dark_gray>» <red>Broadcast Interval <gray>(chat announcements)"
+              - " <dark_gray>» <red>Queue Wait Time <gray>(before start)"
+              - " <dark_gray>» <red>Max Queue Time <gray>(before cancel)"
+              - " <dark_gray>» <red>Game Duration <gray>(match length)"
+              - " <dark_gray>» <red>Start Countdown <gray>(game start delay)"
+              - " <dark_gray>» <red>Min/Max Players <gray>(requirements)"
+              - ""
+              - "<gray>Fine-tune event behavior and timings."
+          STATUS:
+            ENABLED:
+              NAME: "<gray>Status: <green>Enabled"
+              MATERIAL: LIME_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>the event."
+                - ""
+                - "<yellow>You can only edit the event if its disabled."
+            DISABLED:
+              NAME: "<gray>Status: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>CLICK <gray>to <green>enable <gray>the event."
+                - ""
+                - "<red><bold>Requirements to Enable:"
+                - " <dark_gray>» <yellow>Event region (2 corners) must be set"
+                - " <dark_gray>» <yellow>At least 2 spawn points must be set"
+                - " <dark_gray>» <yellow>All settings must be configured"
+                - ""
+                - "<gray><i>Use the LOCATION button to set these up!"
+          LOCATION:
+            NAME: "<dark_purple>Locations"
+            MATERIAL: COMPASS
+            LORE:
+              - ""
+              - "<light_purple><bold>LEFT-CLICK <gray>to start interactive setup mode."
+              - ""
+              - "<dark_purple><bold>Setup Process:"
+              - "<gray>1. <light_purple>Receive Event Wand <gray>to configure locations"
+              - "<gray>2. <light_purple>Set Corners: <gray>Left/Right click to mark region"
+              - "<gray>3. <light_purple>Add Spawns: <gray>Right click blocks to add spawn points"
+              - "<gray>4. <light_purple>Cycle Modes: <gray>Shift + Left/Right click"
+              - "<gray>5. <light_purple>Exit Setup: <gray>Drop (Q) the wand"
+              - ""
+              - "<dark_purple><bold>Currently Configured:"
+              - " <dark_purple>» <light_purple>Corner 1: <gray>%corner1%"
+              - " <dark_purple>» <light_purple>Corner 2: <gray>%corner2%"
+              - " <dark_purple>» <light_purple>Spawn Points: <gray>%spawnPositions% set"
+              - ""
+              - "<gray><i>No commands needed - use the wand!"
+      EVENT-SETTINGS:
+        TITLE: "<dark_blue>%eventName% <dark_gray>- Settings"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          BROADCAST-INTERVAL:
+            NAME: "<gray>Broadcast Interval: <gold>%broadcastInterval% <gray>sec"
+            MATERIAL: CLOCK
+            LORE:
+              - ""
+              - "<gray>The event will be announced"
+              - "<gray>every so often on the chat."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the time."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+          WAIT-BEFORE-START:
+            NAME: "<gray>Wait before event start: <gold>%waitBeforeStart% <gray>sec"
+            MATERIAL: ANVIL
+            LORE:
+              - ""
+              - "<gray>The event waits up to this number"
+              - "<gray>of seconds before starts the game"
+              - "<gray>if it reaches the minimum number of players."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the time."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+          MAX-QUEUE-TIME:
+            NAME: "<gray>Maximum Queue Time: <gold>%queueTime% <gray>min"
+            MATERIAL: BOOK
+            LORE:
+              - ""
+              - "<gray>The event waits up to this number"
+              - "<gray>of minutes before it stops the"
+              - "<gray>queue if the game does not start."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the time."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+          DURATION:
+            TNTTAG:
+              NAME: "<gray>Tnt Explode Time: <gold>%explodeTime% <gray>sec"
+              MATERIAL: TNT
+              LORE:
+                - ""
+                - "<gray>After all this time, the tnt explodes."
+                - ""
+                - "<green><bold>LEFT-CLICK <green>to reduce the time."
+                - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+            SUMO&BRACKETS:
+              NAME: "<gray>Duel Duration: <gold>%roundDuration% <gray>min"
+              MATERIAL: BLAZE_ROD
+              LORE:
+                - ""
+                - "<gray>This is how long 1 game session lasts."
+                - ""
+                - "<green><bold>LEFT-CLICK <green>to reduce the time."
+                - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+            OTHER:
+              NAME: "<gray>Game Duration: <gold>%duration% <gray>min"
+              MATERIAL: BLAZE_ROD
+              LORE:
+                - ""
+                - "<gray>That's how long the game lasts."
+                - ""
+                - "<green><bold>LEFT-CLICK <green>to reduce the time."
+                - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+          START-TIME:
+            NAME: "<gray>Start Countdown: <gold>%startTime% <gray>sec"
+            MATERIAL: FEATHER
+            LORE:
+              - ""
+              - "<gray>The game starts after this time."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the time."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+          MIN-PLAYER:
+            NAME: "<gray>Min Player: <gold>%minPlayer%"
+            MATERIAL: SNOWBALL
+            LORE:
+              - ""
+              - "<gray>At least this many players must"
+              - "<gray>join the event for it to start."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the amount."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the amount."
+          MAX-PLAYER:
+            NAME: "<gray>Max Player: <gold>%maxPlayer%"
+            MATERIAL: GHAST_TEAR
+            LORE:
+              - ""
+              - "<gray>Maximum number of players"
+              - "<gray>allowed to join the event."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the amount."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the amount."
+    HOLOGRAM:
+      HOLOGRAM-MANAGER:
+        TITLE: "<dark_gray>Hologram Manager"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Back to Server Manager"
+            MATERIAL: ARROW
+          HOLOGRAM-ICON:
+            STATUS-NAMES:
+              ENABLED: "<green>Enabled"
+              DISABLED: "<red>Disabled"
+              TYPE-NULL: "<red>N/A"
+            NAME: "<gold>%hologramName%"
+            MATERIAL: PAPER
+            LORE:
+              - ""
+              - "<gold>Hologram Information:"
+              - " <gray>» <yellow>State: %state%"
+              - " <gray>» <yellow>Type: <white>%type%"
+              - " <gray>» <yellow>Stats Show: <white>%statsShow%"
+              - ""
+              - "<aqua><bold>LEFT-CLICK <aqua>to open hologram settings."
+              - "<green><bold>RIGHT-CLICK <green>to teleport to the hologram."
+          PAGE-LEFT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          PAGE-RIGHT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+      HOLOGRAM-MAIN:
+        TITLE: "<dark_blue>%hologram% <dark_gray>- Hologram"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          DELETE:
+            NAME: "<red>Delete Hologram"
+            MATERIAL: RED_DYE
+          EVENT-TYPE:
+            NAME: "<gold>Hologram Type"
+            MATERIAL: NETHER_STAR
+            LORE:
+              - ""
+              - "%eventTypes%"
+              - ""
+              - "<aqua><bold>Click here <aqua>to change the hologram's type."
+          LADDER:
+            NO-LADDER-SETTINGS:
+              NAME: "<red>This hologram type has no ladder settings!"
+              MATERIAL: RED_STAINED_GLASS_PANE
+            HAS-LADDER-SETTINGS:
+              NAME: "<dark_aqua>Ladder Settings"
+              MATERIAL: GOLDEN_SWORD
+              LORE:
+                - ""
+                - "<aqua><bold>Click here <aqua>to open the hologram's"
+                - "<aqua>ladder settings."
+          SHOW-STATS:
+            NAME: "<red>Show Statistics: <white>%showStats%"
+            MATERIAL: PLAYER_HEAD
+            LORE:
+              - ""
+              - "<gray>The hologram will show the"
+              - "<gray>first this many statistics."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to decrease the number."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the number."
+          STATUS:
+            ENABLED:
+              NAME: "<gray>Status: <green>Enabled"
+              MATERIAL: LIME_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <red>disable <gray>the hologram."
+            DISABLED:
+              NAME: "<gray>Status: <red>Disabled"
+              MATERIAL: RED_STAINED_GLASS_PANE
+              LORE:
+                - ""
+                - "<yellow><bold>Click here <gray>to <green>enable <gray>the hologram."
+                - ""
+                - "<red><bold>Note: <gray>The hologram has to meet some"
+                - "<gray>requirements to be enabled:"
+                - " <dark_gray>» <yellow>Set a type."
+                - " <dark_gray>» <yellow>Set the ladder(s) if necessary."
+      HOLOGRAM-LADDERS:
+        TITLE: "<dark_blue>%hologram% <dark_gray>- Ladders"
+        ICONS:
+          GO-BACK:
+            NAME: "<red>Go Back"
+            MATERIAL: ARROW
+          ENABLED-LADDER:
+            NAME: "<green>%ladder%"
+            MATERIAL: LIME_STAINED_GLASS_PANE
+            LORE:
+              - ""
+              - "<gray>This ladder is <green>enabled<gray>."
+              - ""
+              - "<yellow>Click here <gray>to <red>disable<gray>."
+          DISABLED-LADDER:
+            NAME: "<red>%ladder%"
+            MATERIAL: RED_STAINED_GLASS_PANE
+            LORE:
+              - ""
+              - "<gray>This ladder is <red>disabled<gray>."
+              - ""
+              - "<yellow>Click here <gray>to <green>enable<gray>."
+          PAGE-LEFT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          PAGE-RIGHT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+    SERVER:
+      SERVER-MANAGER:
+        TITLE: "<dark_gray>Server Manager"
+        ICONS:
+          BACK-TO:
+            NAME: "<yellow>Back to hub"
+            MATERIAL: ARROW
+          INFORMATIONS:
+            STATUS-NAMES:
+              SET: "<green>Set"
+              UNSET: "<red>Not-Set"
+            NAME: "<yellow>Informations"
+            MATERIAL: BOOK
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Online players: <yellow>%onlinePlayers%"
+              - "<gray>Online staff: <yellow>%onlineStaffs%"
+              - ""
+              - "<gray>Required unranked for ranked matches: <yellow>%requiredDivision%"
+              - ""
+              - "<gray>Lobby status: %lobbyStatus%"
+              - ""
+              - "<gray>Enabled arenas: <yellow>%enabledArena%"
+              - "<gray>Enabled ladders: <yellow>%enabledLadder%"
+              - "<gray>Enabled events: <yellow>%enabledEvents%"
+              - "<dark_gray><st>------------------------"
+          LOBBY-ARMORS:
+            NAME: "<yellow>Lobby Armors"
+            MATERIAL: DIAMOND_CHESTPLATE
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Click here to edit the lobby armors."
+              - "<dark_gray><st>------------------------"
+          SAVE:
+            NAME: "<yellow>Save Data"
+            MATERIAL: SUGAR
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<green>Left Click <gray>to open a GUI"
+              - "<gray>where you can save your"
+              - "<gray>server data in sections."
+              - ""
+              - "<aqua>Right Click <gray>to save all"
+              - "<gray>the server data manually."
+              - "<dark_gray><st>------------------------"
+          MATCHES:
+            NAME: "<yellow>Live Matches"
+            MATERIAL: IRON_SWORD
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Click here to view the"
+              - "<gray>live matches."
+              - ""
+              - "<gray>Live matches: <yellow>%liveMatches%"
+              - "<dark_gray><st>------------------------"
+          EVENTS:
+            NAME: "<yellow>Live Events"
+            MATERIAL: BOW
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Click here to view the"
+              - "<gray>live events."
+              - ""
+              - "<gray>Live events: <yellow>%liveEvents%"
+              - "<dark_gray><st>------------------------"
+      LOBBY-ARMORS:
+        TITLE: "<dark_gray>Lobby Armors"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Back to Server Manager"
+            MATERIAL: ARROW
+          FILLER-ITEM:
+            MATERIAL: BLACK_STAINED_GLASS_PANE
+          FILLER-ITEM2:
+            MATERIAL: ORANGE_STAINED_GLASS_PANE
+          NAME-ITEM:
+            NAME: "<yellow>%inventoryName%"
+            MATERIAL: NAME_TAG
+      EVENTS:
+        TITLE: "<dark_gray>Events"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Back to Server Manager"
+            MATERIAL: ARROW
+          REFRESH-PAGE:
+            NAME: "<green>Refresh Page"
+            MATERIAL: NETHER_STAR
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Click here to refresh the page."
+              - "<dark_gray><st>------------------------"
+          EVENT-ITEM:
+            NAME: "%eventName%"
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<yellow>Event Type: <white>%type%"
+              - ""
+              - "<yellow>Players: <white>%players%"
+              - "<yellow>Spectators: <white>%spectators%"
+              - ""
+              - "<green>Left Click <gray>to spectate the event."
+              - "<aqua>Right Click <gray>to <red>end <gray>the event."
+              - "<dark_gray><st>------------------------"
+      MATCHES:
+        TITLE: "<dark_gray>Matches - Page %page%"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Back to Server Manager"
+            MATERIAL: ARROW
+          GO-PAGE-LEFT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          GO-PAGE-RIGHT:
+            NAME: "<gold>Go to Page %page%"
+            MATERIAL: ARROW
+          REFRESH:
+            NAME: "<green>Refresh Pages"
+            MATERIAL: NETHER_STAR
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Click here to refresh the pages."
+              - "<dark_gray><st>------------------------"
+          MATCH-ICON:
+            NAME: "%matchType%"
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<dark_gray>#%matchId%"
+              - "%weightClass%"
+              - ""
+              - "<yellow>Match Type: <white>%matchType%"
+              - "<yellow>Kit: <white>%ladder%"
+              - "<yellow>Arena: <white>%arena%"
+              - "<yellow>Duration: <white>%roundDuration%"
+              - "<yellow>Spectators: <white>%spectators%"
+              - ""
+              - "<green>Left Click <gray>to spectate the match."
+              - "<aqua>Right Click <gray>to <red>end <gray>the match."
+              - "<dark_gray><st>------------------------"
+      FILE-SAVE:
+        TITLE: "<dark_gray>Data Saver"
+        ICONS:
+          BACK-TO:
+            NAME: "<red>Back to Server Manager"
+            MATERIAL: ARROW
+          DATA-SAVE:
+            NAME: "<yellow>%data% Data Save"
+            MATERIAL: PAPER
+            LORE:
+              - "<dark_gray><st>------------------------"
+              - "<gray>Click here to manually"
+              - "<gray>save the %data% data."
+              - "<dark_gray><st>------------------------"
+  COSMETICS:
+    MAIN-TITLE: "<dark_gray>Armor Cosmetics"
+    # Error messages for permission denied
+    PERMISSION-DENIED-MESSAGE: "<red>You do not have permission for the selected armor tier."
+    TIER-PERMISSION-DENIED-MESSAGE: "<red>You do not have permission for this armor tier."
+    PATTERN-PERMISSION-DENIED-MESSAGE: "<red>You do not have permission to use this trim pattern."
+    MATERIAL-PERMISSION-DENIED-MESSAGE: "<red>You do not have permission to use this trim material."
+    NO-TIER-PERMISSION-MESSAGE: "<red>You do not have permission for any armor tier."
+    APPLY-ALL-TIERS-ERROR-MESSAGE: "<red>You don't have permission to apply this tier to all armor."
+    APPLY-ALL-TIERS-SUCCESS-MESSAGE: "<green>Applied the current tier trim setup to all armor tiers."
+    # Armor Tier customization
+    ARMOR-TIERS:
+      LEATHER:
+        DISPLAY-NAME: "Leather"
+        HELMET-MATERIAL: LEATHER_HELMET
+        CHESTPLATE-MATERIAL: LEATHER_CHESTPLATE
+        LEGGINGS-MATERIAL: LEATHER_LEGGINGS
+        BOOTS-MATERIAL: LEATHER_BOOTS
+      GOLD:
+        DISPLAY-NAME: "Gold"
+        HELMET-MATERIAL: GOLDEN_HELMET
+        CHESTPLATE-MATERIAL: GOLDEN_CHESTPLATE
+        LEGGINGS-MATERIAL: GOLDEN_LEGGINGS
+        BOOTS-MATERIAL: GOLDEN_BOOTS
+      IRON:
+        DISPLAY-NAME: "Iron"
+        HELMET-MATERIAL: IRON_HELMET
+        CHESTPLATE-MATERIAL: IRON_CHESTPLATE
+        LEGGINGS-MATERIAL: IRON_LEGGINGS
+        BOOTS-MATERIAL: IRON_BOOTS
+      DIAMOND:
+        DISPLAY-NAME: "Diamond"
+        HELMET-MATERIAL: DIAMOND_HELMET
+        CHESTPLATE-MATERIAL: DIAMOND_CHESTPLATE
+        LEGGINGS-MATERIAL: DIAMOND_LEGGINGS
+        BOOTS-MATERIAL: DIAMOND_BOOTS
+      NETHERITE:
+        DISPLAY-NAME: "Netherite"
+        HELMET-MATERIAL: NETHERITE_HELMET
+        CHESTPLATE-MATERIAL: NETHERITE_CHESTPLATE
+        LEGGINGS-MATERIAL: NETHERITE_LEGGINGS
+        BOOTS-MATERIAL: NETHERITE_BOOTS
+    ICONS:
+      HELMET-ICON:
+        NAME: "<yellow>Helmet"
+        MATERIAL: LEATHER_HELMET
+        LORE:
+          - ""
+          - "<gray>Click here to customize"
+          - "<gray>armor trim patterns and materials"
+          - "<gray>for your helmet."
+          - ""
+      CHESTPLATE-ICON:
+        NAME: "<yellow>Chestplate"
+        MATERIAL: LEATHER_CHESTPLATE
+        LORE:
+          - ""
+          - "<gray>Click here to customize"
+          - "<gray>armor trim patterns and materials"
+          - "<gray>for your chestplate."
+          - ""
+      LEGGINGS-ICON:
+        NAME: "<yellow>Leggings"
+        MATERIAL: LEATHER_LEGGINGS
+        LORE:
+          - ""
+          - "<gray>Click here to customize"
+          - "<gray>armor trim patterns and materials"
+          - "<gray>for your leggings."
+          - ""
+      BOOTS-ICON:
+        NAME: "<yellow>Boots"
+        MATERIAL: LEATHER_BOOTS
+        LORE:
+          - ""
+          - "<gray>Click here to customize"
+          - "<gray>armor trim patterns and materials"
+          - "<gray>for your boots."
+          - ""
+      SHIELD-ICON:
+        NAME: "<yellow>Shield"
+        MATERIAL: SHIELD
+        LORE:
+          - ""
+          - "<gray>Click here to customize"
+          - "<gray>the trim pattern for your shield."
+          - ""
+      INFO-ICON:
+        NAME: "<aqua>Cosmetics Information"
+        MATERIAL: BOOK
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Unlocked Patterns: <aqua>%pattern_unlocked%<gray>/<aqua>%pattern_total%"
+          - "<gray>Unlocked Materials: <gold>%material_unlocked%<gray>/<gold>%material_total%"
+          - ""
+          - "<gray>Select a category item to edit"
+          - "<gray>your active trim cosmetics."
+          - "<dark_gray><st>------------------------"
+      APPLY-ALL-TIERS:
+        NAME: "<green>Apply To All Armor Tiers"
+        MATERIAL: SMITHING_TABLE
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Copies the active tier trim"
+          - "<gray>pattern and material to all tiers."
+          - ""
+          - "<yellow>Helmet -> Helmet"
+          - "<yellow>Chestplate -> Chestplate"
+          - "<yellow>Leggings -> Leggings"
+          - "<yellow>Boots -> Boots"
+          - ""
+          - "<green>Click to apply"
+          - "<dark_gray><st>------------------------"
+      BACK-TO:
+        NAME: "<red>Back"
+        MATERIAL: ARROW
+    # Dynamically built lore templates for armor cosmetics
+    ARMOR-PREVIEW-LORE:
+      - "<gray>Tier: <yellow>%tier%"
+      - "<gray>Active Pattern: %pattern%"
+      - "<gray>Active Material: %material%"
+      - ""
+      - "<yellow>Left-Click to customize"
+      - "<red>Right-Click to reset"
+    TIER-TOGGLE-LORE:
+      - ""
+      - "<gray>Left-click: <red>Previous tier"
+      - "<gray>Right-click: <green>Next tier"
+    SUB-TITLE: "<dark_gray>Customize %armor% Cosmetics"
+    # Armor Piece Hub Configuration
+    ARMOR-PIECE-HUB:
+      INVENTORY-ROWS: 4
+      SLOTS:
+        BACK: 27
+        PREVIEW: 13
+        PATTERN-MENU: 20
+        MATERIAL-MENU: 24
+      PREVIEW-ITEM:
+        NAME: "<yellow>Current Preview"
+      PATTERN-SELECTION-BUTTON:
+        NAME: "<aqua>Pattern Selection"
+        LORE:
+          - "<gray>Open all available trim patterns."
+          - "<yellow>Click to open."
+        DEFAULT-MATERIAL: SMITHING_TABLE
+      MATERIAL-SELECTION-BUTTON:
+        NAME: "<gold>Material Selection"
+        LORE:
+          - "<gray>Open all available trim materials."
+          - "<yellow>Click to open."
+        DEFAULT-MATERIAL: ANVIL
+    # Pattern Selection GUI Configuration
+    PATTERN-SELECTION:
+      INVENTORY-ROWS: 5
+      BACK-SLOT: 36
+      START-SLOT: 10
+      INVENTORY-TITLE: "<dark_gray>Select Pattern - %armor%"
+      PATTERN-ITEM:
+        NAME: "<aqua>%pattern_name% Pattern"
+        LORE:
+          - "<gray>Status: %state%"
+          - "<gray>Access: %access%"
+    # Material Selection GUI Configuration
+    MATERIAL-SELECTION:
+      INVENTORY-ROWS: 5
+      BACK-SLOT: 36
+      START-SLOT: 10
+      INVENTORY-TITLE: "<dark_gray>Select Material - %armor%"
+      MATERIAL-ITEM:
+        NAME: "<gold>%material_name% Material"
+        LORE:
+          - "<gray>Status: %state%"
+          - "<gray>Access: %access%"
+      MATERIAL-ICONS:
+        LAPIS: LAPIS_LAZULI
+        AMETHYST: AMETHYST_SHARD
+        RESIN: RESIN_BRICK
+    HUB:
+      TITLE: "<dark_gray>✦ Cosmetics"
+      BUTTONS:
+        ARMOR-TRIMS:
+          NAME: "<gold>✦ Armor Trims"
+          MATERIAL: DIAMOND_CHESTPLATE
+          GLOW: true
+          LORE:
+            - ""
+            - "<gray>Customize your armor tier,"
+            - "<gray>trim patterns and materials."
+            - ""
+            - "<yellow>Click to open."
+        SHIELD:
+          NAME: "<blue>✦ Shield"
+          MATERIAL: SHIELD
+          GLOW: false
+          LORE:
+            - ""
+            - "<gray>Design your shield with any"
+            - "<gray>color and pattern combination."
+            - "<gray>Save multiple layouts."
+            - ""
+            - "<yellow>Click to open."
+        LOBBY-ITEMS:
+          NAME: "<aqua>✦ Lobby Items"
+          MATERIAL: ELYTRA
+          GLOW: false
+          LORE:
+            - ""
+            - "<gray>Choose your lobby movement"
+            - "<gray>cosmetic item loadout."
+            - ""
+            - "<yellow>Click to open."
+        KILL-EFFECTS:
+          NAME: "<red>✦ Death Effects"
+          MATERIAL: BLAZE_POWDER
+          GLOW: false
+          LORE:
+            - ""
+            - "<gray>Choose a particle effect that"
+            - "<gray>plays when you kill someone."
+            - ""
+            - "<yellow>Click to open."
+    LOBBY-ITEMS:
+      TITLE: "<dark_gray>✦ Lobby Items"
+      NO-PERMISSION-MESSAGE: "<red>You don't have permission for this lobby cosmetic item!"
+      ENTRIES:
+        NONE:
+          NAME: "<gray>None"
+          MATERIAL: BARRIER
+          LORE:
+            - ""
+            - "<gray>Disable lobby movement cosmetics."
+            - ""
+            - "<gray>Status: %status%"
+            - ""
+        WIND_CHARGE:
+          NAME: "<aqua>Wind Charge"
+          MATERIAL: WIND_CHARGE
+          LORE:
+            - ""
+            - "<gray>Infinite lobby wind charge"
+            - "<gray>while you are in lobby states."
+            - ""
+            - "<gray>Status: %status%"
+            - ""
+        TRIDENT:
+          NAME: "<dark_aqua>Riptide Trident"
+          MATERIAL: TRIDENT
+          LORE:
+            - ""
+            - "<gray>Right-click with Trident in main hand"
+            - "<gray>to trigger riptide boost in lobby."
+            - ""
+            - "<gray>Status: %status%"
+            - ""
+        SPEAR:
+          NAME: "<dark_purple>Lunge Spear"
+          MATERIAL: NETHERITE_SPEAR
+          LORE:
+            - ""
+            - "<gray>Right-click with Spear in main hand"
+            - "<gray>to trigger lunge dash in lobby."
+            - ""
+            - "<gray>Status: %status%"
+            - ""
+    DEATH-EFFECTS:
+      TITLE: "<dark_gray>✦ Death Effects"
+      NO-PERMISSION-MESSAGE: "<red>You don't have permission for this death effect!"
+      SELECTED-PREFIX: "<green>✔ "
+      UNLOCKED-PREFIX: "<yellow>"
+      LOCKED-PREFIX: "<red>🔒 "
+      CLICK-TO-SELECT: "<yellow>Click to select."
+      CLICK-TO-DESELECT: "<gray>Click to deselect."
+      NO-PERMISSION-LORE: "<red>Requires: <gray>%permission%"
+      DEFAULT-LORE:
+        - ""
+        - "<gray>Status: %status%"
+        - ""
+      ENTRIES:
+        NONE:
+          DISPLAY-NAME: "None"
+          ICON: BARRIER
+          LORE:
+            - ""
+            - "<gray>No kill effect."
+            - "<gray>Status: %status%"
+            - ""
+        FLAME:
+          DISPLAY-NAME: "Flame"
+          ICON: BLAZE_POWDER
+          LORE:
+            - ""
+            - "<gray>Bursts of fire on kill."
+            - "<gray>Status: %status%"
+            - ""
+        LIGHTNING:
+          DISPLAY-NAME: "Lightning"
+          ICON: LIGHTNING_ROD
+          LORE:
+            - ""
+            - "<gray>A lightning strike on kill."
+            - "<gray>Status: %status%"
+            - ""
+        FIREWORK:
+          DISPLAY-NAME: "Firework"
+          ICON: FIREWORK_ROCKET
+          LORE:
+            - ""
+            - "<gray>Fireworks burst on kill."
+            - "<gray>Status: %status%"
+            - ""
+        EXPLOSION:
+          DISPLAY-NAME: "Explosion"
+          ICON: TNT
+          LORE:
+            - ""
+            - "<gray>Smoke & fire explosion on kill."
+            - "<gray>Status: %status%"
+            - ""
+        BLOOD:
+          DISPLAY-NAME: "Blood"
+          ICON: REDSTONE
+          LORE:
+            - ""
+            - "<gray>Red dust particles on kill."
+            - "<gray>Status: %status%"
+            - ""
+        ENCHANT:
+          DISPLAY-NAME: "Enchant"
+          ICON: ENCHANTING_TABLE
+          LORE:
+            - ""
+            - "<gray>Magic enchant particles on kill."
+            - "<gray>Status: %status%"
+            - ""
+        ENDER:
+          DISPLAY-NAME: "Ender"
+          ICON: ENDER_PEARL
+          LORE:
+            - ""
+            - "<gray>Ender portal particles on kill."
+            - "<gray>Status: %status%"
+            - ""
+        HEARTS:
+          DISPLAY-NAME: "Hearts"
+          ICON: PINK_DYE
+          LORE:
+            - ""
+            - "<gray>Floating hearts on kill."
+            - "<gray>Status: %status%"
+            - ""
+        ICE:
+          DISPLAY-NAME: "Ice"
+          ICON: PACKED_ICE
+          LORE:
+            - ""
+            - "<gray>Snowflake & ice particles on kill."
+            - "<gray>Status: %status%"
+            - ""
+        SUPERNOVA:
+          DISPLAY-NAME: "Supernova"
+          ICON: NETHER_STAR
+          LORE:
+            - ""
+            - "<gray>Massive cosmic blast with"
+            - "<gray>bright starburst visuals."
+            - "<gray>Status: %status%"
+            - ""
+        VOIDSTORM:
+          DISPLAY-NAME: "Voidstorm"
+          ICON: ENDER_EYE
+          LORE:
+            - ""
+            - "<gray>Dark void surge with portal"
+            - "<gray>and dragon-breath energy."
+            - "<gray>Status: %status%"
+            - ""
+        PHOENIX:
+          DISPLAY-NAME: "Phoenix"
+          ICON: TOTEM_OF_UNDYING
+          LORE:
+            - ""
+            - "<gray>Fiery rebirth burst with"
+            - "<gray>totem-like impact effects."
+            - "<gray>Status: %status%"
+            - ""
+        COMET:
+          DISPLAY-NAME: "Comet"
+          ICON: FIRE_CHARGE
+          LORE:
+            - ""
+            - "<gray>A high-energy comet strike"
+            - "<gray>with sparkling shockwaves."
+            - "<gray>Status: %status%"
+            - ""
+    # ── Shield Cosmetics ──────────────────────────────────────────────────────
+    SHIELD:
+      NO-PERMISSION-MESSAGE: "<red>You don't have permission to use shield cosmetics!"
+      # Layout list GUI
+      LAYOUTS:
+        TITLE: "<dark_gray>\u2756 Shield Layouts"
+        NAME-TITLE: "Layout Name"
+        RENAME-TITLE: "Rename Layout"
+        LIMIT-REACHED: "<red>You've reached your layout limit! Get a higher rank for more."
+        DELETED-MESSAGE: "<green>Layout deleted."
+        NEW-BUTTON:
+          NAME: "<green>New Layout"
+      # Editor GUI
+      EDITOR:
+        TITLE: "<dark_gray>Editing: <yellow>%name%"
+        APPLIED-MESSAGE: "<green>Shield layout applied!"
+        UNAPPLIED-MESSAGE: "<gray>Shield cosmetic removed."
+        ADD-LAYER:
+          NAME: "<green>Add Layer"
+        MAX-LAYERS:
+          NAME: "<red>Max Layers Reached"
+          MESSAGE: "<red>Maximum of 6 layers reached!"
+        REMOVE-LAYER:
+          NAME: "<red>Remove Top Layer"
+      # Color picker GUI
+      COLOR-PICKER:
+        BASE-TITLE: "<dark_gray>Pick Base Color"
+        LAYER-TITLE: "<dark_gray>Pick Layer Color"
+      # Pattern picker GUI
+      PATTERN-PICKER:
+        TITLE: "<dark_gray>Pick Pattern"
+        APPLIED-MESSAGE: "<green>Layer applied!"
+  MATCH-HISTORY:
+    # GUI title. %player% = the target player's name.
+    TITLE: "<dark_gray>Match History <gray>- <gold>%player%"
+
+    # Total number of slots. Must be a multiple of 9, max 54.
+    SIZE: 27
+
+    # When true, match items are automatically centred inside the GUI.
+    # Set false to start them at slot 0 (or use START-SLOT).
+    CENTER-ITEMS: true
+
+    # Override the first item slot. Set to -1 to use CENTER-ITEMS logic.
+    START-SLOT: -1
+
+    # Filler item placed in every unused slot.
+    FILLER-ITEM:
+      MATERIAL: BLACK_STAINED_GLASS_PANE
+      NAME: " "
+
+    MATCH-ITEM:
+      # Set to true to show the opponent's player head as the item.
+      # Set to false to use MATERIAL instead.
+      USE-PLAYER-HEAD: true
+
+      # Fallback material used when USE-PLAYER-HEAD is false.
+      MATERIAL: PAPER
+
+      # Enchantment glow on the item when the viewer won this match.
+      GLOW-ON-WIN: true
+
+      # Item display name. Supports & colour codes.
+      # Placeholders: %opponent% %result% %score% %kit% %arena%
+      #               %player_health% %opponent_health% %duration% %date%
+      NAME: "<yellow>Match vs <white>%opponent%"
+
+      # Item lore. Supports & colour codes and the same placeholders.
+      LORE:
+        - "<dark_gray><st>--------------------"
+        - "<gray>Result: %result%"
+        - "<gray>Score: <white>%score%"
+        - "<gray>Kit: <white>%kit%"
+        - "<gray>Arena: <white>%arena%"
+        - ""
+        - "<gray>Your Health: %player_health%"
+        - "<gray>Opp Health: %opponent_health%"
+        - ""
+        - "<gray>Duration: <white>%duration%"
+        - "<gray>Played: <white>%date%"
+        - "<dark_gray><st>--------------------"
+
+    # Result label strings inserted into %result%.
+    MESSAGES:
+      WIN: "<green>Win"
+      LOSS: "<red>Loss"
+      DRAW: "<yellow>Draw"
