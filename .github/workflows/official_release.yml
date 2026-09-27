@@ -4,14 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       release_version:
-        description: 'The exact version to release'
+        description: Exact version to release
         required: true
         type: string
       release_version_type:
-        description: 'Version type for Modrinth'
+        description: Version type for Modrinth
         required: true
-        default: 'release'
         type: choice
+        default: release
         options:
           - release
           - beta
@@ -19,10 +19,10 @@ on:
 
 jobs:
   call_build:
+    uses: ./.github/workflows/reusable_build.yml
     permissions:
       contents: write
       packages: write
-    uses: ./.github/workflows/reusable_build.yml
     with:
       is-release-build: true
       release-version: ${{ inputs.release_version }}
