@@ -5,7 +5,8 @@ import dev.nandi0813.practice.manager.fight.util.PlayerUtil;
 import dev.nandi0813.practice.manager.inventory.InventoryUtil;
 import dev.nandi0813.practice.manager.profile.Profile;
 import dev.nandi0813.practice.manager.profile.ProfileManager;
-import dev.nandi0813.practice.util.Common;
+import dev.nandi0813.practice.manager.profile.enums.ProfileStatus;
+import dev.nandi0813.practice.util.PAPIUtil;
 import dev.nandi0813.practice.util.PermanentConfig;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import net.kyori.adventure.text.Component;
@@ -33,6 +34,18 @@ public class NametagManager {
     private static final double LOW_HEALTH_THRESHOLD = dev.nandi0813.practice.manager.backend.ConfigManager.getDouble("MATCH-SETTINGS.HEALTH-BELOW-NAME.LOW-HEALTH-THRESHOLD") * 2.0;
     private static final double CONFIG_SCALE = dev.nandi0813.practice.manager.backend.ConfigManager.getDouble("MATCH-SETTINGS.HEALTH-BELOW-NAME.SCALE");
     private static final String HEALTH_SYMBOL = dev.nandi0813.practice.manager.backend.ConfigManager.getString("MATCH-SETTINGS.HEALTH-BELOW-NAME.SYMBOL");
+    private static final boolean TEXT_SHADOW = dev.nandi0813.practice.manager.backend.ConfigManager.getBoolean("MATCH-SETTINGS.HEALTH-BELOW-NAME.TEXT-SHADOW");
+    private static final int BACKGROUND = dev.nandi0813.practice.manager.backend.ConfigManager.getInt("MATCH-SETTINGS.HEALTH-BELOW-NAME.BACKGROUND");
+    private static final String TOP_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("MATCH-SETTINGS.HEALTH-BELOW-NAME.TOP-LINE");
+    private static final String BOTTOM_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("MATCH-SETTINGS.HEALTH-BELOW-NAME.BOTTOM-LINE");
+    private static final String LOBBY_TOP_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("PLAYER.LOBBY-NAMETAG.TOP-LINE");
+    private static final String LOBBY_BOTTOM_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("PLAYER.LOBBY-NAMETAG.BOTTOM-LINE");
+    private static final boolean LOBBY_TEXT_SHADOW = dev.nandi0813.practice.manager.backend.ConfigManager.getBoolean("PLAYER.LOBBY-NAMETAG.TEXT-SHADOW");
+    private static final int LOBBY_BACKGROUND = dev.nandi0813.practice.manager.backend.ConfigManager.getInt("PLAYER.LOBBY-NAMETAG.BACKGROUND");
+    private static final String FFA_TOP_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("FFA.NAMETAG.TOP-LINE");
+    private static final String FFA_BOTTOM_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("FFA.NAMETAG.BOTTOM-LINE");
+    private static final boolean FFA_TEXT_SHADOW = dev.nandi0813.practice.manager.backend.ConfigManager.getBoolean("FFA.NAMETAG.TEXT-SHADOW");
+    private static final int FFA_BACKGROUND = dev.nandi0813.practice.manager.backend.ConfigManager.getInt("FFA.NAMETAG.BACKGROUND");
 
     private static final String BELOW_NAME_OBJECTIVE = "ZPP_BELOW";
 
@@ -116,18 +129,29 @@ public class NametagManager {
 
     public void reset(String player) {
         Player online = Bukkit.getPlayerExact(player);
+
         if (online == null) {
             for (Map.Entry<UUID, NametagOverride> entry : customNametags.entrySet()) {
-                if (player.equalsIgnoreCase(Bukkit.getOfflinePlayer(entry.getKey()).getName())) {
-                    customNametags.remove(entry.getKey());
+                String name = Bukkit.getOfflinePlayer(entry.getKey()).getName();
+
+                if (player.equalsIgnoreCase(name)) {
+                    UUID uuid = entry.getKey();
+
+                    customNametags.remove(uuid);
+                    belowNameLines.remove(uuid);
+                    belowNameUsers.remove(uuid);
                     break;
                 }
             }
+            return;
         }
 
-        customNametags.remove(online.getUniqueId());
-        belowNameLines.remove(online.getUniqueId());
-        belowNameUsers.remove(online.getUniqueId());
+        UUID uuid = online.getUniqueId();
+
+        customNametags.remove(uuid);
+        belowNameLines.remove(uuid);
+        belowNameUsers.remove(uuid);
+
         updateNametag(online);
     }
 
@@ -149,6 +173,7 @@ public class NametagManager {
         hideVanillaNametag(player);
 
         ClientTextDisplay display = displays.computeIfAbsent(player.getUniqueId(), ignored -> new ClientTextDisplay(player));
+        applyNametagStyle(display, player);
         display.setText(buildNametagComponent(player));
 
         for (Player viewer : Bukkit.getOnlinePlayers()) {
@@ -239,6 +264,16 @@ public class NametagManager {
     public void refreshAllNametags() {
         if (!PermanentConfig.NAMETAG_MANAGEMENT_ENABLED) {
             return;
+        }
+
+        for (Player target : Bukkit.getOnlinePlayers()) {
+            ClientTextDisplay display = displays.computeIfAbsent(
+                    target.getUniqueId(),
+                    ignored -> createDisplay(target)
+            );
+
+            applyNametagStyle(display, target);
+            display.setText(buildNametagComponent(target));
         }
 
         for (Player viewer : Bukkit.getOnlinePlayers()) {
@@ -388,12 +423,20 @@ public class NametagManager {
             composed = prefix.append(name).append(suffix);
         }
 
-        Component belowLine = belowNameLines.get(player.getUniqueId());
-        if (belowLine == null || belowLine.equals(Component.empty())) {
-            return composed;
+        if (belowNameUsers.contains(player.getUniqueId())) {
+            composed = applyNametagLines(player, composed, TOP_LINE, BOTTOM_LINE);
         }
 
-        return composed.append(Component.newline()).append(belowLine);
+        if (profile != null && (profile.getStatus() == ProfileStatus.LOBBY || profile.getStatus() == ProfileStatus.STAFF_MODE)) {
+            composed = applyNametagLines(player, composed, LOBBY_TOP_LINE, LOBBY_BOTTOM_LINE);
+        } else if (profile != null && profile.getStatus() == ProfileStatus.FFA) {
+            composed = applyNametagLines(player, composed, FFA_TOP_LINE, FFA_BOTTOM_LINE);
+        }
+
+        Component belowLine = belowNameLines.get(player.getUniqueId());
+        return belowLine == null || belowLine.equals(Component.empty())
+                ? composed
+                : composed.append(Component.newline()).append(belowLine);
     }
 
     public void initForUser(Player player) {
@@ -495,6 +538,35 @@ public class NametagManager {
 
     private boolean isSaturated(Player player) {
         return player.hasPotionEffect(PotionEffectType.SATURATION) || (player.getFoodLevel() >= 20 && player.getSaturation() > 0);
+    }
+
+    private Component applyNametagLines(Player player, Component nametag, String topLine, String bottomLine) {
+        Component top = PAPIUtil.runThroughFormat(player, topLine);
+        Component bottom = PAPIUtil.runThroughFormat(player, bottomLine);
+        if (!top.equals(Component.empty())) {
+            nametag = top.append(Component.newline()).append(nametag);
+        }
+        return bottom.equals(Component.empty()) ? nametag : nametag.append(Component.newline()).append(bottom);
+    }
+
+    private void applyNametagStyle(ClientTextDisplay display, Player player) {
+        if (belowNameUsers.contains(player.getUniqueId())) {
+            display.setTextShadow(TEXT_SHADOW);
+            display.setBackground(BACKGROUND);
+            return;
+        }
+
+        Profile profile = ProfileManager.getInstance().getProfile(player);
+        if (profile != null && profile.getStatus() == ProfileStatus.FFA) {
+            display.setTextShadow(FFA_TEXT_SHADOW);
+            display.setBackground(FFA_BACKGROUND);
+        } else if (profile != null && (profile.getStatus() == ProfileStatus.LOBBY || profile.getStatus() == ProfileStatus.STAFF_MODE)) {
+            display.setTextShadow(LOBBY_TEXT_SHADOW);
+            display.setBackground(LOBBY_BACKGROUND);
+        } else {
+            display.setTextShadow(false);
+            display.setBackground(0);
+        }
     }
 
     private ClientTextDisplay createDisplay(Player owner) {

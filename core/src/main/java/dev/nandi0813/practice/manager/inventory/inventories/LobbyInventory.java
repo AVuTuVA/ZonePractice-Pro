@@ -17,6 +17,7 @@ public class LobbyInventory extends Inventory {
 
         this.invItems.add(new KitEditorInvItem());
         this.invItems.add(new PartyCreateInvItem());
+        this.invItems.add(new PartyJoinInvItem());
         if (ConfigManager.getBoolean("QUEUE.COMBINED.ENABLED")) {
             this.invItems.add(new QueueInvItem());
         } else {
@@ -58,6 +59,11 @@ public class LobbyInventory extends Inventory {
                         continue;
                     if (setupItemSet)
                         continue;
+                }
+                case PartyJoinInvItem partyJoinInvItem -> {
+                    if (!player.hasPermission("zpp.party.joinpublic")) {
+                        continue;
+                    }
                 }
                 case RematchInvItem rematchInvItem -> {
                     continue;

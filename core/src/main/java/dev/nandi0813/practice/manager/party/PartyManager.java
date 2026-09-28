@@ -9,6 +9,7 @@ import dev.nandi0813.practice.manager.gui.GUIManager;
 import dev.nandi0813.practice.manager.gui.GUIType;
 import dev.nandi0813.practice.manager.gui.guis.party.OtherPartiesGui;
 import dev.nandi0813.practice.manager.gui.guis.party.PartyEventsGui;
+import dev.nandi0813.practice.manager.gui.guis.party.PublicPartiesGui;
 import dev.nandi0813.practice.manager.inventory.InventoryManager;
 import dev.nandi0813.practice.manager.party.matchrequest.RequestManager;
 import dev.nandi0813.practice.manager.profile.Profile;
@@ -45,9 +46,13 @@ public class PartyManager implements Listener {
     private static final int DEFAULT_MAX_PARTY_MEMBERS = ConfigManager.getInt("PARTY.SETTINGS.MAX-PARTY-MEMBERS.DEFAULT");
 
     private PartyManager() {
+        // Assigned before the GUIs below are built, some of them read from this manager while being constructed.
+        instance = this;
+
         Bukkit.getPluginManager().registerEvents(this, ZonePractice.getInstance());
 
         GUIManager.getInstance().addGUI(new OtherPartiesGui());
+        GUIManager.getInstance().addGUI(new PublicPartiesGui());
         GUIManager.getInstance().addGUI(new PartyEventsGui());
     }
 
@@ -63,6 +68,13 @@ public class PartyManager implements Listener {
             if (party.getMatch() != null && party.getMatch().equals(match))
                 return party;
         return null;
+    }
+
+    public boolean hasJoinablePublicParty() {
+        for (Party party : parties)
+            if (party.isPublicParty() && party.getMembers().size() < party.getMaxPlayerLimit())
+                return true;
+        return false;
     }
 
     public int resolvePartyMemberLimit(Player player) {
@@ -107,6 +119,7 @@ public class PartyManager implements Listener {
 
             InventoryManager.getInstance().setLobbyInventory(player, false);
             GUIManager.getInstance().searchGUI(GUIType.Party_OtherParties).update();
+            GUIManager.getInstance().searchGUI(GUIType.Party_PublicParties).update();
 
             Common.sendMMMessage(player, LanguageManager.getString("PARTY.PARTY-CREATED"));
         }

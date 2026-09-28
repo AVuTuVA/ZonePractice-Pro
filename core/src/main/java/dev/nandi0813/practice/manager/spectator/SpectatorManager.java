@@ -4,6 +4,7 @@ import dev.nandi0813.practice.ZonePractice;
 import dev.nandi0813.practice.manager.backend.ConfigManager;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.fight.ffa.FFAManager;
+import dev.nandi0813.practice.manager.fight.match.Match;
 import dev.nandi0813.practice.manager.fight.match.MatchManager;
 import dev.nandi0813.practice.manager.gui.GUIManager;
 import dev.nandi0813.practice.manager.gui.guis.SpectatorMenuGui;
@@ -61,6 +62,17 @@ public class SpectatorManager {
 
         PlayerCooldown.addCooldown(player, CooldownObject.RANDOM_MATCH, ConfigManager.getInt("SPECTATOR-SETTINGS.RANDOM-MATCH-COOLDOWN"));
         spectateRandomMatch(player);
+    }
+
+    /**
+     * Teleports a spectator to a single fighter of the match they are watching.
+     * Does nothing if the spectator stopped watching that match in the meantime.
+     */
+    public void teleportToTarget(Player spectator, Match match, Player target) {
+        if (this.spectators.get(spectator) != match) return;
+        if (!match.getPlayers().contains(target)) return;
+
+        spectator.teleport(target);
     }
 
     public static void spectateRandomMatch(Player player) {

@@ -1,4 +1,4 @@
-VERSION: 75
+VERSION: 77
 
 # Mysql database setup.
 MYSQL-DATABASE:
@@ -230,7 +230,6 @@ AUTO-SAVE:
 #
 # Match settings
 MATCH-SETTINGS:
-  SHOW-PLAYERS-IN-TAB: false # If true, all online players remain visible in the tab list even when their entities are hidden.
   TEAMS:
     TEAM1:
       NAME: "<blue>[B]"
@@ -294,6 +293,10 @@ MATCH-SETTINGS:
     LOW-HEALTH-THRESHOLD: 4.0
     SCALE: 20 # The scale setting defines the health display range between 10 and 100 with a default value of 20.
     SYMBOL: "♥" # The symbol displayed after the health value in the below-name display.
+    TEXT-SHADOW: false # If true, a drop shadow is drawn behind the above-head nametag.
+    BACKGROUND: 0 # Background of the above-head nametag as an ARGB value, 0 for none.
+    TOP-LINE: "" # Line drawn above the nametag, supports PlaceholderAPI placeholders.
+    BOTTOM-LINE: "" # Line drawn below the nametag, supports PlaceholderAPI placeholders.
   BUILD-LIMIT-DEFAULT: 4 # Counts from the first players positions Y level. You can set a unique number for this for every arena, then it will consider where you are standing.
   AFTER-COUNTDOWN: 3 # After the match is over this countdown start, and when it's over, the players teleport back to the lobby.
   ROLLBACK:
@@ -408,6 +411,11 @@ MATCH-SETTINGS:
 #
 # FFA settings
 FFA:
+  NAMETAG:
+    TEXT-SHADOW: false # If true, a drop shadow is drawn behind FFA players' nametags.
+    BACKGROUND: 0 # Background of FFA players' nametags as an ARGB value, 0 for none.
+    TOP-LINE: "" # Line drawn above FFA players' nametags, supports PlaceholderAPI placeholders.
+    BOTTOM-LINE: "" # Line drawn below FFA players' nametags, supports PlaceholderAPI placeholders.
   ROLLBACK:
     SECONDS: 300 # After the seconds, the arena will be reseted back to its original state (only on build arenas).
     TELEPORT-TO-SPAWN: false # If true, players are teleported back to the arena's spawn points once the reset has finished.
@@ -710,6 +718,10 @@ PLAYER:
     VALIDATION-PATTERN: "^[a-zA-Z0-9_]{3,16}$"
   LOBBY-NAMETAG:
     ENABLED: true
+    TEXT-SHADOW: false # If true, a drop shadow is drawn behind lobby players' nametags.
+    BACKGROUND: 0 # Background of lobby players' nametags as an ARGB value, 0 for none.
+    TOP-LINE: "" # Line drawn above lobby players' nametags, supports PlaceholderAPI placeholders.
+    BOTTOM-LINE: "" # Line drawn below lobby players' nametags, supports PlaceholderAPI placeholders.
   NAMETAG-MANAGEMENT:
     ENABLED: true # If false, ZonePractice will not manage nametags (above-head prefix/suffix/color) or the tab-list at all.
   JOIN-TELEPORT-LOBBY: true # If true, the player will be teleported to the lobby when they join the server.

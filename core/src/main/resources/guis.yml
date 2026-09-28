@@ -1,4 +1,4 @@
-VERSION: 43
+VERSION: 45
 
 GENERAL-FILLER-ITEM:
   NAME: " "
@@ -567,6 +567,29 @@ GUIS:
               - "%members%"
               - ""
               - "<white><bold>Click here <white>to duel this party."
+              - "<gray><st>------------------------"
+    PUBLIC-PARTIES:
+      TITLE: "<dark_gray>Public Parties - Page %page%"
+      ICONS:
+        FILLER-ITEM:
+          MATERIAL: BLACK_STAINED_GLASS_PANE
+        PAGE-LEFT:
+          NAME: "<gold>Go to Page %page%"
+          MATERIAL: ARROW
+        PAGE-RIGHT:
+          NAME: "<gold>Go to Page %page%"
+          MATERIAL: ARROW
+        PARTY-ITEM:
+          NAME: "<green>%leader%'s Party <gray>(<white>%partySize%<gray>/<white>%maxPartySize%<gray>)"
+          LORE:
+            MEMBER-FORMAT: " <gray>- <aqua>%player%"
+            LORE:
+              - "<gray><st>------------------------"
+              - "%members%"
+              - ""
+              - "<gray>Players: <white>%size%<gray>/<white>%maxsize%"
+              - ""
+              - "<green><bold>Click here <green>to join this party."
               - "<gray><st>------------------------"
     PARTY-SPLIT:
       TITLE: "<dark_gray>Party Split"
@@ -1555,6 +1578,17 @@ GUIS:
           - "<yellow>Spectators: <white>%spectators%"
           - ""
           - "<green>» Click to spectate «"
+  SPECTATOR-TARGETS:
+    TITLE: "<dark_gray>Fighters"
+    ICONS:
+      TARGET-ITEM:
+        NAME: "<yellow>%player%"
+        LORE:
+          - "<dark_gray><st>------------------------"
+          - "<gray>Team: <white>%team%"
+          - "<gray>Health: <white>%health%"
+          - ""
+          - "<green>» Click to teleport «"
   SETUP:
     HUB:
       TITLE: "<red>Server Manager"

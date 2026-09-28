@@ -247,6 +247,8 @@ permissions:
     description: Spectate menu use.
   zpp.spectate.random:
     description: Spectate random match.
+  zpp.spectate.targets:
+    description: Open the fighter list and teleport to a single fighter while spectating.
   zpp.statistics:
     default: true
   zpp.statistics.other:
@@ -287,6 +289,10 @@ permissions:
     description: Change party player limit.
   zpp.party.public:
     description: Change party status to public.
+  zpp.party.view:
+    description: View public parties.
+  zpp.party.joinpublic:
+    description: Join a public party without an invite.
   zpp.party.broadcast:
     description: Broadcast the party, if it public.
   zpp.party.allinvite:

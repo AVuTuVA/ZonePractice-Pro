@@ -9,6 +9,7 @@ import dev.nandi0813.practice.manager.inventory.inventoryitem.spectatoritems.spe
 import dev.nandi0813.practice.manager.inventory.inventoryitem.spectatoritems.spectatormodeitems.Match.RandomMatchInvItem;
 import dev.nandi0813.practice.manager.inventory.inventoryitem.spectatoritems.spectatormodeitems.Match.ShowSpectatorsInvItem;
 import dev.nandi0813.practice.manager.inventory.inventoryitem.spectatoritems.spectatormodeitems.Match.SpecMenuInvItem;
+import dev.nandi0813.practice.manager.inventory.inventoryitem.spectatoritems.spectatormodeitems.Match.SpectatorTargetsInvItem;
 import dev.nandi0813.practice.manager.profile.Profile;
 import dev.nandi0813.practice.manager.profile.ProfileManager;
 import dev.nandi0813.practice.manager.profile.enums.ProfileStatus;
@@ -27,6 +28,7 @@ public class SpecMatchInventory extends Inventory {
         this.invItems.add(new RandomMatchInvItem());
         this.invItems.add(new ShowSpectatorsInvItem());
         this.invItems.add(new SpecMenuInvItem());
+        this.invItems.add(new SpectatorTargetsInvItem());
         this.invItems.add(new LeaveMatchSpecInvItem());
     }
 

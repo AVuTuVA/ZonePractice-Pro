@@ -1,4 +1,4 @@
-VERSION: 3
+VERSION: 5
 
 #
 # Spawn inventories
@@ -48,6 +48,17 @@ LOBBY-BASIC:
       ITEM:
         NAME: "<light_purple>Create Party <gray>(Right-Click)"
         MATERIAL: NAME_TAG
+    PARTY-JOIN:
+      SLOT: 6
+      ITEM:
+        NAME: "<green>Join Party <gray>(Right-Click)"
+        MATERIAL: LIME_DYE
+        LORE:
+          - ""
+          - "<gray>Join a <green>public party <gray>without"
+          - "<gray>asking for an invite."
+          - ""
+          - "<yellow>Open the public party list."
     SETTINGS:
       SLOT: -1
       ITEM:
@@ -189,6 +200,11 @@ SPECTATOR:
         ITEM:
           NAME: "<light_purple>Spectate Random Match <gray>(Right-Click)"
           MATERIAL: COMPASS
+      TARGETS:
+        SLOT: 3
+        ITEM:
+          NAME: "<yellow>Fighters <gray>(Right-Click)"
+          MATERIAL: ENDER_EYE
       SHOW-SPECTATORS:
         SLOT: 0
         ITEM:

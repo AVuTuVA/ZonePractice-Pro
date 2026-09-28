@@ -70,10 +70,6 @@ public enum ConfigManager {
         return getBoolean("CHAT.SHOW-MATCH-CHAT-TO-SPECTATORS");
     }
 
-    public static boolean isShowPlayersInTab() {
-        return getBoolean("MATCH-SETTINGS.SHOW-PLAYERS-IN-TAB");
-    }
-
     public static int getInt(String loc) {
         return getConfig().getInt(loc);
     }

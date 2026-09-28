@@ -1,4 +1,4 @@
-VERSION: 46
+VERSION: 48
 
 CONSOLE-NAME: "<red>Console"
 CANT-USE-CONSOLE: "<red>You can't use this command from the console."
@@ -672,6 +672,7 @@ COMMAND:
         - " <aqua>Party Commands:"
         - " <white>/%label% create <dark_gray>- <gray>Create a party."
         - " <white>/%label% join <dark_gray>- <gray>Join a public party."
+        - " <white>/%label% public <dark_gray>- <gray>Browse the public parties."
         - " <white>/%label% accept <player> <dark_gray>- <gray>Accept a party invitation."
         - " <white>/%label% leave <dark_gray>- <gray>Accept a party invitation."
         - " <white>/%label% info <player> <dark_gray>- <gray>Party information."
@@ -1317,6 +1318,7 @@ PARTY:
   CANT-DUEL-OWN-PARTY: "<red>You can't duel your own party."
   CANT-USE-PARTY-CHAT: "<red>You can't use party chat right now."
   CANT-DUEL-PARTY: "<red>You can't duel this party."
+  NO-JOINABLE-PARTY: "<red>There are no public parties you can join right now."
   PARTY-SPLIT:
     BOTH-TEAMS-NEEDED: "<red>Both teams need at least one player to start the match."
   MATCH-REQUEST-MESSAGE:
