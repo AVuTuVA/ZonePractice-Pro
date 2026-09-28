@@ -46,6 +46,9 @@ public class PartyManager implements Listener {
     private static final int DEFAULT_MAX_PARTY_MEMBERS = ConfigManager.getInt("PARTY.SETTINGS.MAX-PARTY-MEMBERS.DEFAULT");
 
     private PartyManager() {
+        // Assigned before the GUIs below are built, some of them read from this manager while being constructed.
+        instance = this;
+
         Bukkit.getPluginManager().registerEvents(this, ZonePractice.getInstance());
 
         GUIManager.getInstance().addGUI(new OtherPartiesGui());
@@ -68,9 +71,10 @@ public class PartyManager implements Listener {
     }
 
     public boolean hasJoinablePublicParty() {
-        return parties.stream()
-                .anyMatch(party -> party.isPublicParty()
-                        && party.getMembers().size() < party.getMaxPlayerLimit());
+        for (Party party : parties)
+            if (party.isPublicParty() && party.getMembers().size() < party.getMaxPlayerLimit())
+                return true;
+        return false;
     }
 
     public int resolvePartyMemberLimit(Player player) {
