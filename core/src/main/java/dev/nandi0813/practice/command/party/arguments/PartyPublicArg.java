@@ -12,6 +12,11 @@ public final class PartyPublicArg {
     private PartyPublicArg() {}
 
     public static void PublicCommand(Player player) {
+        if (!player.hasPermission("zpp.party.joinpublic")) {
+            Common.sendMMMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
+            return;
+        }
+
         if (!PartyManager.getInstance().hasJoinablePublicParty()) {
             Common.sendMMMessage(player, LanguageManager.getString("PARTY.NO-JOINABLE-PARTY"));
             return;
