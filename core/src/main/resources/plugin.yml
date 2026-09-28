@@ -289,10 +289,10 @@ permissions:
     description: Change party player limit.
   zpp.party.public:
     description: Change party status to public.
+  zpp.party.view:
+    description: View public parties.
   zpp.party.joinpublic:
     description: Join a public party without an invite.
-  zpp.party.list:
-    description: List public parties.
   zpp.party.broadcast:
     description: Broadcast the party, if it public.
   zpp.party.allinvite:
