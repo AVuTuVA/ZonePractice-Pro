@@ -67,6 +67,12 @@ public class PartyManager implements Listener {
         return null;
     }
 
+    public boolean hasJoinablePublicParty() {
+        return parties.stream()
+                .anyMatch(party -> party.isPublicParty()
+                        && party.getMembers().size() < party.getMaxPlayerLimit());
+    }
+
     public int resolvePartyMemberLimit(Player player) {
         Profile profile = ProfileManager.getInstance().getProfile(player);
         if (profile == null) {
