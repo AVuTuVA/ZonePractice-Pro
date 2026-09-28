@@ -51,6 +51,9 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
                 case "join":
                     PartyJoinArg.JoinCommand(player, label, args);
                     break;
+                case "public":
+                    PartyPublicArg.PublicCommand(player);
+                    break;
                 case "create":
                     PartyManager.getInstance().createParty(player);
                     break;
@@ -94,6 +97,7 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
             } else {
                 arguments.add("create");
                 arguments.add("join");
+                arguments.add("public");
                 arguments.add("accept");
             }
 

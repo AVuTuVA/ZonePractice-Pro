@@ -39,6 +39,7 @@ public enum GUIType {
     Queue_CustomKitHostSelector,
 
     Party_OtherParties,
+    Party_PublicParties,
     Party_Events,
     Party_Settings,
     Party_Split,

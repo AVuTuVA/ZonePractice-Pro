@@ -1,4 +1,4 @@
-VERSION: 4
+VERSION: 5
 
 #
 # Spawn inventories
@@ -48,6 +48,17 @@ LOBBY-BASIC:
       ITEM:
         NAME: "<light_purple>Create Party <gray>(Right-Click)"
         MATERIAL: NAME_TAG
+    PARTY-JOIN:
+      SLOT: 6
+      ITEM:
+        NAME: "<green>Join Party <gray>(Right-Click)"
+        MATERIAL: LIME_DYE
+        LORE:
+          - ""
+          - "<gray>Join a <green>public party <gray>without"
+          - "<gray>asking for an invite."
+          - ""
+          - "<yellow>Open the public party list."
     SETTINGS:
       SLOT: -1
       ITEM:

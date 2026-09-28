@@ -9,6 +9,7 @@ import dev.nandi0813.practice.manager.gui.GUIManager;
 import dev.nandi0813.practice.manager.gui.GUIType;
 import dev.nandi0813.practice.manager.gui.guis.party.OtherPartiesGui;
 import dev.nandi0813.practice.manager.gui.guis.party.PartyEventsGui;
+import dev.nandi0813.practice.manager.gui.guis.party.PublicPartiesGui;
 import dev.nandi0813.practice.manager.inventory.InventoryManager;
 import dev.nandi0813.practice.manager.party.matchrequest.RequestManager;
 import dev.nandi0813.practice.manager.profile.Profile;
@@ -48,6 +49,7 @@ public class PartyManager implements Listener {
         Bukkit.getPluginManager().registerEvents(this, ZonePractice.getInstance());
 
         GUIManager.getInstance().addGUI(new OtherPartiesGui());
+        GUIManager.getInstance().addGUI(new PublicPartiesGui());
         GUIManager.getInstance().addGUI(new PartyEventsGui());
     }
 
@@ -107,6 +109,7 @@ public class PartyManager implements Listener {
 
             InventoryManager.getInstance().setLobbyInventory(player, false);
             GUIManager.getInstance().searchGUI(GUIType.Party_OtherParties).update();
+            GUIManager.getInstance().searchGUI(GUIType.Party_PublicParties).update();
 
             Common.sendMMMessage(player, LanguageManager.getString("PARTY.PARTY-CREATED"));
         }

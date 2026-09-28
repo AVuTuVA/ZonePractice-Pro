@@ -283,6 +283,8 @@ permissions:
   # Party permissions
   zpp.party.create:
     description: Create party.
+  zpp.party.joinpublic:
+    description: Join a public party without an invite.
   zpp.party.info.others:
     description: View other player's party information.
   zpp.party.changelimit:

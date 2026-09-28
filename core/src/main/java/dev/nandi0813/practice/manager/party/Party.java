@@ -95,6 +95,7 @@ public class Party implements dev.nandi0813.api.Interface.Party {
 
         sendMessage(LanguageManager.getString("PARTY.PLAYER-JOINED").replace("%player%", member.getName()));
         GUIManager.getInstance().searchGUI(GUIType.Party_OtherParties).update();
+        GUIManager.getInstance().searchGUI(GUIType.Party_PublicParties).update();
 
         // If the party is full, stop broadcasting it.
         if (members.size() == maxPlayerLimit && isBroadcastParty())
@@ -119,6 +120,7 @@ public class Party implements dev.nandi0813.api.Interface.Party {
             InventoryManager.getInstance().setLobbyInventory(member, false);
 
         GUIManager.getInstance().searchGUI(GUIType.Party_OtherParties).update();
+        GUIManager.getInstance().searchGUI(GUIType.Party_PublicParties).update();
     }
 
     public void disband() {
@@ -142,6 +144,7 @@ public class Party implements dev.nandi0813.api.Interface.Party {
         }
 
         GUIManager.getInstance().searchGUI(GUIType.Party_OtherParties).update();
+        GUIManager.getInstance().searchGUI(GUIType.Party_PublicParties).update();
         PartyManager.getInstance().getParties().remove(this);
     }
 

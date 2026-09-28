@@ -672,6 +672,7 @@ COMMAND:
         - " <aqua>Party Commands:"
         - " <white>/%label% create <dark_gray>- <gray>Create a party."
         - " <white>/%label% join <dark_gray>- <gray>Join a public party."
+        - " <white>/%label% public <dark_gray>- <gray>Browse the public parties."
         - " <white>/%label% accept <player> <dark_gray>- <gray>Accept a party invitation."
         - " <white>/%label% leave <dark_gray>- <gray>Accept a party invitation."
         - " <white>/%label% info <player> <dark_gray>- <gray>Party information."

@@ -3,6 +3,7 @@ package dev.nandi0813.practice.manager.gui.guis.party;
 import dev.nandi0813.practice.manager.backend.GUIFile;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.gui.GUI;
+import dev.nandi0813.practice.manager.gui.GUIManager;
 import dev.nandi0813.practice.manager.gui.GUIType;
 import dev.nandi0813.practice.manager.party.Party;
 import dev.nandi0813.practice.manager.party.PartyManager;
@@ -108,6 +109,7 @@ public class PartySettingsGui extends GUI {
                             Common.sendMMMessage(player, LanguageManager.getString("PARTY.CANT-DECREASE-LIMIT"));
                     } else if (clickType.isRightClick() && party.getMaxPlayerLimit() < groupPartyLimit) {
                         party.setMaxPlayerLimit(party.getMaxPlayerLimit() + 1);
+                        GUIManager.getInstance().searchGUI(GUIType.Party_PublicParties).update();
                         update();
                     }
                 } else
@@ -140,6 +142,7 @@ public class PartySettingsGui extends GUI {
                         party.getBroadcastTask().cancel();
 
                     party.setPublicParty(!party.isPublicParty());
+                    GUIManager.getInstance().searchGUI(GUIType.Party_PublicParties).update();
                     update();
                 } else
                     Common.sendMMMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
