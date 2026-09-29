@@ -84,7 +84,7 @@ public final class ZonePractice extends JavaPlugin {
 
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
     private final BukkitMetrics faststats_metrics = BukkitMetrics.factory()
-        .token("98d57804a89964439b95ebbe50247bd4")
+        .token("a515f033e0639d1407b9bd6a926c2efb")
         .errorTracker(ERROR_TRACKER)
         .debug(false)
         .create(this);
@@ -106,7 +106,7 @@ public final class ZonePractice extends JavaPlugin {
         arenaCopyUtilListener = new ArenaCopyUtilListener();
 
         PacketEvents.getAPI().init();
-        metrics = new Metrics(this, 16055);
+        metrics = new Metrics(this, 34393);
         faststats_metrics.ready();
 
         if (VersionChecker.getBukkitVersion() == null) {
