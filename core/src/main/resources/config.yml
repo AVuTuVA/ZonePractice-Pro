@@ -230,6 +230,9 @@ AUTO-SAVE:
 #
 # Match settings
 MATCH-SETTINGS:
+  SHOW-PLAYERS-IN-TAB: false # If true, all online players remain visible in the tab list even when their entities are hidden.
+  SHOW-SPECTATORS-IN-TAB: false # If true, the fighters of a match see its spectators in their tab list.
+  SPECTATOR-TAB-PREFIX: "<dark_gray>[<gray>Spec<dark_gray>] " # Prefix in front of a spectator's name in the tab list of the fighters. Supports %player%, "" for none.
   TEAMS:
     TEAM1:
       NAME: "<blue>[B]"
