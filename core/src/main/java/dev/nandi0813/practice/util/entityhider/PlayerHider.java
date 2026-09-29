@@ -354,8 +354,13 @@ public class PlayerHider implements Listener {
         observer.showPlayer(ZonePractice.getInstance(), target);
     }
 
+    /**
+     * Re-lists {@code target} in the tab list of {@code observer} without touching the display
+     * name, so the global name the server already broadcasts (LuckPerms, TAB,
+     * {@link NametagManager}) is kept.
+     */
     public void showTabEntry(Player observer, Player target) {
-        showTabEntry(observer, target, NametagManager.getInstance().getTabListName(target));
+        showTabEntry(observer, target, null);
     }
 
     /**
@@ -372,27 +377,41 @@ public class PlayerHider implements Listener {
                 ))
                 .toList();
 
-        WrapperPlayServerPlayerInfoUpdate packet = new WrapperPlayServerPlayerInfoUpdate(
-                EnumSet.of(
-                        WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER,
-                        WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LISTED,
-                        WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LATENCY,
-                        WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_GAME_MODE,
-                        WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_DISPLAY_NAME,
-                        WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LIST_ORDER
-                ),
-                new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(
-                        new UserProfile(target.getUniqueId(), target.getName(), properties),
-                        true,
-                        target.getPing(),
-                        GameMode.valueOf(target.getGameMode().name()),
-                        tabName,
-                        null,
-                        target.getPlayerListOrder()
-                )
+        EnumSet<WrapperPlayServerPlayerInfoUpdate.Action> actions = EnumSet.of(
+                WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER,
+                WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LISTED,
+                WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LATENCY,
+                WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_GAME_MODE,
+                WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_LIST_ORDER
         );
 
-        PacketEvents.getAPI().getPlayerManager().sendPacket(observer, packet);
+        if (tabName != null) {
+            actions.add(
+                    WrapperPlayServerPlayerInfoUpdate.Action.UPDATE_DISPLAY_NAME
+            );
+        }
+
+        WrapperPlayServerPlayerInfoUpdate packet =
+                new WrapperPlayServerPlayerInfoUpdate(
+                        actions,
+                        new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(
+                                new UserProfile(
+                                        target.getUniqueId(),
+                                        target.getName(),
+                                        properties
+                                ),
+                                true,
+                                target.getPing(),
+                                GameMode.valueOf(target.getGameMode().name()),
+                                tabName,
+                                null,
+                                target.getPlayerListOrder()
+                        )
+                );
+
+        PacketEvents.getAPI()
+                .getPlayerManager()
+                .sendPacket(observer, packet);
     }
 
     private boolean checkInvalidLobby() {
