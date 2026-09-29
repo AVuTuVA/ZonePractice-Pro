@@ -140,7 +140,7 @@ public class PlayerHider implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent e) {
-        if (!ConfigManager.isShowPlayersInTab()) return;
+        if (!ConfigManager.isShowPlayersInTab() && !ConfigManager.isShowSpectatorsInTab()) return;
 
         final UUID uuid = e.getPlayer().getUniqueId();
 
@@ -369,6 +369,8 @@ public class PlayerHider implements Listener {
      * tab list name other viewers see.
      */
     public void showTabEntry(Player observer, Player target, Component tabName) {
+        if (!observer.isOnline() || !target.isOnline()) return;
+
         List<TextureProperty> properties = target.getPlayerProfile().getProperties().stream()
                 .map(property -> new TextureProperty(
                         property.getName(),
