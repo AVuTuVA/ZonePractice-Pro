@@ -52,6 +52,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -81,7 +84,7 @@ public final class ZonePractice extends JavaPlugin {
 
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
     private final BukkitMetrics faststats_metrics = BukkitMetrics.factory()
-        .token("98d57804a89964439b95ebbe50247bd4")
+        .token("a515f033e0639d1407b9bd6a926c2efb")
         .errorTracker(ERROR_TRACKER)
         .debug(false)
         .create(this);
@@ -103,7 +106,7 @@ public final class ZonePractice extends JavaPlugin {
         arenaCopyUtilListener = new ArenaCopyUtilListener();
 
         PacketEvents.getAPI().init();
-        metrics = new Metrics(this, 16055);
+        metrics = new Metrics(this, 34393);
         faststats_metrics.ready();
 
         if (VersionChecker.getBukkitVersion() == null) {
@@ -225,146 +228,31 @@ public final class ZonePractice extends JavaPlugin {
      * It registers all the commands that the plugin uses
      */
     private void registerCommands(Server server) {
-        AcceptCommand acceptCommand = new AcceptCommand();
-        if (server.getPluginCommand("accept") != null) {
-            server.getPluginCommand("accept").setExecutor(acceptCommand);
-            server.getPluginCommand("accept").setTabCompleter(acceptCommand);
-        }
-
-        ArenaCommand arenaCommand = new ArenaCommand();
-        if (server.getPluginCommand("arena") != null) {
-            server.getPluginCommand("arena").setExecutor(arenaCommand);
-            server.getPluginCommand("arena").setTabCompleter(arenaCommand);
-        }
-
-        DuelCommand duelCommand = new DuelCommand();
-        if (server.getPluginCommand("duel") != null) {
-            server.getPluginCommand("duel").setExecutor(duelCommand);
-            server.getPluginCommand("duel").setTabCompleter(duelCommand);
-        }
-
-        EventCommand eventCommand = new EventCommand();
-        if (server.getPluginCommand("event") != null) {
-            server.getPluginCommand("event").setExecutor(eventCommand);
-            server.getPluginCommand("event").setTabCompleter(eventCommand);
-        }
-
-        LadderCommand ladderCommand = new LadderCommand();
-        if (server.getPluginCommand("ladder") != null) {
-            server.getPluginCommand("ladder").setExecutor(ladderCommand);
-            server.getPluginCommand("ladder").setTabCompleter(ladderCommand);
-        }
-
-        MatchStatsCommand matchStatsCommand = new MatchStatsCommand();
-        if (server.getPluginCommand("matchinv") != null) {
-            server.getPluginCommand("matchinv").setExecutor(matchStatsCommand);
-        }
-
-        MatchHistoryCommand matchHistoryCommand = new MatchHistoryCommand();
-        if (server.getPluginCommand("matchhistory") != null) {
-            server.getPluginCommand("matchhistory").setExecutor(matchHistoryCommand);
-            server.getPluginCommand("matchhistory").setTabCompleter(matchHistoryCommand);
-        }
-
-        PartyCommand partyCommand = new PartyCommand();
-        if (server.getPluginCommand("party") != null) {
-            server.getPluginCommand("party").setExecutor(partyCommand);
-            server.getPluginCommand("party").setTabCompleter(partyCommand);
-        }
-
-        PracticeCommand practiceCommand = new PracticeCommand();
-        if (server.getPluginCommand("practice") != null) {
-            server.getPluginCommand("practice").setExecutor(practiceCommand);
-            server.getPluginCommand("practice").setTabCompleter(practiceCommand);
-        }
-
-        PreviewCommand previewCommand = new PreviewCommand();
-        if (server.getPluginCommand("preview") != null) {
-            server.getPluginCommand("preview").setExecutor(previewCommand);
-            server.getPluginCommand("preview").setTabCompleter(previewCommand);
-        }
-
-        DivisionsCommand divisionsCommand = new DivisionsCommand();
-        if (server.getPluginCommand("divisions") != null) {
-            server.getPluginCommand("divisions").setExecutor(divisionsCommand);
-        }
-
-        SettingsCommand settingsCommand = new SettingsCommand();
-        if (server.getPluginCommand("settings") != null) {
-            server.getPluginCommand("settings").setExecutor(settingsCommand);
-        }
-
-        SetupCommand setupCommand = new SetupCommand();
-        if (server.getPluginCommand("setup") != null) {
-            server.getPluginCommand("setup").setExecutor(setupCommand);
-        }
-
-        SpectateCommand spectateCommand = new SpectateCommand();
-        if (server.getPluginCommand("spectate") != null) {
-            server.getPluginCommand("spectate").setExecutor(spectateCommand);
-            server.getPluginCommand("spectate").setTabCompleter(spectateCommand);
-        }
-
-        StaffCommand staffCommand = new StaffCommand();
-        if (server.getPluginCommand("staff") != null) {
-            server.getPluginCommand("staff").setExecutor(staffCommand);
-            server.getPluginCommand("staff").setTabCompleter(staffCommand);
-        }
-
-        StatisticsCommand statisticsCommand = new StatisticsCommand();
-        if (server.getPluginCommand("statistics") != null) {
-            server.getPluginCommand("statistics").setExecutor(statisticsCommand);
-            server.getPluginCommand("statistics").setTabCompleter(statisticsCommand);
-        }
-
-        UnrankedCommand unrankedCommand = new UnrankedCommand();
-        if (server.getPluginCommand("unranked") != null) {
-            server.getPluginCommand("unranked").setExecutor(unrankedCommand);
-        }
-
-        RankedCommand rankedCommand = new RankedCommand();
-        if (server.getPluginCommand("ranked") != null) {
-            server.getPluginCommand("ranked").setExecutor(rankedCommand);
-        }
-
-        EditorCommand editorCommand = new EditorCommand();
-        if (server.getPluginCommand("editor") != null) {
-            server.getPluginCommand("editor").setExecutor(editorCommand);
-        }
-
-        CopyKitCommand copyKitCommand = new CopyKitCommand();
-        if (server.getPluginCommand("copykit") != null) {
-            server.getPluginCommand("copykit").setExecutor(copyKitCommand);
-        }
-
-        FFACommand ffaCommand = new FFACommand();
-        if (server.getPluginCommand("ffa") != null) {
-            server.getPluginCommand("ffa").setExecutor(ffaCommand);
-            server.getPluginCommand("ffa").setTabCompleter(ffaCommand);
-        }
-
-        IgnoreQueueCommand ignoreQueueCommand = new IgnoreQueueCommand();
-        if (server.getPluginCommand("ignorequeue") != null) {
-            server.getPluginCommand("ignorequeue").setExecutor(ignoreQueueCommand);
-            server.getPluginCommand("ignorequeue").setTabCompleter(ignoreQueueCommand);
-        }
-
-        CosmeticsCommand cosmeticsCommand = new CosmeticsCommand();
-        if (server.getPluginCommand("cosmetics") != null) {
-            server.getPluginCommand("cosmetics").setExecutor(cosmeticsCommand);
-        }
-
-        CustomQueueCommand customQueueCommand = new CustomQueueCommand();
-        if (server.getPluginCommand("customqueue") != null) {
-            server.getPluginCommand("customqueue").setExecutor(customQueueCommand);
-            server.getPluginCommand("customqueue").setTabCompleter(customQueueCommand);
-        }
-
-        NickCommand nickCommand = new NickCommand();
-        if (server.getPluginCommand("nick") != null) {
-            server.getPluginCommand("nick").setExecutor(nickCommand);
-            server.getPluginCommand("nick").setTabCompleter(nickCommand);
-        }
+        registerCommand(server, "accept", new AcceptCommand());
+        registerCommand(server, "arena", new ArenaCommand());
+        registerCommand(server, "duel", new DuelCommand());
+        registerCommand(server, "event", new EventCommand());
+        registerCommand(server, "ladder", new LadderCommand());
+        registerCommand(server, "matchinv", new MatchStatsCommand());
+        registerCommand(server, "matchhistory", new MatchHistoryCommand());
+        registerCommand(server, "party", new PartyCommand());
+        registerCommand(server, "practice", new PracticeCommand());
+        registerCommand(server, "preview", new PreviewCommand());
+        registerCommand(server, "divisions", new DivisionsCommand());
+        registerCommand(server, "settings", new SettingsCommand());
+        registerCommand(server, "setup", new SetupCommand());
+        registerCommand(server, "spectate", new SpectateCommand());
+        registerCommand(server, "staff", new StaffCommand());
+        registerCommand(server, "statistics", new StatisticsCommand());
+        registerCommand(server, "unranked", new UnrankedCommand());
+        registerCommand(server, "ranked", new RankedCommand());
+        registerCommand(server, "editor", new EditorCommand());
+        registerCommand(server, "copykit", new CopyKitCommand());
+        registerCommand(server, "ffa", new FFACommand());
+        registerCommand(server, "ignorequeue", new IgnoreQueueCommand());
+        registerCommand(server, "cosmetics", new CosmeticsCommand());
+        registerCommand(server, "customqueue", new CustomQueueCommand());
+        registerCommand(server, "nick", new NickCommand());
 
         if (ConfigManager.getBoolean("CHAT.PRIVATE-CHAT-ENABLED")) {
             new MessageCommand();
@@ -373,6 +261,16 @@ public final class ZonePractice extends JavaPlugin {
 
         if (ConfigManager.getBoolean("MATCH-SETTINGS.LEAVE-COMMAND.ENABLED")) {
             new LeaveCommand();
+        }
+    }
+
+    private void registerCommand(Server server, String name, CommandExecutor executor) {
+        PluginCommand command = server.getPluginCommand(name);
+        if (command == null) return;
+
+        command.setExecutor(executor);
+        if (executor instanceof TabCompleter tabCompleter) {
+            command.setTabCompleter(tabCompleter);
         }
     }
 

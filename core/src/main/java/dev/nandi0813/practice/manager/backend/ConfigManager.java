@@ -70,6 +70,22 @@ public enum ConfigManager {
         return getBoolean("CHAT.SHOW-MATCH-CHAT-TO-SPECTATORS");
     }
 
+    public static boolean isShowPlayersInTab() {
+        return getBoolean("MATCH-SETTINGS.SHOW-PLAYERS-IN-TAB");
+    }
+
+    public static boolean isShowSpectatorsInTab() {
+        return getBoolean("MATCH-SETTINGS.SHOW-SPECTATORS-IN-TAB");
+    }
+
+    public static String getSpectatorTabPrefix() {
+        return getString("MATCH-SETTINGS.SPECTATOR-TAB-PREFIX");
+    }
+
+    public static boolean isHideLastEliminatedPlayer() {
+        return getBoolean("MATCH-SETTINGS.HIDE-LAST-ELIMINATED-PLAYER");
+    }
+
     public static int getInt(String loc) {
         return getConfig().getInt(loc);
     }

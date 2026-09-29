@@ -1318,7 +1318,7 @@ PARTY:
   CANT-DUEL-OWN-PARTY: "<red>You can't duel your own party."
   CANT-USE-PARTY-CHAT: "<red>You can't use party chat right now."
   CANT-DUEL-PARTY: "<red>You can't duel this party."
-  NO-JOINABLE-PARTY: "<red>There are no public parties you can join right now."
+  NO-JOINABLE-PARTY: "<red>There are no public parties right now."
   PARTY-SPLIT:
     BOTH-TEAMS-NEEDED: "<red>Both teams need at least one player to start the match."
   MATCH-REQUEST-MESSAGE:
