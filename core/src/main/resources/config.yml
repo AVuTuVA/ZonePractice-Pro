@@ -1,4 +1,4 @@
-VERSION: 77
+VERSION: 78
 
 # Mysql database setup.
 MYSQL-DATABASE:
