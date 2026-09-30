@@ -2,7 +2,6 @@ package dev.nandi0813.practice.manager.fight.match.type.playersvsplayers;
 
 import dev.nandi0813.practice.ZonePractice;
 import dev.nandi0813.practice.manager.arena.arenas.Arena;
-import dev.nandi0813.practice.manager.backend.ConfigManager;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.fight.match.Match;
 import dev.nandi0813.practice.manager.fight.match.MatchManager;
@@ -87,8 +86,7 @@ public abstract class PlayersVsPlayers extends Match implements Team {
                     winnerTeam = this.getWinnerTeam();
                     if (winnerTeam != null)
                         endRound = true;
-
-                    if (!endRound || ConfigManager.isHideLastEliminatedPlayer())
+                    else
                         MatchPlayerUtil.hidePlayerPartyGames(player, this.players);
 
                     dev.nandi0813.practice.manager.fight.util.PlayerUtil.clearInventory(player);
@@ -122,8 +120,7 @@ public abstract class PlayersVsPlayers extends Match implements Team {
                     winnerTeam = this.getWinnerTeam();
                     if (winnerTeam != null)
                         endRound = true;
-
-                    if (!endRound || ConfigManager.isHideLastEliminatedPlayer())
+                    else
                         MatchPlayerUtil.hidePlayerPartyGames(player, this.players);
 
                     dev.nandi0813.practice.manager.fight.util.PlayerUtil.clearInventory(player);

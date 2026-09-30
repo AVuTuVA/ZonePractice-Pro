@@ -82,10 +82,6 @@ public enum ConfigManager {
         return getString("MATCH-SETTINGS.SPECTATOR-TAB-PREFIX");
     }
 
-    public static boolean isHideLastEliminatedPlayer() {
-        return getBoolean("MATCH-SETTINGS.HIDE-LAST-ELIMINATED-PLAYER");
-    }
-
     public static int getInt(String loc) {
         return getConfig().getInt(loc);
     }
