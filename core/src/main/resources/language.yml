@@ -1,4 +1,4 @@
-VERSION: 48
+VERSION: 49
 
 CONSOLE-NAME: "<red>Console"
 CANT-USE-CONSOLE: "<red>You can't use this command from the console."
@@ -661,6 +661,10 @@ COMMAND:
         PARTY-FULL: "<red>The party is full. You can contact %leader% to increase the limit."
         NO-INVITE: "<red>You are not invited to this party."
         INVITE-EXPIRED: "<red>Your party invite has expired."
+      CHAT:
+        COMMAND-HELP: "<red>/%label% chat <message>"
+        DISABLED: "<red>Party chat is disabled on this server."
+        NO-PARTY: "<red>You are not a member of a party."
       DISBAND:
         COMMAND-HELP: "<red>/%label% disband"
         NO-PARTY: "<red>You are not a member of a party."
@@ -684,7 +688,8 @@ COMMAND:
         - " <white>/%label% disband <dark_gray>- <gray>Disband party."
         - ""
         - " <aqua>Party Chat:"
-        - " <gray>To use the <aqua>party chat<gray>, prefix your message with a '<aqua>@<gray>' symbol."
+        - " <white>/%label% chat <message> <dark_gray>- <gray>Send a message to your party."
+        - " <gray>or type '<aqua>%shortcut%<gray>' in front of your message instead."
         - "<gray><st>------------------------------------------------"
       INFO:
         COMMAND-HELP: "<red>/%label% info / info <player>"

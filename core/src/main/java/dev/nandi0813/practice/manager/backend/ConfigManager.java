@@ -70,6 +70,14 @@ public enum ConfigManager {
         return getBoolean("CHAT.SHOW-MATCH-CHAT-TO-SPECTATORS");
     }
 
+    public static boolean isPartyChatEnabled() {
+        return getBoolean("CHAT.PARTY-CHAT.ENABLED");
+    }
+
+    public static String getPartyChatShortcut() {
+        return getString("CHAT.PARTY-CHAT.SHORTCUT");
+    }
+
     public static boolean isShowPlayersInTab() {
         return getBoolean("MATCH-SETTINGS.SHOW-PLAYERS-IN-TAB");
     }

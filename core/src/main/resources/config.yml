@@ -1,4 +1,4 @@
-VERSION: 78
+VERSION: 79
 
 # Mysql database setup.
 MYSQL-DATABASE:
@@ -753,7 +753,9 @@ CHAT:
   SERVER-CHAT-ENABLED: true
   ISOLATE-MATCH-CHAT: true # If true, active match/FFA players only see messages from fighters in their own ongoing fight.
   SHOW-MATCH-CHAT-TO-SPECTATORS: true # If true, spectators of a fight also see the messages of the fighters they are watching.
-  PARTY-CHAT-ENABLED: true
+  PARTY-CHAT:
+    ENABLED: true
+    SHORTCUT: "@" # Prefix a message with this symbol to send it to your party instead of the server, like @hello world. Set to "" or false to disable the shortcut, then only /party chat <message> works.
   STAFF-CHAT:
     ENABLED: true
     SHORTCUT: true # If true, you can use send message like #hello world instead of enabling staff chat each time.

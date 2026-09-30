@@ -148,6 +148,10 @@ public class Party implements dev.nandi0813.api.Interface.Party {
         PartyManager.getInstance().getParties().remove(this);
     }
 
+    public boolean canUsePartyChat(Player player) {
+        return partyChat || leader.equals(player);
+    }
+
     public void sendMessage(String message) {
         for (Player player : members)
             Common.sendMMMessage(player, message);
