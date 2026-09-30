@@ -711,7 +711,7 @@ public class PracticeAdapter implements SidebarAdapter {
         if (player.hasPermission("zpp.admin.scoreboard")) {
             for (String line : config.getStringList("ADMIN-EXTENSION")) {
                 line = line
-                        .replace("%tps%", String.valueOf(TPSUtil.get1MinTPSRounded()))
+                        .replace("%tps%", String.valueOf(TPSUtil.get1MinTPS()))
                         .replace("%arenas%", String.valueOf(ArenaManager.getInstance().getArenaList().size()))
                         .replace("%enabledArenas%", String.valueOf(
                                 ArenaManager.getInstance().getEnabledArenas().size() +
