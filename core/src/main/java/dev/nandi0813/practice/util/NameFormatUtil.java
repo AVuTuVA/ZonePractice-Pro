@@ -78,7 +78,7 @@ public final class NameFormatUtil {
 
     /**
      * Applies any PlaceholderAPI placeholders present in {@code component} by
-     * serialising to MiniMessage, running PAPI, then reparsing.
+     * serializing to MiniMessage, running PAPI, then reparsing.
      * PAPI expansions may inject legacy {@code &} codes — these are converted
      * to MiniMessage via the Adventure legacy serializer.
      * Returns {@code component} unchanged if PAPI is not installed

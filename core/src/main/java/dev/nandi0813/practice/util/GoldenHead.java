@@ -77,10 +77,10 @@ public class GoldenHead implements Listener {
             }
             if (type == null) continue;
 
-            if (StringUtil.isNotInteger(split[1])) continue;
+            if (NumberUtil.isNotInteger(split[1])) continue;
             int duration = Integer.parseInt(split[1]);
 
-            if (StringUtil.isNotInteger(split[2])) continue;
+            if (NumberUtil.isNotInteger(split[2])) continue;
             int amplifier = Integer.parseInt(split[2]);
             if (amplifier < 1) continue;
 
