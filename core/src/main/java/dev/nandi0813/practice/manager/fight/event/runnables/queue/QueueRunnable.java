@@ -1,6 +1,7 @@
 package dev.nandi0813.practice.manager.fight.event.runnables.queue;
 
 import dev.nandi0813.practice.manager.backend.ConfigManager;
+import dev.nandi0813.practice.util.TimeUtil;
 import dev.nandi0813.practice.manager.fight.event.interfaces.Event;
 import dev.nandi0813.practice.manager.fight.match.Match;
 import dev.nandi0813.practice.manager.fight.match.MatchManager;
@@ -9,7 +10,6 @@ import dev.nandi0813.practice.manager.profile.Profile;
 import dev.nandi0813.practice.manager.profile.ProfileManager;
 import dev.nandi0813.practice.manager.profile.enums.ProfileStatus;
 import dev.nandi0813.practice.util.Common;
-import dev.nandi0813.practice.util.StringUtil;
 import dev.nandi0813.practice.util.interfaces.Runnable;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -134,7 +134,7 @@ public class QueueRunnable extends Runnable {
     @Override
     public String getFormattedTime() {
         if (queueStartRunnable != null && queueStartRunnable.isRunning()) {
-            return StringUtil.formatMillisecondsToMinutes(queueStartRunnable.getSeconds() * 1000L);
+            return TimeUtil.formatDuration(queueStartRunnable.getSeconds() * 1000L);
         }
         return null;
     }

@@ -1,6 +1,7 @@
 package dev.nandi0813.practice.manager.gui.guis;
 
 import dev.nandi0813.practice.ZonePractice;
+import dev.nandi0813.practice.util.TimeUtil;
 import dev.nandi0813.practice.manager.backend.GUIFile;
 import dev.nandi0813.practice.manager.fight.match.Match;
 import dev.nandi0813.practice.manager.fight.match.Round;
@@ -148,7 +149,7 @@ public class MatchStatsGui extends GUI {
                 effects.add(GUIFile.getString("GUIS.MATCH-STATISTICS.ICONS.EFFECT.HAS-EFFECT.FORMAT")
                         .replace("%name%", StringUtils.capitalize(potionEffect.getType().getKey().getKey().replace("_", " ").toLowerCase()))
                         .replace("%amplifier%", String.valueOf(potionEffect.getAmplifier() + 1))
-                        .replace("%time%", StringUtil.formatMillisecondsToMinutes((potionEffect.getDuration() / 20) * 1000L))
+                        .replace("%time%", TimeUtil.formatDuration((potionEffect.getDuration() / 20) * 1000L))
                 );
             }
 

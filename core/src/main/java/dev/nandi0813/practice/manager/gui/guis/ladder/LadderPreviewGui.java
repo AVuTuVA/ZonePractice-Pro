@@ -1,6 +1,7 @@
 package dev.nandi0813.practice.manager.gui.guis.ladder;
 
 import dev.nandi0813.practice.ZonePractice;
+import dev.nandi0813.practice.util.TimeUtil;
 import dev.nandi0813.practice.manager.backend.GUIFile;
 import dev.nandi0813.practice.manager.gui.GUI;
 import dev.nandi0813.practice.manager.gui.GUIManager;
@@ -8,7 +9,6 @@ import dev.nandi0813.practice.manager.gui.GUIType;
 import dev.nandi0813.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.nandi0813.practice.util.InventoryUtil;
 import dev.nandi0813.practice.util.KitData;
-import dev.nandi0813.practice.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -89,7 +89,7 @@ public class LadderPreviewGui extends GUI {
                 effects.add(GUIFile.getString("GUIS.LADDER-PREVIEW.ICONS.HAS-EFFECT.FORMAT")
                         .replace("%name%", StringUtils.capitalize(potionEffect.getType().getKey().getKey().replace("_", " ").toLowerCase()))
                         .replace("%amplifier%", String.valueOf(potionEffect.getAmplifier() + 1))
-                        .replace("%time%", StringUtil.formatMillisecondsToMinutes((potionEffect.getDuration() / 20) * 1000L))
+                        .replace("%time%", TimeUtil.formatDuration((potionEffect.getDuration() / 20) * 1000L))
                 );
             }
 

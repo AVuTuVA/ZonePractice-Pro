@@ -1,6 +1,7 @@
 package dev.nandi0813.practice.manager.fight.match;
 
 import dev.nandi0813.api.Event.Match.MatchRoundEndEvent;
+import dev.nandi0813.practice.util.TimeUtil;
 import dev.nandi0813.api.Event.Match.MatchRoundStartEvent;
 import dev.nandi0813.practice.ZonePractice;
 import dev.nandi0813.practice.manager.fight.match.enums.RoundStatus;
@@ -15,7 +16,6 @@ import dev.nandi0813.practice.manager.fight.util.BedUtil;
 import dev.nandi0813.practice.manager.fight.util.Stats.Statistic;
 import dev.nandi0813.practice.manager.ladder.enums.LadderType;
 import dev.nandi0813.practice.manager.profile.ProfileManager;
-import dev.nandi0813.practice.util.StringUtil;
 import dev.nandi0813.practice.util.entityhider.PlayerHider;
 import dev.nandi0813.practice.util.playerutil.PlayerUtil;
 import lombok.Getter;
@@ -167,7 +167,7 @@ public abstract class Round extends BukkitRunnable {
     }
 
     public String getFormattedTime() {
-        return StringUtil.formatMillisecondsToMinutes(durationTime * 1000L);
+        return TimeUtil.formatDuration(durationTime * 1000L);
     }
 
     private void showPlayersToEachOther() {

@@ -1,7 +1,7 @@
 package dev.nandi0813.practice.util.interfaces;
 
 import dev.nandi0813.practice.ZonePractice;
-import dev.nandi0813.practice.util.StringUtil;
+import dev.nandi0813.practice.util.TimeUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -52,7 +52,7 @@ public abstract class Runnable extends BukkitRunnable {
     public abstract void run();
 
     public String getFormattedTime() {
-        return StringUtil.formatMillisecondsToMinutes(seconds * 1000L);
+        return TimeUtil.formatDuration(seconds * 1000L);
     }
 
 }
