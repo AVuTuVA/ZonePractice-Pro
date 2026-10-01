@@ -58,6 +58,7 @@ public class ProfileSettingsGui extends GUI {
         Inventory inventory = gui.get(1);
 
         inventory.setItem(10, getDuelRequestItem(profile.isDuelRequest()));
+        inventory.setItem(20, getAutoQueueItem(profile.isAutoQueue()));
         inventory.setItem(11, getSidebarItem(profile.isSidebar()));
         inventory.setItem(12, getPartyInviteItem(profile.isPartyInvites()));
         inventory.setItem(13, getPrivateMessageItem(profile.isPrivateMessages()));
@@ -100,6 +101,17 @@ public class ProfileSettingsGui extends GUI {
                 case 10:
                     if (player.hasPermission("zpp.settings.duelrequest")) {
                         profile.setDuelRequest(!profile.isDuelRequest());
+
+                        update();
+                        if (!player.hasPermission("zpp.bypass.cooldown"))
+                            PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                    } else
+                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+
+                    break;
+                case 20:
+                    if (player.hasPermission("zpp.settings.autoqueue")) {
+                        profile.setAutoQueue(!profile.isAutoQueue());
 
                         update();
                         if (!player.hasPermission("zpp.bypass.cooldown"))
@@ -230,6 +242,13 @@ public class ProfileSettingsGui extends GUI {
             return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.DUEL-REQUEST.ENABLED").get();
 
         return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.DUEL-REQUEST.DISABLED").get();
+    }
+
+    private static ItemStack getAutoQueueItem(boolean autoQueue) {
+        if (autoQueue)
+            return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.AUTO-QUEUE.ENABLED").get();
+
+        return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.AUTO-QUEUE.DISABLED").get();
     }
 
     private static ItemStack getSidebarItem(boolean sidebar) {

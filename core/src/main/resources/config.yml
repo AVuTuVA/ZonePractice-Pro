@@ -1,4 +1,4 @@
-VERSION: 79
+VERSION: 80
 
 # Mysql database setup.
 MYSQL-DATABASE:
@@ -392,6 +392,8 @@ MATCH-SETTINGS:
   REMATCH: # Players get an item in their lobby inventory after duels, so they can easily request a rematch.
     ENABLED: true
     EXPIRE-TIME: 20 # sec
+  AUTO-QUEUE: # When enabled, players who turned on the Auto-Queue setting are automatically re-queued into the same ladder and weight class after their duel ends.
+    ENABLED: true
   KIT-ITEMS:
     DEFAULT-KIT:
       NAME: "<yellow><bold>Default Kit"
@@ -733,6 +735,7 @@ PLAYER:
     ENABLED: true # If enabled, the player's chat will be formatted by their group. It is only viable if "SERVER-CHAT" is also enabled.
   DEFAULT-SETTINGS:
     DUELREQUEST: true
+    AUTOQUEUE: false
     SIDEBAR: true
     HIDEPLAYERS: false
     PARTYINVITES: true

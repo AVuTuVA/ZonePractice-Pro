@@ -63,6 +63,7 @@ public class Profile {
 
     // Player settings
     private boolean duelRequest;
+    private boolean autoQueue;
     private boolean sidebar;
     private boolean hidePlayers;
     private boolean partyInvites;
