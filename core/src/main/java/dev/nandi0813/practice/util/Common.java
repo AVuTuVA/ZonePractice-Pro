@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public final class Common {
 
@@ -150,31 +149,6 @@ public final class Common {
         return 0;
     }
 
-    private static final Map<String, String> LEGACY_ENCHANTMENT_ALIASES = Map.ofEntries(
-            Map.entry("DAMAGE_ALL", "sharpness"),
-            Map.entry("DAMAGE_UNDEAD", "smite"),
-            Map.entry("DAMAGE_ARTHROPODS", "bane_of_arthropods"),
-            Map.entry("ARROW_DAMAGE", "power"),
-            Map.entry("ARROW_KNOCKBACK", "punch"),
-            Map.entry("ARROW_FIRE", "flame"),
-            Map.entry("ARROW_INFINITE", "infinity"),
-            Map.entry("DIG_SPEED", "efficiency"),
-            Map.entry("DURABILITY", "unbreaking"),
-            Map.entry("LOOT_BONUS_BLOCKS", "fortune"),
-            Map.entry("LOOT_BONUS_MOBS", "looting"),
-            Map.entry("OXYGEN", "respiration"),
-            Map.entry("PROTECTION_ENVIRONMENTAL", "protection"),
-            Map.entry("PROTECTION_FIRE", "fire_protection"),
-            Map.entry("PROTECTION_FALL", "feather_falling"),
-            Map.entry("PROTECTION_EXPLOSIONS", "blast_protection"),
-            Map.entry("PROTECTION_PROJECTILE", "projectile_protection"),
-            Map.entry("WATER_WORKER", "aqua_affinity"),
-            Map.entry("THORNS", "thorns"),
-            Map.entry("KNOCKBACK", "knockback"),
-            Map.entry("FIRE_ASPECT", "fire_aspect"),
-            Map.entry("SILK_TOUCH", "silk_touch")
-    );
-
     public static Iterable<Enchantment> getAllEnchantments() {
         return RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT);
     }
@@ -188,14 +162,6 @@ public final class Common {
         Enchantment enchantment = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).get(NamespacedKey.minecraft(normalized));
         if (enchantment != null) {
             return enchantment;
-        }
-
-        String mapped = LEGACY_ENCHANTMENT_ALIASES.get(enchantmentName.trim().toUpperCase(Locale.ROOT));
-        if (mapped != null) {
-            enchantment = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).get(NamespacedKey.minecraft(mapped));
-            if (enchantment != null) {
-                return enchantment;
-            }
         }
 
         for (Enchantment value : getAllEnchantments()) {

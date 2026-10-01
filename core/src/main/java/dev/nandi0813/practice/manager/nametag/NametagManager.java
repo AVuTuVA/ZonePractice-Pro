@@ -1,6 +1,7 @@
 package dev.nandi0813.practice.manager.nametag;
 
 import dev.nandi0813.practice.ZonePractice;
+import dev.nandi0813.practice.manager.backend.ConfigManager;
 import dev.nandi0813.practice.manager.fight.util.PlayerUtil;
 import dev.nandi0813.practice.manager.inventory.InventoryUtil;
 import dev.nandi0813.practice.manager.profile.Profile;
@@ -28,24 +29,28 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class NametagManager {
 
-    private static final boolean SATURATED_HEART_INDICATOR = dev.nandi0813.practice.manager.backend.ConfigManager.getBoolean("MATCH-SETTINGS.HEALTH-BELOW-NAME.SATURATED-HEART-INDICATOR");
-    private static final boolean DECIMAL_ALWAYS_SHOW = dev.nandi0813.practice.manager.backend.ConfigManager.getBoolean("MATCH-SETTINGS.HEALTH-BELOW-NAME.DECIMAL-HEART-INDICATOR.ALWAYS-SHOW");
-    private static final boolean LOW_HEALTH_RATIO = dev.nandi0813.practice.manager.backend.ConfigManager.getBoolean("MATCH-SETTINGS.HEALTH-BELOW-NAME.DECIMAL-HEART-INDICATOR.LOW-HEALTH-DECIMAL-RATIO");
-    private static final double LOW_HEALTH_THRESHOLD = dev.nandi0813.practice.manager.backend.ConfigManager.getDouble("MATCH-SETTINGS.HEALTH-BELOW-NAME.LOW-HEALTH-THRESHOLD") * 2.0;
-    private static final double CONFIG_SCALE = dev.nandi0813.practice.manager.backend.ConfigManager.getDouble("MATCH-SETTINGS.HEALTH-BELOW-NAME.SCALE");
-    private static final String HEALTH_SYMBOL = dev.nandi0813.practice.manager.backend.ConfigManager.getString("MATCH-SETTINGS.HEALTH-BELOW-NAME.SYMBOL");
-    private static final boolean TEXT_SHADOW = dev.nandi0813.practice.manager.backend.ConfigManager.getBoolean("MATCH-SETTINGS.HEALTH-BELOW-NAME.TEXT-SHADOW");
-    private static final int BACKGROUND = dev.nandi0813.practice.manager.backend.ConfigManager.getInt("MATCH-SETTINGS.HEALTH-BELOW-NAME.BACKGROUND");
-    private static final String TOP_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("MATCH-SETTINGS.HEALTH-BELOW-NAME.TOP-LINE");
-    private static final String BOTTOM_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("MATCH-SETTINGS.HEALTH-BELOW-NAME.BOTTOM-LINE");
-    private static final String LOBBY_TOP_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("PLAYER.LOBBY-NAMETAG.TOP-LINE");
-    private static final String LOBBY_BOTTOM_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("PLAYER.LOBBY-NAMETAG.BOTTOM-LINE");
-    private static final boolean LOBBY_TEXT_SHADOW = dev.nandi0813.practice.manager.backend.ConfigManager.getBoolean("PLAYER.LOBBY-NAMETAG.TEXT-SHADOW");
-    private static final int LOBBY_BACKGROUND = dev.nandi0813.practice.manager.backend.ConfigManager.getInt("PLAYER.LOBBY-NAMETAG.BACKGROUND");
-    private static final String FFA_TOP_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("FFA.NAMETAG.TOP-LINE");
-    private static final String FFA_BOTTOM_LINE = dev.nandi0813.practice.manager.backend.ConfigManager.getString("FFA.NAMETAG.BOTTOM-LINE");
-    private static final boolean FFA_TEXT_SHADOW = dev.nandi0813.practice.manager.backend.ConfigManager.getBoolean("FFA.NAMETAG.TEXT-SHADOW");
-    private static final int FFA_BACKGROUND = dev.nandi0813.practice.manager.backend.ConfigManager.getInt("FFA.NAMETAG.BACKGROUND");
+    private static final String HEALTH_PATH = "MATCH-SETTINGS.HEALTH-BELOW-NAME";
+    private static final String LOBBY_PATH = "PLAYER.LOBBY-NAMETAG";
+    private static final String FFA_PATH = "FFA.NAMETAG";
+
+    private boolean saturatedHeartIndicator;
+    private boolean decimalAlwaysShow;
+    private boolean lowHealthRatio;
+    private double lowHealthThreshold;
+    private double configScale;
+    private String healthSymbol;
+    private boolean textShadow;
+    private int background;
+    private String topLine;
+    private String bottomLine;
+    private String lobbyTopLine;
+    private String lobbyBottomLine;
+    private boolean lobbyTextShadow;
+    private int lobbyBackground;
+    private String ffaTopLine;
+    private String ffaBottomLine;
+    private boolean ffaTextShadow;
+    private int ffaBackground;
 
     private static final String BELOW_NAME_OBJECTIVE = "ZPP_BELOW";
 
@@ -60,6 +65,10 @@ public class NametagManager {
         if (instance == null)
             instance = new NametagManager();
         return instance;
+    }
+
+    private NametagManager() {
+        reloadConfig();
     }
 
     private final Map<UUID, ClientTextDisplay> displays = new ConcurrentHashMap<>();
@@ -97,6 +106,40 @@ public class NametagManager {
             updateNametag(online);
             refreshViewer(online);
         }
+    }
+
+    /**
+     * Re-reads the nametag config sections. Call this after a {@code /zpa reload}
+     * so lines, colors and backgrounds reflect the latest values.
+     */
+    public void reload() {
+        reloadConfig();
+
+        // Nametag styles and below-name health live in packet metadata, so every
+        // online player needs a fresh copy pushed to their client.
+        refreshAllNametags();
+        updateBelowNameHealthLines();
+    }
+
+    private void reloadConfig() {
+        saturatedHeartIndicator = ConfigManager.getBoolean(HEALTH_PATH + ".SATURATED-HEART-INDICATOR");
+        decimalAlwaysShow = ConfigManager.getBoolean(HEALTH_PATH + ".DECIMAL-HEART-INDICATOR.ALWAYS-SHOW");
+        lowHealthRatio = ConfigManager.getBoolean(HEALTH_PATH + ".DECIMAL-HEART-INDICATOR.LOW-HEALTH-DECIMAL-RATIO");
+        lowHealthThreshold = ConfigManager.getDouble(HEALTH_PATH + ".LOW-HEALTH-THRESHOLD") * 2.0;
+        configScale = ConfigManager.getDouble(HEALTH_PATH + ".SCALE");
+        healthSymbol = ConfigManager.getString(HEALTH_PATH + ".SYMBOL");
+        textShadow = ConfigManager.getBoolean(HEALTH_PATH + ".TEXT-SHADOW");
+        background = ConfigManager.getInt(HEALTH_PATH + ".BACKGROUND");
+        topLine = ConfigManager.getString(HEALTH_PATH + ".TOP-LINE");
+        bottomLine = ConfigManager.getString(HEALTH_PATH + ".BOTTOM-LINE");
+        lobbyTopLine = ConfigManager.getString(LOBBY_PATH + ".TOP-LINE");
+        lobbyBottomLine = ConfigManager.getString(LOBBY_PATH + ".BOTTOM-LINE");
+        lobbyTextShadow = ConfigManager.getBoolean(LOBBY_PATH + ".TEXT-SHADOW");
+        lobbyBackground = ConfigManager.getInt(LOBBY_PATH + ".BACKGROUND");
+        ffaTopLine = ConfigManager.getString(FFA_PATH + ".TOP-LINE");
+        ffaBottomLine = ConfigManager.getString(FFA_PATH + ".BOTTOM-LINE");
+        ffaTextShadow = ConfigManager.getBoolean(FFA_PATH + ".TEXT-SHADOW");
+        ffaBackground = ConfigManager.getInt(FFA_PATH + ".BACKGROUND");
     }
 
     public void shutdown() {
@@ -172,9 +215,11 @@ public class NametagManager {
 
         hideVanillaNametag(player);
 
-        ClientTextDisplay display = displays.computeIfAbsent(player.getUniqueId(), ignored -> new ClientTextDisplay(player));
+        ClientTextDisplay display = displays.computeIfAbsent(player.getUniqueId(), ignored -> createDisplay(player));
         applyNametagStyle(display, player);
         display.setText(buildNametagComponent(player));
+
+        preserveTabListName(player);
 
         for (Player viewer : Bukkit.getOnlinePlayers()) {
             refreshForViewer(viewer, player, true);
@@ -267,6 +312,8 @@ public class NametagManager {
         }
 
         for (Player target : Bukkit.getOnlinePlayers()) {
+            hideVanillaNametag(target);
+
             ClientTextDisplay display = displays.computeIfAbsent(
                     target.getUniqueId(),
                     ignored -> createDisplay(target)
@@ -424,13 +471,13 @@ public class NametagManager {
         }
 
         if (belowNameUsers.contains(player.getUniqueId())) {
-            composed = applyNametagLines(player, composed, TOP_LINE, BOTTOM_LINE);
+            composed = applyNametagLines(player, composed, topLine, bottomLine);
         }
 
         if (profile != null && (profile.getStatus() == ProfileStatus.LOBBY || profile.getStatus() == ProfileStatus.STAFF_MODE)) {
-            composed = applyNametagLines(player, composed, LOBBY_TOP_LINE, LOBBY_BOTTOM_LINE);
+            composed = applyNametagLines(player, composed, lobbyTopLine, lobbyBottomLine);
         } else if (profile != null && profile.getStatus() == ProfileStatus.FFA) {
-            composed = applyNametagLines(player, composed, FFA_TOP_LINE, FFA_BOTTOM_LINE);
+            composed = applyNametagLines(player, composed, ffaTopLine, ffaBottomLine);
         }
 
         Component belowLine = belowNameLines.get(player.getUniqueId());
@@ -519,21 +566,21 @@ public class NametagManager {
 
     private Component formatHealth(Player player, double health) {
         NamedTextColor heartColor = NamedTextColor.RED;
-        if (SATURATED_HEART_INDICATOR && isSaturated(player)) {
+        if (saturatedHeartIndicator && isSaturated(player)) {
             heartColor = NamedTextColor.YELLOW;
         }
 
-        double scale = Math.clamp(CONFIG_SCALE == 0 ? 20.0 : CONFIG_SCALE, 10.0, 100.0);
+        double scale = Math.clamp(configScale == 0 ? 20.0 : configScale, 10.0, 100.0);
         double maxHealth = java.util.Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
         double displayHealth = (health / maxHealth) * scale;
 
-        if (DECIMAL_ALWAYS_SHOW || (LOW_HEALTH_RATIO && health < LOW_HEALTH_THRESHOLD)) {
+        if (decimalAlwaysShow || (lowHealthRatio && health < lowHealthThreshold)) {
             return Component.text(String.format(java.util.Locale.US, "%.1f", displayHealth), NamedTextColor.WHITE)
-                    .append(Component.text(HEALTH_SYMBOL, heartColor));
+                    .append(Component.text(healthSymbol, heartColor));
         }
 
         return Component.text((int) Math.ceil(displayHealth), NamedTextColor.WHITE)
-                .append(Component.text(HEALTH_SYMBOL, heartColor));
+                .append(Component.text(healthSymbol, heartColor));
     }
 
     private boolean isSaturated(Player player) {
@@ -551,18 +598,18 @@ public class NametagManager {
 
     private void applyNametagStyle(ClientTextDisplay display, Player player) {
         if (belowNameUsers.contains(player.getUniqueId())) {
-            display.setTextShadow(TEXT_SHADOW);
-            display.setBackground(BACKGROUND);
+            display.setTextShadow(textShadow);
+            display.setBackground(background);
             return;
         }
 
         Profile profile = ProfileManager.getInstance().getProfile(player);
         if (profile != null && profile.getStatus() == ProfileStatus.FFA) {
-            display.setTextShadow(FFA_TEXT_SHADOW);
-            display.setBackground(FFA_BACKGROUND);
+            display.setTextShadow(ffaTextShadow);
+            display.setBackground(ffaBackground);
         } else if (profile != null && (profile.getStatus() == ProfileStatus.LOBBY || profile.getStatus() == ProfileStatus.STAFF_MODE)) {
-            display.setTextShadow(LOBBY_TEXT_SHADOW);
-            display.setBackground(LOBBY_BACKGROUND);
+            display.setTextShadow(lobbyTextShadow);
+            display.setBackground(lobbyBackground);
         } else {
             display.setTextShadow(false);
             display.setBackground(0);

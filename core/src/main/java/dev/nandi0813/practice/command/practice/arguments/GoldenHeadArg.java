@@ -4,6 +4,7 @@ import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.server.ServerManager;
 import dev.nandi0813.practice.util.Common;
 import dev.nandi0813.practice.util.GoldenHead;
+import dev.nandi0813.practice.util.NumberUtil;
 import dev.nandi0813.practice.util.StringUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +28,7 @@ public final class GoldenHeadArg {
         if (args.length == 1) {
             player.getInventory().addItem(goldenHead.getItem().clone());
         } else if (args.length == 2) {
-            if (StringUtil.isNotInteger(args[1])) {
+            if (NumberUtil.isNotInteger(args[1])) {
                 Common.sendMMMessage(player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.GOLDENHEAD.INVALID-AMOUNT"));
                 return;
             }

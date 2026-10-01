@@ -169,7 +169,7 @@ public class InventoryGui extends GUI {
                 effectStrings.add(GUIFile.getString("GUIS.SETUP.LADDER.INVENTORY.ICONS.EFFECTS.HAS-EFFECT.EFFECT-FORMAT")
                         .replace("%name%", StringUtils.capitalize(potionEffect.getType().getKey().getKey().replace("_", " ").toLowerCase()))
                         .replace("%amplifier%", String.valueOf(potionEffect.getAmplifier() + 1))
-                        .replace("%time%", StringUtil.formatMillisecondsToMinutes((potionEffect.getDuration() / 20) * 1000L))
+                        .replace("%time%", TimeUtil.formatDuration((potionEffect.getDuration() / 20) * 1000L))
                 );
 
             List<String> lore = new ArrayList<>();

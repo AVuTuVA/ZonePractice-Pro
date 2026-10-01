@@ -1,6 +1,7 @@
 package dev.nandi0813.practice.manager.fight.match;
 
 import dev.nandi0813.api.Event.Match.MatchEndEvent;
+import dev.nandi0813.practice.util.TimeUtil;
 import dev.nandi0813.api.Event.Match.MatchStartEvent;
 import dev.nandi0813.api.Event.Spectate.End.MatchSpectateEndEvent;
 import dev.nandi0813.api.Event.Spectate.Start.MatchSpectateStartEvent;
@@ -35,7 +36,6 @@ import dev.nandi0813.practice.util.Common;
 import dev.nandi0813.practice.util.Cuboid;
 import dev.nandi0813.practice.util.LastAttackerTracker;
 import dev.nandi0813.practice.util.PermanentConfig;
-import dev.nandi0813.practice.util.StringUtil;
 import dev.nandi0813.practice.util.entityhider.PlayerHider;
 import dev.nandi0813.practice.util.fightmapchange.FightChangeOptimized;
 import dev.nandi0813.practice.util.interfaces.Spectatable;
@@ -634,7 +634,7 @@ public abstract class Match extends BukkitRunnable implements Spectatable, dev.n
     }
 
     public String getFormattedTime() {
-        return StringUtil.formatMillisecondsToMinutes(duration * 1000L);
+        return TimeUtil.formatDuration(duration * 1000L);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package dev.nandi0813.practice.manager.gui.guis.profile;
 
 import dev.nandi0813.practice.ZonePractice;
+import dev.nandi0813.practice.util.TimeUtil;
 import dev.nandi0813.practice.manager.backend.GUIFile;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.fight.event.EventManager;
@@ -21,7 +22,6 @@ import dev.nandi0813.practice.manager.spectator.SpectatorManager;
 import dev.nandi0813.practice.util.Common;
 import dev.nandi0813.practice.util.InventoryUtil;
 import dev.nandi0813.practice.util.ItemCreateUtil;
-import dev.nandi0813.practice.util.StringUtil;
 import dev.nandi0813.practice.util.interfaces.Spectatable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -207,8 +207,8 @@ public class ProfileSetupGui extends GUI {
         guiItem
                 .replace("%player%", profile.getPlayer().getName())
                 .replace("%uuid%", String.valueOf(profile.getUuid()))
-                .replace("%first_played%", StringUtil.getDate(profile.getFirstJoin()))
-                .replace("%last_played%", (profile.getStatus().equals(ProfileStatus.OFFLINE) ? StringUtil.getDate(profile.getLastJoin()) : GUIFile.getString("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.BASIC-INFO.ONLINE-STATUS")))
+                .replace("%first_played%", TimeUtil.formatDate(profile.getFirstJoin()))
+                .replace("%last_played%", (profile.getStatus().equals(ProfileStatus.OFFLINE) ? TimeUtil.formatDate(profile.getLastJoin()) : GUIFile.getString("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.BASIC-INFO.ONLINE-STATUS")))
                 .replace("%unranked_left%", String.valueOf(profile.getUnrankedLeft()))
                 .replace("%ranked_left%", String.valueOf(profile.getRankedLeft()))
                 .replace("%division_fullName%", profile.getStats().getDivision() != null ? Common.mmToNormal(profile.getStats().getDivision().getFullName()) : "<red>N/A")
@@ -266,7 +266,7 @@ public class ProfileSetupGui extends GUI {
                     .replace("%player%", profile.getPlayer().getName())
                     .replace("%banner%", rankedBan.getBanner() == null ? "<red>Console" : rankedBan.getBanner().getPlayer().getName())
                     .replace("%reason%", rankedBan.getReason() == null ? "<red>N/A" : rankedBan.getReason())
-                    .replace("%time%", StringUtil.getDate(rankedBan.getTime()))
+                    .replace("%time%", TimeUtil.formatDate(rankedBan.getTime()))
                     .get();
         } else
             return null;

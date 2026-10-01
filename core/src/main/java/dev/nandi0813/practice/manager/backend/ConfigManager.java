@@ -70,6 +70,14 @@ public enum ConfigManager {
         return getBoolean("CHAT.SHOW-MATCH-CHAT-TO-SPECTATORS");
     }
 
+    public static boolean isPartyChatEnabled() {
+        return getBoolean("CHAT.PARTY-CHAT.ENABLED");
+    }
+
+    public static String getPartyChatShortcut() {
+        return getString("CHAT.PARTY-CHAT.SHORTCUT");
+    }
+
     public static boolean isShowPlayersInTab() {
         return getBoolean("MATCH-SETTINGS.SHOW-PLAYERS-IN-TAB");
     }
@@ -80,10 +88,6 @@ public enum ConfigManager {
 
     public static String getSpectatorTabPrefix() {
         return getString("MATCH-SETTINGS.SPECTATOR-TAB-PREFIX");
-    }
-
-    public static boolean isHideLastEliminatedPlayer() {
-        return getBoolean("MATCH-SETTINGS.HIDE-LAST-ELIMINATED-PLAYER");
     }
 
     public static int getInt(String loc) {

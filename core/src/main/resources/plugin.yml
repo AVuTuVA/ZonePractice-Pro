@@ -186,6 +186,7 @@ permissions:
       zpp.settings.open: true
       zpp.bypass.cooldown: false
       zpp.settings.duelrequest: true
+      zpp.settings.autoqueue: true
       zpp.settings.scoreboard: true
       zpp.settings.privatemessage: true
       zpp.settings.partyinvite: true
@@ -198,6 +199,8 @@ permissions:
     default: true
   zpp.settings.duelrequest:
     description: Toggle duel requests.
+  zpp.settings.autoqueue:
+    description: Toggle auto-queue after a match ends.
   zpp.settings.scoreboard:
     description: Toggle the scoreboard.
   zpp.settings.privatemessage:

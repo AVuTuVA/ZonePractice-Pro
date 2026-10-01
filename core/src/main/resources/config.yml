@@ -1,4 +1,4 @@
-VERSION: 78
+VERSION: 80
 
 # Mysql database setup.
 MYSQL-DATABASE:
@@ -233,7 +233,6 @@ MATCH-SETTINGS:
   SHOW-PLAYERS-IN-TAB: false # If true, all online players remain visible in the tab list even when their entities are hidden.
   SHOW-SPECTATORS-IN-TAB: false # If true, the fighters of a match see its spectators in their tab list.
   SPECTATOR-TAB-PREFIX: "<dark_gray>[<gray>Spec<dark_gray>] " # Prefix in front of a spectator's name in the tab list of the fighters. Supports %player%, "" for none.
-  HIDE-LAST-ELIMINATED-PLAYER: false # If true, the player eliminated last is hidden from the arena as well, so only the winner stays visible.
   TEAMS:
     TEAM1:
       NAME: "<blue>[B]"
@@ -393,6 +392,8 @@ MATCH-SETTINGS:
   REMATCH: # Players get an item in their lobby inventory after duels, so they can easily request a rematch.
     ENABLED: true
     EXPIRE-TIME: 20 # sec
+  AUTO-QUEUE: # When enabled, players who turned on the Auto-Queue setting are automatically re-queued into the same ladder and weight class after their duel ends.
+    ENABLED: true
   KIT-ITEMS:
     DEFAULT-KIT:
       NAME: "<yellow><bold>Default Kit"
@@ -734,6 +735,7 @@ PLAYER:
     ENABLED: true # If enabled, the player's chat will be formatted by their group. It is only viable if "SERVER-CHAT" is also enabled.
   DEFAULT-SETTINGS:
     DUELREQUEST: true
+    AUTOQUEUE: false
     SIDEBAR: true
     HIDEPLAYERS: false
     PARTYINVITES: true
@@ -754,7 +756,9 @@ CHAT:
   SERVER-CHAT-ENABLED: true
   ISOLATE-MATCH-CHAT: true # If true, active match/FFA players only see messages from fighters in their own ongoing fight.
   SHOW-MATCH-CHAT-TO-SPECTATORS: true # If true, spectators of a fight also see the messages of the fighters they are watching.
-  PARTY-CHAT-ENABLED: true
+  PARTY-CHAT:
+    ENABLED: true
+    SHORTCUT: "@" # Prefix a message with this symbol to send it to your party instead of the server, like @hello world. Set to "" or false to disable the shortcut, then only /party chat <message> works.
   STAFF-CHAT:
     ENABLED: true
     SHORTCUT: true # If true, you can use send message like #hello world instead of enabling staff chat each time.

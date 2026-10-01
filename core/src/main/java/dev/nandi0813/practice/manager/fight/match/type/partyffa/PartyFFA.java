@@ -2,7 +2,6 @@ package dev.nandi0813.practice.manager.fight.match.type.partyffa;
 
 import dev.nandi0813.practice.ZonePractice;
 import dev.nandi0813.practice.manager.arena.arenas.Arena;
-import dev.nandi0813.practice.manager.backend.ConfigManager;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.fight.match.Match;
 import dev.nandi0813.practice.manager.fight.match.MatchManager;
@@ -90,7 +89,6 @@ public class PartyFFA extends Match {
 
     @Override
     protected void killPlayer(Player player, String deathMessage) {
-        boolean endRound = false;
         PartyFfaRound round = this.getCurrentRound();
 
         // Use the Match helper method to handle ladder-specific death behavior
@@ -136,11 +134,9 @@ public class PartyFFA extends Match {
                 if (winnerPlayer != null) {
                     round.setRoundWinner(winnerPlayer);
                     round.endRound();
-                    endRound = true;
-                }
-
-                if (!endRound || ConfigManager.isHideLastEliminatedPlayer())
+                } else {
                     MatchPlayerUtil.hidePlayerPartyGames(player, this.players);
+                }
                 break;
 
             case NO_ACTION:

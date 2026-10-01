@@ -1,13 +1,13 @@
 package dev.nandi0813.practice.manager.queue.runnables;
 
 import dev.nandi0813.practice.manager.backend.ConfigManager;
+import dev.nandi0813.practice.util.TimeUtil;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.profile.Profile;
 import dev.nandi0813.practice.manager.profile.ProfileManager;
 import dev.nandi0813.practice.manager.profile.enums.ProfileStatus;
 import dev.nandi0813.practice.manager.queue.CustomKitQueueManager;
 import dev.nandi0813.practice.util.Common;
-import dev.nandi0813.practice.util.StringUtil;
 import dev.nandi0813.practice.util.actionbar.ActionBarPriority;
 import dev.nandi0813.practice.util.interfaces.Runnable;
 import lombok.Getter;
@@ -83,7 +83,7 @@ public class CustomKitSearchRunnable extends Runnable {
 
         profile.getActionBar().setMessage(ACTION_BAR_ID,
                 searchingActionbar
-                        .replace("%elapsed%", StringUtil.formatMillisecondsToMinutes(seconds * 1000L))
+                        .replace("%elapsed%", TimeUtil.formatDuration(seconds * 1000L))
                         .replace("%kit%", hostedKitName == null ? "-" : hostedKitName),
                 -1,
                 ActionBarPriority.NORMAL);

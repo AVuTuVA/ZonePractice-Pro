@@ -1,4 +1,4 @@
-VERSION: 45
+VERSION: 46
 
 GENERAL-FILLER-ITEM:
   NAME: " "
@@ -750,6 +750,31 @@ GUIS:
             - ""
             - " <gray><bold>► <gray>Allow other players to duel you."
             - " <red><bold>► <gray>Don't allow other players to duel you."
+            - "<dark_gray><st>--------------------------------"
+      AUTO-QUEUE:
+        ENABLED:
+          NAME: "<aqua>Toggle Auto-Queue"
+          MATERIAL: GOLDEN_SWORD
+          LORE:
+            - "<dark_gray><st>--------------------------------"
+            - "<gray>If enabled, you will be"
+            - "<gray>automatically re-queued into"
+            - "<gray>the same ladder after a match."
+            - ""
+            - " <green><bold>► <gray>Auto-queue after matches."
+            - " <gray><bold>► <gray>Return to the lobby after matches."
+            - "<dark_gray><st>--------------------------------"
+        DISABLED:
+          NAME: "<aqua>Toggle Auto-Queue"
+          MATERIAL: GOLDEN_SWORD
+          LORE:
+            - "<dark_gray><st>--------------------------------"
+            - "<gray>If enabled, you will be"
+            - "<gray>automatically re-queued into"
+            - "<gray>the same ladder after a match."
+            - ""
+            - " <gray><bold>► <gray>Auto-queue after matches."
+            - " <red><bold>► <gray>Return to the lobby after matches."
             - "<dark_gray><st>--------------------------------"
       SIDEBAR:
         ENABLED:

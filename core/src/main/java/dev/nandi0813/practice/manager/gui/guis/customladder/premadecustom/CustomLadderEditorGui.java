@@ -1,6 +1,7 @@
 package dev.nandi0813.practice.manager.gui.guis.customladder.premadecustom;
 
 import dev.nandi0813.practice.ZonePractice;
+import dev.nandi0813.practice.util.TimeUtil;
 import dev.nandi0813.practice.manager.backend.GUIFile;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.fight.match.enums.WeightClass;
@@ -18,7 +19,6 @@ import dev.nandi0813.practice.manager.profile.enums.ProfileStatus;
 import dev.nandi0813.practice.util.Common;
 import dev.nandi0813.practice.util.InventoryUtil;
 import dev.nandi0813.practice.util.ItemCreateUtil;
-import dev.nandi0813.practice.util.StringUtil;
 import dev.nandi0813.practice.util.cooldown.CooldownObject;
 import dev.nandi0813.practice.util.cooldown.PlayerCooldown;
 import lombok.Getter;
@@ -332,7 +332,7 @@ public class CustomLadderEditorGui extends GUI {
                 effects.add(GUIFile.getString("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.HAS-EFFECT.FORMAT")
                         .replace("%name%", StringUtils.capitalize(potionEffect.getType().getKey().getKey().replace("_", " ").toLowerCase()))
                         .replace("%amplifier%", String.valueOf(potionEffect.getAmplifier() + 1))
-                        .replace("%time%", StringUtil.formatMillisecondsToMinutes((potionEffect.getDuration() / 20) * 1000L))
+                        .replace("%time%", TimeUtil.formatDuration((potionEffect.getDuration() / 20) * 1000L))
                 );
             }
 

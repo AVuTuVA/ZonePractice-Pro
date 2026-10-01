@@ -39,6 +39,9 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
                 case "accept":
                     PartyAcceptArg.AcceptCommand(player, label, args);
                     break;
+                case "chat":
+                    PartyChatArg.ChatCommand(player, label, args);
+                    break;
                 case "disband":
                     PartyDisbandArg.DisbandCommand(player, label, args);
                     break;
@@ -94,6 +97,7 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
                     arguments.add("invite");
 
                 arguments.add("leave");
+                arguments.add("chat");
             } else {
                 arguments.add("create");
                 arguments.add("join");

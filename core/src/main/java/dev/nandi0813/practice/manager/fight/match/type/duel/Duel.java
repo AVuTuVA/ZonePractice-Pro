@@ -2,6 +2,7 @@ package dev.nandi0813.practice.manager.fight.match.type.duel;
 
 import dev.nandi0813.practice.ZonePractice;
 import dev.nandi0813.practice.manager.arena.arenas.Arena;
+import dev.nandi0813.practice.manager.backend.ConfigManager;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.fight.match.Match;
 import dev.nandi0813.practice.manager.fight.match.MatchManager;
@@ -14,23 +15,21 @@ import dev.nandi0813.practice.manager.fight.match.interfaces.Team;
 import dev.nandi0813.practice.manager.fight.match.util.TeamUtil;
 import dev.nandi0813.practice.manager.fight.match.util.TempKillPlayer;
 import dev.nandi0813.practice.manager.inventory.InventoryManager;
-import dev.nandi0813.practice.manager.nametag.NametagManager;
 import dev.nandi0813.practice.manager.ladder.abstraction.Ladder;
 import dev.nandi0813.practice.manager.ladder.abstraction.interfaces.DeathResult;
 import dev.nandi0813.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.nandi0813.practice.manager.profile.Profile;
 import dev.nandi0813.practice.manager.profile.ProfileManager;
+import dev.nandi0813.practice.manager.profile.enums.ProfileStatus;
+import dev.nandi0813.practice.manager.queue.QueueManager;
 import dev.nandi0813.practice.manager.server.sound.SoundManager;
 import dev.nandi0813.practice.manager.server.sound.SoundType;
 import dev.nandi0813.practice.util.playerutil.PlayerUtil;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 public class Duel extends Match implements Team {
@@ -223,7 +222,46 @@ public class Duel extends Match implements Team {
             // Set the player inventory to lobby inventory
             if (player.isOnline())
                 InventoryManager.getInstance().setLobbyInventory(player, true);
+
+            // Auto-queue: re-queue the player into the same ladder + weight class if enabled.
+            scheduleAutoQueue(player, this.ranked, this.ladder);
         }
+    }
+
+    /**
+     * Schedules an auto-queue attempt for {@code player} shortly after the match cleanup.
+     * The delay mirrors {@code RematchRequest} so it runs after the lobby inventory is set.
+     * All queue validation (frozen/disabled ladder, ranked limits/ban/ping) is delegated to
+     * {@link QueueManager}, which fails gracefully with a player message instead of throwing.
+     */
+    private void scheduleAutoQueue(Player player, boolean ranked, Ladder ladder) {
+        if (!ZonePractice.getInstance().isEnabled()) return;
+        if (!(ladder instanceof NormalLadder normalLadder)) return;
+
+        Bukkit.getScheduler().runTaskLater(ZonePractice.getInstance(), () -> {
+            boolean masterEnabled = ConfigManager.getBoolean("MATCH-SETTINGS.AUTO-QUEUE.ENABLED");
+            Profile profile = ProfileManager.getInstance().getProfile(player);
+            if (profile == null) return;
+
+            boolean online = player.isOnline();
+            boolean inLobby = profile.getStatus() == ProfileStatus.LOBBY;
+
+            if (!shouldAutoQueue(masterEnabled, profile.isAutoQueue(), online, inLobby)) return;
+
+            if (ranked)
+                QueueManager.getInstance().createRankedQueue(player, normalLadder);
+            else
+                QueueManager.getInstance().createUnrankedQueue(player, normalLadder);
+        }, 5L);
+    }
+
+    /**
+     * Pure eligibility check for auto-queue. Extracted so it can be unit tested without a live server.
+     *
+     * @return true only when all conditions hold.
+     */
+    static boolean shouldAutoQueue(boolean masterEnabled, boolean playerAutoQueue, boolean online, boolean inLobby) {
+        return masterEnabled && playerAutoQueue && online && inLobby;
     }
 
     @Override

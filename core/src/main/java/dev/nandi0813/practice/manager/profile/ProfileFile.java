@@ -98,6 +98,7 @@ public class ProfileFile extends ConfigFile {
 
     private void setSettings() {
         config.set("settings.duelrequest", profile.isDuelRequest());
+        config.set("settings.autoqueue", profile.isAutoQueue());
         config.set("settings.sidebar", profile.isSidebar());
         config.set("settings.hideplayers", profile.isHidePlayers());
         config.set("settings.partyinvites", profile.isPartyInvites());
@@ -176,6 +177,7 @@ public class ProfileFile extends ConfigFile {
         setCustomKitPerm();
 
         config.set("settings.duelrequest", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.DUELREQUEST"));
+        config.set("settings.autoqueue", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.AUTOQUEUE"));
         config.set("settings.sidebar", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.SIDEBAR"));
         config.set("settings.hideplayers", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.HIDEPLAYERS"));
         config.set("settings.partyinvites", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.PARTYINVITES"));
@@ -266,6 +268,7 @@ public class ProfileFile extends ConfigFile {
 
     private void loadSettings() {
         profile.setDuelRequest(config.getBoolean("settings.duelrequest"));
+        profile.setAutoQueue(config.getBoolean("settings.autoqueue"));
         profile.setSidebar(config.getBoolean("settings.sidebar"));
         profile.setHidePlayers(config.getBoolean("settings.hideplayers"));
         profile.setPartyInvites(config.getBoolean("settings.partyinvites"));

@@ -46,18 +46,21 @@ public class PlayerChatListener implements Listener {
 
 
         // Party chat
-        if (ConfigManager.getBoolean("CHAT.PARTY-CHAT-ENABLED")
+        String partyChatShortcut = ConfigManager.getPartyChatShortcut();
+
+        if (ConfigManager.isPartyChatEnabled()
+                && !partyChatShortcut.isEmpty()
                 && profile.isParty()
                 && party != null
-                && rawMessage.startsWith("@")) {
+                && rawMessage.startsWith(partyChatShortcut)) {
 
-            if (party.isPartyChat() || party.getLeader() == player) {
+            if (party.canUsePartyChat(player)) {
 
                 setViewers(e, party.getMembers());
 
                 applyRenderer(
                         e,
-                        Component.text(rawMessage.substring(1)),
+                        Component.text(rawMessage.substring(partyChatShortcut.length())),
                         ChatFormatUtil.buildPartyChatMessage(player)
                 );
 

@@ -1,6 +1,7 @@
 package dev.nandi0813.practice.manager.queue;
 
 import dev.nandi0813.api.Event.Queue.QueueEndEvent;
+import dev.nandi0813.practice.util.TimeUtil;
 import dev.nandi0813.api.Event.Queue.QueueStartEvent;
 import dev.nandi0813.practice.ZonePractice;
 import dev.nandi0813.practice.manager.arena.arenas.Arena;
@@ -20,7 +21,6 @@ import dev.nandi0813.practice.manager.queue.runnables.RankedSearchRunnable;
 import dev.nandi0813.practice.manager.queue.runnables.SearchRunnable;
 import dev.nandi0813.practice.manager.queue.runnables.UnrankedSearchRunnable;
 import dev.nandi0813.practice.util.Common;
-import dev.nandi0813.practice.util.StringUtil;
 import dev.nandi0813.practice.util.interfaces.Runnable;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.DeathProtection;
@@ -321,7 +321,7 @@ public class Queue extends Runnable implements dev.nandi0813.api.Interface.Queue
     }
 
     public String getFormattedDuration() {
-        return StringUtil.formatMillisecondsToMinutes(seconds * 1000L);
+        return TimeUtil.formatDuration(seconds * 1000L);
     }
 
 }
