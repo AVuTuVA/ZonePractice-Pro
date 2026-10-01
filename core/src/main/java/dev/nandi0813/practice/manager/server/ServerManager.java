@@ -9,6 +9,7 @@ import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.division.DivisionManager;
 import dev.nandi0813.practice.manager.fight.match.util.EloMode;
 import dev.nandi0813.practice.manager.inventory.InventoryManager;
+import dev.nandi0813.practice.manager.nametag.NametagManager;
 import dev.nandi0813.practice.manager.profile.Profile;
 import dev.nandi0813.practice.manager.profile.ProfileManager;
 import dev.nandi0813.practice.manager.profile.enums.ProfileStatus;
@@ -259,6 +260,7 @@ public class ServerManager implements Listener {
             loadLobby();
             SidebarManager.getInstance().reloadSidebarConfig();
             goldenHead.reload();
+            NametagManager.getInstance().reload();
             return true;
         } catch (Exception e) {
             Common.sendConsoleMMMessage("<red>Failed to reload practice files: " + e.getMessage());
