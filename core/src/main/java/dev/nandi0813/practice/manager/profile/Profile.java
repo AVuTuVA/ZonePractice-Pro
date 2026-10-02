@@ -121,6 +121,14 @@ public class Profile {
         return Bukkit.getPlayer(uuid);
     }
 
+    /**
+     * The name to record this profile under. A player who has never joined has no
+     * name yet, so the uuid stands in for one.
+     */
+    public String getStoredName() {
+        return player != null && player.getName() != null ? player.getName() : uuid.toString();
+    }
+
     // Data persistence
 
     public void save() {

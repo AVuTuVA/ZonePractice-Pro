@@ -20,6 +20,7 @@ import dev.nandi0813.practice.manager.arena.listener.ArenaListener;
 import dev.nandi0813.practice.manager.arena.setup.SpawnMarkerManager;
 import dev.nandi0813.practice.manager.arena.util.ArenaWorldUtil;
 import dev.nandi0813.practice.manager.backend.*;
+import dev.nandi0813.practice.manager.backend.database.Database;
 import dev.nandi0813.practice.manager.division.DivisionManager;
 import dev.nandi0813.practice.manager.fight.event.EventManager;
 import dev.nandi0813.practice.manager.fight.ffa.FFAListener;
@@ -75,6 +76,12 @@ public final class ZonePractice extends JavaPlugin {
     private static EntityHider entityHider;
     @Getter
     private static ArenaCopyUtilListener arenaCopyUtilListener;
+    /**
+     * The Mariadb backend, or {@code null} when it is disabled or unreachable. Every
+     * caller must treat it as optional; the plugin stores profiles on disk regardless.
+     */
+    @Getter
+    private static Database database;
 
     @Getter
     private static volatile boolean fullyLoaded = false;
@@ -122,7 +129,7 @@ public final class ZonePractice extends JavaPlugin {
         BackendManager.createFile(this);
         LanguageManager.createFile(this);
         GUIFile.createFile(this);
-        MysqlManager.openConnection();
+        initializeDatabase();
         MatchHistoryManager.getInstance(); // eagerly initialise singleton
         DivisionManager.getInstance().getData();
         ArenaWorldUtil.createArenaWorld();
@@ -214,14 +221,40 @@ public final class ZonePractice extends JavaPlugin {
         EventManager.getInstance().saveEventData();
         ArenaManager.getInstance().saveArenas();
         ProfileManager.getInstance().saveProfiles();
-        MysqlManager.saveProfilesBlocking(ProfileManager.getInstance().getProfiles().values());
+        // The plugin is going down, so wait for the final database flush instead of
+        // handing it to an executor that is about to be shut down.
+        ProfileManager.getInstance().saveProfilesToDatabase().join();
         LadderManager.getInstance().saveLadders();
         SidebarManager.getInstance().close();
         InventoryManager.getInstance().setData();
         if (metrics != null) metrics.shutdown();
         faststats_metrics.shutdown();
-        MysqlManager.closeConnection();
+        if (database != null) database.close();
         BackendManager.save();
+    }
+
+    /**
+     * Opens the configured database.
+     * <p>
+     * A database that cannot be reached is not fatal: the plugin keeps running on
+     * its file storage, so the failure is reported and the plugin starts without one.
+     */
+    private static void initializeDatabase() {
+        if (!ConfigManager.getBoolean("MARIADB-DATABASE.ENABLED")) return;
+
+        try {
+            database = Database.forMariaDB(
+                    ConfigManager.getString("MARIADB-DATABASE.CONNECTION.HOST"),
+                    ConfigManager.getInt("MARIADB-DATABASE.CONNECTION.PORT"),
+                    ConfigManager.getString("MARIADB-DATABASE.CONNECTION.DATABASE"),
+                    ConfigManager.getString("MARIADB-DATABASE.CONNECTION.USER"),
+                    ConfigManager.getString("MARIADB-DATABASE.CONNECTION.PASSWORD"),
+                    Math.max(2, ConfigManager.getInt("MARIADB-DATABASE.CONNECTION.POOL-SIZE"))
+            );
+        } catch (Exception e) {
+            Common.sendConsoleMMMessage("<red>Error during database initialization, continuing without it: "
+                    + (e.getCause() != null ? e.getCause() : e).getMessage());
+        }
     }
 
     /**

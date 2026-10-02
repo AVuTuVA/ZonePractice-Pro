@@ -6,7 +6,7 @@ import dev.nandi0813.practice.manager.arena.arenas.Arena;
 import dev.nandi0813.practice.manager.arena.arenas.FFAArena;
 import dev.nandi0813.practice.manager.backend.ConfigManager;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
-import dev.nandi0813.practice.manager.backend.MysqlManager;
+import dev.nandi0813.practice.manager.profile.ProfileManager;
 import dev.nandi0813.practice.manager.fight.match.Match;
 import dev.nandi0813.practice.manager.fight.match.MatchManager;
 import dev.nandi0813.practice.manager.fight.util.BlockUtil;
@@ -108,9 +108,9 @@ public enum LadderUtil {
         }
 
         /*
-         * Delete the ladder statistics from the mysql table.
+         * Delete the ladder statistics from the mariadb table.
          */
-        MysqlManager.deleteLadderStatsAsync(ladder.getName());
+        ProfileManager.getInstance().deleteLadderStatsFromDatabase(ladder.getName());
     }
 
     public static void enableLadder(NormalLadder ladder) {

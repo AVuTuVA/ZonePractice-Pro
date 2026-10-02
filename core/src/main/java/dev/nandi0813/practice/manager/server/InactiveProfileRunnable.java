@@ -3,7 +3,6 @@ package dev.nandi0813.practice.manager.server;
 import dev.nandi0813.practice.ZonePractice;
 import dev.nandi0813.practice.manager.backend.ConfigManager;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
-import dev.nandi0813.practice.manager.backend.MysqlManager;
 import dev.nandi0813.practice.manager.profile.Profile;
 import dev.nandi0813.practice.manager.profile.ProfileManager;
 import lombok.Getter;
@@ -37,7 +36,7 @@ public class InactiveProfileRunnable extends BukkitRunnable {
             if (daysDiff > deleteAfter) {
                 if (profile.getFile().getFile().delete()) {
                     ProfileManager.getInstance().getProfiles().remove(profile.getUuid());
-                    deleteStatsFromMysql(profile);
+                    deleteStatsFromMariadb(profile);
 
                     count++;
                 }
@@ -48,10 +47,8 @@ public class InactiveProfileRunnable extends BukkitRunnable {
             ServerManager.getInstance().alertPlayers("zpp.admin", LanguageManager.getString("PROFILE.INACTIVITY-REMOVED").replace("%count%", String.valueOf(count)));
     }
 
-    private void deleteStatsFromMysql(Profile profile) {
-        if (!MysqlManager.isConnected(false)) return;
-
-        MysqlManager.deleteProfileStatsAsync(profile.getUuid());
+    private void deleteStatsFromMariadb(Profile profile) {
+        ProfileManager.getInstance().deleteProfileFromDatabase(profile.getUuid());
     }
 
 }

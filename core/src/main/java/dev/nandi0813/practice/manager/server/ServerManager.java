@@ -68,7 +68,7 @@ public class ServerManager implements Listener {
     @Getter
     private final AutoSaveRunnable autoSaveRunnable = new AutoSaveRunnable();
     @Getter
-    private final MysqlSaveRunnable mysqlSaveRunnable = new MysqlSaveRunnable();
+    private final MariadbSaveRunnable mariadbSaveRunnable = new MariadbSaveRunnable();
     @Getter
     private final InactiveProfileRunnable inactiveProfileRunnable = new InactiveProfileRunnable();
     @Getter
@@ -100,8 +100,8 @@ public class ServerManager implements Listener {
         }
         if (ConfigManager.getBoolean("RANKED.LIMIT.ENABLED"))
             profileLimitRunnable.begin();
-        if (ConfigManager.getBoolean("MYSQL-DATABASE.ENABLED"))
-            mysqlSaveRunnable.begin();
+        if (ConfigManager.getBoolean("MARIADB-DATABASE.ENABLED"))
+            mariadbSaveRunnable.begin();
 
         loadOfflinePlayers();
     }

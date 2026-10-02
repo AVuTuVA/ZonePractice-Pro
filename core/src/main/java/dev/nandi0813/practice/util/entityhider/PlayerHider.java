@@ -321,12 +321,16 @@ public class PlayerHider implements Listener {
 
 
     public void hidePlayer(Player observer, Player target) {
-        boolean showPlayersInTab = ConfigManager.isShowPlayersInTab();
+        boolean inLobby = ConfigManager.isShowPlayersInLobbyTab()
+                && ServerManager.getInstance().getInWorld().get(observer) == WorldEnum.LOBBY;
+        boolean showPlayersInTab = ConfigManager.isShowPlayersInTab() || inLobby;
 
         observer.hidePlayer(ZonePractice.getInstance(), target);
 
         if (showPlayersInTab) {
-            showTabEntry(observer, target);
+            // Re-adding the entry resets the name on the client side, so the lobby tab list has to
+            // carry the same name NametagManager broadcasts globally.
+            showTabEntry(observer, target, inLobby ? NametagManager.getInstance().getTabListName(target) : null);
         } else {
             removeTabEntry(observer, target);
         }

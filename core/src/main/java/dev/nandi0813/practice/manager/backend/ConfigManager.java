@@ -82,6 +82,10 @@ public enum ConfigManager {
         return getBoolean("MATCH-SETTINGS.SHOW-PLAYERS-IN-TAB");
     }
 
+    public static boolean isShowPlayersInLobbyTab() {
+        return getBoolean("MATCH-SETTINGS.SHOW-PLAYERS-IN-LOBBY-TAB");
+    }
+
     public static boolean isShowSpectatorsInTab() {
         return getBoolean("MATCH-SETTINGS.SHOW-SPECTATORS-IN-TAB");
     }

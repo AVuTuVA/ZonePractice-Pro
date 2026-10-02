@@ -2,8 +2,14 @@ package dev.nandi0813.practice.manager.profile;
 
 import dev.nandi0813.api.Event.NewPlayerJoin;
 import dev.nandi0813.practice.ZonePractice;
-import dev.nandi0813.practice.manager.backend.MysqlManager;
+import dev.nandi0813.practice.manager.backend.database.Database;
+import dev.nandi0813.practice.manager.backend.database.model.GlobalStatsRow;
+import dev.nandi0813.practice.manager.backend.database.model.LadderStatsRow;
 import dev.nandi0813.practice.manager.division.DivisionManager;
+import dev.nandi0813.practice.manager.ladder.LadderManager;
+import dev.nandi0813.practice.manager.ladder.abstraction.normal.NormalLadder;
+import dev.nandi0813.practice.manager.profile.statistics.LadderStats;
+import dev.nandi0813.practice.manager.profile.statistics.ProfileStat;
 import dev.nandi0813.practice.manager.gui.guis.profile.ProfileSettingsGui;
 import dev.nandi0813.practice.util.Common;
 import dev.nandi0813.practice.util.StartUpCallback;
@@ -15,6 +21,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ProfileManager {
@@ -105,15 +112,71 @@ public class ProfileManager {
             // 1. Load YAML profiles: settings, kits, cosmetics, timestamps
             loadProfilesFromDisk();
 
-            // 2. Load MySQL stats: elo, wins, losses per ladder
-            Collection<Profile> loadedProfiles = profiles.values();
-            MysqlManager.loadProfilesAsync(loadedProfiles).whenComplete((ignored, throwable) -> {
+            // 2. Overlay the database statistics: elo, wins, losses per ladder
+            loadProfilesFromDatabase().whenComplete((ignored, throwable) -> {
                 if (throwable != null) {
                     Common.sendConsoleMMMessage("<red>Error: " + throwable.getMessage());
                 }
                 Bukkit.getScheduler().runTask(ZonePractice.getInstance(), callback::onLoadingDone);
             });
         });
+    }
+
+    private CompletableFuture<Void> loadProfilesFromDatabase() {
+        Database database = ZonePractice.getDatabase();
+        if (database == null) return CompletableFuture.completedFuture(null);
+
+        List<CompletableFuture<Void>> futures = new ArrayList<>(profiles.size());
+        for (Profile profile : profiles.values()) {
+            CompletableFuture<Void> future = database.getGlobalStatsRepository().getStats(profile.getUuid())
+                    .thenAccept(row -> applyGlobalStats(row, profile))
+                    .thenCompose(ignored -> database.getLadderStatsRepository().getStats(profile.getUuid()))
+                    .thenAccept(rows -> applyLadderStats(rows, profile));
+
+            futures.add(future);
+        }
+
+        return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
+    }
+
+    private static void applyGlobalStats(GlobalStatsRow row, Profile profile) {
+        if (row == null) return;
+
+        profile.setFirstJoin(row.getFirstJoin());
+        profile.setLastJoin(row.getLastJoin());
+
+        // The win/loss totals and the global ELO are derived from the ladder rows by
+        // ProfileStat, so only the fields it does not recompute are restored here.
+        ProfileStat stats = profile.getStats();
+        stats.setExperience(row.getExperience());
+        stats.setWinStreak(row.getWinStreak());
+        stats.setBestWinStreak(row.getBestWinStreak());
+        stats.setLoseStreak(row.getLoseStreak());
+        stats.setBestLoseStreak(row.getBestLoseStreak());
+    }
+
+    private static void applyLadderStats(List<LadderStatsRow> rows, Profile profile) {
+        for (LadderStatsRow row : rows) {
+            NormalLadder ladder = LadderManager.getInstance().getLadder(row.getLadder());
+            if (ladder == null) continue;
+
+            LadderStats stats = profile.getStats().getLadderStat(ladder);
+            stats.setUnRankedWins(row.getUnrankedWins());
+            stats.setUnRankedLosses(row.getUnrankedLosses());
+            stats.setUnRankedWinStreak(row.getUnrankedWinStreak());
+            stats.setUnRankedBestWinStreak(row.getUnrankedBestWinStreak());
+            stats.setUnRankedLoseStreak(row.getUnrankedLoseStreak());
+            stats.setUnRankedBestLoseStreak(row.getUnrankedBestLoseStreak());
+            stats.setRankedWins(row.getRankedWins());
+            stats.setRankedLosses(row.getRankedLosses());
+            stats.setRankedWinStreak(row.getRankedWinStreak());
+            stats.setRankedBestWinStreak(row.getRankedBestWinStreak());
+            stats.setRankedLoseStreak(row.getRankedLoseStreak());
+            stats.setRankedBestLoseStreak(row.getRankedBestLoseStreak());
+            stats.setElo(row.getElo());
+            stats.setKills(row.getKills());
+            stats.setDeaths(row.getDeaths());
+        }
     }
 
     /** Iterates all .yml files in /profiles/ and loads each into the cache. */
@@ -185,6 +248,47 @@ public class ProfileManager {
         }
     }
 
+    /**
+     * Writes every cached profile's statistics to the database in one batch per table.
+     *
+     * @return a future that completes once both tables are written
+     */
+    public CompletableFuture<Void> saveProfilesToDatabase() {
+        Database database = ZonePractice.getDatabase();
+        if (database == null) return CompletableFuture.completedFuture(null);
+
+        List<Profile> present = new ArrayList<>(profiles.values());
+        present.removeIf(Objects::isNull);
+        if (present.isEmpty()) return CompletableFuture.completedFuture(null);
+
+        return database.getGlobalStatsRepository().saveAll(present)
+                .thenCompose(ignored -> database.getLadderStatsRepository().saveAll(present));
+    }
+
+    public void saveProfileToDatabase(Profile profile) {
+        Database database = ZonePractice.getDatabase();
+        if (database == null) return;
+
+        database.getGlobalStatsRepository().save(profile)
+                .thenCompose(ignored -> database.getLadderStatsRepository().save(profile));
+    }
+
+    public void deleteProfileFromDatabase(UUID uuid) {
+        Database database = ZonePractice.getDatabase();
+        if (database == null) return;
+
+        database.getGlobalStatsRepository().delete(uuid)
+                .thenCompose(ignored -> database.getLadderStatsRepository().delete(uuid))
+                .thenCompose(ignored -> database.getMatchHistoryRepository().delete(uuid));
+    }
+
+    public void deleteLadderStatsFromDatabase(String ladderName) {
+        Database database = ZonePractice.getDatabase();
+        if (database == null) return;
+
+        database.getLadderStatsRepository().deleteLadder(ladderName);
+    }
+
     public void demoteOfflineProfile(UUID uuid) {
         if (uuid == null) {
             return;
@@ -202,7 +306,7 @@ public class ProfileManager {
 
         profile.save();
         profile.onQuit();
-        MysqlManager.saveProfileAsync(profile);
+        saveProfileToDatabase(profile);
     }
 
     public void clearPlayerReference(Player player) {
