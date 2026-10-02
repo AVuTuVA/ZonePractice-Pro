@@ -49,19 +49,19 @@ public class MatchHistoryFile extends ConfigFile {
     private void setMatch(MatchHistoryEntry entry, int matchId) {
         String match = ROOT + "." + matchId;
 
-        config.set(match + ".player_uuid",           entry.getPlayerUuid().toString());
-        config.set(match + ".opponent_uuid",          entry.getOpponentUuid().toString());
-        config.set(match + ".player_name",            entry.getPlayerName());
-        config.set(match + ".opponent_name",          entry.getOpponentName());
-        config.set(match + ".kit_name",               entry.getKitName());
-        config.set(match + ".arena_name",             entry.getArenaName());
-        config.set(match + ".player_score",           entry.getPlayerScore());
-        config.set(match + ".opponent_score",         entry.getOpponentScore());
-        config.set(match + ".player_final_health",    entry.getPlayerFinalHealth());
-        config.set(match + ".opponent_final_health",  entry.getOpponentFinalHealth());
-        config.set(match + ".winner_uuid",            entry.getWinnerUuid() != null ? entry.getWinnerUuid().toString() : "");
-        config.set(match + ".match_duration",         entry.getMatchDuration());
-        config.set(match + ".played_at",              entry.getPlayedAt());
+        config.set(match + ".uuid",                entry.getPlayerUuid().toString());
+        config.set(match + ".opponentUuid",        entry.getOpponentUuid().toString());
+        config.set(match + ".username",            entry.getPlayerName());
+        config.set(match + ".opponentName",        entry.getOpponentName());
+        config.set(match + ".kitName",             entry.getKitName());
+        config.set(match + ".arenaName",           entry.getArenaName());
+        config.set(match + ".score",               entry.getPlayerScore());
+        config.set(match + ".opponentScore",       entry.getOpponentScore());
+        config.set(match + ".finalHealth",         entry.getPlayerFinalHealth());
+        config.set(match + ".opponentFinalHealth", entry.getOpponentFinalHealth());
+        config.set(match + ".winnerUuid",          entry.getWinnerUuid() != null ? entry.getWinnerUuid().toString() : "");
+        config.set(match + ".matchDuration",       entry.getMatchDuration());
+        config.set(match + ".playedAt",            entry.getPlayedAt());
     }
 
     @Override
@@ -91,19 +91,19 @@ public class MatchHistoryFile extends ConfigFile {
         try {
             return new MatchHistoryEntry(
                     Integer.parseInt(matchId),
-                    UUID.fromString(config.getString(match + ".player_uuid",   matchHistory.getUuid().toString())),
-                    UUID.fromString(config.getString(match + ".opponent_uuid", "00000000-0000-0000-0000-000000000000")),
-                    config.getString(match + ".player_name",         "Unknown"),
-                    config.getString(match + ".opponent_name",       "Unknown"),
-                    config.getString(match + ".kit_name",            "Unknown"),
-                    config.getString(match + ".arena_name",          "Unknown"),
-                    config.getInt(match + ".player_score",           0),
-                    config.getInt(match + ".opponent_score",         0),
-                    config.getDouble(match + ".player_final_health", 0.0),
-                    config.getDouble(match + ".opponent_final_health", 0.0),
+                    UUID.fromString(config.getString(match + ".uuid",       matchHistory.getUuid().toString())),
+                    UUID.fromString(config.getString(match + ".opponentUuid", "00000000-0000-0000-0000-000000000000")),
+                    config.getString(match + ".username",         "Unknown"),
+                    config.getString(match + ".opponentName",     "Unknown"),
+                    config.getString(match + ".kitName",          "Unknown"),
+                    config.getString(match + ".arenaName",        "Unknown"),
+                    config.getInt(match + ".score",                 0),
+                    config.getInt(match + ".opponentScore",         0),
+                    config.getDouble(match + ".finalHealth",         0.0),
+                    config.getDouble(match + ".opponentFinalHealth", 0.0),
                     getWinnerUuid(match),
-                    config.getInt(match + ".match_duration",         0),
-                    config.getLong(match + ".played_at",             System.currentTimeMillis())
+                    config.getInt(match + ".matchDuration",       0),
+                    config.getLong(match + ".playedAt",          System.currentTimeMillis())
             );
         } catch (Exception e) {
             Common.sendConsoleMMMessage("<yellow>[MatchHistory] Skipping corrupt entry " + matchId
@@ -113,7 +113,7 @@ public class MatchHistoryFile extends ConfigFile {
     }
 
     private UUID getWinnerUuid(String match) {
-        String winnerUuid = config.getString(match + ".winner_uuid");
+        String winnerUuid = config.getString(match + ".winnerUuid");
         return (winnerUuid != null && !winnerUuid.isEmpty()) ? UUID.fromString(winnerUuid) : null;
     }
 
