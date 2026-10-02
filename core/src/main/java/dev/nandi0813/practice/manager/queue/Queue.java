@@ -103,7 +103,7 @@ public class Queue extends Runnable implements dev.nandi0813.api.Interface.Queue
     }
 
     public List<NormalLadder> getQueuedLadders() {
-        return Collections.unmodifiableList(new ArrayList<>(this.queuedLadders));
+        return List.copyOf(this.queuedLadders);
     }
 
     public String getCyclingSidebarLadder() {
@@ -237,6 +237,7 @@ public class Queue extends Runnable implements dev.nandi0813.api.Interface.Queue
         }
 
         Duel duel = new Duel(matchedLadder, arena, Arrays.asList(player, queue.getPlayer()), ranked, matchedLadder.getRounds());
+        duel.setQueuedMatch(true);
 
         if (matchFoundAnimation)
             Bukkit.getScheduler().runTaskLater(ZonePractice.getInstance(), () -> {
