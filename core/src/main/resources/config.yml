@@ -1,4 +1,4 @@
-VERSION: 81
+VERSION: 82
 
 # MariaDB database settings.
 # MySQL is also supported if preferred.
@@ -232,6 +232,7 @@ AUTO-SAVE:
 # Match settings
 MATCH-SETTINGS:
   SHOW-PLAYERS-IN-TAB: false # If true, all online players remain visible in the tab list even when their entities are hidden.
+  SHOW-PLAYERS-IN-LOBBY-TAB: false # If true, players in the lobby keep every online player in their tab list, even the ones whose entities are hidden. Only has an effect while SHOW-PLAYERS-IN-TAB is false.
   SHOW-SPECTATORS-IN-TAB: false # If true, the fighters of a match see its spectators in their tab list.
   SPECTATOR-TAB-PREFIX: "<dark_gray>[<gray>Spec<dark_gray>] " # Prefix in front of a spectator's name in the tab list of the fighters. Supports %player%, "" for none.
   TEAMS:
