@@ -36,7 +36,7 @@ public class InactiveProfileRunnable extends BukkitRunnable {
             if (daysDiff > deleteAfter) {
                 if (profile.getFile().getFile().delete()) {
                     ProfileManager.getInstance().getProfiles().remove(profile.getUuid());
-                    deleteStatsFromMysql(profile);
+                    deleteStatsFromMariadb(profile);
 
                     count++;
                 }
@@ -47,7 +47,7 @@ public class InactiveProfileRunnable extends BukkitRunnable {
             ServerManager.getInstance().alertPlayers("zpp.admin", LanguageManager.getString("PROFILE.INACTIVITY-REMOVED").replace("%count%", String.valueOf(count)));
     }
 
-    private void deleteStatsFromMysql(Profile profile) {
+    private void deleteStatsFromMariadb(Profile profile) {
         ProfileManager.getInstance().deleteProfileFromDatabase(profile.getUuid());
     }
 

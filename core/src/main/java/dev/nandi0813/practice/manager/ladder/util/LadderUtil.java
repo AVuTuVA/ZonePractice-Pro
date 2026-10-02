@@ -108,7 +108,7 @@ public enum LadderUtil {
         }
 
         /*
-         * Delete the ladder statistics from the mysql table.
+         * Delete the ladder statistics from the mariadb table.
          */
         ProfileManager.getInstance().deleteLadderStatsFromDatabase(ladder.getName());
     }

@@ -44,7 +44,7 @@ public class Database {
                 + "?useSsl=false&characterEncoding=utf8");
         config.setUsername(user);
         config.setPassword(password);
-        config.setPoolName("ZonePractice-MySQL");
+        config.setPoolName("ZonePractice-Mariadb");
         config.setMaximumPoolSize(poolSize);
         config.setMinimumIdle(1);
         config.setConnectionTimeout(10000L);
@@ -52,7 +52,7 @@ public class Database {
         config.setLeakDetectionThreshold(0L);
 
         Database opened = new Database(new HikariDataSource(config));
-        Common.sendConsoleMMMessage("<gray>Connected to MySQL database <white>" + database);
+        Common.sendConsoleMMMessage("<gray>Connected to Mariadb database <white>" + database);
         return opened;
     }
 

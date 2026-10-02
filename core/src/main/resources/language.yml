@@ -946,7 +946,7 @@ COMMAND:
       MATCH-ENDED: "<red>The match has been ended by a moderator."
       PLAYER-ENDED-MATCH: "<yellow>You ended match %matchId%."
       MATCH-ALREADY-ENDED: "<red>Match is already ended."
-      MYSQL-DISABLED: "<red>You cannot save the mysql data because it is disabled."
+      MARIADB-DISABLED: "<red>You cannot save the mariadb data because it is disabled."
       DATA-SAVED-MANUALLY: "<green>Successful data save."
   SPECTATE:
     COMMAND-HELP: "<red>/%label% <player>"

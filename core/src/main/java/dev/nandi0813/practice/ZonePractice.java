@@ -77,7 +77,7 @@ public final class ZonePractice extends JavaPlugin {
     @Getter
     private static ArenaCopyUtilListener arenaCopyUtilListener;
     /**
-     * The MySQL backend, or {@code null} when it is disabled or unreachable. Every
+     * The Mariadb backend, or {@code null} when it is disabled or unreachable. Every
      * caller must treat it as optional; the plugin stores profiles on disk regardless.
      */
     @Getter
@@ -240,16 +240,16 @@ public final class ZonePractice extends JavaPlugin {
      * its file storage, so the failure is reported and the plugin starts without one.
      */
     private static void initializeDatabase() {
-        if (!ConfigManager.getBoolean("MYSQL-DATABASE.ENABLED")) return;
+        if (!ConfigManager.getBoolean("MARIADB-DATABASE.ENABLED")) return;
 
         try {
             database = Database.forMariaDB(
-                    ConfigManager.getString("MYSQL-DATABASE.CONNECTION.HOST"),
-                    ConfigManager.getInt("MYSQL-DATABASE.CONNECTION.PORT"),
-                    ConfigManager.getString("MYSQL-DATABASE.CONNECTION.DATABASE"),
-                    ConfigManager.getString("MYSQL-DATABASE.CONNECTION.USER"),
-                    ConfigManager.getString("MYSQL-DATABASE.CONNECTION.PASSWORD"),
-                    Math.max(2, ConfigManager.getInt("MYSQL-DATABASE.CONNECTION.POOL-SIZE"))
+                    ConfigManager.getString("MARIADB-DATABASE.CONNECTION.HOST"),
+                    ConfigManager.getInt("MARIADB-DATABASE.CONNECTION.PORT"),
+                    ConfigManager.getString("MARIADB-DATABASE.CONNECTION.DATABASE"),
+                    ConfigManager.getString("MARIADB-DATABASE.CONNECTION.USER"),
+                    ConfigManager.getString("MARIADB-DATABASE.CONNECTION.PASSWORD"),
+                    Math.max(2, ConfigManager.getInt("MARIADB-DATABASE.CONNECTION.POOL-SIZE"))
             );
         } catch (Exception e) {
             Common.sendConsoleMMMessage("<red>Error during database initialization, continuing without it: "

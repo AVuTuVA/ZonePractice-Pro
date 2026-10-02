@@ -1,9 +1,10 @@
-VERSION: 80
+VERSION: 81
 
-# Mysql database setup.
-MYSQL-DATABASE:
+# MariaDB database settings.
+# MySQL is also supported if preferred.
+MARIADB-DATABASE:
   ENABLED: false
-  SAVE-PERIOD: 5 # The server saves the player statistics for this minute interval to the mysql database.
+  SAVE-PERIOD: 5 # The server saves the player statistics for this minute interval to the mariadb database.
   CONNECTION:
     HOST: localhost
     PORT: 3306

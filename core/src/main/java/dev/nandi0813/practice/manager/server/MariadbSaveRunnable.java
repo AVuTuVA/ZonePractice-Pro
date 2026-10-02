@@ -7,9 +7,9 @@ import lombok.Getter;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
-public class MysqlSaveRunnable extends BukkitRunnable {
+public class MariadbSaveRunnable extends BukkitRunnable {
 
-    private final int interval = ConfigManager.getInt("MYSQL-DATABASE.SAVE-PERIOD");
+    private final int interval = ConfigManager.getInt("MARIADB-DATABASE.SAVE-PERIOD");
 
     public void begin() {
         this.runTaskTimerAsynchronously(ZonePractice.getInstance(), interval * 60 * 20L, interval * 60 * 20L);

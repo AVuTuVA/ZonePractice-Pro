@@ -49,7 +49,7 @@ public class ServerSaveGui extends GUI {
             inventory.setItem(5, GUIFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE").replace("%data%", "Event").get());
             inventory.setItem(6, GUIFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE").replace("%data%", "Player").get());
             inventory.setItem(7, GUIFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE").replace("%data%", "Hologram").get());
-            inventory.setItem(8, GUIFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE").replace("%data%", "Mysql").get());
+            inventory.setItem(8, GUIFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE").replace("%data%", "Mariadb").get());
 
             updatePlayers();
         });
@@ -99,10 +99,10 @@ public class ServerSaveGui extends GUI {
                 case 8:
                     if (ZonePractice.getDatabase() != null) {
                         Bukkit.getScheduler().runTaskAsynchronously(ZonePractice.getInstance(), () ->
-                                ServerManager.getInstance().getMysqlSaveRunnable().save());
+                                ServerManager.getInstance().getMariadbSaveRunnable().save());
                         Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETUP.SERVER.DATA-SAVED-MANUALLY"));
                     } else
-                        Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETUP.SERVER.MYSQL-DISABLED"));
+                        Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETUP.SERVER.MARIADB-DISABLED"));
                     break;
             }
         }
