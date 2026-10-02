@@ -3,7 +3,6 @@ package dev.nandi0813.practice.manager.server;
 import dev.nandi0813.practice.ZonePractice;
 import dev.nandi0813.practice.manager.backend.ConfigManager;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
-import dev.nandi0813.practice.manager.backend.MysqlManager;
 import dev.nandi0813.practice.manager.profile.Profile;
 import dev.nandi0813.practice.manager.profile.ProfileManager;
 import lombok.Getter;
@@ -49,9 +48,7 @@ public class InactiveProfileRunnable extends BukkitRunnable {
     }
 
     private void deleteStatsFromMysql(Profile profile) {
-        if (!MysqlManager.isConnected(false)) return;
-
-        MysqlManager.deleteProfileStatsAsync(profile.getUuid());
+        ProfileManager.getInstance().deleteProfileFromDatabase(profile.getUuid());
     }
 
 }

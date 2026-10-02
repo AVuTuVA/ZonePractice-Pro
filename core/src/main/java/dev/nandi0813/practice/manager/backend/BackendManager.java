@@ -10,8 +10,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 public enum BackendManager {
     ;
@@ -77,10 +75,6 @@ public enum BackendManager {
 
     public static double getDouble(String loc) {
         return getConfig().getDouble(loc);
-    }
-
-    public static Set<String> getConfigSectionKeys(String loc) {
-        return Objects.requireNonNull(getConfig().getConfigurationSection(loc)).getKeys(false);
     }
 
     public static List<String> getList(String loc) {

@@ -2,8 +2,7 @@ package dev.nandi0813.practice.manager.matchhistory;
 
 import dev.nandi0813.api.Event.Match.MatchEndEvent;
 import dev.nandi0813.practice.ZonePractice;
-import dev.nandi0813.practice.manager.backend.MysqlManager;
-import dev.nandi0813.practice.manager.fight.match.Round;
+import dev.nandi0813.practice.manager.backend.database.Database;
 import dev.nandi0813.practice.manager.fight.match.type.duel.Duel;
 import dev.nandi0813.practice.manager.fight.util.Stats.Statistic;
 import dev.nandi0813.practice.util.Common;
@@ -13,20 +12,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Central manager for match history.
- * <p>
- * Storage strategy:
- *   1. YAML files  — always used (match-history/<uuid>.yml), same pattern as profiles/.
- *   2. MySQL        — also used when connected; logic lives in MysqlManager.
- * <p>
- * Both reads and writes are async. An in-memory cache avoids repeated disk access.
- */
 public class MatchHistoryManager implements Listener {
+
+    private static final int MAX_HISTORY = 5;
 
     private static MatchHistoryManager instance;
 
@@ -35,99 +30,67 @@ public class MatchHistoryManager implements Listener {
         return instance;
     }
 
-    private static final int MAX_HISTORY = 5;
-
-    /** In-memory cache: player UUID → last MAX_HISTORY entries, newest-first. */
     private final Map<UUID, MatchHistory> matchHistories = new ConcurrentHashMap<>();
-
-    /**
-     * Returns the cached per-player {@link MatchHistory}, creating one on demand.
-     * Analogous to {@code ProfileManager#getProfile(UUID)}.
-     */
-    public MatchHistory getMatchHistory(UUID uuid) {
-        return matchHistories.computeIfAbsent(uuid, MatchHistory::new);
-    }
 
     private MatchHistoryManager() {
         Bukkit.getPluginManager().registerEvents(this, ZonePractice.getInstance());
     }
 
-    /**
-     * Records a completed 1v1 duel match for both participants asynchronously.
-     * Always writes to YAML; also writes to MySQL when connected (via MysqlManager).
-     */
-    public void saveMatchAsync(UUID playerUuid, UUID opponentUuid,
-                               String playerName, String opponentName,
-                               String kitName, String arenaName,
-                               int playerScore, int opponentScore,
-                               double playerFinalHealth, double opponentFinalHealth,
-                               UUID winnerUuid, int matchDuration) {
+    public MatchHistory getMatchHistory(UUID uuid) {
+        return matchHistories.computeIfAbsent(uuid, MatchHistory::new);
+    }
 
-        long now = System.currentTimeMillis();
-
+    public void saveMatch(MatchResult result) {
         CompletableFuture.runAsync(() -> {
-            MatchHistoryEntry playerPov = new MatchHistoryEntry(
-                    -1, playerUuid, opponentUuid, playerName, opponentName,
-                    kitName, arenaName, playerScore, opponentScore,
-                    playerFinalHealth, opponentFinalHealth, winnerUuid, matchDuration, now);
+            MatchResult opponentView = result.fromOpponent();
 
-            MatchHistoryEntry opponentPov = new MatchHistoryEntry(
-                    -1, opponentUuid, playerUuid, opponentName, playerName,
-                    kitName, arenaName, opponentScore, playerScore,
-                    opponentFinalHealth, playerFinalHealth, winnerUuid, matchDuration, now);
+            // The YAML store hands out the id, and both players share it so the two
+            // entries stay recognisably the same match.
+            int matchId = saveToYaml(result.getPlayerUuid(), result);
+            saveToYaml(opponentView.getPlayerUuid(), opponentView);
 
-            int assignedId = saveToYaml(playerUuid, playerPov);
-            saveToYaml(opponentUuid, opponentPov);
+            getMatchHistory(result.getPlayerUuid()).add(result.toEntry(matchId));
+            getMatchHistory(opponentView.getPlayerUuid()).add(opponentView.toEntry(matchId));
 
-            // Build final entries with real id for cache
-            MatchHistoryEntry finalPlayerPov = new MatchHistoryEntry(
-                    assignedId, playerUuid, opponentUuid, playerName, opponentName,
-                    kitName, arenaName, playerScore, opponentScore,
-                    playerFinalHealth, opponentFinalHealth, winnerUuid, matchDuration, now);
-
-            MatchHistoryEntry finalOpponentPov = new MatchHistoryEntry(
-                    assignedId, opponentUuid, playerUuid, opponentName, playerName,
-                    kitName, arenaName, opponentScore, playerScore,
-                    opponentFinalHealth, playerFinalHealth, winnerUuid, matchDuration, now);
-
-            getMatchHistory(playerUuid).add(finalPlayerPov);
-            getMatchHistory(opponentUuid).add(finalOpponentPov);
-
-            if (MysqlManager.isConnected(false)) {
-                MysqlManager.saveMatchHistoryAsync(
-                        playerUuid, opponentUuid, playerName, opponentName,
-                        kitName, arenaName, playerScore, opponentScore,
-                        playerFinalHealth, opponentFinalHealth, winnerUuid, matchDuration, now);
-            }
+            saveToDatabase(result, opponentView);
         });
     }
 
-    /**
-     * Loads history for a player asynchronously.
-     * Returns from cache if available; otherwise reads YAML (and MySQL as fallback if YAML empty).
-     */
     public CompletableFuture<List<MatchHistoryEntry>> loadHistoryAsync(UUID playerUuid) {
         MatchHistory history = matchHistories.get(playerUuid);
         if (history != null && !history.getMatches().isEmpty()) {
             return CompletableFuture.completedFuture(new ArrayList<>(history.getMatches()));
         }
 
-        return CompletableFuture.supplyAsync(() -> {
-            MatchHistory loaded = getMatchHistory(playerUuid);
-            List<MatchHistoryEntry> entries = loaded.load();
-
-            if (entries.isEmpty() && MysqlManager.isConnected(false)) {
-                entries = MysqlManager.loadMatchHistorySync(playerUuid, MAX_HISTORY);
-                loaded.getMatches().addAll(entries);
-            }
-
-            return entries;
-        });
+        return CompletableFuture.supplyAsync(() -> getMatchHistory(playerUuid).load())
+                .thenCompose(entries -> entries.isEmpty() ? loadFromDatabase(playerUuid) : CompletableFuture.completedFuture(entries));
     }
 
-    private int saveToYaml(UUID uuid, MatchHistoryEntry entry) {
+    private CompletableFuture<List<MatchHistoryEntry>> loadFromDatabase(UUID playerUuid) {
+        Database database = ZonePractice.getDatabase();
+        if (database == null) return CompletableFuture.completedFuture(List.of());
+
+        return database.getMatchHistoryRepository().getHistory(playerUuid, MAX_HISTORY)
+                .thenApply(entries -> {
+                    getMatchHistory(playerUuid).getMatches().addAll(entries);
+                    return entries;
+                });
+    }
+
+    private void saveToDatabase(MatchResult result, MatchResult opponentView) {
+        Database database = ZonePractice.getDatabase();
+        if (database == null) return;
+
+        database.getMatchHistoryRepository().save(result.toRow(), opponentView.toRow(), MAX_HISTORY)
+                .exceptionally(error -> {
+                    Common.sendConsoleMMMessage("<red>[MatchHistory] database save error: " + error.getMessage());
+                    return null;
+                });
+    }
+
+    private int saveToYaml(UUID uuid, MatchResult result) {
         try {
-            return getMatchHistory(uuid).getFile().saveMatch(entry);
+            return getMatchHistory(uuid).getFile().saveMatch(result.toEntry(-1));
         } catch (Exception e) {
             Common.sendConsoleMMMessage("<red>[MatchHistory] YAML save error for " + uuid + ": " + e.getMessage());
             return -1;
@@ -146,11 +109,9 @@ public class MatchHistoryManager implements Listener {
             return;
         }
 
-        Round lastRound = duel.getCurrentRound();
-        Map<UUID, Statistic> stats = lastRound.getStatistics();
-
-        Statistic stat1 = stats.get(player1.getUniqueId());
-        Statistic stat2 = stats.get(player2.getUniqueId());
+        Map<UUID, Statistic> statistics = duel.getCurrentRound().getStatistics();
+        Statistic stat1 = statistics.get(player1.getUniqueId());
+        Statistic stat2 = statistics.get(player2.getUniqueId());
 
         double p1Health = (stat1 != null && stat1.isSet())
                 ? stat1.getEndHeart()
@@ -162,16 +123,15 @@ public class MatchHistoryManager implements Listener {
 
         UUID winnerUuid = duel.getMatchWinner() != null ? duel.getMatchWinner().getUniqueId() : null;
 
-        MatchHistoryManager.getInstance().saveMatchAsync(
+        saveMatch(new MatchResult(
                 player1.getUniqueId(), player2.getUniqueId(),
                 player1.getName(), player2.getName(),
-                duel.getLadder().getName(),
-                duel.getArena().getName(),
+                duel.getLadder().getName(), duel.getArena().getName(),
                 duel.getWonRounds(player1), duel.getWonRounds(player2),
                 p1Health, p2Health,
                 winnerUuid,
-                duel.getDuration()
-        );
+                duel.getDuration(),
+                System.currentTimeMillis()
+        ));
     }
-
 }

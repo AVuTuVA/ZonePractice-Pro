@@ -62,6 +62,18 @@
                             <minimizeJar>false</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
 
+                            <transformers>
+                                <!--
+                                    Relocations rename classes but leave the
+                                    META-INF/services files untouched, so a ServiceLoader
+                                    lookup for a relocated interface finds nothing. The
+                                    MariaDB driver registers every authentication plugin this
+                                    way, and without it no plugin loads at all.
+                                -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
