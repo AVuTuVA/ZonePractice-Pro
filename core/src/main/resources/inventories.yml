@@ -35,7 +35,7 @@ LOBBY-BASIC:
           - ""
           - "<yellow>Open the cosmetics menu."
         ENCHANTMENTS:
-          - "DURABILITY:1"
+          - "UNBREAKING:1"
         FLAGS:
           - "HIDE_ENCHANTS"
     ENABLE-SPECTATE-MODE:
@@ -66,7 +66,7 @@ LOBBY-BASIC:
         MATERIAL: CLOCK
         AMOUNT: 1
         ENCHANTMENTS:
-          - "DURABILITY:1"
+          - "UNBREAKING:1"
       FLAGS:
         - "HIDE_POTION_EFFECTS"
     KIT-EDITOR:
