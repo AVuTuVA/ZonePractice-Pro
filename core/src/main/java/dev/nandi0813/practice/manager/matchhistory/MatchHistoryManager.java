@@ -40,9 +40,9 @@ public class MatchHistoryManager implements Listener {
         return matchHistories.computeIfAbsent(uuid, MatchHistory::new);
     }
 
-    public void saveMatch(MatchResult result) {
+    public void saveMatch(MatchHistoryResult result) {
         CompletableFuture.runAsync(() -> {
-            MatchResult opponentView = result.fromOpponent();
+            MatchHistoryResult opponentView = result.fromOpponent();
 
             // The YAML store hands out the id, and both players share it so the two
             // entries stay recognisably the same match.
@@ -77,7 +77,7 @@ public class MatchHistoryManager implements Listener {
                 });
     }
 
-    private void saveToDatabase(MatchResult result, MatchResult opponentView) {
+    private void saveToDatabase(MatchHistoryResult result, MatchHistoryResult opponentView) {
         Database database = ZonePractice.getDatabase();
         if (database == null) return;
 
@@ -88,7 +88,7 @@ public class MatchHistoryManager implements Listener {
                 });
     }
 
-    private int saveToYaml(UUID uuid, MatchResult result) {
+    private int saveToYaml(UUID uuid, MatchHistoryResult result) {
         try {
             return getMatchHistory(uuid).getFile().saveMatch(result.toEntry(-1));
         } catch (Exception e) {
@@ -123,7 +123,7 @@ public class MatchHistoryManager implements Listener {
 
         UUID winnerUuid = duel.getMatchWinner() != null ? duel.getMatchWinner().getUniqueId() : null;
 
-        saveMatch(new MatchResult(
+        saveMatch(new MatchHistoryResult(
                 player1.getUniqueId(), player2.getUniqueId(),
                 player1.getName(), player2.getName(),
                 duel.getLadder().getName(), duel.getArena().getName(),

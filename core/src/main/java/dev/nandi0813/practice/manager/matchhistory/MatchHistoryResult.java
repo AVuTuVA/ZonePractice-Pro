@@ -10,7 +10,7 @@ import java.util.UUID;
  * the database row and the cached entry are all derived from this one value.
  */
 @Getter
-public final class MatchResult {
+public final class MatchHistoryResult {
 
     private final UUID playerUuid;
     private final UUID opponentUuid;
@@ -26,12 +26,12 @@ public final class MatchResult {
     private final int matchDuration;
     private final long playedAt;
 
-    public MatchResult(UUID playerUuid, UUID opponentUuid,
-                       String playerName, String opponentName,
-                       String kitName, String arenaName,
-                       int playerScore, int opponentScore,
-                       double playerFinalHealth, double opponentFinalHealth,
-                       UUID winnerUuid, int matchDuration, long playedAt) {
+    public MatchHistoryResult(UUID playerUuid, UUID opponentUuid,
+                              String playerName, String opponentName,
+                              String kitName, String arenaName,
+                              int playerScore, int opponentScore,
+                              double playerFinalHealth, double opponentFinalHealth,
+                              UUID winnerUuid, int matchDuration, long playedAt) {
         this.playerUuid = playerUuid;
         this.opponentUuid = opponentUuid;
         this.playerName = playerName;
@@ -47,8 +47,8 @@ public final class MatchResult {
         this.playedAt = playedAt;
     }
 
-    public MatchResult fromOpponent() {
-        return new MatchResult(
+    public MatchHistoryResult fromOpponent() {
+        return new MatchHistoryResult(
                 opponentUuid, playerUuid,
                 opponentName, playerName,
                 kitName, arenaName,
