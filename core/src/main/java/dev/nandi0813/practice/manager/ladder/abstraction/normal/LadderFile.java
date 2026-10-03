@@ -311,7 +311,10 @@ ladder.setEnderPearlCooldown(Math.clamp(epCooldown.doubleValue(), 0.0, 60.0));
 
         if (ladder instanceof Creeper creeper) {
             Number creeperExplosionDelay = getNumeric("settings.creeper-explosion-delay");
-            if (creeperExplosionDelay != null)
+
+            if (creeperExplosionDelay == null)
+                creeper.setCreeperExplosionDelay(1.0);
+            else
                 creeper.setCreeperExplosionDelay(Math.clamp(creeperExplosionDelay.doubleValue(), 0.5, 10.0));
         }
 

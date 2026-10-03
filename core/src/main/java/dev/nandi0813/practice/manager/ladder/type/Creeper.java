@@ -13,7 +13,6 @@ public class Creeper extends NormalLadder {
 
     public Creeper(String name, LadderType type) {
         super(name, type);
-        this.creeperExplosionDelay = 1.0;
     }
 
     public int getCreeperExplosionDelayTicks() {
