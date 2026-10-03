@@ -145,7 +145,9 @@ public class FFA implements Spectatable, dev.nandi0813.api.Interface.FFA {
 
         // Hide the spectators
         for (Player spectator : this.spectators) {
-            PlayerHider.getInstance().hidePlayer(player, spectator);
+            // The joining player is still mapped to the lobby world until teleportPlayer below,
+            // so they must not be treated as a lobby player here.
+            PlayerHider.getInstance().hidePlayer(player, spectator, false);
             PlayerHider.getInstance().showPlayer(spectator, player);
         }
 
