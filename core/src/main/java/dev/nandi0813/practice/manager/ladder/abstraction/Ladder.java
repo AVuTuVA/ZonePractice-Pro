@@ -63,6 +63,8 @@ public abstract class Ladder {
     @Setter
     protected boolean tntAutoIgnite = false;
     @Setter
+    protected boolean pullPlayersWithRod = true;
+    @Setter
     protected int maxDuration = 600;
     @Setter
     protected boolean multiRoundStartCountdown = true;
@@ -115,6 +117,7 @@ public abstract class Ladder {
         this.startCountdown = ladder.getStartCountdown();
         this.tntFuseTime = ladder.getTntFuseTime();
         this.tntAutoIgnite = ladder.isTntAutoIgnite();
+        this.pullPlayersWithRod = ladder.isPullPlayersWithRod();
         this.maxDuration = ladder.getMaxDuration();
         this.multiRoundStartCountdown = ladder.isMultiRoundStartCountdown();
         this.dropInventory = ladder.isDropInventory();

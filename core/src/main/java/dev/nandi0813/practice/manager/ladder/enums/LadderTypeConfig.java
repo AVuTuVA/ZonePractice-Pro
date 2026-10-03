@@ -121,7 +121,8 @@ public class LadderTypeConfig {
                 SettingType.DROP_INVENTORY,
                 SettingType.ROUND_END_DELAY,
                 SettingType.ROUND_STATUS_TITLES,
-                SettingType.COUNTDOWN_TITLES
+                SettingType.COUNTDOWN_TITLES,
+                SettingType.PULL_PLAYERS_WITH_ROD
         );
     }
 

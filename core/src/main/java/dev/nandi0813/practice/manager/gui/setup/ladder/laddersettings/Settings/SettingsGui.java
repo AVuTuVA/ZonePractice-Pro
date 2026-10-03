@@ -250,6 +250,9 @@ public class SettingsGui extends GUI {
 
         if (settingTypes.contains(SettingType.CREEPER_EXPLOSION_DELAY))
             settingItems.add(new CreeperExplosionDelayItem(this, (Creeper) ladder));
+
+        if (settingTypes.contains(SettingType.PULL_PLAYERS_WITH_ROD))
+            settingItems.add(new PullPlayersWithRodItem(this, ladder));
     }
 
 }

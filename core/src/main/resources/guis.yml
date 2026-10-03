@@ -1,4 +1,4 @@
-VERSION: 48
+VERSION: 49
 
 GENERAL-FILLER-ITEM:
   NAME: " "
@@ -2813,6 +2813,21 @@ GUIS:
               - ""
               - "<green><bold>LEFT-CLICK <green>to reduce the delay."
               - "<aqua><bold>RIGHT-CLICK <aqua>to increase the delay."
+          PULL-PLAYERS-WITH-ROD:
+            ENABLED:
+              NAME: "<gray>Pull Players With Rod: <green>Enabled"
+              MATERIAL: FISHING_ROD
+              LORE:
+                - ""
+                - "<gray>Players can be pulled with a fishing rod."
+            DISABLED:
+              NAME: "<gray>Pull Players With Rod: <red>Disabled"
+              MATERIAL: FISHING_ROD
+              LORE:
+                - ""
+                - "<gray>Players cannot be pulled with a fishing rod."
+                - ""
+                - "<green><bold>LEFT-CLICK <green>to toggle."
       INVENTORY:
         TITLE: "<dark_blue>%ladder% <dark_gray>- Inventory"
         ICONS:

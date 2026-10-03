@@ -1,5 +1,6 @@
-package dev.nandi0813.practice.manager.fight.match.listener;
+package dev.nandi0813.practice.manager.fight.listener;
 
+import com.destroystokyo.paper.event.entity.CreeperIgniteEvent;
 import dev.nandi0813.practice.ZonePractice;
 import dev.nandi0813.practice.manager.fight.match.Match;
 import dev.nandi0813.practice.manager.fight.match.MatchManager;
@@ -80,21 +81,12 @@ public class CreeperListener implements Listener {
     }
 
     private static void ignite(Creeper creeper, int fuseTicks) {
-        if (!isValid(creeper)) {
+        if (!isValid(creeper) || creeper.isIgnited()) {
             return;
         }
 
-        if (!creeper.isIgnited()) {
-            creeper.setMaxFuseTicks(fuseTicks);
-            creeper.ignite();
-            creeper.setFuseTicks(fuseTicks);
-            return;
-        }
-
-        // Never extend an already running fuse.
-        if (creeper.getFuseTicks() > fuseTicks) {
-            creeper.setFuseTicks(fuseTicks);
-        }
+        creeper.setMaxFuseTicks(fuseTicks);
+        creeper.ignite();
     }
 
     private static boolean isValid(Creeper creeper) {
@@ -114,6 +106,20 @@ public class CreeperListener implements Listener {
         }
 
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onCreeperIgnite(CreeperIgniteEvent event) {
+        Creeper creeper = event.getEntity();
+
+        Match match = getCreeperMatch(creeper.getLocation());
+        if (!isCreeperLiveMatch(match)) {
+            return;
+        }
+
+        int fuseTicks = getFuseTicks(match);
+
+        creeper.setMaxFuseTicks(fuseTicks);
     }
 
     @EventHandler
