@@ -39,6 +39,7 @@ public class SaveResource {
             "bridges.yml",
             "builduhc.yml",
             "cart.yml",
+            "creeper.yml",
             "crystal.yml",
             "diamondpotion.yml",
             "fireball.yml",

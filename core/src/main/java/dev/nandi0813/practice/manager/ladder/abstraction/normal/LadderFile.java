@@ -6,6 +6,7 @@ import dev.nandi0813.practice.manager.ladder.abstraction.interfaces.CustomConfig
 import dev.nandi0813.practice.manager.ladder.abstraction.interfaces.RespawnableLadder;
 import dev.nandi0813.practice.manager.ladder.abstraction.interfaces.TempBuildReturnDelay;
 import dev.nandi0813.practice.manager.ladder.enums.WeightClassType;
+import dev.nandi0813.practice.manager.ladder.type.Creeper;
 import dev.nandi0813.practice.manager.ladder.util.LadderFileUtil;
 import dev.nandi0813.practice.util.BasicItem;
 import dev.nandi0813.practice.util.Common;
@@ -52,6 +53,8 @@ public class LadderFile extends ConfigFile {
         config.set("settings.matchtypes", LadderFileUtil.getMatchTypeNames(ladder.getMatchTypes()));
         config.set("settings.knockback", ladder.getLadderKnockback().get());
         config.set("settings.tntfusetime", ladder.getTntFuseTime());
+        config.set("settings.tntautoignite", ladder.isTntAutoIgnite());
+        config.set("settings.pullplayerswithrod", ladder.isPullPlayersWithRod());
         config.set("settings.healthbelowname", ladder.isHealthBelowName());
         config.set("settings.resetbuildafterround", ladder.isResetBuildAfterRound());
         config.set("settings.breakallblocks", ladder.isBreakAllBlocks());
@@ -69,6 +72,10 @@ public class LadderFile extends ConfigFile {
 
         if (ladder instanceof TempBuildReturnDelay tempBuildReturnDelay) {
             config.set("settings.temp-build-return-delay", tempBuildReturnDelay.getTempBuildReturnDelaySeconds());
+        }
+
+        if (ladder instanceof Creeper creeper) {
+            config.set("settings.creeper-explosion-delay", creeper.getCreeperExplosionDelay());
         }
 
         if (ladder.getIcon() != null)
@@ -209,8 +216,8 @@ public class LadderFile extends ConfigFile {
 
         Number epCooldown = getNumeric("settings.epcooldown");
         if (epCooldown != null) {
-            ladder.setEnderPearlCooldown(Math.clamp(epCooldown.doubleValue(), 0.0, 60.0));
-        }
+ladder.setEnderPearlCooldown(Math.clamp(epCooldown.doubleValue(), 0.0, 60.0));
+    }
 
         Number gaCooldown = getNumeric("settings.gacooldown");
         if (gaCooldown != null) {
@@ -243,6 +250,16 @@ public class LadderFile extends ConfigFile {
             ladder.setTntFuseTime(tntFuseTime);
         } else
             ladder.setTntFuseTime(4);
+
+        if (config.isBoolean("settings.tntautoignite"))
+            ladder.setTntAutoIgnite(config.getBoolean("settings.tntautoignite"));
+        else
+            ladder.setTntAutoIgnite(false);
+
+        if (config.isBoolean("settings.pullplayerswithrod"))
+            ladder.setPullPlayersWithRod(config.getBoolean("settings.pullplayerswithrod"));
+        else
+            ladder.setPullPlayersWithRod(true);
 
         if (ladder instanceof RespawnableLadder respawnableLadder) {
             if (config.isInt("settings.respawntime")) {
@@ -290,6 +307,15 @@ public class LadderFile extends ConfigFile {
 
             if (buildDelay < -1 || buildDelay > 30) buildDelay = 6;
             tempBuildReturnDelay.setTempBuildReturnDelaySeconds(buildDelay);
+        }
+
+        if (ladder instanceof Creeper creeper) {
+            Number creeperExplosionDelay = getNumeric("settings.creeper-explosion-delay");
+
+            if (creeperExplosionDelay == null)
+                creeper.setCreeperExplosionDelay(1.0);
+            else
+                creeper.setCreeperExplosionDelay(Math.clamp(creeperExplosionDelay.doubleValue(), 0.5, 10.0));
         }
 
         if (config.isString("settings.knockback"))

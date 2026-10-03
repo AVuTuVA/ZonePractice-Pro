@@ -26,6 +26,7 @@ import dev.nandi0813.practice.manager.server.sound.SoundManager;
 import dev.nandi0813.practice.manager.server.sound.SoundType;
 import dev.nandi0813.practice.util.playerutil.PlayerUtil;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -35,6 +36,10 @@ import java.util.*;
 public class Duel extends Match implements Team {
 
     private final boolean ranked;
+
+    @Getter
+    @Setter
+    private boolean queuedMatch = false;
 
     private final Player player1;
     private final Player player2;
@@ -231,11 +236,14 @@ public class Duel extends Match implements Team {
     /**
      * Schedules an auto-queue attempt for {@code player} shortly after the match cleanup.
      * The delay mirrors {@code RematchRequest} so it runs after the lobby inventory is set.
+     * Only matches started by the matchmaking queue are re-queued, a {@code /duel} request
+     * already picked an opponent, so those players return to the lobby instead.
      * All queue validation (frozen/disabled ladder, ranked limits/ban/ping) is delegated to
      * {@link QueueManager}, which fails gracefully with a player message instead of throwing.
      */
     private void scheduleAutoQueue(Player player, boolean ranked, Ladder ladder) {
         if (!ZonePractice.getInstance().isEnabled()) return;
+        if (!this.queuedMatch) return;
         if (!(ladder instanceof NormalLadder normalLadder)) return;
 
         Bukkit.getScheduler().runTaskLater(ZonePractice.getInstance(), () -> {
@@ -246,7 +254,7 @@ public class Duel extends Match implements Team {
             boolean online = player.isOnline();
             boolean inLobby = profile.getStatus() == ProfileStatus.LOBBY;
 
-            if (!shouldAutoQueue(masterEnabled, profile.isAutoQueue(), online, inLobby)) return;
+            if (!shouldAutoQueue(masterEnabled, profile.isAutoQueue(), this.queuedMatch, online, inLobby)) return;
 
             if (ranked)
                 QueueManager.getInstance().createRankedQueue(player, normalLadder);
@@ -260,8 +268,8 @@ public class Duel extends Match implements Team {
      *
      * @return true only when all conditions hold.
      */
-    static boolean shouldAutoQueue(boolean masterEnabled, boolean playerAutoQueue, boolean online, boolean inLobby) {
-        return masterEnabled && playerAutoQueue && online && inLobby;
+    static boolean shouldAutoQueue(boolean masterEnabled, boolean playerAutoQueue, boolean queuedMatch, boolean online, boolean inLobby) {
+        return masterEnabled && playerAutoQueue && queuedMatch && online && inLobby;
     }
 
     @Override

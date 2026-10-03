@@ -123,6 +123,7 @@ QUEUE:
             - "MLGRUSH"
             - "BRIDGES"
             - "BATTLERUSH"
+            - "CREEPER"
             - "BEDWARS"
             - "SKYWARS"
   RANKED:
@@ -209,6 +210,7 @@ QUEUE:
             - "MLGRUSH"
             - "BRIDGES"
             - "BATTLERUSH"
+            - "CREEPER"
             - "BEDWARS"
             - "SKYWARS"
 #

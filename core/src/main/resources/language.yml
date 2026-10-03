@@ -1,4 +1,4 @@
-VERSION: 49
+VERSION: 50
 
 CONSOLE-NAME: "<red>Console"
 CANT-USE-CONSOLE: "<red>You can't use this command from the console."
@@ -1246,6 +1246,15 @@ LADDER:
         - "<gray>goal is to jump in the other player's portal."
         - "<gray>Players can build and there is a respawn"
         - "<gray>cooldown."
+        - "<dark_gray><st>----------------------------------"
+    CREEPER:
+      NAME: "Creeper"
+      DESCRIPTION:
+        - "<dark_gray><st>----------------------------------"
+        - "<gray>With this ladder, creepers ignite as soon as a"
+        - "<gray>player gets close to them, even when the player is"
+        - "<gray>out of sight. The delay before they explode can be"
+        - "<gray>changed in the ladder settings."
         - "<dark_gray><st>----------------------------------"
   KIT-EDITOR:
     LADDER-SELECTOR:

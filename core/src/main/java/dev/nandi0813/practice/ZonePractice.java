@@ -26,8 +26,9 @@ import dev.nandi0813.practice.manager.fight.event.EventManager;
 import dev.nandi0813.practice.manager.fight.ffa.FFAListener;
 import dev.nandi0813.practice.manager.fight.ffa.FFAManager;
 import dev.nandi0813.practice.manager.fight.listener.BuildListener;
-import dev.nandi0813.practice.manager.fight.listener.EPCountdownListener;
+import dev.nandi0813.practice.manager.fight.listener.CreeperListener;
 import dev.nandi0813.practice.manager.fight.listener.FireworkRocketCooldownListener;
+import dev.nandi0813.practice.manager.fight.listener.ProjectileCooldownListener;
 import dev.nandi0813.practice.manager.fight.match.MatchManager;
 import dev.nandi0813.practice.manager.fight.match.util.EloMode;
 import dev.nandi0813.practice.manager.fight.util.EntityHider;
@@ -333,9 +334,10 @@ public final class ZonePractice extends JavaPlugin {
         pm.registerEvents(arenaCopyUtilListener, this);
         pm.registerEvents(new BuildListener(), this);
         pm.registerEvents(new FFAListener(), this);
-        pm.registerEvents(new EPCountdownListener(), this);
+        pm.registerEvents(new ProjectileCooldownListener(), this);
         pm.registerEvents(new FireworkRocketCooldownListener(), this);
         pm.registerEvents(new PlayerChatListener(), this);
+        pm.registerEvents(new CreeperListener(), this);
     }
 
 }

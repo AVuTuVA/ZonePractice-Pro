@@ -219,6 +219,20 @@ public enum LadderType {
             .withPearlSettings()
             .withBuildSettings()
             .withSetting(SettingType.TEMP_BUILD_RETURN_DELAY)
+    ),
+
+    CREEPER(LadderTypeConfig.builder(
+                    "LADDER.LADDER-TYPES.CREEPER.NAME",
+                    Material.CREEPER_HEAD,
+                    "LADDER.LADDER-TYPES.CREEPER.DESCRIPTION",
+                    Creeper.class
+            )
+            .withBuild()
+            .withRegenSettings()
+            .withCommonSettings()
+            .withPearlSettings()
+            .withBuildSettings()
+            .withSetting(SettingType.CREEPER_EXPLOSION_DELAY)
     );
 
     private final String name;

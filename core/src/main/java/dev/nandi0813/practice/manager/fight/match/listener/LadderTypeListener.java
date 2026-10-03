@@ -644,6 +644,20 @@ public class LadderTypeListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerFish(PlayerFishEvent event) {
+        if (!(event.getCaught() instanceof Player)) {
+            return;
+        }
+
+        Match match = MatchManager.getInstance().getLiveMatchByPlayer(event.getPlayer());
+        if (match == null || match.getLadder().isPullPlayersWithRod()) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player player)) return;
 

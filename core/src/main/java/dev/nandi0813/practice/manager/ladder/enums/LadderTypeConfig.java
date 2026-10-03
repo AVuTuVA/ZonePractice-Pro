@@ -121,7 +121,8 @@ public class LadderTypeConfig {
                 SettingType.DROP_INVENTORY,
                 SettingType.ROUND_END_DELAY,
                 SettingType.ROUND_STATUS_TITLES,
-                SettingType.COUNTDOWN_TITLES
+                SettingType.COUNTDOWN_TITLES,
+                SettingType.PULL_PLAYERS_WITH_ROD
         );
     }
 
@@ -159,6 +160,7 @@ public class LadderTypeConfig {
     public LadderTypeConfig withBuildSettings() {
         return withSettings(
                 SettingType.TNT_FUSE_TIME,
+                SettingType.TNT_AUTO_IGNITE,
                 SettingType.BREAK_ALL_BLOCKS,
                 SettingType.WIND_CHARGE_COOLDOWN
         );

@@ -174,7 +174,7 @@ public class PlayerHider implements Listener {
             if (player == online) continue;
 
             if (profile.isHideSpectators())
-                hidePlayer(player, online);
+                hidePlayer(player, online, false);
 
             if (ProfileManager.getInstance().getProfile(online).isHidePlayers())
                 hidePlayer(online, player);
@@ -203,7 +203,7 @@ public class PlayerHider implements Listener {
         // Hide other players.
         if (match instanceof Match) {
             for (Player hide : MatchManager.getInstance().getHidePlayers((Match) match)) {
-                this.hidePlayer(player, hide);
+                this.hidePlayer(player, hide, false);
             }
         }
     }
@@ -321,8 +321,20 @@ public class PlayerHider implements Listener {
 
 
     public void hidePlayer(Player observer, Player target) {
-        boolean inLobby = ConfigManager.isShowPlayersInLobbyTab()
-                && ServerManager.getInstance().getInWorld().get(observer) == WorldEnum.LOBBY;
+        hidePlayer(observer, target, ConfigManager.isShowPlayersInLobbyTab() && isLobbyPlayer(observer));
+    }
+
+    /**
+     * Hides {@code target} from {@code observer}.
+     *
+     * @param keepInLobbyTab whether the {@code SHOW-PLAYERS-IN-LOBBY-TAB} exemption applies to
+     *                       {@code observer}. It has to be passed explicitly while a player is
+     *                       being moved out of the lobby, because the world tracking is only
+     *                       updated once the teleport event fired, so the observer still counts as
+     *                       a lobby player at that point.
+     */
+    public void hidePlayer(Player observer, Player target, boolean keepInLobbyTab) {
+        boolean inLobby = keepInLobbyTab && ConfigManager.isShowPlayersInLobbyTab();
         boolean showPlayersInTab = ConfigManager.isShowPlayersInTab() || inLobby;
 
         observer.hidePlayer(ZonePractice.getInstance(), target);
@@ -334,6 +346,25 @@ public class PlayerHider implements Listener {
         } else {
             removeTabEntry(observer, target);
         }
+    }
+
+    /**
+     * Whether the player is a lobby player, which is what {@code SHOW-PLAYERS-IN-LOBBY-TAB} is
+     * about. The world alone is not enough, because a player who just entered a match, an event
+     * or a spectated is still mapped to the lobby world until their teleport event fired.
+     */
+    private boolean isLobbyPlayer(Player player) {
+        if (ServerManager.getInstance().getInWorld().get(player) != WorldEnum.LOBBY) return false;
+
+        Profile profile = ProfileManager.getInstance().getProfile(player);
+        if (profile == null) return false;
+
+        ProfileStatus status = profile.getStatus();
+        return status.equals(ProfileStatus.LOBBY)
+                || status.equals(ProfileStatus.QUEUE)
+                || status.equals(ProfileStatus.EDITOR)
+                || status.equals(ProfileStatus.CUSTOM_EDITOR)
+                || status.equals(ProfileStatus.STAFF_MODE);
     }
 
     /**

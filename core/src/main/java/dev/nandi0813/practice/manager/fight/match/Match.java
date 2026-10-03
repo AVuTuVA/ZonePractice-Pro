@@ -147,7 +147,10 @@ public abstract class Match extends BukkitRunnable implements Spectatable, dev.n
 
             for (Player online : Bukkit.getOnlinePlayers()) {
                 if (!this.players.contains(online)) {
-                    PlayerHider.getInstance().hidePlayer(player, online);
+                    // The fighters are still mapped to the lobby world here, they only get
+                    // teleported into the arena with the first round, so they must not be treated
+                    // as lobby players and keep everybody in their tab list.
+                    PlayerHider.getInstance().hidePlayer(player, online, false);
                     PlayerHider.getInstance().hidePlayer(online, player);
                 }
             }
