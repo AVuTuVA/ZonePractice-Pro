@@ -15,19 +15,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
-public class EPCountdownListener implements Listener {
+/**
+ * Replaces vanilla projectile cooldowns with configured cooldowns.
+ */
+public class ProjectileCooldownListener implements Listener {
 
-    /**
-     * Intercepts the vanilla ender pearl cooldown that Paper sets automatically on throw.
-     * Instead of cancelling it and re-applying via setCooldown (which creates a race),
-     * we simply override the tick count in-place using {@code e.setCooldownTicks()}.
-     *
-     * <ul>
-     *   <li>If the ladder/FFA has a configured cooldown {@code > 0}: replace vanilla ticks with {@code duration * 20}.</li>
-     *   <li>If the ladder/FFA has no configured cooldown (duration {@code <= 0}): cancel the vanilla cooldown entirely.</li>
-     *   <li>If the player is not in a match or FFA: leave vanilla cooldown untouched.</li>
-     * </ul>
-     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEnderPearlCooldownSet(PlayerItemCooldownEvent e) {
         if (e.getType() != Material.ENDER_PEARL) {
