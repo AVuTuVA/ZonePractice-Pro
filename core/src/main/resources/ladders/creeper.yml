@@ -31,7 +31,6 @@ settings:
   tntautoignite: true
   pullplayerswithrod: false
   creeper-explosion-delay: 2.0
-creeper-explosion-delay: 1.0
 icon:
   ==: org.bukkit.inventory.ItemStack
   DataVersion: 4903
