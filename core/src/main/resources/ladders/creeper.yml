@@ -21,13 +21,14 @@ settings:
   matchtypes:
   - DUEL
   knockback: DEFAULT
-  tntfusetime: 4
+  tntfusetime: 1
   healthbelowname: false
   resetbuildafterround: false
   breakallblocks: true
   roundenddelay: 3
   roundstatustitles: true
   countdowntitles: true
+  tntautoignite: true
 creeper-explosion-delay: 1.0
 icon:
   ==: org.bukkit.inventory.ItemStack
