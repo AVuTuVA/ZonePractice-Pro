@@ -1,4 +1,4 @@
-VERSION: 46
+VERSION: 47
 
 GENERAL-FILLER-ITEM:
   NAME: " "
@@ -2788,6 +2788,15 @@ GUIS:
               - ""
               - "<green><bold>LEFT-CLICK <green>to reduce the cooldown."
               - "<aqua><bold>RIGHT-CLICK <aqua>to increase the cooldown."
+          CREEPER-EXPLOSION-DELAY:
+            NAME: "<gray>Creeper Explosion Delay: <gold>%creeperExplosionDelay% sec"
+            MATERIAL: CREEPER_HEAD
+            LORE:
+              - ""
+              - "<gray>How long a creeper stays primed before it explodes."
+              - ""
+              - "<green><bold>LEFT-CLICK <green>to reduce the delay."
+              - "<aqua><bold>RIGHT-CLICK <aqua>to increase the delay."
       INVENTORY:
         TITLE: "<dark_blue>%ladder% <dark_gray>- Inventory"
         ICONS:

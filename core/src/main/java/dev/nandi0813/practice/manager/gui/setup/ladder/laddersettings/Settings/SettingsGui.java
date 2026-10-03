@@ -10,7 +10,9 @@ import dev.nandi0813.practice.manager.gui.setup.ladder.laddersettings.Settings.I
 import dev.nandi0813.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.nandi0813.practice.manager.ladder.enums.LadderType;
 import dev.nandi0813.practice.manager.ladder.type.Boxing;
+import dev.nandi0813.practice.manager.ladder.type.Creeper;
 import dev.nandi0813.practice.manager.ladder.type.SkyWars;
+import dev.nandi0813.practice.manager.ladder.type.Spleef;
 import dev.nandi0813.practice.util.Common;
 import dev.nandi0813.practice.util.InventoryUtil;
 import lombok.Getter;
@@ -223,7 +225,7 @@ public class SettingsGui extends GUI {
             settingItems.add(new BreakAllBlocksItem(this, ladder));
 
         if (settingTypes.contains(SettingType.SPLEEF_SNOWBALL_MODE))
-            settingItems.add(new SpleefSnowballModeItem(this, (dev.nandi0813.practice.manager.ladder.type.Spleef) ladder));
+            settingItems.add(new SpleefSnowballModeItem(this, (Spleef) ladder));
 
         if (settingTypes.contains(SettingType.BLOCK_RETURN_DELAY))
             settingItems.add(new BlockReturnDelayItem(this, ladder));
@@ -242,6 +244,9 @@ public class SettingsGui extends GUI {
 
         if (settingTypes.contains(SettingType.WIND_CHARGE_COOLDOWN))
             settingItems.add(new WindChargeCooldownItem(this, ladder));
+
+        if (settingTypes.contains(SettingType.CREEPER_EXPLOSION_DELAY))
+            settingItems.add(new CreeperExplosionDelayItem(this, (Creeper) ladder));
     }
 
 }
