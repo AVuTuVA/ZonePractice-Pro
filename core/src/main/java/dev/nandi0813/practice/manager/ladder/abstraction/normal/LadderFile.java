@@ -52,6 +52,7 @@ public class LadderFile extends ConfigFile {
         config.set("settings.matchtypes", LadderFileUtil.getMatchTypeNames(ladder.getMatchTypes()));
         config.set("settings.knockback", ladder.getLadderKnockback().get());
         config.set("settings.tntfusetime", ladder.getTntFuseTime());
+        config.set("settings.tntautoignite", ladder.isTntAutoIgnite());
         config.set("settings.healthbelowname", ladder.isHealthBelowName());
         config.set("settings.resetbuildafterround", ladder.isResetBuildAfterRound());
         config.set("settings.breakallblocks", ladder.isBreakAllBlocks());
@@ -243,6 +244,11 @@ public class LadderFile extends ConfigFile {
             ladder.setTntFuseTime(tntFuseTime);
         } else
             ladder.setTntFuseTime(4);
+
+        if (config.isBoolean("settings.tntautoignite"))
+            ladder.setTntAutoIgnite(config.getBoolean("settings.tntautoignite"));
+        else
+            ladder.setTntAutoIgnite(false);
 
         if (ladder instanceof RespawnableLadder respawnableLadder) {
             if (config.isInt("settings.respawntime")) {

@@ -231,7 +231,7 @@ public enum LadderType {
             .withRegenSettings()
             .withCommonSettings()
             .withPearlSettings()
-            .withSetting(SettingType.BREAK_ALL_BLOCKS)
+            .withBuildSettings()
             .withSetting(SettingType.CREEPER_EXPLOSION_DELAY)
     );
 

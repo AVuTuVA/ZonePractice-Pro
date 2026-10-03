@@ -61,6 +61,8 @@ public abstract class Ladder {
     @Setter
     protected int tntFuseTime = 4;
     @Setter
+    protected boolean tntAutoIgnite = false;
+    @Setter
     protected int maxDuration = 600;
     @Setter
     protected boolean multiRoundStartCountdown = true;
@@ -112,6 +114,7 @@ public abstract class Ladder {
         this.matchTypes = new ArrayList<>(ladder.getMatchTypes());
         this.startCountdown = ladder.getStartCountdown();
         this.tntFuseTime = ladder.getTntFuseTime();
+        this.tntAutoIgnite = ladder.isTntAutoIgnite();
         this.maxDuration = ladder.getMaxDuration();
         this.multiRoundStartCountdown = ladder.isMultiRoundStartCountdown();
         this.dropInventory = ladder.isDropInventory();

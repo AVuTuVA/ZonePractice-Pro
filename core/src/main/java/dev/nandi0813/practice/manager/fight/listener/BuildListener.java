@@ -382,6 +382,16 @@ public class BuildListener implements Listener {
                 fightChange.trackFireAround(block);
             }
         }
+
+        if (placedType == Material.TNT && spectatable instanceof Match match && match.getLadder().isTntAutoIgnite()
+                && match.getCurrentRound().getRoundStatus() == RoundStatus.LIVE) {
+            Location tntLocation = block.getLocation();
+            block.setType(Material.AIR, false);
+
+            TNTPrimed tnt = block.getWorld().spawn(tntLocation.clone().add(0.5, 0.0, 0.5), TNTPrimed.class);
+            tnt.setFuseTicks(match.getLadder().getTntFuseTime() * 20);
+            tnt.setSource(event.getPlayer());
+        }
     }
 
     /**

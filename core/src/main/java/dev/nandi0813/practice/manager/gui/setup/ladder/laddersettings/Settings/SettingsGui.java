@@ -215,6 +215,9 @@ public class SettingsGui extends GUI {
         if (settingTypes.contains(SettingType.TNT_FUSE_TIME))
             settingItems.add(new TntFuseTimeItem(this, ladder));
 
+        if (settingTypes.contains(SettingType.TNT_AUTO_IGNITE))
+            settingItems.add(new TntAutoIgniteItem(this, ladder));
+
         if (settingTypes.contains(SettingType.HEALTH_BELOW_NAME))
             settingItems.add(new HealthBelowNameItem(this, ladder));
 

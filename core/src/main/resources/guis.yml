@@ -1,4 +1,4 @@
-VERSION: 47
+VERSION: 48
 
 GENERAL-FILLER-ITEM:
   NAME: " "
@@ -2442,6 +2442,22 @@ GUIS:
               - ""
               - "<green><bold>LEFT-CLICK <green>to reduce the time."
               - "<aqua><bold>RIGHT-CLICK <aqua>to increase the time."
+          TNT-AUTO-IGNITE:
+            ENABLED:
+              NAME: "<gray>TNT Auto Ignite: <green>Enabled"
+              MATERIAL: TNT
+              LORE:
+                - ""
+                - "<gray>TNT explodes on its own after being placed."
+                - "<gray>The fuse time above is still used."
+            DISABLED:
+              NAME: "<gray>TNT Auto Ignite: <red>Disabled"
+              MATERIAL: TNT
+              LORE:
+                - ""
+                - "<gray>TNT has to be ignited with flint and steel."
+                - ""
+                - "<green><bold>LEFT-CLICK <green>to toggle."
           EDITABLE:
             ENABLED:
               NAME: "<gray>Editable: <green>Enabled"

@@ -24,6 +24,7 @@ public enum SettingType {
     BUILD,
     MAX_DURATION,
     TNT_FUSE_TIME,
+    TNT_AUTO_IGNITE,
     HEALTH_BELOW_NAME,
     RESET_BUILD_AFTER_ROUND,
     BREAK_ALL_BLOCKS,
