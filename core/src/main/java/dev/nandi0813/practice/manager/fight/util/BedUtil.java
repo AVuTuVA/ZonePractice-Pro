@@ -58,7 +58,7 @@ public class BedUtil {
         if (!bedStatus.get(TeamEnum.TEAM1) && !bedStatus.get(TeamEnum.TEAM2)) return false;
 
         Block bedBlock = e.getBlock();
-        if (!bedBlock.getType().toString().contains("_BED")) return false;
+        if (!BlockUtil.isBedMaterial(bedBlock.getType())) return false;
 
         TeamEnum team = ((Team) match).getTeam(player);
         Location bedLoc = bedBlock.getLocation();

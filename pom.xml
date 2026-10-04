@@ -6,7 +6,7 @@
 
     <groupId>dev.nandi0813</groupId>
     <artifactId>practice-parent</artifactId>
-    <version>7.8.5-SNAPSHOT</version>
+    <version>7.8.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>ZonePractice Pro</name>
@@ -17,6 +17,7 @@
     </properties>
 
     <modules>
+        <module>api</module>
         <module>core</module>
         <module>distribution</module>
     </modules>

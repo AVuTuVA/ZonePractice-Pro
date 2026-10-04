@@ -1,4 +1,4 @@
-VERSION: 82
+VERSION: 83
 
 # MariaDB database settings.
 # MySQL is also supported if preferred.
@@ -330,6 +330,8 @@ MATCH-SETTINGS:
       - "ABSORPTION::90::1"
       - "REGENERATION::20::2"
   REMOVE-EMPTY-BOTTLE: true # Removes empty potion bottles after the player use it.
+  SOUP:
+    HEAL: 6.5 # Health points a mushroom stew restores when used in a match, FFA or event. 1.0 is half a heart, so 6.5 equals 3.25 hearts.
   DUEL:
     SWORD-TO-DUEL: true # When enabled, hitting a player with the unranked sword in the lobby sends a duel request.
     INVITATION-EXPIRY: 60 # After the seconds, the duel request will expire.
@@ -762,7 +764,7 @@ CHAT:
   SHOW-MATCH-CHAT-TO-SPECTATORS: true # If true, spectators of a fight also see the messages of the fighters they are watching.
   PARTY-CHAT:
     ENABLED: true
-    SHORTCUT: "@" # Prefix a message with this symbol to send it to your party instead of the server, like @hello world. Set to "" or false to disable the shortcut, then only /party chat <message> works.
+    SHORTCUT: "@" # Prefix a message with this symbol to send it to your party instead of the server, like @hello world. Set to "" or false to disable the shortcut, then only /party chat works.
   STAFF-CHAT:
     ENABLED: true
     SHORTCUT: true # If true, you can use send message like #hello world instead of enabling staff chat each time.

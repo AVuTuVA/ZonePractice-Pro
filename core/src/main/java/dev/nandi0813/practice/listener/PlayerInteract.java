@@ -1,5 +1,7 @@
 package dev.nandi0813.practice.listener;
 
+import dev.nandi0813.practice.manager.backend.ConfigManager;
+import dev.nandi0813.practice.manager.fight.util.BlockUtil;
 import dev.nandi0813.practice.manager.profile.Profile;
 import dev.nandi0813.practice.manager.profile.ProfileManager;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
@@ -19,9 +21,11 @@ import java.util.Objects;
 
 public class PlayerInteract implements Listener {
 
+    private static final double SOUP_HEAL = ConfigManager.getDouble("MATCH-SETTINGS.SOUP.HEAL", 6.5);
+
     @EventHandler
     public void onFlowerPotManipulate(PlayerFlowerPotManipulateEvent e) {
-        // Only block taking flowers out of pots; placing flowers remains unchanged.
+        // Prevent taking flowers out of pots in MATCH, FFA and EVENT.
         if (e.isPlacing()) {
             return;
         }
@@ -47,70 +51,86 @@ public class PlayerInteract implements Listener {
         Player player = e.getPlayer();
         Profile profile = ProfileManager.getInstance().getProfile(player);
 
-        if (profile == null) {
-            return;
-        }
+        if (profile == null) return;
 
         Action action = e.getAction();
-        if (!action.equals(Action.RIGHT_CLICK_BLOCK) && !action.equals(Action.RIGHT_CLICK_AIR)) {
-            return;
-        }
+        if (action != Action.RIGHT_CLICK_BLOCK && action != Action.RIGHT_CLICK_AIR) return;
 
         ItemStack item = e.getItem();
-        if (item == null || !item.getType().equals(Material.MUSHROOM_STEW)) {
-            return;
-        }
+        if (item == null || item.getType() != Material.MUSHROOM_STEW) return;
 
         switch (profile.getStatus()) {
             case MATCH:
             case FFA:
             case EVENT:
-                int food = player.getFoodLevel();
-                double health = player.getHealth();
-                double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
-                double regen = 6.5;
-
-                if (food < 20) e.setCancelled(true);
-
-                if (health == maxHealth) return;
-
-                if ((health + regen) < maxHealth) {
-                    consumeUsedSoup(player, e.getHand());
-                    player.setHealth(health + regen);
-                } else if ((health + regen) >= maxHealth) {
-                    consumeUsedSoup(player, e.getHand());
-                    player.setHealth(maxHealth);
+                if (player.getFoodLevel() < 20) {
+                    e.setCancelled(true);
+                    return;
                 }
+
+                double health = player.getHealth();
+                double maxHealth = Objects.requireNonNull(
+                        player.getAttribute(Attribute.MAX_HEALTH)
+                ).getValue();
+
+                if (health >= maxHealth) return;
+
+                double newHealth = Math.min(health + SOUP_HEAL, maxHealth);
+
+                consumeUsedSoup(player, e.getHand());
+                player.setHealth(newHealth);
                 player.updateInventory();
+                break;
+
+            default:
                 break;
         }
     }
 
     private void consumeUsedSoup(Player player, EquipmentSlot hand) {
         if (hand == EquipmentSlot.OFF_HAND) {
-            player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-            return;
+            player.getInventory().setItemInOffHand(null);
+        } else {
+            player.getInventory().setItemInMainHand(null);
         }
-
-        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
     }
 
     @EventHandler
-    public void onPlayerSleep(PlayerInteractEvent e) {
+    public void onBedInteract(PlayerInteractEvent e) {
         Player player = e.getPlayer();
+        Profile profile = ProfileManager.getInstance().getProfile(player);
+        if (profile == null) return;
+
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
         if (player.isSneaking()) return;
 
         Block block = e.getClickedBlock();
-        if (block == null) return;
+        if (block == null || !BlockUtil.isBedMaterial(block.getType())) return;
 
-        String blockType = block.getType().toString();
-        if (blockType.contains("BED_") || blockType.contains("_BED"))
-            e.setCancelled(true);
+        switch (profile.getStatus()) {
+            case MATCH:
+            case FFA:
+            case EVENT:
+                e.setCancelled(true);
+                break;
+            default:
+                break;
+        }
     }
 
     @EventHandler
-    public void onPlayerSleep(PlayerBedEnterEvent e) {
-        e.setCancelled(true);
+    public void onBedEnter(PlayerBedEnterEvent e) {
+        Profile profile = ProfileManager.getInstance().getProfile(e.getPlayer());
+        if (profile == null) return;
+
+        switch (profile.getStatus()) {
+            case MATCH:
+            case FFA:
+            case EVENT:
+                e.setCancelled(true);
+                break;
+            default:
+                break;
+        }
     }
 }

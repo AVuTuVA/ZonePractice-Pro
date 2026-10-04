@@ -115,8 +115,9 @@ public class Party implements dev.nandi0813.api.Interface.Party {
 
         members.remove(member);
         memberProfile.setParty(false);
+        memberProfile.setPartyChat(false);
 
-        if (ProfileManager.getInstance().getProfile(member).getStatus().equals(ProfileStatus.LOBBY))
+        if (memberProfile.getStatus().equals(ProfileStatus.LOBBY))
             InventoryManager.getInstance().setLobbyInventory(member, false);
 
         GUIManager.getInstance().searchGUI(GUIType.Party_OtherParties).update();
@@ -127,8 +128,11 @@ public class Party implements dev.nandi0813.api.Interface.Party {
         broadcastTask.cancel();
         sendMessage(LanguageManager.getString("PARTY.PARTY-DISBANDED"));
 
-        for (Player member : members)
-            ProfileManager.getInstance().getProfile(member).setParty(false);
+        for (Player member : members) {
+            Profile memberProfile = ProfileManager.getInstance().getProfile(member);
+            memberProfile.setParty(false);
+            memberProfile.setPartyChat(false);
+        }
 
         List<Player> members_copy = new ArrayList<>(members);
         members.clear();

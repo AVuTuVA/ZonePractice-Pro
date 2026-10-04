@@ -53,6 +53,7 @@ public class Profile {
     private ProfileStatus status;
     private boolean spectatorMode;
     private boolean party;
+    private boolean partyChat;
     private boolean hideSpectators;
 
     // Staff state

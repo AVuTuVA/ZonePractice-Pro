@@ -118,7 +118,7 @@ public class ChangedBlock {
         Block currentBlock = location.getBlock();
 
         try {
-            if (bedFace != null && material.name().contains("BED")) {
+            if (bedFace != null && BlockUtil.isBedMaterial(material)) {
                 BedUtil.placeBed(currentBlock.getLocation(), bedFace);
             } else {
                 currentBlock.setBlockData(blockData, true);

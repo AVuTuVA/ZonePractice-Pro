@@ -200,12 +200,8 @@ public class BuildListener implements Listener {
                 : block.getRelative(0, 1, 0);
     }
 
-    private static boolean isBedMaterial(Material material) {
-        return material != null && material.name().endsWith("_BED");
-    }
-
     private static Block getOtherBedHalf(Block block) {
-        if (block == null || !isBedMaterial(block.getType()) || !(block.getBlockData() instanceof Bed bedData)) {
+        if (block == null || !BlockUtil.isBedMaterial(block.getType()) || !(block.getBlockData() instanceof Bed bedData)) {
             return null;
         }
         return bedData.getPart() == Bed.Part.HEAD

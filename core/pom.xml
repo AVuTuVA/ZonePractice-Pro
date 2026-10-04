@@ -7,7 +7,7 @@
     <parent>
         <groupId>dev.nandi0813</groupId>
         <artifactId>practice-parent</artifactId>
-        <version>7.8.5-SNAPSHOT</version>
+        <version>7.8.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>practice-core</artifactId>
@@ -106,7 +106,7 @@
 
         <!-- API -->
         <dependency>
-            <groupId>com.github.sylveya</groupId>
+            <groupId>dev.nandi0813</groupId>
             <artifactId>ZonePracticePro-Api</artifactId>
             <version>2.4.0</version>
         </dependency>

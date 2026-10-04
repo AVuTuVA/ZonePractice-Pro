@@ -61,7 +61,7 @@ public final class BlockUtil {
         }
     }
 
-    private static boolean isBedMaterial(Material material) {
+    public static boolean isBedMaterial(Material material) {
         return material != null && material.name().endsWith("_BED");
     }
 

@@ -16,12 +16,12 @@
   </repository>
  </repositories>
  <dependency>
-     <groupId>com.github.sylveya</groupId>
+     <groupId>com.github.sylveya.ZonePractice-Pro</groupId>
      <artifactId>ZonePracticePro-Api</artifactId>
      <version>2.4.0</version>
      <scope>provided</scope>
  </dependency>
-```
+ ```
 
 - Also make sure you have added ZonePractice Pro as a dependency in your plugin.yml:
 

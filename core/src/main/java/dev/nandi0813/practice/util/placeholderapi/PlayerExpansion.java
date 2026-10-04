@@ -150,10 +150,36 @@ public class PlayerExpansion extends PlaceholderExpansion implements Relational 
                         return profile.getStats().getDivision().getFullName();
                 }
                 break;
+            case "kills":
+                if (input.length != 2) break;
+
+                // kills_global
+                if (input[1].equals("global"))
+                    return String.valueOf(profile.getStats().getKills());
+                break;
+            case "deaths":
+                if (input.length != 2) break;
+
+                // deaths_global
+                if (input[1].equals("global"))
+                    return String.valueOf(profile.getStats().getDeaths());
+                break;
             case "wins":
                 if (input.length == 1) return null;
 
                 switch (input[1]) {
+                    case "ranked":
+                        if (input.length == 2) {
+                            // wins_ranked
+                            return String.valueOf(profile.getStats().getWins(true));
+                        }
+                        break;
+                    case "unranked":
+                        if (input.length == 2) {
+                            // wins_unranked
+                            return String.valueOf(profile.getStats().getWins(false));
+                        }
+                        break;
                     case "global":
                         if (input.length == 2) {
                             // wins_global
@@ -192,6 +218,18 @@ public class PlayerExpansion extends PlaceholderExpansion implements Relational 
                 if (input.length == 1) return null;
 
                 switch (input[1]) {
+                    case "ranked":
+                        if (input.length == 2) {
+                            // losses_ranked
+                            return String.valueOf(profile.getStats().getLosses(true));
+                        }
+                        break;
+                    case "unranked":
+                        if (input.length == 2) {
+                            // losses_unranked
+                            return String.valueOf(profile.getStats().getLosses(false));
+                        }
+                        break;
                     case "global":
                         if (input.length == 2) {
                             // losses_global
@@ -224,6 +262,28 @@ public class PlayerExpansion extends PlaceholderExpansion implements Relational 
                                 break;
                         }
                         break;
+                }
+                break;
+            case "kdr":
+                if (input.length != 2) break;
+
+                // kdr_global
+                if (input[1].equals("global"))
+                    return String.valueOf(profile.getStats().getGlobalKdr());
+                break;
+            case "winrate":
+                if (input.length != 2) break;
+
+                switch (input[1]) {
+                    // winrate_global
+                    case "global":
+                        return String.valueOf(profile.getStats().getGlobalWinrate());
+                    // winrate_ranked
+                    case "ranked":
+                        return String.valueOf(profile.getStats().getWinrate(true));
+                    // winrate_unranked
+                    case "unranked":
+                        return String.valueOf(profile.getStats().getWinrate(false));
                 }
                 break;
             case "elo":

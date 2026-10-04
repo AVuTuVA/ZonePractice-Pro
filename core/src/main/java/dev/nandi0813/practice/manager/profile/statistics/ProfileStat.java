@@ -244,6 +244,18 @@ public class ProfileStat {
         return NumberUtil.roundDouble((double) w / l);
     }
 
+    public double getWinrate(boolean ranked) {
+        int total = getWins(ranked) + getLosses(ranked);
+        if (total == 0) return 0;
+        return NumberUtil.roundDouble((double) getWins(ranked) * 100 / total);
+    }
+
+    public double getGlobalWinrate() {
+        int total = getGlobalWins() + getGlobalLosses();
+        if (total == 0) return 0;
+        return NumberUtil.roundDouble((double) getGlobalWins() * 100 / total);
+    }
+
     public int getKills() {
         int kills = 0;
         for (NormalLadder ladder : ladderStats.keySet()) {
@@ -266,6 +278,14 @@ public class ProfileStat {
             }
         }
         return deaths;
+    }
+
+    public double getGlobalKdr() {
+        int k = getKills();
+        int d = getDeaths();
+
+        if (d == 0) return k;
+        return NumberUtil.roundDouble((double) k / d);
     }
 
 }
