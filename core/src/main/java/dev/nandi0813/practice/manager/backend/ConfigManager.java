@@ -106,6 +106,10 @@ public enum ConfigManager {
         return getConfig().getDouble(loc);
     }
 
+    public static double getDouble(String loc, double def) {
+        return getConfig().getDouble(loc, def);
+    }
+
     public static Set<String> getConfigSectionKeys(String loc) {
         return Objects.requireNonNull(getConfig().getConfigurationSection(loc)).getKeys(false);
     }
