@@ -21,24 +21,34 @@
 
 ## Player Stats
 
-| PlaceholderAPI         | Description                            |
-|------------------------|----------------------------------------|
-| %zpp_wins_global%      | Total wins (ranked + unranked)         |
-| %zpp_wins_global_r%    | Total ranked wins                      |
-| %zpp_wins_global_u%    | Total unranked wins                    |
-| %zpp_losses_global%    | Total losses (ranked + unranked)       |
-| %zpp_losses_global_r%  | Total ranked losses                    |
-| %zpp_losses_global_u%  | Total unranked losses                  |
-| %zpp_elo_global%       | Global elo                             |
-| %zpp_division_short%   | Global division short name             |
-| %zpp_division_full%    | Global division full name              |
-| %zpp_division_weight%  | Global division weight                 |
-| %zpp_nametag_color%    | Player's nametag color                 |
-| %zpp_group_name%       | Player group name                      |
-| %zpp_group_prefix%     | Player group prefix                    |
-| %zpp_group_suffix%     | Player group suffix                    |
-| %zpp_group_limit_r%    | Daily ranked match limit of the group  |
-| %zpp_group_limit_u%    | Daily unranked match limit of the group|
+| PlaceholderAPI          | Description                            |
+|-------------------------|----------------------------------------|
+| %zpp_wins_global%       | Total wins (ranked + unranked)         |
+| %zpp_wins_global_r%     | Total ranked wins                      |
+| %zpp_wins_global_u%     | Total unranked wins                    |
+| %zpp_wins_ranked%       | Total ranked wins                      |
+| %zpp_wins_unranked%     | Total unranked wins                    |
+| %zpp_losses_global%     | Total losses (ranked + unranked)       |
+| %zpp_losses_global_r%   | Total ranked losses                    |
+| %zpp_losses_global_u%   | Total unranked losses                  |
+| %zpp_losses_ranked%     | Total ranked losses                    |
+| %zpp_losses_unranked%   | Total unranked losses                  |
+| %zpp_kills_global%      | Total kills in all ladders             |
+| %zpp_deaths_global%     | Total deaths in all ladders            |
+| %zpp_kdr_global%        | Global kill/death ratio                |
+| %zpp_winrate_global%    | Global winrate in percent              |
+| %zpp_winrate_ranked%    | Ranked winrate in percent              |
+| %zpp_winrate_unranked%  | Unranked winrate in percent            |
+| %zpp_elo_global%        | Global elo                             |
+| %zpp_division_short%    | Global division short name             |
+| %zpp_division_full%     | Global division full name              |
+| %zpp_division_weight%   | Global division weight                 |
+| %zpp_nametag_color%     | Player's nametag color                 |
+| %zpp_group_name%        | Player group name                      |
+| %zpp_group_prefix%      | Player group prefix                    |
+| %zpp_group_suffix%      | Player group suffix                    |
+| %zpp_group_limit_r%     | Daily ranked match limit of the group  |
+| %zpp_group_limit_u%     | Daily unranked match limit of the group|
 
 ## Ladder Stats
 
