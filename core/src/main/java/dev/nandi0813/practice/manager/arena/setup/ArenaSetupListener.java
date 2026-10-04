@@ -10,6 +10,7 @@ import dev.nandi0813.practice.manager.arena.util.PortalLocation;
 import dev.nandi0813.practice.manager.backend.ConfigManager;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.fight.util.BedUtil;
+import dev.nandi0813.practice.manager.fight.util.BlockUtil;
 import dev.nandi0813.practice.manager.gui.GUIType;
 import dev.nandi0813.practice.manager.gui.setup.arena.ArenaGUISetupManager;
 import dev.nandi0813.practice.util.Common;
@@ -247,8 +248,7 @@ public class ArenaSetupListener implements Listener {
         Block block = event.getClickedBlock();
         if (block == null) return;
 
-        String type = block.getType().toString();
-        if (!type.contains("_BED") && !type.contains("BED_")) {
+        if (!BlockUtil.isBedMaterial(block.getType())) {
             Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.BED.NO-BED").replace("%arena%", arena.getName()));
             return;
         }
