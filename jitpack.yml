@@ -1,0 +1,5 @@
+jdk: 25
+# JitPack builds multi-module repositories by building the whole reactor. Only the
+# parent and the api module are needed to publish ZonePracticePro-Api, so building
+# core/distribution here would make an unrelated failure break the API artifact.
+install: mvn -B -ntp -DskipTests clean install -pl api -am
