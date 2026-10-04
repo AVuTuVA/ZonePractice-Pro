@@ -16,8 +16,8 @@
   </repository>
  </repositories>
  <dependency>
-     <groupId>com.github.sylveya.ZonePracticePro</groupId>
-     <artifactId>api</artifactId>
+     <groupId>com.github.sylveya.ZonePractice-Pro</groupId>
+     <artifactId>ZonePracticePro-Api</artifactId>
      <version>2.4.0</version>
      <scope>provided</scope>
  </dependency>
