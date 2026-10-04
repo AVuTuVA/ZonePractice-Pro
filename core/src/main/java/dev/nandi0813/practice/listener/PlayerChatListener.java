@@ -48,11 +48,16 @@ public class PlayerChatListener implements Listener {
         // Party chat
         String partyChatShortcut = ConfigManager.getPartyChatShortcut();
 
+        boolean partyChatShortcutUsed = !partyChatShortcut.isEmpty() && rawMessage.startsWith(partyChatShortcut);
+
         if (ConfigManager.isPartyChatEnabled()
-                && !partyChatShortcut.isEmpty()
                 && profile.isParty()
                 && party != null
-                && rawMessage.startsWith(partyChatShortcut)) {
+                && (partyChatShortcutUsed || profile.isPartyChat())) {
+
+            String partyChatMessage = partyChatShortcutUsed
+                    ? rawMessage.substring(partyChatShortcut.length())
+                    : rawMessage;
 
             if (party.canUsePartyChat(player)) {
 
@@ -60,20 +65,20 @@ public class PlayerChatListener implements Listener {
 
                 applyRenderer(
                         e,
-                        Component.text(rawMessage.substring(partyChatShortcut.length())),
+                        Component.text(partyChatMessage),
                         ChatFormatUtil.buildPartyChatMessage(player)
                 );
 
             } else {
                 e.setCancelled(true);
 
-                String cantUse = LanguageManager.getString(
-                        "PARTY.CANT-USE-PARTY-CHAT"
+                String disabled = LanguageManager.getString(
+                        "PARTY.PARTY-CHAT-DISABLED-BY-LEADER"
                 );
 
                 Bukkit.getScheduler().runTask(
                         ZonePractice.getInstance(),
-                        () -> Common.sendMMMessage(player, cantUse)
+                        () -> Common.sendMMMessage(player, disabled)
                 );
             }
 

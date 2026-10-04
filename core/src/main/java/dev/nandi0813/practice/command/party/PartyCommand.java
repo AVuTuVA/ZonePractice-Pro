@@ -40,7 +40,7 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
                     PartyAcceptArg.AcceptCommand(player, label, args);
                     break;
                 case "chat":
-                    PartyChatArg.ChatCommand(player, label, args);
+                    PartyChatArg.ChatCommand(player, args);
                     break;
                 case "disband":
                     PartyDisbandArg.DisbandCommand(player, label, args);

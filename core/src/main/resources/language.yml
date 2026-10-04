@@ -1,4 +1,4 @@
-VERSION: 50
+VERSION: 51
 
 CONSOLE-NAME: "<red>Console"
 CANT-USE-CONSOLE: "<red>You can't use this command from the console."
@@ -662,9 +662,10 @@ COMMAND:
         NO-INVITE: "<red>You are not invited to this party."
         INVITE-EXPIRED: "<red>Your party invite has expired."
       CHAT:
-        COMMAND-HELP: "<red>/%label% chat <message>"
         DISABLED: "<red>Party chat is disabled on this server."
         NO-PARTY: "<red>You are not a member of a party."
+        CHAT-ENABLED: "<yellow>Party chat <green>enabled<yellow>."
+        CHAT-DISABLED: "<yellow>Party chat <red>disabled<yellow>."
       DISBAND:
         COMMAND-HELP: "<red>/%label% disband"
         NO-PARTY: "<red>You are not a member of a party."
@@ -688,8 +689,8 @@ COMMAND:
         - " <white>/%label% disband <dark_gray>- <gray>Disband party."
         - ""
         - " <aqua>Party Chat:"
-        - " <white>/%label% chat <message> <dark_gray>- <gray>Send a message to your party."
-        - " <gray>or type '<aqua>%shortcut%<gray>' in front of your message instead."
+        - " <white>/%label% chat <dark_gray>- <gray>Toggle party chat."
+        - " <gray>or type '<aqua>%shortcut%<gray>' in front of your message to send it to your party once."
         - "<gray><st>------------------------------------------------"
       INFO:
         COMMAND-HELP: "<red>/%label% info / info <player>"
@@ -1330,7 +1331,7 @@ PARTY:
   PARTY-NOT-PUBLIC: "<red>You have to have a public party for that."
   NO-BROADCAST-LEFT: "<red>You have reached your daily party broadcast limit."
   CANT-DUEL-OWN-PARTY: "<red>You can't duel your own party."
-  CANT-USE-PARTY-CHAT: "<red>You can't use party chat right now."
+  PARTY-CHAT-DISABLED-BY-LEADER: "<red>The party leader has disabled party chat."
   CANT-DUEL-PARTY: "<red>You can't duel this party."
   NO-JOINABLE-PARTY: "<red>There are no public parties right now."
   PARTY-SPLIT:

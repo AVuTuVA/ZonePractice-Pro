@@ -117,7 +117,25 @@ public class PartySettingsGui extends GUI {
                 break;
             case 12:
                 if (player.hasPermission("zpp.party.partychat")) {
-                    party.setPartyChat(!party.isPartyChat());
+                    boolean partyChat = !party.isPartyChat();
+                    party.setPartyChat(partyChat);
+
+                    // Turning party chat off also turns it off for every member,
+                    // so nobody keeps a toggle the party no longer allows.
+                    if (!partyChat) {
+                        String disabled = LanguageManager.getString("PARTY.PARTY-CHAT-DISABLED-BY-LEADER");
+
+                        for (Player member : party.getMembers()) {
+                            if (member.equals(party.getLeader())) continue;
+
+                            Profile memberProfile = ProfileManager.getInstance().getProfile(member);
+                            if (!memberProfile.isPartyChat()) continue;
+
+                            memberProfile.setPartyChat(false);
+                            Common.sendMMMessage(member, disabled);
+                        }
+                    }
+
                     update();
                 } else
                     Common.sendMMMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));

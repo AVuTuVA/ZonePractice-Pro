@@ -4,6 +4,8 @@ import dev.nandi0813.practice.manager.backend.ConfigManager;
 import dev.nandi0813.practice.manager.backend.LanguageManager;
 import dev.nandi0813.practice.manager.party.Party;
 import dev.nandi0813.practice.manager.party.PartyManager;
+import dev.nandi0813.practice.manager.profile.Profile;
+import dev.nandi0813.practice.manager.profile.ProfileManager;
 import dev.nandi0813.practice.util.ChatFormatUtil;
 import dev.nandi0813.practice.util.Common;
 import org.bukkit.entity.Player;
@@ -12,14 +14,9 @@ public final class PartyChatArg {
 
     private PartyChatArg() {}
 
-    public static void ChatCommand(Player player, String label, String[] args) {
+    public static void ChatCommand(Player player, String[] args) {
         if (!ConfigManager.isPartyChatEnabled()) {
             Common.sendMMMessage(player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.CHAT.DISABLED"));
-            return;
-        }
-
-        if (args.length < 2) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.CHAT.COMMAND-HELP").replace("%label%", label));
             return;
         }
 
@@ -30,7 +27,18 @@ public final class PartyChatArg {
         }
 
         if (!party.canUsePartyChat(player)) {
-            Common.sendMMMessage(player, LanguageManager.getString("PARTY.CANT-USE-PARTY-CHAT"));
+            Common.sendMMMessage(player, LanguageManager.getString("PARTY.PARTY-CHAT-DISABLED-BY-LEADER"));
+            return;
+        }
+
+        if (args.length == 1) {
+            Profile profile = ProfileManager.getInstance().getProfile(player);
+            profile.setPartyChat(!profile.isPartyChat());
+
+            if (profile.isPartyChat())
+                Common.sendMMMessage(player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.CHAT.CHAT-ENABLED"));
+            else
+                Common.sendMMMessage(player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.CHAT.CHAT-DISABLED"));
             return;
         }
 
