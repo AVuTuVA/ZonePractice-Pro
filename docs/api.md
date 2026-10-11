@@ -50,7 +50,7 @@ dependencies {
     <dependency>
         <groupId>com.github.sylveya.AstralPractice</groupId>
         <artifactId>AstralPractice-Api</artifactId>
-        <version>2.4.0</version>
+        <version>2.5.0</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>

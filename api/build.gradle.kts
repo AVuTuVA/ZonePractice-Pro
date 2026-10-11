@@ -2,7 +2,7 @@ plugins {
     id("module-api")
 }
 
-version = "2.4.0"
+version = "2.5.0"
 
 dependencies {
     compileOnlyApi(libs.paper.api)
