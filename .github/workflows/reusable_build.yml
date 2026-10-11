@@ -41,6 +41,7 @@ jobs:
     runs-on: ${{ inputs.runner }}
     permissions:
       contents: write
+      pull-requests: read
 
     env:
       MODRINTH_ID: ${{ secrets.MODRINTH_ID }}
@@ -87,64 +88,22 @@ jobs:
           path: distribution/build/libs/AstralPractice-${{ env.BUILD_VERSION }}.jar
           if-no-files-found: error
 
-      - name: Resolve Dev Changelog Args
-        if: ${{ !inputs.is-release-build }}
-        id: changelog_args
-        run: |
-          BEFORE="${{ github.event.before }}"
-          AFTER="${{ github.event.after }}"
-
-          if [[ -z "$AFTER" ]]; then
-            AFTER="${{ github.sha }}"
-          fi
-
-          # Use push range when both SHAs exist and before is not the all-zero sentinel.
-          if [[ -n "$BEFORE" && -n "$AFTER" && "$BEFORE" != "0000000000000000000000000000000000000000" ]] \
-            && git cat-file -e "$BEFORE^{commit}" 2>/dev/null \
-            && git cat-file -e "$AFTER^{commit}" 2>/dev/null; then
-            ARGS="--verbose ${BEFORE}..${AFTER}"
-          elif git rev-parse --verify HEAD^ >/dev/null 2>&1; then
-            ARGS="--verbose HEAD^..HEAD"
-          else
-            ARGS="--verbose --unreleased"
-          fi
-
-          echo "args=$ARGS" >> "$GITHUB_OUTPUT"
-
-      - name: Generate Dev Changelog
-        if: ${{ !inputs.is-release-build }}
-        id: git_cliff_dev
-        uses: orhun/git-cliff-action@v4.9.1
+      - name: Generate Changelog with Release Drafter
+        id: drafter
+        uses: release-drafter/release-drafter@v7
         with:
-          config: cliff.toml
-          args: ${{ steps.changelog_args.outputs.args }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Release Changelog
-        if: ${{ inputs.is-release-build }}
-        id: git_cliff_release
-        uses: orhun/git-cliff-action@v4.9.1
-        with:
-          config: cliff.toml
-          args: --unreleased
+          commitish: ${{ github.sha }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prepare Final Changelog
         id: changelog
-        env:
-          DEV_NOTES: ${{ steps.git_cliff_dev.outputs.content }}
-          RELEASE_NOTES: ${{ steps.git_cliff_release.outputs.content }}
         run: |
-          NOTES=""
-          if [[ "${{ inputs.is-release-build }}" == "true" ]]; then
-            NOTES="$RELEASE_NOTES"
-          else
-            NOTES="$DEV_NOTES"
+          NOTES="${{ inputs.release-changelog }}"
+          if [[ -z "$NOTES" ]]; then
+            NOTES="${{ steps.drafter.outputs.body }}"
           fi
-
-          if [ -z "$NOTES" ]; then
+          if [[ -z "$NOTES" ]]; then
             NOTES="No new code changes in this build"
           fi
 
