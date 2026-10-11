@@ -24,4 +24,11 @@ public interface Queue {
    * @return the type
    */
   boolean isRanked();
+
+  /**
+   * Get the ladder name of the queue.
+   *
+   * @return the ladder name
+   */
+  String getLadderName();
 }

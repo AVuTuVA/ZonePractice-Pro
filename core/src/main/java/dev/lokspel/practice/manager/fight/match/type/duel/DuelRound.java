@@ -36,8 +36,9 @@ public class DuelRound extends Round implements PlayerWinner {
     if (endMatch) {
       Player matchWinner = this.getMatch().getMatchWinner();
       if (matchWinner != null) {
+        Player matchLoser = duel.getOppositePlayer(matchWinner);
         Profile winnerProfile = duel.getPlayerProfiles().get(matchWinner);
-        Profile loserProfile = duel.getPlayerProfiles().get(duel.getOppositePlayer(matchWinner));
+        Profile loserProfile = duel.getPlayerProfiles().get(matchLoser);
 
         List<String> rankedExtension = new ArrayList<>();
         if (ladder instanceof NormalLadder normalLadder) {
@@ -57,17 +58,17 @@ public class DuelRound extends Round implements PlayerWinner {
             int loserEloChange = Math.abs(eloChanges.getSecond());
 
             int winnerOldElo = winnerLadderStats.getElo();
-            winnerLadderStats.increaseElo(winnerEloChange);
+            winnerProfile.getStats().changeElo(normalLadder, winnerEloChange, duel);
 
             int loserOldElo = loserLadderStats.getElo();
-            loserLadderStats.decreaseElo(loserEloChange);
+            loserProfile.getStats().changeElo(normalLadder, -loserEloChange, duel);
 
             for (String reLine :
                 PracticeConfig.language().getMatch().getDuel().getMatchEnd().getRankedExtension()) {
               rankedExtension.add(
                   reLine
                       .replace("%winner%", matchWinner.getName())
-                      .replace("%loser%", duel.getOppositePlayer(matchWinner).getName())
+                      .replace("%loser%", matchLoser != null ? matchLoser.getName() : "")
                       .replace("%eloChange%", String.valueOf(winnerEloChange))
                       .replace("%winnerEloChange%", String.valueOf(winnerEloChange))
                       .replace("%loserEloChange%", String.valueOf(loserEloChange))

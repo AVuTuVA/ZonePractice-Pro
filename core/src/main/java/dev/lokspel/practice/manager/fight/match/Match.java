@@ -737,4 +737,29 @@ public abstract class Match extends BukkitRunnable
   public Cuboid getCuboid() {
     return arena != null ? arena.getCuboid() : null;
   }
+
+  @Override
+  public String getMatchId() {
+    return this.id;
+  }
+
+  @Override
+  public String getArenaName() {
+    return this.arena != null ? this.arena.getName() : null;
+  }
+
+  @Override
+  public boolean isRanked() {
+    return this instanceof Duel duel && duel.isRanked();
+  }
+
+  @Override
+  public int getDurationSeconds() {
+    return this.duration;
+  }
+
+  @Override
+  public int getCurrentRoundNumber() {
+    return this.rounds.size();
+  }
 }
