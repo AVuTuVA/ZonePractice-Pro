@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.Round;
 import dev.lokspel.practice.manager.fight.util.stats.Statistic;
@@ -73,11 +74,19 @@ public class MatchStatsGui extends Gui {
                 String title;
                 if (match.getLadder().getRounds() == 1) {
                   title =
-                      GuiFile.getString("GUIS.MATCH-STATISTICS.TITLE.SINGLE-ROUND")
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getMatchStatistics()
+                          .getTitle()
+                          .getSingleRound()
                           .replace("%player%", Objects.requireNonNull(player.getName()));
                 } else {
                   title =
-                      GuiFile.getString("GUIS.MATCH-STATISTICS.TITLE.MULTIPLE-ROUND")
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getMatchStatistics()
+                          .getTitle()
+                          .getMultipleRound()
                           .replace("%player%", Objects.requireNonNull(player.getName()))
                           .replace("%round%", String.valueOf(round));
                 }
@@ -157,7 +166,8 @@ public class MatchStatsGui extends Gui {
   }
 
   private ItemStack getPotionItem(Statistic roundStatistic, int healthPotionsLeft) {
-    return GuiFile.getGuiItem("GUIS.MATCH-STATISTICS.ICONS.POTION")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getMatchStatistics().getIcons().getPotion())
         .replace("%potion_left%", String.valueOf(healthPotionsLeft))
         .replace("%potion_thrown%", String.valueOf(roundStatistic.getPotionThrown()))
         .replace("%potion_missed%", String.valueOf(roundStatistic.getPotionMissed()))
@@ -167,13 +177,15 @@ public class MatchStatsGui extends Gui {
   }
 
   private ItemStack getHealthItem(double endHearth) {
-    return GuiFile.getGuiItem("GUIS.MATCH-STATISTICS.ICONS.HEALTH")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getMatchStatistics().getIcons().getHealth())
         .replace("%end_hearth%", String.valueOf(endHearth))
         .get();
   }
 
   private ItemStack getFoodItem(double endHunger) {
-    return GuiFile.getGuiItem("GUIS.MATCH-STATISTICS.ICONS.HUNGER")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getMatchStatistics().getIcons().getHunger())
         .replace("%end_hunger%", String.valueOf(endHunger))
         .get();
   }
@@ -183,7 +195,13 @@ public class MatchStatsGui extends Gui {
       List<String> effects = new ArrayList<>();
       for (PotionEffect potionEffect : roundStatistic.getEndPotionEffects()) {
         effects.add(
-            GuiFile.getString("GUIS.MATCH-STATISTICS.ICONS.EFFECT.HAS-EFFECT.FORMAT")
+            PracticeConfig.guis()
+                .getGuis()
+                .getMatchStatistics()
+                .getIcons()
+                .getEffect()
+                .getHasEffect()
+                .getFormat()
                 .replace(
                     "%name%",
                     StringUtils.capitalize(
@@ -195,7 +213,14 @@ public class MatchStatsGui extends Gui {
 
       List<String> lore = new ArrayList<>();
       for (String line :
-          GuiFile.getStringList("GUIS.MATCH-STATISTICS.ICONS.EFFECT.HAS-EFFECT.ICON.LORE")) {
+          PracticeConfig.guis()
+              .getGuis()
+              .getMatchStatistics()
+              .getIcons()
+              .getEffect()
+              .getHasEffect()
+              .getIcon()
+              .getLore()) {
         if (line.contains("%effects%")) {
           lore.addAll(effects);
         } else {
@@ -204,7 +229,15 @@ public class MatchStatsGui extends Gui {
       }
 
       ItemStack item =
-          GuiFile.getGuiItem("GUIS.MATCH-STATISTICS.ICONS.EFFECT.HAS-EFFECT.ICON").get();
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getMatchStatistics()
+                      .getIcons()
+                      .getEffect()
+                      .getHasEffect()
+                      .getIcon())
+              .get();
       ItemMeta itemMeta = item.getItemMeta();
 
       itemMeta.lore(StringUtil.cc(lore).stream().map(Common::legacyToComponent).toList());
@@ -212,12 +245,20 @@ public class MatchStatsGui extends Gui {
 
       return item;
     } else {
-      return GuiFile.getGuiItem("GUIS.MATCH-STATISTICS.ICONS.EFFECT.NO-EFFECT").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getMatchStatistics()
+                  .getIcons()
+                  .getEffect()
+                  .getNoEffect())
+          .get();
     }
   }
 
   private ItemStack getStatsItem(Statistic roundStatistic) {
-    return GuiFile.getGuiItem("GUIS.MATCH-STATISTICS.ICONS.STATS")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getMatchStatistics().getIcons().getStats())
         .replace("%total_hits%", String.valueOf(roundStatistic.getHit()))
         .replace("%total_hits_received%", String.valueOf(roundStatistic.getGetHit()))
         .replace("%longest_combo%", String.valueOf(roundStatistic.getLongestCombo()))
@@ -226,7 +267,8 @@ public class MatchStatsGui extends Gui {
   }
 
   private ItemStack getNextRoundItem(int nextRound) {
-    return GuiFile.getGuiItem("GUIS.MATCH-STATISTICS.ICONS.VIEW-ROUND")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getMatchStatistics().getIcons().getViewRound())
         .replace("%round%", String.valueOf(nextRound))
         .get();
   }

@@ -1,11 +1,10 @@
 package dev.lokspel.practice.manager.fight.match.util;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.ArenaCopy;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.NormalArena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.duel.DuelManager;
 import dev.lokspel.practice.manager.duel.DuelRequest;
 import dev.lokspel.practice.manager.fight.match.Match;
@@ -67,7 +66,10 @@ public class RematchRequest {
       String targetName = target != null ? target.getName() : "Unknown";
       Common.sendMmMessage(
           sender,
-          LanguageManager.getString("MATCH.REMATCH-REQUEST.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getMatch()
+              .getRematchRequest()
+              .getTargetOffline()
               .replace("%target%", targetName));
       MatchManager.getInstance().invalidateRematch(this);
       return;
@@ -79,7 +81,10 @@ public class RematchRequest {
       if (targetProfile.isParty()) {
         Common.sendMmMessage(
             sender,
-            LanguageManager.getString("MATCH.REMATCH-REQUEST.CANT-SEND-ANYMORE")
+            PracticeConfig.language()
+                .getMatch()
+                .getRematchRequest()
+                .getCantSendAnymore()
                 .replace("%target%", target.getName()));
         return;
       }
@@ -97,7 +102,8 @@ public class RematchRequest {
         }
       }
 
-      Common.sendMmMessage(sender, LanguageManager.getString("MATCH.REMATCH-REQUEST.ALREADY-SENT"));
+      Common.sendMmMessage(
+          sender, PracticeConfig.language().getMatch().getRematchRequest().getAlreadySent());
       return;
     }
 
@@ -108,7 +114,10 @@ public class RematchRequest {
       if (!targetProfile.isDuelRequest()) {
         Common.sendMmMessage(
             sender,
-            LanguageManager.getString("MATCH.REMATCH-REQUEST.TARGET-DONT-ACCEPT")
+            PracticeConfig.language()
+                .getMatch()
+                .getRematchRequest()
+                .getTargetDontAccept()
                 .replace("%target%", target.getName()));
         return;
       }
@@ -127,7 +136,10 @@ public class RematchRequest {
     } else {
       Common.sendMmMessage(
           sender,
-          LanguageManager.getString("MATCH.REMATCH-REQUEST.CANT-SEND-ANYMORE")
+          PracticeConfig.language()
+              .getMatch()
+              .getRematchRequest()
+              .getCantSendAnymore()
               .replace("%target%", target.getName()));
     }
   }
@@ -169,7 +181,7 @@ public class RematchRequest {
         .runTaskLater(
             AstralPractice.getInstance(),
             () -> MatchManager.getInstance().invalidateRematch(this),
-            ConfigManager.getInt("MATCH-SETTINGS.REMATCH.EXPIRE-TIME") * 20L);
+            PracticeConfig.settings().getMatchSettings().getRematch().getExpireTime() * 20L);
   }
 
   public synchronized void invalidate() {

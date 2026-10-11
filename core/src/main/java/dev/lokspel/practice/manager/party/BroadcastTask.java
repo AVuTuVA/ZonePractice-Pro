@@ -1,8 +1,7 @@
 package dev.lokspel.practice.manager.party;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.util.Common;
@@ -27,7 +26,9 @@ public class BroadcastTask extends BukkitRunnable {
     party.setBroadcastParty(true);
 
     this.runTaskTimerAsynchronously(
-        AstralPractice.getInstance(), 0, ConfigManager.getInt("PARTY.PUBLIC-BROADCAST-TIME") * 20L);
+        AstralPractice.getInstance(),
+        0,
+        PracticeConfig.settings().getParty().getPublicBroadcastTime() * 20L);
   }
 
   @Override
@@ -43,13 +44,15 @@ public class BroadcastTask extends BukkitRunnable {
 
   @Override
   public void run() {
-    if (count > ConfigManager.getInt("PARTY.BROADCAST-TIMES")) {
+    if (count > PracticeConfig.settings().getParty().getBroadcastTimes()) {
       cancel();
       return;
     }
 
     String broadcastMsg =
-        LanguageManager.getString("PARTY.BROADCAST-MSG")
+        PracticeConfig.language()
+            .getParty()
+            .getBroadcastMsg()
             .replace("%player%", party.getLeader().getName());
 
     for (Player online : Bukkit.getOnlinePlayers()) {

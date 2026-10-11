@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.match.util;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.type.partyffa.PartyFfa;
@@ -97,7 +97,7 @@ public final class MatchUtil {
 
     if (EloMode.getActiveMode() == EloMode.SKILL) {
       final int eloFactor =
-          Math.max(1, ConfigManager.getInt("QUEUE.RANKED.ELO-SYSTEM.K-FACTOR", 32));
+          Math.max(1, PracticeConfig.settings().getQueue().getRanked().getEloSystem().getKfactor());
       double expectedWinner = expectedScore(winnerElo, loserElo);
 
       winnerChange = (int) Math.round(eloFactor * (1 - expectedWinner));
@@ -107,7 +107,7 @@ public final class MatchUtil {
       loserChange = -winnerChange;
     }
 
-    int maxChange = ConfigManager.getInt("QUEUE.RANKED.ELO-SYSTEM.MAX-CHANGE", 0);
+    int maxChange = PracticeConfig.settings().getQueue().getRanked().getEloSystem().getMaxChange();
     if (maxChange > 0) {
       winnerChange = Math.clamp(winnerChange, -maxChange, maxChange);
       loserChange = Math.clamp(loserChange, -maxChange, maxChange);
@@ -123,7 +123,8 @@ public final class MatchUtil {
 
   /** Random Elo change from the configured {@code QUEUE.RANKED.ELO-CHANGE} interval. */
   private static int getRandomElo() {
-    String[] changeInterval = ConfigManager.getString("QUEUE.RANKED.ELO-CHANGE").split("-");
+    String[] changeInterval =
+        PracticeConfig.settings().getQueue().getRanked().getEloChange().split("-");
     int min = Integer.parseInt(changeInterval[0]);
     int max = Integer.parseInt(changeInterval[1]);
 

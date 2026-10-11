@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.party.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -20,7 +20,12 @@ public final class PartyInviteArg {
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INVITE.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getInvite()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -28,13 +33,25 @@ public final class PartyInviteArg {
     Party party = PartyManager.getInstance().getParty(player);
     if (party == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INVITE.NO-PARTY"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getInvite()
+              .getNoParty());
       return;
     }
 
     if (!party.isAllInvite() && !party.getLeader().equals(player)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INVITE.CANT-INVITE"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getInvite()
+              .getCantInvite());
       return;
     }
 
@@ -42,21 +59,37 @@ public final class PartyInviteArg {
     if (target == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INVITE.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getInvite()
+              .getTargetOffline()
               .replace("%target%", args[1]));
       return;
     }
 
     if (player.equals(target)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INVITE.CANT-INVITE-YOURSELF"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getInvite()
+              .getCantInviteYourself());
       return;
     }
 
     if (party.getMembers().contains(target)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INVITE.PLAYER-ALREADY-IN-PARTY")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getInvite()
+              .getPlayerAlreadyInParty()
               .replace("%target%", target.getName()));
       return;
     }
@@ -65,7 +98,12 @@ public final class PartyInviteArg {
     if (!targetProfile.isPartyInvites()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INVITE.NO-INVITES")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getInvite()
+              .getNoInvites()
               .replace("%target%", target.getName()));
       return;
     }
@@ -75,7 +113,12 @@ public final class PartyInviteArg {
             > System.currentTimeMillis())) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INVITE.ALREADY-INVITED")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getInvite()
+              .getAlreadyInvited()
               .replace("%target%", target.getName()));
       return;
     }
@@ -83,11 +126,21 @@ public final class PartyInviteArg {
     party.getInvites().put(target, System.currentTimeMillis());
 
     party.sendMessage(
-        LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INVITE.PLAYER-INVITED")
+        PracticeConfig.language()
+            .getCommand()
+            .getParty()
+            .getArguments()
+            .getInvite()
+            .getPlayerInvited()
             .replace("%target%", target.getName()));
     Common.sendMmMessage(
         target,
-        LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INVITE.PLAYER-GOT-INVITE")
+        PracticeConfig.language()
+            .getCommand()
+            .getParty()
+            .getArguments()
+            .getInvite()
+            .getPlayerGotInvite()
             .replace("%inviter%", player.getName()));
   }
 

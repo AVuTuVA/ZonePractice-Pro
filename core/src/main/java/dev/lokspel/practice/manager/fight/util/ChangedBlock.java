@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.util;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.listener.BuildListener;
 import dev.lokspel.practice.util.Common;
 import lombok.Getter;
@@ -94,7 +94,7 @@ public class ChangedBlock {
         chestInventory = chest.getInventory().getContents().clone();
       }
     } catch (Exception e) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("ARENA.ARENA-REGEN-FAILED-CHEST"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getArena().getArenaRegenFailedChest());
     }
   }
 

@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.event.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
@@ -18,21 +18,34 @@ public final class StopArg {
     if (!player.hasPermission("ap.event.stop.collecting")
         && !player.hasPermission("ap.event.stop.live")) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.STOP.NO-PERMISSION"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getStop()
+              .getNoPermission());
       return;
     }
 
     int eventSize = EventManager.getInstance().getEvents().size();
     if (eventSize == 0) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.STOP.NO-EVENT"));
+          player,
+          PracticeConfig.language().getCommand().getEvent().getArguments().getStop().getNoEvent());
       return;
     }
 
     if (args.length == 1) {
       if (eventSize > 1) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.STOP.MORE-EVENTS"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getStop()
+                .getMoreEvents());
         return;
       }
 
@@ -45,13 +58,25 @@ public final class StopArg {
       if (event.getStatus().equals(EventStatus.COLLECTING)) {
         if (!player.hasPermission("ap.event.stop.collecting")) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.STOP.NO-PERMISSION"));
+              player,
+              PracticeConfig.language()
+                  .getCommand()
+                  .getEvent()
+                  .getArguments()
+                  .getStop()
+                  .getNoPermission());
           return;
         }
       } else {
         if (!player.hasPermission("ap.event.stop.live")) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.STOP.NO-PERMISSION"));
+              player,
+              PracticeConfig.language()
+                  .getCommand()
+                  .getEvent()
+                  .getArguments()
+                  .getStop()
+                  .getNoPermission());
           return;
         }
       }
@@ -59,7 +84,12 @@ public final class StopArg {
       event.forceEnd(player);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.STOP.END-SUCCESS")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getStop()
+              .getEndSuccess()
               .replace("%event%", event.getType().getName()));
     } else if (args.length == 2) {
       Event event = null;
@@ -74,7 +104,12 @@ public final class StopArg {
       if (event == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.STOP.NO-LIVE-EVENT")
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getStop()
+                .getNoLiveEvent()
                 .replace("%event%", args[1]));
         return;
       }
@@ -83,13 +118,25 @@ public final class StopArg {
       if (event.getStatus().equals(EventStatus.COLLECTING)) {
         if (!player.hasPermission("ap.event.stop.collecting")) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.STOP.NO-PERMISSION"));
+              player,
+              PracticeConfig.language()
+                  .getCommand()
+                  .getEvent()
+                  .getArguments()
+                  .getStop()
+                  .getNoPermission());
           return;
         }
       } else {
         if (!player.hasPermission("ap.event.stop.live")) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.STOP.NO-PERMISSION"));
+              player,
+              PracticeConfig.language()
+                  .getCommand()
+                  .getEvent()
+                  .getArguments()
+                  .getStop()
+                  .getNoPermission());
           return;
         }
       }
@@ -97,7 +144,12 @@ public final class StopArg {
       event.forceEnd(player);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.STOP.END-SUCCESS")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getStop()
+              .getEndSuccess()
               .replace("%event%", event.getType().getName()));
     } else {
       HelpArg.run(player, label);

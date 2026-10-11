@@ -1,10 +1,9 @@
 package dev.lokspel.practice.manager.arena.arenas.interfaces;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.Cuboid;
 import java.util.ArrayList;
@@ -30,7 +29,9 @@ public abstract class BasicArena {
   @Setter protected List<Location> ffaPositions = new ArrayList<>();
 
   @Setter protected boolean buildMax = false;
-  @Setter protected int buildMaxValue = ConfigManager.getInt("MATCH-SETTINGS.BUILD-LIMIT-DEFAULT");
+
+  @Setter
+  protected int buildMaxValue = PracticeConfig.settings().getMatchSettings().getBuildLimitDefault();
 
   @Setter protected boolean deadZone = false;
   @Setter protected int deadZoneValue = 0;
@@ -82,7 +83,7 @@ public abstract class BasicArena {
   public boolean teleport(Player player) {
     Location location = getAvailableLocation();
     if (location == null) {
-      Common.sendMmMessage(player, LanguageManager.getString("ARENA.NO-AVAILABLE-LOCATION"));
+      Common.sendMmMessage(player, PracticeConfig.language().getArena().getNoAvailableLocation());
       return false;
     }
 

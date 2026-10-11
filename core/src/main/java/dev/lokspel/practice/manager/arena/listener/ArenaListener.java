@@ -4,12 +4,12 @@ import static dev.lokspel.practice.manager.arena.ArenaManager.LOADED_CHUNK_KEYS;
 import static dev.lokspel.practice.manager.arena.ArenaManager.LOAD_CHUNKS;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.BasicArena;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
 import dev.lokspel.practice.manager.arena.util.ArenaWorldUtil;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -88,7 +88,7 @@ public class ArenaListener implements Listener {
     boolean cancelled = false;
 
     if (playerWorld.equals(ArenaWorldUtil.getArenasCopyWorld())) {
-      Common.sendMmMessage(player, LanguageManager.getString("ARENA.CANT-EDIT-COPIES"));
+      Common.sendMmMessage(player, PracticeConfig.language().getArena().getCantEditCopies());
       return true;
     } else if (playerWorld.equals(ArenaWorldUtil.getArenasWorld())) {
       for (Cuboid cuboid : ArenaManager.getInstance().getArenaCuboids().keySet()) {
@@ -103,13 +103,17 @@ public class ArenaListener implements Listener {
             cancelled = true;
             Common.sendMmMessage(
                 player,
-                LanguageManager.getString("ARENA.CANT-EDIT-ARENA-WITH-COPIES")
+                PracticeConfig.language()
+                    .getArena()
+                    .getCantEditArenaWithCopies()
                     .replace("%arena%", mainArena.getDisplayName()));
           } else if (!MatchManager.getInstance().getLiveMatchesByArena(arena).isEmpty()) {
             cancelled = true;
             Common.sendMmMessage(
                 player,
-                LanguageManager.getString("ARENA.CANT-EDIT-ARENA-WITH-MATCH")
+                PracticeConfig.language()
+                    .getArena()
+                    .getCantEditArenaWithMatch()
                     .replace("%arena%", mainArena.getDisplayName()));
           }
         }

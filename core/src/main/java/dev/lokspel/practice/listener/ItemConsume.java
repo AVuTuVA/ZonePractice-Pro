@@ -1,7 +1,7 @@
 package dev.lokspel.practice.listener;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import org.bukkit.Bukkit;
@@ -25,7 +25,7 @@ public class ItemConsume implements Listener {
       case FFA:
       case EVENT:
         if (item.getType() == Material.POTION
-            && ConfigManager.getConfig().getBoolean("MATCH-SETTINGS.REMOVE-EMPTY-BOTTLE")) {
+            && PracticeConfig.settings().getMatchSettings().isRemoveEmptyBottle()) {
           Bukkit.getScheduler()
               .runTaskLater(
                   AstralPractice.getInstance(),

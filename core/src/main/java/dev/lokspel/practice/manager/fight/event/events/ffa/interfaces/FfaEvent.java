@@ -3,7 +3,8 @@ package dev.lokspel.practice.manager.fight.event.events.ffa.interfaces;
 import dev.lokspel.api.event.event.EventEndEvent;
 import dev.lokspel.api.event.spectate.start.EventSpectateStartEvent;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.language.EventMessages;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import dev.lokspel.practice.manager.fight.event.interfaces.FullRunnableInterface;
@@ -18,6 +19,7 @@ import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.entityhider.PlayerHider;
 import dev.lokspel.practice.util.playerutil.PlayerUtil;
 import java.util.Random;
+import java.util.function.Supplier;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -25,11 +27,16 @@ import org.bukkit.entity.Player;
 public abstract class FfaEvent extends FullRunnableInterface {
 
   protected static final Random random = new Random();
-  private final String languagePath;
+  private final Supplier<EventMessages> messages;
 
-  public FfaEvent(Object starter, EventData eventData, String languagePath) {
+  public FfaEvent(Object starter, EventData eventData, Supplier<EventMessages> messages) {
     super(starter, eventData);
-    this.languagePath = languagePath;
+    this.messages = messages;
+  }
+
+  /** Returns this event's language section, resolved on each call so reloads apply. */
+  public EventMessages getMessages() {
+    return this.messages.get();
   }
 
   public void teleport(final Player player) {
@@ -94,13 +101,14 @@ public abstract class FfaEvent extends FullRunnableInterface {
       this.getDurationRunnable().begin();
     } else if (seconds % 10 == 0 || seconds <= 3) {
       sendMessage(
-          LanguageManager.getString(languagePath + ".GAME-STARTING")
+          getMessages()
+              .getGameStarting()
               .replace("%seconds%", String.valueOf(seconds))
               .replace(
                   "%secondName%",
                   (seconds == 1
-                      ? LanguageManager.getString("SECOND-NAME.1SEC")
-                      : LanguageManager.getString("SECOND-NAME.1<SEC"))),
+                      ? PracticeConfig.language().getSecondName().getOneSecond()
+                      : PracticeConfig.language().getSecondName().getUnderOneSecond())),
           true);
 
       SoundEffect sound = SoundManager.getInstance().getSound(SoundType.EVENT_START_COUNTDOWN);
@@ -143,16 +151,13 @@ public abstract class FfaEvent extends FullRunnableInterface {
     }
 
     if (winner != null) {
-      this.sendMessage(
-          LanguageManager.getString(languagePath + ".WON-EVENT")
-              .replace("%winner%", winner.getName()),
-          true);
+      this.sendMessage(getMessages().getWonEvent().replace("%winner%", winner.getName()), true);
 
       for (String cmd : eventData.getType().getWinnerCmd()) {
         ServerManager.runConsoleCommand(cmd.replace("%player%", winner.getName()));
       }
     } else {
-      this.sendMessage(LanguageManager.getString(languagePath + ".NO-WINNER"), true);
+      this.sendMessage(getMessages().getNoWinner(), true);
     }
   }
 
@@ -163,7 +168,8 @@ public abstract class FfaEvent extends FullRunnableInterface {
     }
 
     this.sendMessage(
-        LanguageManager.getString(languagePath + ".PLAYER-DIED")
+        getMessages()
+            .getPlayerDied()
             .replace("%player%", player.getName())
             .replace("%startPlayerCount%", String.valueOf(this.getStartPlayerCount()))
             .replace("%playerCount%", String.valueOf(players.size() - 1)),
@@ -199,9 +205,7 @@ public abstract class FfaEvent extends FullRunnableInterface {
 
     if (message && !this.status.equals(EventStatus.END)) {
       sendMessage(
-          LanguageManager.getString(languagePath + ".STARTED-SPECTATING")
-              .replace("%spectator%", spectator.getName()),
-          true);
+          getMessages().getStartedSpectating().replace("%spectator%", spectator.getName()), true);
     }
 
     for (Player eventPlayer : players) {

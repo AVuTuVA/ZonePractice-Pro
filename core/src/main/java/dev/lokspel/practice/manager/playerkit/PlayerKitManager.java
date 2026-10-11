@@ -1,6 +1,8 @@
 package dev.lokspel.practice.manager.playerkit;
 
-import dev.lokspel.practice.manager.backend.ConfigFile;
+import dev.lokspel.practice.config.ItemConfig;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.playerkit.Items;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.ladder.abstraction.playercustom.CustomLadder;
@@ -21,7 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 @Getter
-public class PlayerKitManager extends ConfigFile implements Listener {
+public class PlayerKitManager implements Listener {
 
   private static PlayerKitManager instance;
 
@@ -32,9 +34,7 @@ public class PlayerKitManager extends ConfigFile implements Listener {
     return instance;
   }
 
-  private PlayerKitManager() {
-    super("", "playerkit");
-  }
+  private PlayerKitManager() {}
 
   /** All config-driven item categories, in declaration order. */
   private final List<DynamicCategory> dynamicCategories = new ArrayList<>();
@@ -99,60 +99,75 @@ public class PlayerKitManager extends ConfigFile implements Listener {
   private void loadDynamicCategories() {
     dynamicCategories.clear();
 
-    String iconsSection = "GUI.ITEMS.CATEGORY-GUI.ICONS";
-    if (config.getConfigurationSection(iconsSection) == null) {
+    Items items = PracticeConfig.playerKit().getGui().getItems();
+    Map<String, Items.CategoryGui.CategoryIcon> icons = items.getCategoryGui().getIcons();
+    if (icons == null) {
       return;
     }
 
-    for (String id : config.getConfigurationSection(iconsSection).getKeys(false)) {
+    Map<String, Items.ItemsGui.ItemCategory> categories = items.getItemsGui().getCategories();
+    for (Map.Entry<String, Items.CategoryGui.CategoryIcon> entry : icons.entrySet()) {
+      String id = entry.getKey();
       if (FIXED_ICON_KEYS.contains(id)) {
         continue;
       } // skip built-ins
 
-      String iconPath = iconsSection + "." + id;
-      String titlePath = "GUI.ITEMS.ITEMS-GUI.CATEGORIES." + id + ".TITLE";
-      String itemsPath = "GUI.ITEMS.ITEMS-GUI.CATEGORIES." + id + ".ITEMS";
+      Items.ItemsGui.ItemCategory category = categories != null ? categories.get(id) : null;
 
-      EditorIcon icon = getEditorItem(iconPath);
-      String title = config.getString(titlePath, "<dark_gray>" + id);
-      List<String> items = config.getStringList(itemsPath);
+      EditorIcon icon = getEditorItem(entry.getValue());
+      String title =
+          category != null && category.getTitle() != null
+              ? category.getTitle()
+              : "<dark_gray>" + id;
+      List<String> itemList =
+          category != null && category.getItems() != null ? category.getItems() : List.of();
 
-      CategoryGui gui = new CategoryGui(GuiType.PlayerCustom_DynamicCategory, title, items);
+      CategoryGui gui = new CategoryGui(GuiType.PlayerCustom_DynamicCategory, title, itemList);
       dynamicCategories.add(new DynamicCategory(id, icon, gui));
     }
   }
 
-  @Override
-  public void setData() {}
+  /**
+   * Creates the editor icon an item section describes, without a slot.
+   *
+   * @param item the section, or {@code null} for an empty icon
+   */
+  public EditorIcon getEditorItem(ItemConfig item) {
+    return getEditorItem(item, null);
+  }
 
-  @Override
-  public void getData() {}
+  /** Creates the editor icon of a category picker entry, in the entry's slot. */
+  public EditorIcon getEditorItem(Items.CategoryGui.CategoryIcon icon) {
+    return getEditorItem(icon, icon != null ? icon.getSlot() : null);
+  }
 
-  public EditorIcon getEditorItem(String loc) {
+  /**
+   * Creates the editor icon an item section describes. Only the name, material and lore of the
+   * section are used.
+   *
+   * @param item the section, or {@code null} for an empty icon
+   * @param slot the icon's slot, or {@code null} to leave it unset ({@code -1})
+   */
+  public EditorIcon getEditorItem(ItemConfig item, Integer slot) {
     EditorIcon guiItem = new EditorIcon();
-
-    if (config.isString(loc + ".NAME")) {
-      guiItem.setName(config.getString(loc + ".NAME"));
+    if (item == null) {
+      return guiItem;
     }
 
-    if (config.isString(loc + ".MATERIAL")) {
-      guiItem.setMaterial(Material.valueOf(config.getString(loc + ".MATERIAL")));
+    if (item.getName() != null) {
+      guiItem.setName(item.getName());
     }
 
-    short damage = 0;
-    if (config.isInt(loc + ".DAMAGE")) {
-      damage = Short.parseShort(String.valueOf(config.getInt(loc + ".DAMAGE")));
-    }
-    if (damage != 0) {
-      guiItem.setDamage(damage);
+    if (item.getMaterial() != null) {
+      guiItem.setMaterial(Material.valueOf(item.getMaterial()));
     }
 
-    if (config.isList(loc + ".LORE")) {
-      guiItem.setLore(config.getStringList(loc + ".LORE"));
+    if (item.getLore() != null) {
+      guiItem.setLore(item.getLore());
     }
 
-    if (config.isInt(loc + ".SLOT")) {
-      guiItem.setSlot(config.getInt(loc + ".SLOT"));
+    if (slot != null) {
+      guiItem.setSlot(slot);
     }
 
     return guiItem;

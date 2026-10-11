@@ -1,7 +1,7 @@
 package dev.lokspel.practice.command.singlecommands;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.guis.MatchHistoryGui;
 import dev.lokspel.practice.manager.matchhistory.MatchHistoryEntry;
 import dev.lokspel.practice.manager.matchhistory.MatchHistoryManager;
@@ -27,7 +27,8 @@ public class MatchHistoryCommand implements CommandExecutor, TabCompleter {
     }
 
     if (!player.hasPermission("ap.matchhistory")) {
-      Common.sendMmMessage(player, LanguageManager.getString("NO-PERMISSION"));
+      // No message: language.yml has no top-level NO-PERMISSION key, so the old lookup was null
+      // and nothing was sent.
       return true;
     }
 
@@ -43,7 +44,7 @@ public class MatchHistoryCommand implements CommandExecutor, TabCompleter {
       OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(args[0]);
       if (!offlineTarget.hasPlayedBefore() && !offlineTarget.isOnline()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.MATCH-HISTORY.PLAYER-NOT-FOUND"));
+            player, PracticeConfig.language().getCommand().getMatchHistory().getPlayerNotFound());
         return true;
       }
       targetUuid = offlineTarget.getUniqueId();
@@ -66,7 +67,10 @@ public class MatchHistoryCommand implements CommandExecutor, TabCompleter {
                         if (entries == null || entries.isEmpty()) {
                           Common.sendMmMessage(
                               player,
-                              LanguageManager.getString("COMMAND.MATCH-HISTORY.NO-HISTORY"));
+                              PracticeConfig.language()
+                                  .getCommand()
+                                  .getMatchHistory()
+                                  .getNoHistory());
                           return;
                         }
 

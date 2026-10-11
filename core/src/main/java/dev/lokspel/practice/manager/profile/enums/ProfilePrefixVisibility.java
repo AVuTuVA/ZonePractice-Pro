@@ -1,17 +1,21 @@
 package dev.lokspel.practice.manager.profile.enums;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.Getter;
 
 public enum ProfilePrefixVisibility {
-  NONE(LanguageManager.getString("PROFILE.PREFIX-VISIBILITY-NAMES.NONE"), false, false),
-  PREFIX(LanguageManager.getString("PROFILE.PREFIX-VISIBILITY-NAMES.PREFIX"), true, false),
-  SUFFIX(LanguageManager.getString("PROFILE.PREFIX-VISIBILITY-NAMES.SUFFIX"), false, true),
+  NONE(PracticeConfig.language().getProfile().getPrefixVisibilityNames().getNone(), false, false),
+  PREFIX(
+      PracticeConfig.language().getProfile().getPrefixVisibilityNames().getPrefix(), true, false),
+  SUFFIX(
+      PracticeConfig.language().getProfile().getPrefixVisibilityNames().getSuffix(), false, true),
   PREFIX_AND_SUFFIX(
-      LanguageManager.getString("PROFILE.PREFIX-VISIBILITY-NAMES.PREFIX-AND-SUFFIX"), true, true);
+      PracticeConfig.language().getProfile().getPrefixVisibilityNames().getPrefixAndSuffix(),
+      true,
+      true);
 
   @Getter private final String name;
   @Getter private final boolean showPrefix;

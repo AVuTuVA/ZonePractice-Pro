@@ -1,11 +1,10 @@
 package dev.lokspel.practice.manager.gui.setup.arena.arenasettings.normal;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.ArenaCopy;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -73,7 +72,12 @@ public class CopyGui extends Gui {
                     gui.put(
                         page,
                         InventoryUtil.createInventory(
-                            GuiFile.getString("GUIS.SETUP.ARENA.ARENA-COPY.TITLE")
+                            PracticeConfig.guis()
+                                .getGuis()
+                                .getSetup()
+                                .getArena()
+                                .getArenaCopy()
+                                .getTitle()
                                 .replace("%arenaName%", arena.getName())
                                 .replace("%arenaDisplayName%", arena.getDisplayName())
                                 .replace("%page%", String.valueOf(page)),
@@ -93,19 +97,42 @@ public class CopyGui extends Gui {
                   if (PageUtil.isPageValid(iconsList, page - 1, spaces)) {
                     inventory.setItem(
                         18,
-                        GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-COPY.ICONS.PAGE-LEFT")
+                        BackendUtil.getGuiItem(
+                                PracticeConfig.guis()
+                                    .getGuis()
+                                    .getSetup()
+                                    .getArena()
+                                    .getArenaCopy()
+                                    .getIcons()
+                                    .getPageLeft())
                             .replace("%page%", String.valueOf(page - 1))
                             .get());
                   } else {
                     inventory.setItem(
-                        18, GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-COPY.ICONS.BACK-TO").get());
+                        18,
+                        BackendUtil.getGuiItem(
+                                PracticeConfig.guis()
+                                    .getGuis()
+                                    .getSetup()
+                                    .getArena()
+                                    .getArenaCopy()
+                                    .getIcons()
+                                    .getBackTo())
+                            .get());
                   }
 
                   // Right navigation
                   if (PageUtil.isPageValid(iconsList, page + 1, spaces)) {
                     inventory.setItem(
                         26,
-                        GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-COPY.ICONS.PAGE-RIGHT")
+                        BackendUtil.getGuiItem(
+                                PracticeConfig.guis()
+                                    .getGuis()
+                                    .getSetup()
+                                    .getArena()
+                                    .getArenaCopy()
+                                    .getIcons()
+                                    .getPageRight())
                             .replace("%page%", String.valueOf(page + 1))
                             .get());
                   }
@@ -113,13 +140,31 @@ public class CopyGui extends Gui {
                   // Decrease copies
                   if (!copies.isEmpty()) {
                     inventory.setItem(
-                        21, GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-COPY.ICONS.DELETE").get());
+                        21,
+                        BackendUtil.getGuiItem(
+                                PracticeConfig.guis()
+                                    .getGuis()
+                                    .getSetup()
+                                    .getArena()
+                                    .getArenaCopy()
+                                    .getIcons()
+                                    .getDelete())
+                            .get());
                   }
 
                   // Increase copies
                   if (copies.size() < 64) {
                     inventory.setItem(
-                        23, GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-COPY.ICONS.GENERATE").get());
+                        23,
+                        BackendUtil.getGuiItem(
+                                PracticeConfig.guis()
+                                    .getGuis()
+                                    .getSetup()
+                                    .getArena()
+                                    .getArenaCopy()
+                                    .getIcons()
+                                    .getGenerate())
+                            .get());
                   }
 
                   // Arena icons
@@ -187,7 +232,8 @@ public class CopyGui extends Gui {
       if (slot == 21) {
         if (arena.isEnabled()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.ARENA.CANT-DELETE-COPIES"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getArena().getCantDeleteCopies());
           return;
         }
 
@@ -195,18 +241,20 @@ public class CopyGui extends Gui {
       } else if (slot == 23) {
         if (!arena.isEnabled()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.ARENA.ARENA-DISABLED"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getArena().getArenaDisabled());
           return;
         }
 
         if (arena.isCopying()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.ARENA.ALREADY-GENERATING"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getArena().getAlreadyGenerating());
           return;
         }
 
         Location location = AstralPractice.getArenaCopyUtilListener().createCopy(profile, arena);
-        if (!ConfigManager.getBoolean("ARENA.TELEPORT-TO-COPY")) {
+        if (!PracticeConfig.settings().getArena().isTeleportToCopy()) {
           return;
         }
 

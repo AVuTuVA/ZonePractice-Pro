@@ -1,8 +1,8 @@
 package dev.lokspel.practice.command.ffa.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,20 +17,25 @@ public final class ListArg {
     for (FfaArena ffaArena : ArenaManager.getInstance().getFfaArenas()) {
       if (ffaArena.getFfa().isOpen()) {
         ffas.add(
-            LanguageManager.getString("FFA.COMMAND.LIST.FORMAT")
+            PracticeConfig.language()
+                .getFfa()
+                .getCommand()
+                .getList()
+                .getFormat()
                 .replace("%arena%", ffaArena.getDisplayName())
                 .replace("%players%", String.valueOf(ffaArena.getFfa().getPlayers().size())));
       }
     }
 
-    for (String line : LanguageManager.getList("FFA.COMMAND.LIST.LIST")) {
+    for (String line : PracticeConfig.language().getFfa().getCommand().getList().getList()) {
       if (line.contains("%arenas%")) {
         if (!ffas.isEmpty()) {
           for (String ffa : ffas) {
             Common.sendMmMessage(player, ffa);
           }
         } else {
-          Common.sendMmMessage(player, LanguageManager.getString("FFA.COMMAND.LIST.EMPTY"));
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getFfa().getCommand().getList().getEmpty());
         }
       } else {
         Common.sendMmMessage(player, line);

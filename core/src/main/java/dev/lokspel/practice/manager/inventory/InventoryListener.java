@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.inventory;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.inventory.inventories.StaffInventory;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
@@ -15,6 +15,7 @@ import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
 import dev.lokspel.practice.manager.server.ServerManager;
 import dev.lokspel.practice.manager.server.WorldEnum;
 import dev.lokspel.practice.util.Common;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -49,8 +50,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class InventoryListener implements Listener {
-
-  private static final String LOBBY_PROTECTION_PATH = "PLAYER.LOBBY-PROTECTION.";
 
   @EventHandler
   public void onPlayerInteractWithInvItem(PlayerInteractEvent e) {
@@ -240,7 +239,7 @@ public class InventoryListener implements Listener {
       return;
     }
 
-    if (ConfigManager.getBoolean("MATCH-SETTINGS.DUEL.SWORD-TO-DUEL")
+    if (PracticeConfig.settings().getMatchSettings().getDuel().isSwordToDuel()
         && profile.getStatus().equals(ProfileStatus.LOBBY)
         && !profile.isParty()
         && player.hasPermission("ap.duel")) {
@@ -654,7 +653,9 @@ public class InventoryListener implements Listener {
   }
 
   private boolean isLobbyProtectionAllowed(String setting) {
-    return ConfigManager.getConfig().getBoolean(LOBBY_PROTECTION_PATH + setting, false);
+    Map<String, Boolean> lobbyProtection =
+        PracticeConfig.settings().getPlayer().getLobbyProtection();
+    return lobbyProtection != null && Boolean.TRUE.equals(lobbyProtection.get(setting));
   }
 
   private boolean isInLobbyWorld(Player player) {

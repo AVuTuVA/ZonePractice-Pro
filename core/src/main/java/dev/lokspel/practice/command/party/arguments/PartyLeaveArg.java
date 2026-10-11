@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.party.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.util.Common;
@@ -14,7 +14,12 @@ public final class PartyLeaveArg {
     if (args.length != 1) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.LEAVE.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getLeave()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -22,7 +27,8 @@ public final class PartyLeaveArg {
     Party party = PartyManager.getInstance().getParty(player);
     if (party == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.LEAVE.NO-PARTY"));
+          player,
+          PracticeConfig.language().getCommand().getParty().getArguments().getLeave().getNoParty());
       return;
     }
 

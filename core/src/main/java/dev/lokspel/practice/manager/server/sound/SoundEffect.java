@@ -1,13 +1,15 @@
 package dev.lokspel.practice.manager.server.sound;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.settings.SettingsConfig;
 import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class SoundEffect {
 
@@ -16,11 +18,12 @@ public class SoundEffect {
   private final float volume;
   private final float pitch;
 
-  public SoundEffect(String name) {
-    this.enabled = ConfigManager.getBoolean("SOUNDS." + name + ".ENABLED");
-    this.sound = resolveSound(ConfigManager.getString("SOUNDS." + name + ".SOUND"));
-    this.volume = (float) ConfigManager.getDouble("SOUNDS." + name + ".VOLUME");
-    this.pitch = (float) ConfigManager.getDouble("SOUNDS." + name + ".PITCH");
+  public SoundEffect(@Nullable SettingsConfig.Sound config) {
+    SettingsConfig.Sound settings = config != null ? config : new SettingsConfig.Sound();
+    this.enabled = Boolean.TRUE.equals(settings.getEnabled());
+    this.sound = resolveSound(Objects.requireNonNullElse(settings.getSound(), ""));
+    this.volume = (float) Objects.requireNonNullElse(settings.getVolume(), 0.0D).doubleValue();
+    this.pitch = (float) Objects.requireNonNullElse(settings.getPitch(), 0.0D).doubleValue();
   }
 
   SoundEffect(boolean enabled) {

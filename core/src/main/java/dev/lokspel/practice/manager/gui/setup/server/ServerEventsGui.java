@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.setup.server;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
 import dev.lokspel.practice.manager.gui.Gui;
@@ -30,7 +30,9 @@ public class ServerEventsGui extends Gui {
   public ServerEventsGui(Gui backTo) {
     super(GuiType.Server_Events);
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString("GUIS.SETUP.SERVER.EVENTS.TITLE"), 2));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getSetup().getServer().getEvents().getTitle(), 2));
     this.backTo = backTo;
   }
 
@@ -54,9 +56,27 @@ public class ServerEventsGui extends Gui {
               }
 
               inventory.setItem(
-                  9, GuiFile.getGuiItem("GUIS.SETUP.SERVER.EVENTS.ICONS.BACK-TO").get());
+                  9,
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getServer()
+                              .getEvents()
+                              .getIcons()
+                              .getBackTo())
+                      .get());
               inventory.setItem(
-                  17, GuiFile.getGuiItem("GUIS.SETUP.SERVER.EVENTS.ICONS.REFRESH-PAGE").get());
+                  17,
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getServer()
+                              .getEvents()
+                              .getIcons()
+                              .getRefreshPage())
+                      .get());
 
               for (Event event : EventManager.getInstance().getEvents()) {
                 int slot = inventory.firstEmpty();
@@ -93,7 +113,8 @@ public class ServerEventsGui extends Gui {
       case 17:
         if (PlayerCooldown.isActive(player, CooldownObject.SERVER_SETUP_EVENT_REFRESH)) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.SERVER.WAIT-BEFORE"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getServer().getWaitBefore());
           return;
         }
 
@@ -110,7 +131,11 @@ public class ServerEventsGui extends Gui {
             event.forceEnd(player);
             Common.sendMmMessage(
                 player,
-                LanguageManager.getString("COMMAND.SETUP.SERVER.ENDED-EVENT")
+                PracticeConfig.language()
+                    .getCommand()
+                    .getSetup()
+                    .getServer()
+                    .getEndedEvent()
                     .replace("%event%", event.getType().getName()));
           }
         }
@@ -120,8 +145,24 @@ public class ServerEventsGui extends Gui {
 
   private ItemStack getEventItem(Event event) {
     GuiItem guiItem = event.getEventData().getIcon();
-    guiItem.setName(GuiFile.getString("GUIS.SETUP.SERVER.EVENTS.ICONS.EVENT-ITEM.NAME"));
-    guiItem.setLore(GuiFile.getStringList("GUIS.SETUP.SERVER.EVENTS.ICONS.EVENT-ITEM.LORE"));
+    guiItem.setName(
+        PracticeConfig.guis()
+            .getGuis()
+            .getSetup()
+            .getServer()
+            .getEvents()
+            .getIcons()
+            .getEventItem()
+            .getName());
+    guiItem.setLore(
+        PracticeConfig.guis()
+            .getGuis()
+            .getSetup()
+            .getServer()
+            .getEvents()
+            .getIcons()
+            .getEventItem()
+            .getLore());
 
     guiItem
         .replace("%eventName%", event.getEventData().getType().getName())

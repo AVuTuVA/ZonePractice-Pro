@@ -1,8 +1,7 @@
 package dev.lokspel.practice.manager.server;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import java.util.ArrayList;
@@ -13,7 +12,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class InactiveProfileRunnable extends BukkitRunnable {
 
-  private final int deleteAfter = ConfigManager.getInt("PLAYER.DELETE-INACTIVE-USER.DAYS");
+  private final int deleteAfter =
+      PracticeConfig.settings().getPlayer().getDeleteInactiveUser().getDays();
   @Getter private boolean running = false;
 
   public void begin() {
@@ -45,7 +45,9 @@ public class InactiveProfileRunnable extends BukkitRunnable {
       ServerManager.getInstance()
           .alertPlayers(
               "ap.admin",
-              LanguageManager.getString("PROFILE.INACTIVITY-REMOVED")
+              PracticeConfig.language()
+                  .getProfile()
+                  .getInactivityRemoved()
                   .replace("%count%", String.valueOf(count)));
     }
   }

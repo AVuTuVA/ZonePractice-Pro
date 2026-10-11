@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.party;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -18,12 +19,16 @@ import org.bukkit.inventory.ItemStack;
 public class PartyEventsGui extends Gui {
 
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.PARTY.PARTY-GAMES.ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis().getGuis().getParty().getPartyGames().getIcons().getFillerItem())
+          .get();
 
   public PartyEventsGui() {
     super(GuiType.Party_Events);
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString("GUIS.PARTY.PARTY-GAMES.TITLE"), 3));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getParty().getPartyGames().getTitle(), 3));
 
     build();
   }
@@ -41,8 +46,21 @@ public class PartyEventsGui extends Gui {
       inventory.setItem(i, FILLER_ITEM);
     }
 
-    inventory.setItem(11, GuiFile.getGuiItem("GUIS.PARTY.PARTY-GAMES.ICONS.PARTY_SPLIT").get());
-    inventory.setItem(15, GuiFile.getGuiItem("GUIS.PARTY.PARTY-GAMES.ICONS.PARTY_FFA").get());
+    inventory.setItem(
+        11,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getParty()
+                    .getPartyGames()
+                    .getIcons()
+                    .getPartySplit())
+            .get());
+    inventory.setItem(
+        15,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getParty().getPartyGames().getIcons().getPartyFfa())
+            .get());
 
     updatePlayers();
   }

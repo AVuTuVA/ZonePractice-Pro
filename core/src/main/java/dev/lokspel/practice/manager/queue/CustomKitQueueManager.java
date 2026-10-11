@@ -1,10 +1,10 @@
 package dev.lokspel.practice.manager.queue;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.settings.QueueSettings;
 import dev.lokspel.practice.event.ProfileStatusChangeEvent;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.type.duel.Duel;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
 import dev.lokspel.practice.manager.ladder.abstraction.playercustom.CustomLadder;
@@ -47,18 +47,12 @@ public class CustomKitQueueManager implements Listener {
   @Getter private final Map<UUID, CustomKitSearchRunnable> joinSearches = new LinkedHashMap<>();
 
   public boolean isCustomKitQueueEnabled() {
-    Object enabledValue = ConfigManager.get("QUEUE.UNRANKED.CUSTOM-KIT.ENABLED");
-    if (enabledValue == null) {
-      enabledValue = ConfigManager.get("QUEUE.UNRANKED.CUSTOM-KIT-QUEUE-ENABLED");
-    }
+    QueueSettings.CustomKit customKit =
+        PracticeConfig.settings().getQueue().getUnranked().getCustomKit();
+    Boolean enabled = customKit != null ? customKit.getEnabled() : null;
 
-    // Keep feature enabled by default to avoid breaking old configs that don't have the new key
-    // yet.
-    if (enabledValue == null) {
-      return true;
-    }
-
-    return Boolean.parseBoolean(String.valueOf(enabledValue));
+    // Keep feature enabled by default to avoid breaking old configs that don't have the key yet.
+    return enabled == null || enabled;
   }
 
   public List<CustomLadder> getHostableKits(Profile profile) {
@@ -98,23 +92,24 @@ public class CustomKitQueueManager implements Listener {
     }
 
     if (!isCustomKitQueueEnabled()) {
-      Common.sendMmMessage(host, LanguageManager.getString("CANT-USE-COMMAND"));
+      Common.sendMmMessage(host, PracticeConfig.language().getCantUseCommand());
       return false;
     }
 
     Profile profile = ProfileManager.getInstance().getProfile(host);
     if (profile == null || profile.getStatus() != ProfileStatus.LOBBY) {
-      Common.sendMmMessage(host, LanguageManager.getString("CANT-USE-COMMAND"));
+      Common.sendMmMessage(host, PracticeConfig.language().getCantUseCommand());
       return false;
     }
 
     if (!customLadder.isEnabled()) {
-      Common.sendMmMessage(host, LanguageManager.getString("QUEUES.CUSTOM.KIT-NOT-READY"));
+      Common.sendMmMessage(
+          host, PracticeConfig.language().getQueues().getCustom().getKitNotReady());
       return false;
     }
 
     if (customLadder.getAvailableArenas().isEmpty()) {
-      Common.sendMmMessage(host, LanguageManager.getString("QUEUES.NO-AVAILABLE-ARENA"));
+      Common.sendMmMessage(host, PracticeConfig.language().getQueues().getNoAvailableArena());
       return false;
     }
 
@@ -139,7 +134,10 @@ public class CustomKitQueueManager implements Listener {
 
     Common.sendMmMessage(
         host,
-        LanguageManager.getString("QUEUES.CUSTOM.HOSTED")
+        PracticeConfig.language()
+            .getQueues()
+            .getCustom()
+            .getHosted()
             .replace("%kit%", customLadder.getDisplayName()));
 
     tryMatchHostedQueue(host);
@@ -152,13 +150,13 @@ public class CustomKitQueueManager implements Listener {
     }
 
     if (!isCustomKitQueueEnabled()) {
-      Common.sendMmMessage(joiner, LanguageManager.getString("CANT-USE-COMMAND"));
+      Common.sendMmMessage(joiner, PracticeConfig.language().getCantUseCommand());
       return false;
     }
 
     Profile profile = ProfileManager.getInstance().getProfile(joiner);
     if (profile == null || profile.getStatus() != ProfileStatus.LOBBY) {
-      Common.sendMmMessage(joiner, LanguageManager.getString("CANT-USE-COMMAND"));
+      Common.sendMmMessage(joiner, PracticeConfig.language().getCantUseCommand());
       return false;
     }
 
@@ -174,7 +172,8 @@ public class CustomKitQueueManager implements Listener {
     joinSearches.put(joiner.getUniqueId(), search);
     search.begin();
 
-    Common.sendMmMessage(joiner, LanguageManager.getString("QUEUES.CUSTOM.WAITING-FOR-HOST"));
+    Common.sendMmMessage(
+        joiner, PracticeConfig.language().getQueues().getCustom().getWaitingForHost());
     return true;
   }
 
@@ -198,7 +197,8 @@ public class CustomKitQueueManager implements Listener {
       clearQueueActionBar(host);
 
       if (sendMessage) {
-        Common.sendMmMessage(host, LanguageManager.getString("QUEUES.CUSTOM.CANCELLED"));
+        Common.sendMmMessage(
+            host, PracticeConfig.language().getQueues().getCustom().getCancelled());
       }
     }
 
@@ -225,7 +225,8 @@ public class CustomKitQueueManager implements Listener {
       clearQueueActionBar(joiner);
 
       if (sendMessage) {
-        Common.sendMmMessage(joiner, LanguageManager.getString("QUEUES.CUSTOM.SEARCH-CANCELLED"));
+        Common.sendMmMessage(
+            joiner, PracticeConfig.language().getQueues().getCustom().getSearchCancelled());
       }
     }
 
@@ -286,7 +287,7 @@ public class CustomKitQueueManager implements Listener {
     Arena arena = LadderUtil.getAvailableArena(hostedKit);
     if (arena == null) {
       hostedQueues.remove(host.getUniqueId());
-      Common.sendMmMessage(host, LanguageManager.getString("QUEUES.NO-AVAILABLE-ARENA"));
+      Common.sendMmMessage(host, PracticeConfig.language().getQueues().getNoAvailableArena());
       InventoryManager.getInstance().setLobbyInventory(host, false);
       return false;
     }
@@ -303,11 +304,17 @@ public class CustomKitQueueManager implements Listener {
 
     Common.sendMmMessage(
         host,
-        LanguageManager.getString("QUEUES.CUSTOM.MATCH-FOUND")
+        PracticeConfig.language()
+            .getQueues()
+            .getCustom()
+            .getMatchFound()
             .replace("%player%", joiner.getName()));
     Common.sendMmMessage(
         joiner,
-        LanguageManager.getString("QUEUES.CUSTOM.JOINED")
+        PracticeConfig.language()
+            .getQueues()
+            .getCustom()
+            .getJoined()
             .replace("%player%", host.getName())
             .replace("%kit%", hostedKit.getDisplayName()));
 
@@ -337,7 +344,8 @@ public class CustomKitQueueManager implements Listener {
     if (hostedQueue.customLadder() == null || !hostedQueue.customLadder().isEnabled()) {
       hostedQueues.remove(hostedQueue.hostUuid());
       InventoryManager.getInstance().setLobbyInventory(host, false);
-      Common.sendMmMessage(host, LanguageManager.getString("QUEUES.CUSTOM.KIT-NOT-READY"));
+      Common.sendMmMessage(
+          host, PracticeConfig.language().getQueues().getCustom().getKitNotReady());
       return false;
     }
 

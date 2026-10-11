@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.playerkit.PlayerKitManager;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -19,25 +19,28 @@ public class CopyKitCommand implements CommandExecutor {
     }
 
     if (!player.hasPermission("ap.playerkit.copy")) {
-      Common.sendMmMessage(player, LanguageManager.getString("CUSTOM-PLAYER-KIT.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCustomPlayerKit().getNoPermission());
       return false;
     }
 
     Profile profile = ProfileManager.getInstance().getProfile(player);
     if (profile.getGroup() == null || profile.getGroup().getCustomKitLimit() <= 0) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("CUSTOM-PLAYER-KIT.COPYKIT.NO-CUSTOM-KIT"));
+          player, PracticeConfig.language().getCustomPlayerKit().getCopykit().getNoCustomKit());
       return false;
     }
 
     if (args.length != 1) {
-      Common.sendMmMessage(player, LanguageManager.getString("CUSTOM-PLAYER-KIT.COPYKIT.HELP"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCustomPlayerKit().getCopykit().getHelp());
       return false;
     }
 
     String code = args[0];
     if (!PlayerKitManager.getInstance().getCopy().containsKey(code)) {
-      Common.sendMmMessage(player, LanguageManager.getString("CUSTOM-PLAYER-KIT.COPYKIT.NO-CODE"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCustomPlayerKit().getCopykit().getNoCode());
       return false;
     }
 

@@ -1,11 +1,11 @@
 package dev.lokspel.practice.manager.ladder.abstraction.playercustom;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.ladder.enums.LadderType;
-import dev.lokspel.practice.manager.playerkit.PlayerKitManager;
 import dev.lokspel.practice.manager.playerkit.guis.MainGui;
 import dev.lokspel.practice.manager.profile.Profile;
 import java.util.ArrayList;
@@ -17,26 +17,25 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class CustomLadder extends Ladder {
 
   private static final String DEFAULT_NAME =
-      PlayerKitManager.getInstance().getString("DEFAULT-SETTINGS.NAME");
+      PracticeConfig.playerKit().getDefaultSettings().getName();
   private static final boolean DEFAULT_REGEN =
-      PlayerKitManager.getInstance().getBoolean("DEFAULT-SETTINGS.REGENERATION");
+      PracticeConfig.playerKit().getDefaultSettings().isRegeneration();
   private static final boolean DEFAULT_HUNGER =
-      PlayerKitManager.getInstance().getBoolean("DEFAULT-SETTINGS.HUNGER");
+      PracticeConfig.playerKit().getDefaultSettings().isHunger();
   private static final boolean DEFAULT_BUILD =
-      PlayerKitManager.getInstance().getBoolean("DEFAULT-SETTINGS.BUILD");
+      PracticeConfig.playerKit().getDefaultSettings().isBuild();
   private static final int DEFAULT_ROUNDS =
-      PlayerKitManager.getInstance().getInt("DEFAULT-SETTINGS.ROUNDS");
+      PracticeConfig.playerKit().getDefaultSettings().getRounds();
   private static final double DEFAULT_HITDELAY =
-      convertHitDelayToMultiplier(
-          PlayerKitManager.getInstance().getInt("DEFAULT-SETTINGS.HITDELAY"));
+      convertHitDelayToMultiplier(PracticeConfig.playerKit().getDefaultSettings().getHitdelay());
   private static final double DEFAULT_EP_COOLDOWN =
-      PlayerKitManager.getInstance().getInt("DEFAULT-SETTINGS.EP_COOLDOWN");
+      PracticeConfig.playerKit().getDefaultSettings().getEpCooldown();
   private static final double DEFAULT_GA_COOLDOWN =
-      PlayerKitManager.getInstance().getInt("DEFAULT-SETTINGS.GA_COOLDOWN");
+      PracticeConfig.playerKit().getDefaultSettings().getGaCooldown();
   private static final double DEFAULT_WIND_CHARGE_COOLDOWN =
-      PlayerKitManager.getInstance().getInt("DEFAULT-SETTINGS.WIND_CHARGE_COOLDOWN");
+      PracticeConfig.playerKit().getDefaultSettings().getWindChargeCooldown();
   private static final boolean DEFAULT_HEALTH_BELOW_NAME =
-      PlayerKitManager.getInstance().getBoolean("DEFAULT-SETTINGS.HEALTH_BELOW_NAME");
+      PracticeConfig.playerKit().getDefaultSettings().isHealthBelowName();
 
   private static final String NAME_PATH = ".settings.name";
   private static final String REGEN_PATH = ".settings.regen";
@@ -56,7 +55,7 @@ public class CustomLadder extends Ladder {
   private static final List<MatchType> MATCH_TYPES = new ArrayList<>();
 
   static {
-    for (String matchType : PlayerKitManager.getInstance().getList("MATCH-TYPES")) {
+    for (String matchType : PracticeConfig.playerKit().getMatchTypes()) {
       MATCH_TYPES.add(MatchType.valueOf(matchType));
     }
   }

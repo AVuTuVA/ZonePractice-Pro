@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics.shield;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -37,8 +38,11 @@ public class ShieldEditorGui extends Gui {
   /* Two rows of three layer slots (max 6) */
   private static final int[] LAYER_SLOTS = {19, 20, 21, 28, 29, 30};
 
-  private static final ItemStack FILLER = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
-  private static final ItemStack BACK = GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BACK-TO").get();
+  private static final ItemStack FILLER =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  private static final ItemStack BACK =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+          .get();
 
   private final Profile profile;
 
@@ -56,8 +60,12 @@ public class ShieldEditorGui extends Gui {
     ShieldLayout layout = getLayout();
     String layoutName = layout != null ? layout.getName() : "Shield";
     String title =
-        GuiFile.getConfig()
-            .getString("GUIS.COSMETICS.SHIELD.EDITOR.TITLE", "<dark_gray>Editing: <yellow>%name%")
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getShield()
+            .getEditor()
+            .getTitle()
             .replace("%name%", layoutName);
     this.gui.put(1, InventoryUtil.createInventory(title, ROWS));
     build();
@@ -107,11 +115,20 @@ public class ShieldEditorGui extends Gui {
         new GuiItem(canAdd ? Material.LIME_STAINED_GLASS_PANE : Material.RED_STAINED_GLASS_PANE);
     addBtn.setName(
         canAdd
-            ? GuiFile.getConfig()
-                .getString("GUIS.COSMETICS.SHIELD.EDITOR.ADD-LAYER.NAME", "<green>Add Layer")
-            : GuiFile.getConfig()
-                .getString(
-                    "GUIS.COSMETICS.SHIELD.EDITOR.MAX-LAYERS.NAME", "<red>Max Layers Reached"));
+            ? PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getShield()
+                .getEditor()
+                .getAddLayer()
+                .getName()
+            : PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getShield()
+                .getEditor()
+                .getMaxLayers()
+                .getName());
     List<String> addLore = new ArrayList<>();
     addLore.add(
         "<gray>Layers: <white>"
@@ -132,9 +149,13 @@ public class ShieldEditorGui extends Gui {
             canRemove ? Material.ORANGE_STAINED_GLASS_PANE : Material.GRAY_STAINED_GLASS_PANE);
     removeBtn.setName(
         canRemove
-            ? GuiFile.getConfig()
-                .getString(
-                    "GUIS.COSMETICS.SHIELD.EDITOR.REMOVE-LAYER.NAME", "<red>Remove Top Layer")
+            ? PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getShield()
+                .getEditor()
+                .getRemoveLayer()
+                .getName()
             : "<dark_gray>No layers to remove");
     if (canRemove) {
       List<String> remLore = new ArrayList<>();
@@ -181,10 +202,13 @@ public class ShieldEditorGui extends Gui {
       if (layout.getLayers().size() >= ShieldLayout.MAX_LAYERS) {
         Common.sendMmMessage(
             player,
-            GuiFile.getConfig()
-                .getString(
-                    "GUIS.COSMETICS.SHIELD.EDITOR.MAX-LAYERS.MESSAGE",
-                    "<red>Maximum layers reached!"));
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getShield()
+                .getEditor()
+                .getMaxLayers()
+                .getMessage());
         return;
       }
       // Open color picker for new layer (layer index = layers.size() = about to be added)
@@ -223,18 +247,23 @@ public class ShieldEditorGui extends Gui {
       ShieldCosmeticsUtil.applyShieldToPlayer(player);
       Common.sendMmMessage(
           player,
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.SHIELD.EDITOR.UNAPPLIED-MESSAGE",
-                  "<gray>Shield cosmetic removed."));
+          PracticeConfig.guis()
+              .getGuis()
+              .getCosmetics()
+              .getShield()
+              .getEditor()
+              .getUnappliedMessage());
     } else {
       profile.getCosmeticsData().setActiveShieldLayoutIndex(layoutIndex);
       ShieldCosmeticsUtil.applyShieldToPlayer(player);
       Common.sendMmMessage(
           player,
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.SHIELD.EDITOR.APPLIED-MESSAGE", "<green>Shield layout applied!"));
+          PracticeConfig.guis()
+              .getGuis()
+              .getCosmetics()
+              .getShield()
+              .getEditor()
+              .getAppliedMessage());
     }
     profile.save();
     update(true);

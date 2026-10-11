@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.fight.match.runnable.round;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.language.Match.EndTitles;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.Round;
 import dev.lokspel.practice.manager.fight.match.enums.MatchStatus;
@@ -62,7 +62,7 @@ public class RoundEndRunnable extends BukkitRunnable {
     if (!ended) {
       this.seconds = round.getMatch().getLadder().getRoundEndDelay();
     } else {
-      this.seconds = ConfigManager.getConfig().getInt("MATCH-SETTINGS.AFTER-COUNTDOWN");
+      this.seconds = PracticeConfig.settings().getMatchSettings().getAfterCountdown();
     }
   }
 
@@ -108,7 +108,7 @@ public class RoundEndRunnable extends BukkitRunnable {
         TitleUtil.sendTitle(
             winner,
             Common.deserializeMiniMessage(
-                LanguageManager.getString("MATCH.END-TITLES.MATCH.VICTORY")),
+                PracticeConfig.language().getMatch().getEndTitles().getMatch().getVictory()),
             Common.deserializeMiniMessage(getMatchSubtitle(winner, true)),
             200,
             1500,
@@ -120,7 +120,7 @@ public class RoundEndRunnable extends BukkitRunnable {
             TitleUtil.sendTitle(
                 player,
                 Common.deserializeMiniMessage(
-                    LanguageManager.getString("MATCH.END-TITLES.MATCH.DEFEAT")),
+                    PracticeConfig.language().getMatch().getEndTitles().getMatch().getDefeat()),
                 Common.deserializeMiniMessage(getMatchSubtitle(winner, false)),
                 200,
                 1500,
@@ -139,7 +139,7 @@ public class RoundEndRunnable extends BukkitRunnable {
           TitleUtil.sendTitle(
               roundWinner,
               Common.deserializeMiniMessage(
-                  LanguageManager.getString("MATCH.END-TITLES.ROUND.VICTORY")),
+                  PracticeConfig.language().getMatch().getEndTitles().getRound().getVictory()),
               Common.deserializeMiniMessage(subtitle),
               200,
               1500,
@@ -151,7 +151,7 @@ public class RoundEndRunnable extends BukkitRunnable {
               TitleUtil.sendTitle(
                   player,
                   Common.deserializeMiniMessage(
-                      LanguageManager.getString("MATCH.END-TITLES.ROUND.DEFEAT")),
+                      PracticeConfig.language().getMatch().getEndTitles().getRound().getDefeat()),
                   Common.deserializeMiniMessage(subtitle),
                   200,
                   1500,
@@ -168,12 +168,13 @@ public class RoundEndRunnable extends BukkitRunnable {
         String subtitle = getRoundSubtitle(null, winnerTeam);
         for (Player player : match.getPlayers()) {
           boolean wonRound = playersVsPlayers.getTeam(player) == winnerTeam;
-          String titlePath =
-              wonRound ? "MATCH.END-TITLES.ROUND.VICTORY" : "MATCH.END-TITLES.ROUND.DEFEAT";
+          EndTitles.Round roundTitles =
+              PracticeConfig.language().getMatch().getEndTitles().getRound();
+          String title = wonRound ? roundTitles.getVictory() : roundTitles.getDefeat();
 
           TitleUtil.sendTitle(
               player,
-              Common.deserializeMiniMessage(LanguageManager.getString(titlePath)),
+              Common.deserializeMiniMessage(title),
               Common.deserializeMiniMessage(subtitle),
               200,
               1500,
@@ -188,14 +189,11 @@ public class RoundEndRunnable extends BukkitRunnable {
       return "";
     }
 
-    String subtitlePath =
-        winnerTeam != null
-            ? "MATCH.END-TITLES.ROUND.SUBTITLE-TEAM"
-            : "MATCH.END-TITLES.ROUND.SUBTITLE-PLAYER";
+    EndTitles.Round roundTitles = PracticeConfig.language().getMatch().getEndTitles().getRound();
+    String subtitle =
+        winnerTeam != null ? roundTitles.getSubtitleTeam() : roundTitles.getSubtitlePlayer();
 
-    return applyPlaceholders(
-        LanguageManager.getString(subtitlePath),
-        getRoundScorePlaceholders(roundWinner, winnerTeam));
+    return applyPlaceholders(subtitle, getRoundScorePlaceholders(roundWinner, winnerTeam));
   }
 
   private Map<String, String> getRoundScorePlaceholders(Player roundWinner, TeamEnum winnerTeam) {
@@ -248,12 +246,11 @@ public class RoundEndRunnable extends BukkitRunnable {
       return "";
     }
 
-    String path =
-        victory
-            ? "MATCH.END-TITLES.MATCH.SUBTITLE-VICTORY"
-            : "MATCH.END-TITLES.MATCH.SUBTITLE-DEFEAT";
+    EndTitles.MatchSection matchTitles =
+        PracticeConfig.language().getMatch().getEndTitles().getMatch();
+    String subtitle = victory ? matchTitles.getSubtitleVictory() : matchTitles.getSubtitleDefeat();
 
-    return applyPlaceholders(LanguageManager.getString(path), getMatchScorePlaceholders(winner));
+    return applyPlaceholders(subtitle, getMatchScorePlaceholders(winner));
   }
 
   private boolean isMultiRoundMatch() {

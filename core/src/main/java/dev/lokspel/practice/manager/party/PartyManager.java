@@ -2,8 +2,7 @@ package dev.lokspel.practice.manager.party;
 
 import dev.lokspel.api.event.PartyCreateEvent;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -44,9 +43,9 @@ public class PartyManager implements Listener {
   private final List<Party> parties = new ArrayList<>();
 
   public static final long INVITE_COOLDOWN =
-      ConfigManager.getInt("PARTY.PARTY-INVITE-COOLDOWN") * 1000L;
+      PracticeConfig.settings().getParty().getPartyInviteCooldown() * 1000L;
   private static final int DEFAULT_MAX_PARTY_MEMBERS =
-      ConfigManager.getInt("PARTY.SETTINGS.MAX-PARTY-MEMBERS.DEFAULT");
+      PracticeConfig.settings().getParty().getSettings().getMaxPartyMembers().getDefaultValue();
 
   private PartyManager() {
     // Assigned before the GUIs below are built, some of them read from this manager while being
@@ -123,17 +122,17 @@ public class PartyManager implements Listener {
     Profile profile = ProfileManager.getInstance().getProfile(player);
 
     if (!player.hasPermission("ap.party.create")) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoPermission());
       return;
     }
 
     if (PartyManager.getInstance().getParty(player) != null) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.ALREADY-PARTY"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getAlreadyParty());
       return;
     }
 
     if (!profile.getStatus().equals(ProfileStatus.LOBBY)) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.CANT-CREATE-PARTY"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getCantCreateParty());
       return;
     }
 
@@ -149,7 +148,7 @@ public class PartyManager implements Listener {
       GuiManager.getInstance().searchGui(GuiType.Party_OtherParties).update();
       GuiManager.getInstance().searchGui(GuiType.Party_PublicParties).update();
 
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.PARTY-CREATED"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getPartyCreated());
     }
   }
 

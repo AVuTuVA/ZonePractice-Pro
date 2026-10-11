@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.ladder.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -23,14 +22,20 @@ public final class IconArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.LADDER.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getLadder().getNoPermission());
       return;
     }
 
     if (args.length != 3) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.ICON.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getIcon()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -39,15 +44,25 @@ public final class IconArg {
     if (ladder == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.ICON.NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getIcon()
+              .getNotExists()
               .replace("%ladder%", args[2]));
       return;
     }
 
-    if (ladder.isEnabled() && !ConfigManager.getBoolean("SETUP.ALLOW-ICON-EDIT-WHILE-ENABLED")) {
+    if (ladder.isEnabled() && !PracticeConfig.settings().getSetup().isAllowIconEditWhileEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.ICON.LADDER-ENABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getIcon()
+              .getLadderEnabled()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
@@ -56,7 +71,12 @@ public final class IconArg {
     if (icon.getType().equals(Material.AIR)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.ICON.NO-ITEM")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getIcon()
+              .getNoItem()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
@@ -64,7 +84,12 @@ public final class IconArg {
     if (icon.getItemMeta() == null || !icon.getItemMeta().hasDisplayName()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.ICON.NO-DISPLAYNAME")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getIcon()
+              .getNoDisplayname()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
@@ -80,7 +105,12 @@ public final class IconArg {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.ICON.SAVED-ICON")
+        PracticeConfig.language()
+            .getCommand()
+            .getLadder()
+            .getArguments()
+            .getIcon()
+            .getSavedIcon()
             .replace("%ladder%", ladder.getDisplayName()));
   }
 

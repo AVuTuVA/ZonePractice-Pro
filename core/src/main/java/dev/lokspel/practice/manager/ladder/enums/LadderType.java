@@ -1,6 +1,8 @@
 package dev.lokspel.practice.manager.ladder.enums;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.language.LadderTypeMessages;
+import dev.lokspel.practice.config.language.LanguageConfig.Ladder.LadderTypes;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingType;
 import dev.lokspel.practice.manager.ladder.type.Basic;
 import dev.lokspel.practice.manager.ladder.type.BattleRush;
@@ -18,6 +20,7 @@ import dev.lokspel.practice.manager.ladder.type.Sumo;
 import dev.lokspel.practice.manager.ladder.type.TntSumo;
 import dev.lokspel.practice.util.Common;
 import java.util.List;
+import java.util.function.Function;
 import lombok.Getter;
 import org.bukkit.Material;
 
@@ -27,11 +30,7 @@ import org.bukkit.Material;
  */
 public enum LadderType {
   BASIC(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.BASIC.NAME",
-              Material.DIRT,
-              "LADDER.LADDER-TYPES.BASIC.DESCRIPTION",
-              Basic.class)
+      LadderTypeConfig.builder(LadderTypes::getBasic, Material.DIRT, Basic.class)
           .withMovementSettings()
           .withTeamSettings()
           .withRegenSettings()
@@ -39,11 +38,7 @@ public enum LadderType {
           .withPearlSettings()),
 
   BUILD(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.BUILD.NAME",
-              Material.STONE_PICKAXE,
-              "LADDER.LADDER-TYPES.BUILD.DESCRIPTION",
-              Build.class)
+      LadderTypeConfig.builder(LadderTypes::getBuild, Material.STONE_PICKAXE, Build.class)
           .withBuild()
           .withMovementSettings()
           .withTeamSettings()
@@ -53,21 +48,13 @@ public enum LadderType {
           .withBuildSettings()),
 
   SUMO(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.SUMO.NAME",
-              Material.STICK,
-              "LADDER.LADDER-TYPES.SUMO.DESCRIPTION",
-              Sumo.class)
+      LadderTypeConfig.builder(LadderTypes::getSumo, Material.STICK, Sumo.class)
           .withTeamSettings()
           .withCommonSettings()
           .withPearlSettings()),
 
   TNT_SUMO(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.TNT-SUMO.NAME",
-              Material.TNT,
-              "LADDER.LADDER-TYPES.TNT-SUMO.DESCRIPTION",
-              TntSumo.class)
+      LadderTypeConfig.builder(LadderTypes::getTntSumo, Material.TNT, TntSumo.class)
           .withBuild()
           .withTeamSettings()
           .withCommonSettings()
@@ -75,11 +62,7 @@ public enum LadderType {
           .withSetting(SettingType.TEMP_BUILD_RETURN_DELAY)),
 
   BOXING(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.BOXING.NAME",
-              Material.DIAMOND_CHESTPLATE,
-              "LADDER.LADDER-TYPES.BOXING.DESCRIPTION",
-              Boxing.class)
+      LadderTypeConfig.builder(LadderTypes::getBoxing, Material.DIAMOND_CHESTPLATE, Boxing.class)
           .withMovementSettings()
           .withTeamSettings()
           .withCommonSettings()
@@ -87,11 +70,7 @@ public enum LadderType {
           .withSetting(SettingType.BOXING_HITS)),
 
   PEARL_FIGHT(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.PEARL-FIGHT.NAME",
-              Material.ENDER_PEARL,
-              "LADDER.LADDER-TYPES.PEARL-FIGHT.DESCRIPTION",
-              PearlFight.class)
+      LadderTypeConfig.builder(LadderTypes::getPearlFight, Material.ENDER_PEARL, PearlFight.class)
           .withBuild()
           .withMovementSettings()
           .withCommonSettings()
@@ -103,11 +82,7 @@ public enum LadderType {
           .withBuildSettings()),
 
   SPLEEF(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.SPLEEF.NAME",
-              Material.IRON_SHOVEL,
-              "LADDER.LADDER-TYPES.SPLEEF.DESCRIPTION",
-              Spleef.class)
+      LadderTypeConfig.builder(LadderTypes::getSpleef, Material.IRON_SHOVEL, Spleef.class)
           .withBuild()
           .withMovementSettings()
           .withSettings(
@@ -127,11 +102,7 @@ public enum LadderType {
               SettingType.ROUND_STATUS_TITLES)),
 
   SKYWARS(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.SKYWARS.NAME",
-              Material.ENDER_EYE,
-              "LADDER.LADDER-TYPES.SKYWARS.DESCRIPTION",
-              SkyWars.class)
+      LadderTypeConfig.builder(LadderTypes::getSkywars, Material.ENDER_EYE, SkyWars.class)
           .withBuild()
           .withTeamSettings()
           .withRegenSettings()
@@ -141,11 +112,7 @@ public enum LadderType {
           .withSetting(SettingType.SKYWARS_LOOT)),
 
   BEDWARS(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.BEDWARS.NAME",
-              Material.RED_BED,
-              "LADDER.LADDER-TYPES.BEDWARS.DESCRIPTION",
-              BedWars.class)
+      LadderTypeConfig.builder(LadderTypes::getBedwars, Material.RED_BED, BedWars.class)
           .withBuild()
           .withBed()
           .noPartyFfa()
@@ -157,10 +124,7 @@ public enum LadderType {
 
   FIREBALL_FIGHT(
       LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.FIREBALL-FIGHT.NAME",
-              Material.FIRE_CHARGE,
-              "LADDER.LADDER-TYPES.FIREBALL-FIGHT.DESCRIPTION",
-              FireballFight.class)
+              LadderTypes::getFireballFight, Material.FIRE_CHARGE, FireballFight.class)
           .withBuild()
           .withBed()
           .noPartyFfa()
@@ -174,11 +138,7 @@ public enum LadderType {
           .withSetting(SettingType.FIREBALL_BLOCK_DESTROY)),
 
   MLG_RUSH(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.MLG-RUSH.NAME",
-              Material.BLUE_TERRACOTTA,
-              "LADDER.LADDER-TYPES.MLG-RUSH.DESCRIPTION",
-              MlgRush.class)
+      LadderTypeConfig.builder(LadderTypes::getMlgRush, Material.BLUE_TERRACOTTA, MlgRush.class)
           .withBuild()
           .withBed()
           .noPartyFfa()
@@ -188,11 +148,7 @@ public enum LadderType {
           .withSetting(SettingType.BLOCK_RETURN_DELAY)),
 
   BRIDGES(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.BRIDGES.NAME",
-              Material.RED_TERRACOTTA,
-              "LADDER.LADDER-TYPES.BRIDGES.DESCRIPTION",
-              Bridges.class)
+      LadderTypeConfig.builder(LadderTypes::getBridges, Material.RED_TERRACOTTA, Bridges.class)
           .withBuild()
           .withPortal()
           .noPartyFfa()
@@ -203,11 +159,7 @@ public enum LadderType {
           .withSetting(SettingType.RESET_BUILD_AFTER_ROUND)),
 
   BATTLE_RUSH(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.BATTLE-RUSH.NAME",
-              Material.LILY_PAD,
-              "LADDER.LADDER-TYPES.BATTLE-RUSH.DESCRIPTION",
-              BattleRush.class)
+      LadderTypeConfig.builder(LadderTypes::getBattleRush, Material.LILY_PAD, BattleRush.class)
           .withBuild()
           .withPortal()
           .noPartyFfa()
@@ -218,11 +170,7 @@ public enum LadderType {
           .withSetting(SettingType.TEMP_BUILD_RETURN_DELAY)),
 
   CREEPER(
-      LadderTypeConfig.builder(
-              "LADDER.LADDER-TYPES.CREEPER.NAME",
-              Material.CREEPER_HEAD,
-              "LADDER.LADDER-TYPES.CREEPER.DESCRIPTION",
-              Creeper.class)
+      LadderTypeConfig.builder(LadderTypes::getCreeper, Material.CREEPER_HEAD, Creeper.class)
           .withBuild()
           .withRegenSettings()
           .withCommonSettings()
@@ -230,8 +178,7 @@ public enum LadderType {
           .withBuildSettings()
           .withSetting(SettingType.CREEPER_EXPLOSION_DELAY));
 
-  private final String name;
-  private final List<String> description;
+  private final Function<LadderTypes, LadderTypeMessages> messages;
 
   @Getter private final Material icon;
   @Getter private final boolean build;
@@ -242,11 +189,10 @@ public enum LadderType {
   @Getter private final boolean portal;
 
   LadderType(LadderTypeConfig config) {
-    this.name = LanguageManager.getString(config.getNameKey());
+    this.messages = config.getMessages();
     this.icon = config.getIcon();
     this.build = config.isBuild();
     this.isPartyFfaSupported = config.isPartyFfaSupported();
-    this.description = LanguageManager.getList(config.getDescriptionKey());
     this.classInstance = config.getClassInstance();
     this.settingTypes = config.getSettingTypes();
     this.bed = config.isHasBed();
@@ -254,10 +200,14 @@ public enum LadderType {
   }
 
   public String getName() {
-    return Common.mmToNormal(this.name);
+    return Common.mmToNormal(getMessages().getName());
   }
 
   public List<String> getDescription() {
-    return Common.mmToNormal(this.description);
+    return Common.mmToNormal(getMessages().getDescription());
+  }
+
+  private LadderTypeMessages getMessages() {
+    return this.messages.apply(PracticeConfig.language().getLadder().getLadderTypes());
   }
 }

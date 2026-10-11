@@ -9,8 +9,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPl
 import dev.lokspel.api.event.spectate.end.MatchSpectateEndEvent;
 import dev.lokspel.api.event.spectate.start.MatchSpectateStartEvent;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.nametag.NametagManager;
@@ -80,7 +79,7 @@ public class PlayerHider implements Listener {
                     || onlineStatus.equals(ProfileStatus.EVENT)
                     || onlineStatus.equals(ProfileStatus.FFA)) {
                   hidePlayer(online, player);
-                  if (!ConfigManager.isShowPlayersInTab()) {
+                  if (!PracticeConfig.settings().getMatchSettings().isShowPlayersInTab()) {
                     hidePlayer(player, online);
                   }
                 } else if (!onlineStatus.equals(ProfileStatus.SPECTATE)
@@ -165,7 +164,7 @@ public class PlayerHider implements Listener {
                       || !online.hasPermission("ap.staffmode.see")) {
                     hidePlayer(online, player);
                   }
-                } else if (!ConfigManager.isShowPlayersInTab()) {
+                } else if (!PracticeConfig.settings().getMatchSettings().isShowPlayersInTab()) {
                   hidePlayer(player, online);
                 }
               }
@@ -175,7 +174,8 @@ public class PlayerHider implements Listener {
 
   @EventHandler(priority = EventPriority.MONITOR)
   public void onPlayerQuit(PlayerQuitEvent e) {
-    if (!ConfigManager.isShowPlayersInTab() && !ConfigManager.isShowSpectatorsInTab()) {
+    if (!PracticeConfig.settings().getMatchSettings().isShowPlayersInTab()
+        && !PracticeConfig.settings().getMatchSettings().isShowSpectatorsInTab()) {
       return;
     }
 
@@ -231,9 +231,9 @@ public class PlayerHider implements Listener {
     // Show the spectator in the tab list of the fighters, with the configured prefix in front of
     // the
     // name. Sent per viewer, because the tab list name of a player is global.
-    if (!e.isCancelled() && ConfigManager.isShowSpectatorsInTab()) {
+    if (!e.isCancelled() && PracticeConfig.settings().getMatchSettings().isShowSpectatorsInTab()) {
       Component tabName = NametagManager.getInstance().getTabListName(player);
-      String prefix = ConfigManager.getSpectatorTabPrefix();
+      String prefix = PracticeConfig.settings().getMatchSettings().getSpectatorTabPrefix();
 
       if (!prefix.isEmpty()) {
         tabName =
@@ -261,7 +261,7 @@ public class PlayerHider implements Listener {
    */
   @EventHandler
   public void onSpectatingEnd(MatchSpectateEndEvent e) {
-    boolean keepInTab = ConfigManager.isShowPlayersInTab();
+    boolean keepInTab = PracticeConfig.settings().getMatchSettings().isShowPlayersInTab();
     Player spectator = e.getPlayer();
 
     for (Player fighter : e.getMatch().getPlayers()) {
@@ -381,7 +381,10 @@ public class PlayerHider implements Listener {
 
   public void hidePlayer(Player observer, Player target) {
     hidePlayer(
-        observer, target, ConfigManager.isShowPlayersInLobbyTab() && isLobbyPlayer(observer));
+        observer,
+        target,
+        PracticeConfig.settings().getMatchSettings().isShowPlayersInLobbyTab()
+            && isLobbyPlayer(observer));
   }
 
   /**
@@ -393,8 +396,10 @@ public class PlayerHider implements Listener {
    *     still counts as a lobby player at that point.
    */
   public void hidePlayer(Player observer, Player target, boolean keepInLobbyTab) {
-    boolean inLobby = keepInLobbyTab && ConfigManager.isShowPlayersInLobbyTab();
-    boolean showPlayersInTab = ConfigManager.isShowPlayersInTab() || inLobby;
+    boolean inLobby =
+        keepInLobbyTab && PracticeConfig.settings().getMatchSettings().isShowPlayersInLobbyTab();
+    boolean showPlayersInTab =
+        PracticeConfig.settings().getMatchSettings().isShowPlayersInTab() || inLobby;
 
     observer.hidePlayer(AstralPractice.getInstance(), target);
 
@@ -507,7 +512,7 @@ public class PlayerHider implements Listener {
 
   private boolean checkInvalidLobby() {
     if (ServerManager.getLobby() == null) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("SET-SERVER-LOBBY"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getSetServerLobby());
       return true;
     }
     return false;

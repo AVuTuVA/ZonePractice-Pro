@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -28,7 +29,11 @@ public class PlayerInvGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.PLAYER-INVENTORY.TITLE").replace("%player%", target.getName()),
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerInventory()
+                .getTitle()
+                .replace("%player%", target.getName()),
             5));
 
     build();
@@ -76,7 +81,14 @@ public class PlayerInvGui extends Gui {
               for (int i = 0; i < inventory.getSize(); i++) {
                 if (inventory.getItem(i) == null) {
                   inventory.setItem(
-                      i, GuiFile.getGuiItem("GUIS.PLAYER-INVENTORY.ICONS.FILLER-ITEM").get());
+                      i,
+                      BackendUtil.getGuiItem(
+                              PracticeConfig.guis()
+                                  .getGuis()
+                                  .getPlayerInventory()
+                                  .getIcons()
+                                  .getFillerItem())
+                          .get());
                 }
               }
             });
@@ -88,13 +100,15 @@ public class PlayerInvGui extends Gui {
   }
 
   private ItemStack getHealthItem() {
-    return GuiFile.getGuiItem("GUIS.PLAYER-INVENTORY.ICONS.HEALTH")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getPlayerInventory().getIcons().getHealth())
         .replace("%health%", String.valueOf(target.getHealth()))
         .get();
   }
 
   private ItemStack getHungerItem() {
-    return GuiFile.getGuiItem("GUIS.PLAYER-INVENTORY.ICONS.HUNGER")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getPlayerInventory().getIcons().getHunger())
         .replace("%hunger%", String.valueOf(target.getFoodLevel()))
         .get();
   }
@@ -104,7 +118,12 @@ public class PlayerInvGui extends Gui {
       List<String> effects = new ArrayList<>();
       for (PotionEffect potionEffect : target.getActivePotionEffects()) {
         effects.add(
-            GuiFile.getString("GUIS.PLAYER-INVENTORY.ICONS.EFFECT.FORMAT")
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerInventory()
+                .getIcons()
+                .getEffect()
+                .getFormat()
                 .replace(
                     "%name%",
                     StringUtils.capitalize(
@@ -115,7 +134,14 @@ public class PlayerInvGui extends Gui {
       }
 
       List<String> lore = new ArrayList<>();
-      for (String line : GuiFile.getStringList("GUIS.PLAYER-INVENTORY.ICONS.EFFECT.ICON.LORE")) {
+      for (String line :
+          PracticeConfig.guis()
+              .getGuis()
+              .getPlayerInventory()
+              .getIcons()
+              .getEffect()
+              .getIcon()
+              .getLore()) {
         if (line.contains("%effects%")) {
           lore.addAll(effects);
         } else {
@@ -123,7 +149,14 @@ public class PlayerInvGui extends Gui {
         }
       }
 
-      GuiItem item = GuiFile.getGuiItem("GUIS.PLAYER-INVENTORY.ICONS.EFFECT.ICON");
+      GuiItem item =
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerInventory()
+                  .getIcons()
+                  .getEffect()
+                  .getIcon());
       item.setLore(lore);
 
       return item.get();

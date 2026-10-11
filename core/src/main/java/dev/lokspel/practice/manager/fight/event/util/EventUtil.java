@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.event.util;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -62,7 +62,9 @@ public enum EventUtil {
       Profile profile = ProfileManager.getInstance().getProfile(player);
       if (profile != null) {
         String message =
-            LanguageManager.getString("EVENT.COMPASS-TRACKER-ACTIONBAR")
+            PracticeConfig.language()
+                .getEvent()
+                .getCompassTrackerActionbar()
                 .replace("%target%", target.getName())
                 .replace("%distance%", String.valueOf(distance));
 

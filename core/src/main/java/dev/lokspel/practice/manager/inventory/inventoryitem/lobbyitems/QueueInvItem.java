@@ -1,22 +1,25 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.lobbyitems;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
 import java.util.Locale;
 import org.bukkit.entity.Player;
 
 public class QueueInvItem extends InvItem {
 
-  private static final String DEFAULT_QUEUE_GUI_PATH = "QUEUE.COMBINED.DEFAULT-GUI";
-
   public QueueInvItem() {
-    super(getItemStack("LOBBY-BASIC.NORMAL.QUEUE.ITEM"), getInt("LOBBY-BASIC.NORMAL.QUEUE.SLOT"));
+    super(PracticeConfig.inventories().getLobbyBasic().getNormal().get("QUEUE"));
   }
 
   @Override
   public void handleClickEvent(Player player) {
     String defaultGui =
-        ConfigManager.getString(DEFAULT_QUEUE_GUI_PATH).trim().toUpperCase(Locale.ROOT);
+        PracticeConfig.settings()
+            .getQueue()
+            .getCombined()
+            .getDefaultGui()
+            .trim()
+            .toUpperCase(Locale.ROOT);
 
     if (defaultGui.equals("RANKED")) {
       player.performCommand("ranked");

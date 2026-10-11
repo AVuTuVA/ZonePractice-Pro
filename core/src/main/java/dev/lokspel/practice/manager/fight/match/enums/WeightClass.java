@@ -1,11 +1,11 @@
 package dev.lokspel.practice.manager.fight.match.enums;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.Common;
 
 public enum WeightClass {
-  UNRANKED(ConfigManager.getConfig().getString("MATCH-SETTINGS.WEIGHT-CLASS.UNRANKED")),
-  RANKED(ConfigManager.getConfig().getString("MATCH-SETTINGS.WEIGHT-CLASS.RANKED"));
+  UNRANKED(PracticeConfig.settings().getMatchSettings().getWeightClass().getUnranked()),
+  RANKED(PracticeConfig.settings().getMatchSettings().getWeightClass().getRanked());
 
   private final String name;
 

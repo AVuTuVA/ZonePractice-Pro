@@ -1,13 +1,13 @@
 package dev.lokspel.practice.manager.playerkit.guis;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.ladder.abstraction.playercustom.CustomLadder;
 import dev.lokspel.practice.manager.ladder.enums.KnockbackType;
-import dev.lokspel.practice.manager.playerkit.PlayerKitManager;
 import dev.lokspel.practice.manager.playerkit.StaticItems;
 import dev.lokspel.practice.util.InventoryUtil;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class CustomSettingGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            PlayerKitManager.getInstance().getString("GUI.CUSTOM-SETTINGS.TITLE"), 6));
+            PracticeConfig.playerKit().getGui().getCustomSettings().getTitle(), 6));
 
     this.build();
   }

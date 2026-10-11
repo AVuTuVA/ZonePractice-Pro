@@ -1,8 +1,9 @@
 package dev.lokspel.practice.manager.fight.match.type.playersvsplayers;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.language.MatchTypeMessages;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.Round;
@@ -112,8 +113,9 @@ public abstract class PlayersVsPlayers extends Match implements Team {
             PlayerUtil.clearInventory(player);
           }
 
-          if (this.getLanguagePath() != null) {
-            String teamDeathMsg = LanguageManager.getString(this.getLanguagePath() + ".PLAYER-DIE");
+          MatchTypeMessages messages = this.getMessages();
+          if (messages != null) {
+            String teamDeathMsg = messages.getPlayerDie();
             if (teamDeathMsg != null) {
               this.sendMessage(
                   TeamUtil.replaceTeamNames(
@@ -167,12 +169,10 @@ public abstract class PlayersVsPlayers extends Match implements Team {
     if (quit && !this.status.equals(MatchStatus.END) && !this.status.equals(MatchStatus.OVER)) {
       this.getCurrentStat(player).end(true);
 
-      if (this.getLanguagePath() != null) {
+      MatchTypeMessages messages = this.getMessages();
+      if (messages != null) {
         this.sendMessage(
-            TeamUtil.replaceTeamNames(
-                LanguageManager.getString(this.getLanguagePath() + ".PLAYER-LEFT"),
-                player,
-                this.getTeam(player)),
+            TeamUtil.replaceTeamNames(messages.getPlayerLeft(), player, this.getTeam(player)),
             true);
       }
 
@@ -291,10 +291,10 @@ public abstract class PlayersVsPlayers extends Match implements Team {
     return null;
   }
 
-  private String getLanguagePath() {
+  private MatchTypeMessages getMessages() {
     return switch (type) {
-      case PARTY_SPLIT -> "MATCH.PARTY-SPLIT";
-      case PARTY_VS_PARTY -> "MATCH.PARTY-VS-PARTY";
+      case PARTY_SPLIT -> PracticeConfig.language().getMatch().getPartySplit();
+      case PARTY_VS_PARTY -> PracticeConfig.language().getMatch().getPartyVsParty();
       default -> null;
     };
   }

@@ -1,16 +1,20 @@
 package dev.lokspel.practice.manager.gui.guis.leaderboard;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.ItemConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiCache;
+import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.util.InventoryUtil;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,14 +24,15 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class LeaderboardGui extends Gui {
 
-  private final String configPath;
+  private final Supplier<dev.lokspel.practice.config.gui.LeaderboardGui> config;
   private final Gui backTo;
 
-  protected LeaderboardGui(GuiType type, String configPath, Gui backTo) {
+  protected LeaderboardGui(
+      GuiType type, Supplier<dev.lokspel.practice.config.gui.LeaderboardGui> config, Gui backTo) {
     super(type);
-    this.configPath = configPath;
+    this.config = config;
     this.backTo = backTo;
-    this.gui.put(1, InventoryUtil.createInventory(GuiFile.getString(configPath + ".TITLE"), 6));
+    this.gui.put(1, InventoryUtil.createInventory(config.get().getTitle(), 6));
   }
 
   @Override
@@ -60,7 +65,8 @@ public abstract class LeaderboardGui extends Gui {
                 inventory.setItem(slot, createLadderItem(ladder));
               }
 
-              ItemStack fillerItem = GuiFile.getGuiItem(configPath + ".ICONS.FILLER-ITEM").get();
+              ItemStack fillerItem =
+                  icon(dev.lokspel.practice.config.gui.LeaderboardGui.Icons::getFillerItem).get();
               for (int i = 0; i < 45; i++) {
                 ItemStack current = inventory.getItem(i);
                 if (current == null || current.getType().equals(Material.AIR)) {
@@ -68,7 +74,9 @@ public abstract class LeaderboardGui extends Gui {
                 }
               }
 
-              inventory.setItem(45, GuiFile.getGuiItem(configPath + ".ICONS.BACK-TO-HUB").get());
+              inventory.setItem(
+                  45,
+                  icon(dev.lokspel.practice.config.gui.LeaderboardGui.Icons::getBackToHub).get());
               inventory.setItem(49, createGlobalItem());
               inventory.setItem(53, LbGuiUtil.getCacheInfoItem());
 
@@ -78,6 +86,14 @@ public abstract class LeaderboardGui extends Gui {
                 GuiCache.putCache(type, gui);
               }
             });
+  }
+
+  /** Builds the GUI item of an icon, or an empty item when the icon is not configured. */
+  private GuiItem icon(
+      Function<dev.lokspel.practice.config.gui.LeaderboardGui.Icons, ItemConfig> getter) {
+    dev.lokspel.practice.config.gui.LeaderboardGui.Icons icons = config.get().getIcons();
+    ItemConfig item = icons != null ? getter.apply(icons) : null;
+    return item != null ? BackendUtil.getGuiItem(item) : new GuiItem();
   }
 
   protected boolean isLadderVisible(NormalLadder ladder) {

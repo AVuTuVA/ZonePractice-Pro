@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.match.util;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.type.duel.Duel;
 import dev.lokspel.practice.manager.server.ServerManager;
 import java.util.HashMap;
@@ -23,14 +23,38 @@ public class RewardCommandManager {
 
   private RewardCommandManager() {
     this.winnerCommand.put(
-        false, ConfigManager.getList("MATCH-SETTINGS.END-COMMAND.DUEL.UNRANKED.WINNER-COMMANDS"));
+        false,
+        PracticeConfig.settings()
+            .getMatchSettings()
+            .getEndCommand()
+            .getDuel()
+            .getUnranked()
+            .getWinnerCommands());
     this.loserCommand.put(
-        false, ConfigManager.getList("MATCH-SETTINGS.END-COMMAND.DUEL.UNRANKED.LOSER-COMMANDS"));
+        false,
+        PracticeConfig.settings()
+            .getMatchSettings()
+            .getEndCommand()
+            .getDuel()
+            .getUnranked()
+            .getLoserCommands());
 
     this.winnerCommand.put(
-        true, ConfigManager.getList("MATCH-SETTINGS.END-COMMAND.DUEL.RANKED.WINNER-COMMANDS"));
+        true,
+        PracticeConfig.settings()
+            .getMatchSettings()
+            .getEndCommand()
+            .getDuel()
+            .getRanked()
+            .getWinnerCommands());
     this.loserCommand.put(
-        true, ConfigManager.getList("MATCH-SETTINGS.END-COMMAND.DUEL.RANKED.LOSER-COMMANDS"));
+        true,
+        PracticeConfig.settings()
+            .getMatchSettings()
+            .getEndCommand()
+            .getDuel()
+            .getRanked()
+            .getLoserCommands());
   }
 
   public void executeCommands(Duel duel, boolean ranked) {

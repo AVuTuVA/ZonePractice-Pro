@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.staff.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
 import dev.lokspel.practice.manager.fight.match.Match;
@@ -22,14 +22,20 @@ public final class StopArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.staffmode.stop")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.STAFF.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getStaff().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getStaff()
+              .getArguments()
+              .getStop()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -39,7 +45,12 @@ public final class StopArg {
     if (target == null || targetProfile == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getStaff()
+              .getArguments()
+              .getStop()
+              .getTargetOffline()
               .replace("%target%", args[1]));
       return;
     }
@@ -47,7 +58,12 @@ public final class StopArg {
     if (player != target && target.hasPermission("ap.bypass.stop")) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.TARGET-BYPASS")
+          PracticeConfig.language()
+              .getCommand()
+              .getStaff()
+              .getArguments()
+              .getStop()
+              .getTargetBypass()
               .replace("%target%", target.getName()));
       return;
     }
@@ -64,13 +80,31 @@ public final class StopArg {
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.MATCH.PLAYER")
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getMatch()
+                .getPlayer()
                 .replace("%target%", target.getName()));
         target.sendMessage(
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.MATCH.TARGET")
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getMatch()
+                .getTarget()
                 .replace("%player%", player.getName()));
         match.sendMessage(
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.MATCH.MATCH")
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getMatch()
+                .getMatch()
                 .replace("%target%", target.getName()),
             true);
         break;
@@ -84,13 +118,31 @@ public final class StopArg {
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.EVENT.PLAYER")
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getEvent()
+                .getPlayer()
                 .replace("%target%", target.getName()));
         target.sendMessage(
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.EVENT.TARGET")
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getEvent()
+                .getTarget()
                 .replace("%player%", player.getName()));
         event.sendMessage(
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.EVENT.EVENT")
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getEvent()
+                .getEvent()
                 .replace("%target%", target.getName()),
             true);
         break;
@@ -101,11 +153,23 @@ public final class StopArg {
 
           Common.sendMmMessage(
               player,
-              LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.SPECTATE.PLAYER")
+              PracticeConfig.language()
+                  .getCommand()
+                  .getStaff()
+                  .getArguments()
+                  .getStop()
+                  .getSpectate()
+                  .getPlayer()
                   .replace("%target%", target.getName()));
           Common.sendMmMessage(
               target,
-              LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.SPECTATE.TARGET")
+              PracticeConfig.language()
+                  .getCommand()
+                  .getStaff()
+                  .getArguments()
+                  .getStop()
+                  .getSpectate()
+                  .getTarget()
                   .replace("%player%", player.getName()));
         }
         break;
@@ -118,7 +182,12 @@ public final class StopArg {
   public static void run(String label, String[] args) {
     if (args.length != 2) {
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getStaff()
+              .getArguments()
+              .getStop()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -127,7 +196,12 @@ public final class StopArg {
     Profile targetProfile = ProfileManager.getInstance().getProfile(target);
     if (target == null || targetProfile == null) {
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getStaff()
+              .getArguments()
+              .getStop()
+              .getTargetOffline()
               .replace("%target%", args[1]));
       return;
     }
@@ -143,13 +217,31 @@ public final class StopArg {
         match.removePlayer(target, false);
 
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.MATCH.PLAYER")
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getMatch()
+                .getPlayer()
                 .replace("%target%", target.getName()));
         target.sendMessage(
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.MATCH.TARGET")
-                .replace("%player%", LanguageManager.getString("CONSOLE-NAME")));
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getMatch()
+                .getTarget()
+                .replace("%player%", PracticeConfig.language().getConsoleName()));
         match.sendMessage(
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.MATCH.MATCH")
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getMatch()
+                .getMatch()
                 .replace("%target%", target.getName()),
             true);
         break;
@@ -162,13 +254,31 @@ public final class StopArg {
         event.removePlayer(target, false);
 
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.EVENT.PLAYER")
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getEvent()
+                .getPlayer()
                 .replace("%target%", target.getName()));
         target.sendMessage(
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.EVENT.TARGET")
-                .replace("%player%", LanguageManager.getString("CONSOLE-NAME")));
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getEvent()
+                .getTarget()
+                .replace("%player%", PracticeConfig.language().getConsoleName()));
         event.sendMessage(
-            LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.EVENT.EVENT")
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getStop()
+                .getEvent()
+                .getEvent()
                 .replace("%target%", target.getName()),
             true);
         break;
@@ -178,12 +288,24 @@ public final class StopArg {
           spectatable.removeSpectator(target);
 
           Common.sendConsoleMmMessage(
-              LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.SPECTATE.PLAYER")
+              PracticeConfig.language()
+                  .getCommand()
+                  .getStaff()
+                  .getArguments()
+                  .getStop()
+                  .getSpectate()
+                  .getPlayer()
                   .replace("%target%", target.getName()));
           Common.sendMmMessage(
               target,
-              LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.STOP.SPECTATE.TARGET")
-                  .replace("%player%", LanguageManager.getString("CONSOLE-NAME")));
+              PracticeConfig.language()
+                  .getCommand()
+                  .getStaff()
+                  .getArguments()
+                  .getStop()
+                  .getSpectate()
+                  .getTarget()
+                  .replace("%player%", PracticeConfig.language().getConsoleName()));
         }
         break;
 

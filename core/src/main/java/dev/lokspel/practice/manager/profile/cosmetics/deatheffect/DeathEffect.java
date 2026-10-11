@@ -8,11 +8,13 @@ import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerParticle;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.gui.Cosmetics;
 import dev.lokspel.practice.manager.fight.util.EntityHiderListener;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -55,15 +57,15 @@ public enum DeathEffect {
 
   /** Display name read from guis.yml with fallback to default. */
   public String getDisplayName() {
-    String key = "GUIS.COSMETICS.DEATH-EFFECTS.ENTRIES." + this.name() + ".DISPLAY-NAME";
-    String val = GuiFile.getConfig().getString(key);
+    Cosmetics.DeathEffects.DeathEffectEntry entry = config();
+    String val = entry != null ? entry.getDisplayName() : null;
     return (val != null && !val.isBlank()) ? val : defaultDisplayName;
   }
 
   /** Icon material read from guis.yml with fallback. */
   public Material getConfiguredIcon() {
-    String key = "GUIS.COSMETICS.DEATH-EFFECTS.ENTRIES." + this.name() + ".ICON";
-    String val = GuiFile.getConfig().getString(key);
+    Cosmetics.DeathEffects.DeathEffectEntry entry = config();
+    String val = entry != null ? entry.getIcon() : null;
     if (val != null && !val.isBlank()) {
       try {
         return Material.valueOf(val.toUpperCase(Locale.ROOT));
@@ -73,6 +75,13 @@ public enum DeathEffect {
       }
     }
     return icon;
+  }
+
+  /** The GUIS.COSMETICS.DEATH-EFFECTS.ENTRIES entry of this effect, or null when absent. */
+  private Cosmetics.DeathEffects.DeathEffectEntry config() {
+    Map<String, Cosmetics.DeathEffects.DeathEffectEntry> entries =
+        PracticeConfig.guis().getGuis().getCosmetics().getDeathEffects().getEntries();
+    return entries != null ? entries.get(this.name()) : null;
   }
 
   public static String getPermissionNode(String id) {

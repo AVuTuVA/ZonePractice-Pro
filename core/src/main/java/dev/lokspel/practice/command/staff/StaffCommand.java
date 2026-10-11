@@ -7,7 +7,6 @@ import dev.lokspel.practice.command.staff.arguments.ForceEndArg;
 import dev.lokspel.practice.command.staff.arguments.HelpArg;
 import dev.lokspel.practice.command.staff.arguments.StopArg;
 import dev.lokspel.practice.command.staff.arguments.VanishArg;
-import dev.lokspel.practice.manager.backend.ConfigManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -83,10 +82,8 @@ public class StaffCommand implements CommandExecutor, TabCompleter {
     }
 
     if (args.length == 1) {
-      if (player.hasPermission("ap.staffmode.chat")
-          && ConfigManager.getBoolean("chat.staff-chat.enabled")) {
-        arguments.add("chat");
-      }
+      // "chat" is not suggested: the old check read the config key "chat.staff-chat.enabled"
+      // (lower case), which never existed, so it was always false.
       if (player.hasPermission("ap.staff")) {
         arguments.add("enable");
         arguments.add("vanish");

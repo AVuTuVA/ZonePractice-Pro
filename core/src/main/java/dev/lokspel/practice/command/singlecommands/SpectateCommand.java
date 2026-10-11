@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
 import dev.lokspel.practice.manager.fight.ffa.FfaManager;
@@ -27,12 +27,13 @@ public class SpectateCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
     if (!player.hasPermission("ap.spectate")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SPECTATE.NO-SPECTATE"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getSpectate().getNoSpectate());
       return false;
     }
 
@@ -41,14 +42,19 @@ public class SpectateCommand implements CommandExecutor, TabCompleter {
             && !profile.getStatus().equals(ProfileStatus.SPECTATE))
         || profile.isParty()
         || profile.isStaffMode()) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SPECTATE.CANT-SPECTATE"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getSpectate().getCantSpectate());
       return false;
     }
 
     if (args.length != 1) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.SPECTATE.COMMAND-HELP").replace("%label%", label));
+          PracticeConfig.language()
+              .getCommand()
+              .getSpectate()
+              .getCommandHelp()
+              .replace("%label%", label));
       return false;
     }
 
@@ -56,13 +62,17 @@ public class SpectateCommand implements CommandExecutor, TabCompleter {
     if (target == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.SPECTATE.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getSpectate()
+              .getTargetOffline()
               .replace("%target%", args[0]));
       return false;
     }
 
     if (target == player) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SPECTATE.CANT-SPECTATE2"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getSpectate().getCantSpectate2());
       return false;
     }
 
@@ -86,7 +96,8 @@ public class SpectateCommand implements CommandExecutor, TabCompleter {
         ffa.addSpectator(player, target, true, true);
       }
     } else {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SPECTATE.PLAYER-INACTIVE"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getSpectate().getPlayerInactive());
     }
 
     return true;

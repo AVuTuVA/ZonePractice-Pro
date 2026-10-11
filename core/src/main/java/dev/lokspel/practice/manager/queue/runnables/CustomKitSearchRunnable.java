@@ -1,7 +1,6 @@
 package dev.lokspel.practice.manager.queue.runnables;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
@@ -18,7 +17,7 @@ import org.bukkit.entity.Player;
 public class CustomKitSearchRunnable extends Runnable {
 
   private static final int MAX_JOIN_SEARCH_TIME =
-      ConfigManager.getInt("QUEUE.UNRANKED.MAX-QUEUE-TIME");
+      PracticeConfig.settings().getQueue().getUnranked().getMaxQueueTime();
   private static final String ACTION_BAR_ID = "queue";
 
   @Getter private final UUID playerUuid;
@@ -67,15 +66,17 @@ public class CustomKitSearchRunnable extends Runnable {
       CustomKitQueueManager.getInstance().cancelJoinSearch(player, false, true);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("QUEUES.NO-MATCH-IN-TIME")
+          PracticeConfig.language()
+              .getQueues()
+              .getNoMatchInTime()
               .replace("%maxTime%", String.valueOf(MAX_JOIN_SEARCH_TIME / 60)));
       return;
     }
 
     String searchingActionbar =
         mode == SearchMode.HOST
-            ? LanguageManager.getString("QUEUES.CUSTOM.HOSTING-ACTIONBAR")
-            : LanguageManager.getString("QUEUES.CUSTOM.SEARCHING-ACTIONBAR");
+            ? PracticeConfig.language().getQueues().getCustom().getHostingActionbar()
+            : PracticeConfig.language().getQueues().getCustom().getSearchingActionbar();
 
     if (searchingActionbar.isEmpty()) {
       searchingActionbar =

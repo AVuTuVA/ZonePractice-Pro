@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.customladder;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -30,13 +30,40 @@ public class PlayerCustomKitSelector extends Gui {
           5, List.of(9, 11, 13, 15, 17));
 
   private static final GuiItem KIT_ITEM =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.PLAYER-CUSTOM-KIT-SELECTOR.ICONS.KIT");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis()
+              .getGuis()
+              .getKitEditor()
+              .getPlayerCustomKitSelector()
+              .getIcons()
+              .getKit());
   private static final ItemStack SELECTED_KIT_ITEM =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.PLAYER-CUSTOM-KIT-SELECTOR.ICONS.SELECTED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getKitEditor()
+                  .getPlayerCustomKitSelector()
+                  .getIcons()
+                  .getSelected())
+          .get();
   private static final ItemStack UNSELECTED_KIT_ITEM =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.PLAYER-CUSTOM-KIT-SELECTOR.ICONS.UNSELECTED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getKitEditor()
+                  .getPlayerCustomKitSelector()
+                  .getIcons()
+                  .getUnselected())
+          .get();
   private static final ItemStack GUIDE_ITEM =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.PLAYER-CUSTOM-KIT-SELECTOR.ICONS.GUIDE").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getKitEditor()
+                  .getPlayerCustomKitSelector()
+                  .getIcons()
+                  .getGuide())
+          .get();
 
   private final Profile profile;
   private final int kitLimit;
@@ -51,7 +78,8 @@ public class PlayerCustomKitSelector extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.KIT-EDITOR.PLAYER-CUSTOM-KIT-SELECTOR.TITLE"), 6));
+            PracticeConfig.guis().getGuis().getKitEditor().getPlayerCustomKitSelector().getTitle(),
+            6));
 
     this.build();
   }
@@ -117,7 +145,10 @@ public class PlayerCustomKitSelector extends Gui {
           newLadder.getMainGui().open(player);
           Common.sendMmMessage(
               player,
-              LanguageManager.getString("CUSTOM-PLAYER-KIT.COPYKIT.COPY-SUCCESS")
+              PracticeConfig.language()
+                  .getCustomPlayerKit()
+                  .getCopykit()
+                  .getCopySuccess()
                   .replace("%name%", copyCustomLadder.getDisplayName()));
         }
       } else {
@@ -133,7 +164,7 @@ public class PlayerCustomKitSelector extends Gui {
           }
         } else {
           Common.sendMmMessage(
-              player, LanguageManager.getString("CUSTOM-PLAYER-KIT.ONLY-SELECT-ENABLED-CUSTOMS"));
+              player, PracticeConfig.language().getCustomPlayerKit().getOnlySelectEnabledCustoms());
         }
       }
     }

@@ -6,10 +6,9 @@ import dev.lokspel.api.event.FfaRemovePlayerEvent;
 import dev.lokspel.api.event.spectate.end.FfaSpectateEndEvent;
 import dev.lokspel.api.event.spectate.start.FfaSpectateStartEvent;
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.ffa.FfaFightPlayer;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.enums.TeamEnum;
@@ -171,7 +170,11 @@ public class Ffa implements Spectatable, dev.lokspel.api.interfaces.Ffa {
 
     teleportPlayer(player);
     this.sendMessage(
-        LanguageManager.getString("FFA.GAME.PLAYER-JOIN").replace("%player%", player.getName()),
+        PracticeConfig.language()
+            .getFfa()
+            .getGame()
+            .getPlayerJoin()
+            .replace("%player%", player.getName()),
         true);
 
     dev.lokspel.practice.util.playerutil.PlayerUtil.setFightPlayer(player, ladder);
@@ -241,7 +244,11 @@ public class Ffa implements Spectatable, dev.lokspel.api.interfaces.Ffa {
     Bukkit.getPluginManager().callEvent(new FfaRemovePlayerEvent(this, player));
 
     this.sendMessage(
-        LanguageManager.getString("FFA.GAME.PLAYER-LEAVE").replace("%player%", player.getName()),
+        PracticeConfig.language()
+            .getFfa()
+            .getGame()
+            .getPlayerLeave()
+            .replace("%player%", player.getName()),
         true);
 
     // Remove in-flight ender pearls to prevent the player from being
@@ -373,12 +380,12 @@ public class Ffa implements Spectatable, dev.lokspel.api.interfaces.Ffa {
 
   public boolean isFfaKitBlocked() {
     return CombatLogUtil.getInstance().isEnabled()
-        && ConfigManager.getBoolean("FFA.COMBAT-LOG.BLOCK-KIT");
+        && PracticeConfig.settings().getFfa().getCombatLog().isBlockKit();
   }
 
   public boolean isFfaLeaveBlocked() {
     return CombatLogUtil.getInstance().isEnabled()
-        && ConfigManager.getBoolean("FFA.COMBAT-LOG.BLOCK-LEAVE");
+        && PracticeConfig.settings().getFfa().getCombatLog().isBlockLeave();
   }
 
   public boolean isFfaKillOnQuit() {
@@ -450,7 +457,10 @@ public class Ffa implements Spectatable, dev.lokspel.api.interfaces.Ffa {
     }
 
     this.sendMessage(
-        LanguageManager.getString("FIGHT.DEATH-MESSAGES.COMBAT-LOG-QUIT")
+        PracticeConfig.language()
+            .getFight()
+            .getDeathMessages()
+            .getCombatLogQuit()
             .replace("%player%", player.getName())
             .replace("%killer%", attacker.getName()),
         true);
@@ -480,7 +490,7 @@ public class Ffa implements Spectatable, dev.lokspel.api.interfaces.Ffa {
       return;
     }
 
-    if (ConfigManager.getBoolean("FFA.ROLLBACK.TELEPORT-TO-SPAWN")) {
+    if (PracticeConfig.settings().getFfa().getRollback().isTeleportToSpawn()) {
       for (Player player : new ArrayList<>(this.players.keySet())) {
         if (player == null || !player.isOnline()) {
           continue;
@@ -598,7 +608,10 @@ public class Ffa implements Spectatable, dev.lokspel.api.interfaces.Ffa {
 
     if (message) {
       this.sendMessage(
-          LanguageManager.getString("FFA.GAME.SPECTATE-START")
+          PracticeConfig.language()
+              .getFfa()
+              .getGame()
+              .getSpectateStart()
               .replace("%player%", player.getName()),
           true);
     }
@@ -627,13 +640,26 @@ public class Ffa implements Spectatable, dev.lokspel.api.interfaces.Ffa {
   }
 
   private static final String BUILD_ON =
-      GuiFile.getString("GUIS.SPECTATOR-MENU.ICONS.FFA-ICON.BUILD-STATUS.ENABLED");
+      PracticeConfig.guis()
+          .getGuis()
+          .getSpectatorMenu()
+          .getIcons()
+          .getFfaIcon()
+          .getBuildStatus()
+          .getEnabled();
   private static final String BUILD_OFF =
-      GuiFile.getString("GUIS.SPECTATOR-MENU.ICONS.FFA-ICON.BUILD-STATUS.DISABLED");
+      PracticeConfig.guis()
+          .getGuis()
+          .getSpectatorMenu()
+          .getIcons()
+          .getFfaIcon()
+          .getBuildStatus()
+          .getDisabled();
 
   @Override
   public GuiItem getSpectatorMenuItem() {
-    return GuiFile.getGuiItem("GUIS.SPECTATOR-MENU.ICONS.FFA-ICON")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getSpectatorMenu().getIcons().getFfaIcon())
         .setMaterial(arena.getIcon().getType())
         .setDamage(Common.getItemDamage(arena.getIcon()))
         .replace("%players%", String.valueOf(players.size()))

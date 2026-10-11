@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.customladder.premadecustom;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -58,7 +58,11 @@ public class CustomLadderSelectorGui extends Gui {
     for (int page = 1; PageUtil.isPageValid(ladders.size(), page, spaces) || page == 1; page++) {
       Inventory inventory = existingInventories.get(page);
       String title =
-          GuiFile.getString("GUIS.KIT-EDITOR.LADDER-SELECTOR.TITLE")
+          PracticeConfig.guis()
+              .getGuis()
+              .getKitEditor()
+              .getLadderSelector()
+              .getTitle()
               .replace("%page%", String.valueOf(page));
       if (inventory == null || inventory.getSize() != 6 * 9) {
         inventory = InventoryUtil.createInventory(title, 6);
@@ -92,14 +96,26 @@ public class CustomLadderSelectorGui extends Gui {
       ItemStack left =
           page == 1
               ? GuiManager.getFILLER_ITEM()
-              : GuiFile.getGuiItem("GUIS.KIT-EDITOR.LADDER-SELECTOR.ICONS.PAGE-LEFT")
+              : BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getKitEditor()
+                          .getLadderSelector()
+                          .getIcons()
+                          .getPageLeft())
                   .replace("%page%", String.valueOf(page - 1))
                   .get();
       inventory.setItem(45, left);
 
       ItemStack right =
           PageUtil.isPageValid(ladders.size(), page + 1, spaces)
-              ? GuiFile.getGuiItem("GUIS.KIT-EDITOR.LADDER-SELECTOR.ICONS.PAGE-RIGHT")
+              ? BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getKitEditor()
+                          .getLadderSelector()
+                          .getIcons()
+                          .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
               : GuiManager.getFILLER_ITEM();
@@ -149,7 +165,11 @@ public class CustomLadderSelectorGui extends Gui {
       if (!ladder.isEnabled() || !ladder.isEditable()) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("LADDER.KIT-EDITOR.LADDER-SELECTOR.NOT-AVAILABLE")
+            PracticeConfig.language()
+                .getLadder()
+                .getKitEditor()
+                .getLadderSelector()
+                .getNotAvailable()
                 .replace("%ladder%", ladder.getDisplayName()));
         update();
         return;
@@ -158,7 +178,11 @@ public class CustomLadderSelectorGui extends Gui {
       if (ladder.isFrozen()) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("LADDER.KIT-EDITOR.LADDER-SELECTOR.LADDER-FROZEN")
+            PracticeConfig.language()
+                .getLadder()
+                .getKitEditor()
+                .getLadderSelector()
+                .getLadderFrozen()
                 .replace("%ladder%", ladder.getDisplayName()));
         return;
       }
@@ -173,13 +197,19 @@ public class CustomLadderSelectorGui extends Gui {
     if (iconMeta != null) {
       iconMeta.displayName(
           Common.legacyToComponent(
-              GuiFile.getString("GUIS.KIT-EDITOR.LADDER-SELECTOR.ICONS.NAME")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getKitEditor()
+                  .getLadderSelector()
+                  .getIcons()
+                  .getName()
                   .replace("%ladder%", ladder.getDisplayName())
                   .replace("%ladderOriginal%", ladder.getName())));
       ItemCreateUtil.hideItemFlags(iconMeta);
 
       List<String> lore = new ArrayList<>();
-      for (String line : GuiFile.getStringList("GUIS.KIT-EDITOR.LADDER-SELECTOR.ICONS.LORE")) {
+      for (String line :
+          PracticeConfig.guis().getGuis().getKitEditor().getLadderSelector().getIcons().getLore()) {
         lore.add(
             line.replace("%ladder%", ladder.getDisplayName())
                 .replace("%ladderOriginal%", ladder.getName()));

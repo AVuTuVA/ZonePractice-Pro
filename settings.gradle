@@ -1,3 +1,19 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url = uri('https://registry.whereareiam.me/maven/packages') }
+        maven { url = uri('https://repo.opencollab.dev/main/') }
+        maven { url = uri('https://repo.opencollab.dev/maven-snapshots/') }
+    }
+    plugins {
+        // One version for every Anvil plugin; the framework modules follow it through anvil.module(...).
+        id 'me.whereareiam.anvil' version anvilVersion
+        id 'me.whereareiam.anvil.junit' version anvilVersion
+        id 'me.whereareiam.anvil.capability.default' version anvilVersion
+        id 'me.whereareiam.anvil.platform.paper' version anvilVersion
+    }
+}
+
 rootProject.name = 'AstralPractice'
 
 include 'api', 'core', 'distribution'

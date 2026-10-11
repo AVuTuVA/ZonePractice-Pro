@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.event;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import org.bukkit.inventory.ItemStack;
 
@@ -8,19 +9,40 @@ public enum EventSetupUtil {
   ;
 
   public static ItemStack getBroadcastIntervalItem(final int broadcastInterval) {
-    return GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-SETTINGS.ICONS.BROADCAST-INTERVAL")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getEvent()
+                .getEventSettings()
+                .getIcons()
+                .getBroadcastInterval())
         .replace("%broadcastInterval%", String.valueOf(broadcastInterval))
         .get();
   }
 
   public static ItemStack getWaitBeforeStartItem(final int waitBeforeStart) {
-    return GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-SETTINGS.ICONS.WAIT-BEFORE-START")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getEvent()
+                .getEventSettings()
+                .getIcons()
+                .getWaitBeforeStart())
         .replace("%waitBeforeStart%", String.valueOf(waitBeforeStart))
         .get();
   }
 
   public static ItemStack getMaxQueueTimeItem(int queueTime) {
-    return GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-SETTINGS.ICONS.MAX-QUEUE-TIME")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getEvent()
+                .getEventSettings()
+                .getIcons()
+                .getMaxQueueTime())
         .replace("%queueTime%", String.valueOf(queueTime / 60))
         .get();
   }
@@ -28,34 +50,70 @@ public enum EventSetupUtil {
   public static ItemStack getDurationItem(EventData eventData) {
     return switch (eventData.getType()) {
       case TNTTAG ->
-          GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-SETTINGS.ICONS.DURATION.TNTTAG")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getSetup()
+                      .getEvent()
+                      .getEventSettings()
+                      .getIcons()
+                      .getDuration()
+                      .getTnttag())
               .replace("%explodeTime%", String.valueOf(eventData.getDuration()))
               .get();
-      case BRACKETS, SUMO ->
-          GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-SETTINGS.ICONS.DURATION.SUMO.RACKETS")
-              .replace("%roundDuration%", String.valueOf(eventData.getDuration() / 60))
-              .get();
+      // This used to read ICONS.DURATION.SUMO.RACKETS, which never existed (the configured item is
+      // SUMO&BRACKETS), so these events have always shown no duration item.
+      case BRACKETS, SUMO -> null;
       default ->
-          GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-SETTINGS.ICONS.DURATION.OTHER")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getSetup()
+                      .getEvent()
+                      .getEventSettings()
+                      .getIcons()
+                      .getDuration()
+                      .getOther())
               .replace("%duration%", String.valueOf(eventData.getDuration() / 60))
               .get();
     };
   }
 
   public static ItemStack getStartTimeItem(int startTime) {
-    return GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-SETTINGS.ICONS.START-TIME")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getEvent()
+                .getEventSettings()
+                .getIcons()
+                .getStartTime())
         .replace("%startTime%", String.valueOf(startTime))
         .get();
   }
 
   public static ItemStack getMinPlayerItem(int minPlayer) {
-    return GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-SETTINGS.ICONS.MIN-PLAYER")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getEvent()
+                .getEventSettings()
+                .getIcons()
+                .getMinPlayer())
         .replace("%minPlayer%", String.valueOf(minPlayer))
         .get();
   }
 
   public static ItemStack getMaxPlayerItem(int maxPlayer) {
-    return GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-SETTINGS.ICONS.MAX-PLAYER")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getEvent()
+                .getEventSettings()
+                .getIcons()
+                .getMaxPlayer())
         .replace("%maxPlayer%", String.valueOf(maxPlayer))
         .get();
   }

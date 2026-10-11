@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.fight.match.type.playersvsplayers.partyvsparty;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
 import dev.lokspel.practice.manager.fight.match.enums.TeamEnum;
 import dev.lokspel.practice.manager.fight.match.type.playersvsplayers.PlayersVsPlayers;
@@ -59,7 +59,7 @@ public class PartyVsParty extends PlayersVsPlayers {
     this.rounds.put(round.getRoundNumber(), round);
 
     if (round.getRoundNumber() == 1) {
-      for (String line : LanguageManager.getList("MATCH.PARTY-VS-PARTY.MATCH-START")) {
+      for (String line : PracticeConfig.language().getMatch().getPartyVsParty().getMatchStart()) {
         sendMessage(
             line.replace("%matchTypeName%", MatchType.PARTY_VS_PARTY.getName(false))
                 .replace("%ladder%", ladder.getName())

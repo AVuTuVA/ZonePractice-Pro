@@ -1,7 +1,7 @@
 package dev.lokspel.practice.util;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.util.actionbar.ActionBarPriority;
 import java.util.HashMap;
@@ -20,8 +20,6 @@ import org.bukkit.scheduler.BukkitTask;
  * FFA.COMBAT-LOG}.
  */
 public class CombatLogUtil {
-
-  private static final String CONFIG_PATH = "FFA.COMBAT-LOG";
 
   @Getter private boolean enabled;
   private int tagDuration;
@@ -52,12 +50,12 @@ public class CombatLogUtil {
    * durations and messages reflect the latest values.
    */
   public void reload() {
-    enabled = ConfigManager.getBoolean(CONFIG_PATH + ".ENABLED");
-    tagDuration = ConfigManager.getInt(CONFIG_PATH + ".TAG-DURATION", 10);
-    countAsKillOnQuit = ConfigManager.getBoolean(CONFIG_PATH + ".COUNT-AS-KILL-ON-QUIT");
-    clearOnKill = ConfigManager.getBoolean(CONFIG_PATH + ".CLEAR-ON-KILL", true);
-    actionBar = ConfigManager.getBoolean(CONFIG_PATH + ".ACTION-BAR");
-    actionBarMsg = ConfigManager.getString(CONFIG_PATH + ".ACTION-BAR-MSG");
+    enabled = PracticeConfig.settings().getFfa().getCombatLog().isEnabled();
+    tagDuration = PracticeConfig.settings().getFfa().getCombatLog().getTagDuration();
+    countAsKillOnQuit = PracticeConfig.settings().getFfa().getCombatLog().isCountAsKillOnQuit();
+    clearOnKill = PracticeConfig.settings().getFfa().getCombatLog().isClearOnKill();
+    actionBar = PracticeConfig.settings().getFfa().getCombatLog().isActionBar();
+    actionBarMsg = PracticeConfig.settings().getFfa().getCombatLog().getActionBarMsg();
 
     // If combat-logging is turned off, drop any leftover combat state so
     // players aren't stuck kit/leave-blocked by stale tags.

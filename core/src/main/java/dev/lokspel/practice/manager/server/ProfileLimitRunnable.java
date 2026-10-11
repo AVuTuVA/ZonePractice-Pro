@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.server;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.enums.WeightClass;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -43,7 +43,8 @@ public class ProfileLimitRunnable extends BukkitRunnable {
     for (Player player : Bukkit.getOnlinePlayers()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("GAMES-RESET")
+          PracticeConfig.language()
+              .getGamesReset()
               .replace("%unranked%", WeightClass.UNRANKED.getMmName())
               .replace("%ranked%", WeightClass.RANKED.getMmName()));
     }

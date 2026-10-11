@@ -4,8 +4,10 @@ import static dev.lokspel.practice.util.PermanentConfig.FIGHT_ENTITY;
 import static dev.lokspel.practice.util.PermanentConfig.PLACED_IN_FIGHT;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.language.LadderSpecificMessages;
+import dev.lokspel.practice.config.language.MatchTypeMessages;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.ConfigManager;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.enums.RoundStatus;
 import dev.lokspel.practice.manager.fight.match.util.TeamUtil;
@@ -52,14 +54,34 @@ import org.jetbrains.annotations.NotNull;
 public class FireballFight extends BedFight implements CustomConfig, LadderHandle {
 
   private static final double TNT_VELOCITY_HORIZONTAL_MULTIPLICATIVE =
-      ConfigManager.getDouble("MATCH-SETTINGS.FIREBALL-FIGHT.EXPLOSION.TNT.HORIZONTAL");
+      PracticeConfig.settings()
+          .getMatchSettings()
+          .getFireballFight()
+          .getExplosion()
+          .getTnt()
+          .getHorizontal();
   private static final double TNT_VELOCITY_VERTICAL_MULTIPLICATIVE =
-      ConfigManager.getDouble("MATCH-SETTINGS.FIREBALL-FIGHT.EXPLOSION.TNT.VERTICAL");
+      PracticeConfig.settings()
+          .getMatchSettings()
+          .getFireballFight()
+          .getExplosion()
+          .getTnt()
+          .getVertical();
 
   private static final double FB_VELOCITY_HORIZONTAL_MULTIPLICATIVE =
-      ConfigManager.getDouble("MATCH-SETTINGS.FIREBALL-FIGHT.EXPLOSION.FIREBALL.HORIZONTAL");
+      PracticeConfig.settings()
+          .getMatchSettings()
+          .getFireballFight()
+          .getExplosion()
+          .getFireball()
+          .getHorizontal();
   private static final double FB_VELOCITY_VERTICAL_MULTIPLICATIVE =
-      ConfigManager.getDouble("MATCH-SETTINGS.FIREBALL-FIGHT.EXPLOSION.FIREBALL.VERTICAL");
+      PracticeConfig.settings()
+          .getMatchSettings()
+          .getFireballFight()
+          .getExplosion()
+          .getFireball()
+          .getVertical();
 
   private double fireballCooldown;
   private boolean fireballBlockDestroy;
@@ -71,8 +93,9 @@ public class FireballFight extends BedFight implements CustomConfig, LadderHandl
   }
 
   @Override
-  public String getRespawnLanguagePath() {
-    return "FIREBALL-FIGHT";
+  public LadderSpecificMessages getRespawnMessages(
+      MatchTypeMessages.LadderSpecific ladderSpecific) {
+    return ladderSpecific.getFireballFight();
   }
 
   @Override
@@ -139,7 +162,7 @@ public class FireballFight extends BedFight implements CustomConfig, LadderHandl
   public static final String FIREBALL_FIGHT_TNT_SHOOTER =
       "ASTRALPRACTICE_MATCH_FIREBALL_TNT_SHOOTER";
   private static final double FIREBALL_SPEED =
-      ConfigManager.getDouble("MATCH-SETTINGS.FIREBALL-FIGHT.FIREBALL-SPEED");
+      PracticeConfig.settings().getMatchSettings().getFireballFight().getFireballSpeed();
 
   private static void onTntClick(final @NotNull PlayerInteractEvent e) {
     Block clickedBlock = e.getClickedBlock();
@@ -274,7 +297,7 @@ public class FireballFight extends BedFight implements CustomConfig, LadderHandl
   }
 
   private static final float FIREBALL_YIELD =
-      (float) ConfigManager.getDouble("MATCH-SETTINGS.FIREBALL-FIGHT.FIREBALL-YIELD");
+      (float) PracticeConfig.settings().getMatchSettings().getFireballFight().getFireballYield();
 
   private static void onFireballHit(final @NotNull ProjectileHitEvent e) {
     Entity entity = e.getEntity();

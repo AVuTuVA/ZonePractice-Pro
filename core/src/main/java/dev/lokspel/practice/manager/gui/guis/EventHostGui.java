@@ -1,8 +1,6 @@
 package dev.lokspel.practice.manager.gui.guis;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.gui.Gui;
@@ -24,7 +22,10 @@ public class EventHostGui extends Gui {
 
   public EventHostGui() {
     super(GuiType.Event_Host);
-    this.gui.put(1, InventoryUtil.createInventory(GuiFile.getString("GUIS.EVENT-HOST.TITLE"), 1));
+    this.gui.put(
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getEventHost().getTitle(), 1));
 
     build();
   }
@@ -64,8 +65,8 @@ public class EventHostGui extends Gui {
         EventType eventType = eventSlots.get(slot);
 
         if (!EventManager.getInstance().getEvents().isEmpty()
-            && !ConfigManager.getBoolean("EVENT.MULTIPLE")) {
-          Common.sendMmMessage(player, LanguageManager.getString("EVENT.ONLY-ONE-EVENT"));
+            && !PracticeConfig.settings().getEvent().isMultiple()) {
+          Common.sendMmMessage(player, PracticeConfig.language().getEvent().getOnlyOneEvent());
           return;
         }
 
@@ -73,13 +74,16 @@ public class EventHostGui extends Gui {
             && !player.hasPermission("ap.event.host.all")) {
           Common.sendMmMessage(
               player,
-              LanguageManager.getString("EVENT.CANT-HOST-EVENT")
+              PracticeConfig.language()
+                  .getEvent()
+                  .getCantHostEvent()
                   .replace("%event%", eventType.getName()));
           return;
         }
 
         if (profile.getEventStartLeft() <= 0) {
-          Common.sendMmMessage(player, LanguageManager.getString("EVENT.CANT-HOST-EVENT-TODAY"));
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getEvent().getCantHostEventToday());
           return;
         }
 

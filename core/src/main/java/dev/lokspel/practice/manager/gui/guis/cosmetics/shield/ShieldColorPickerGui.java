@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics.shield;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -23,8 +24,11 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ShieldColorPickerGui extends Gui {
 
-  private static final ItemStack FILLER = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
-  private static final ItemStack BACK = GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BACK-TO").get();
+  private static final ItemStack FILLER =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  private static final ItemStack BACK =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+          .get();
 
   private static final int ROWS = 5;
   private static final int BACK_SLOT = 36;
@@ -60,13 +64,18 @@ public class ShieldColorPickerGui extends Gui {
     boolean isBase = (layerIndex == -1);
     String title =
         isBase
-            ? GuiFile.getConfig()
-                .getString(
-                    "GUIS.COSMETICS.SHIELD.COLOR-PICKER.BASE-TITLE", "<dark_gray>Pick Base Color")
-            : GuiFile.getConfig()
-                .getString(
-                    "GUIS.COSMETICS.SHIELD.COLOR-PICKER.LAYER-TITLE",
-                    "<dark_gray>Pick Layer Color");
+            ? PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getShield()
+                .getColorPicker()
+                .getBaseTitle()
+            : PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getShield()
+                .getColorPicker()
+                .getLayerTitle();
     this.gui.put(1, InventoryUtil.createInventory(title, ROWS));
     build();
   }

@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics.armortrim;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -36,18 +37,29 @@ public class ArmorTrimMainGui extends Gui {
   private static final int INFO_SLOT = 30;
   private static final int APPLY_ALL_SLOT = 32;
 
-  private static final ItemStack FILLER_ITEM = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
-  private static final GuiItem HELMET_ITEM = GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.HELMET-ICON");
+  private static final ItemStack FILLER_ITEM =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  private static final GuiItem HELMET_ITEM =
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getHelmetIcon());
   private static final GuiItem CHESTPLATE_ITEM =
-      GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.CHESTPLATE-ICON");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getChestplateIcon());
   private static final GuiItem LEGGINGS_ITEM =
-      GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.LEGGINGS-ICON");
-  private static final GuiItem BOOTS_ITEM = GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BOOTS-ICON");
-  private static final GuiItem INFO_ITEM = GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.INFO-ICON");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getLeggingsIcon());
+  private static final GuiItem BOOTS_ITEM =
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBootsIcon());
+  private static final GuiItem INFO_ITEM =
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getInfoIcon());
   private static final GuiItem APPLY_ALL_ITEM =
-      GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.APPLY-ALL-TIERS");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getApplyAllTiers());
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BACK-TO").get();
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+          .get();
 
   private static final ArmorSlot[] ARMOR_TYPE_SLOTS = {
     ArmorSlot.HELMET, ArmorSlot.CHESTPLATE, ArmorSlot.LEGGINGS, ArmorSlot.BOOTS
@@ -63,7 +75,8 @@ public class ArmorTrimMainGui extends Gui {
 
     this.gui.put(
         1,
-        InventoryUtil.createInventory(GuiFile.getString("GUIS.COSMETICS.MAIN-TITLE"), MAIN_ROWS));
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getCosmetics().getMainTitle(), MAIN_ROWS));
     this.build();
   }
 
@@ -135,7 +148,7 @@ public class ArmorTrimMainGui extends Gui {
     if (slot == APPLY_ALL_SLOT) {
       if (!player.hasPermission("ap.cosmetics.armortrim.apply-global")) {
         Common.sendMmMessage(
-            player, GuiFile.getString("GUIS.COSMETICS.APPLY-ALL-TIERS-ERROR-MESSAGE"));
+            player, PracticeConfig.guis().getGuis().getCosmetics().getApplyAllTiersErrorMessage());
         return;
       }
 
@@ -148,10 +161,7 @@ public class ArmorTrimMainGui extends Gui {
       ArmorTrimTier activeTier = profile.getCosmeticsData().getActiveTier();
       if (!player.hasPermission(activeTier.getPermissionNode())) {
         String deniedMessage =
-            GuiFile.getConfig()
-                .getString(
-                    "GUIS.COSMETICS.PERMISSION-DENIED-MESSAGE",
-                    "<red>You do not have permission for the selected armor tier.");
+            PracticeConfig.guis().getGuis().getCosmetics().getPermissionDeniedMessage();
         Common.sendMmMessage(player, deniedMessage);
         return;
       }
@@ -194,8 +204,7 @@ public class ArmorTrimMainGui extends Gui {
         guiItem.getLore() == null ? new ArrayList<>() : new ArrayList<>(guiItem.getLore());
 
     // Get dynamic lore template from guis.yml
-    List<String> lorTemplate =
-        GuiFile.getConfig().getStringList("GUIS.COSMETICS.ARMOR-PREVIEW-LORE");
+    List<String> lorTemplate = PracticeConfig.guis().getGuis().getCosmetics().getArmorPreviewLore();
     for (String line : lorTemplate) {
       String processedLine =
           line.replace("%tier%", tier.getDisplayName())
@@ -255,8 +264,7 @@ public class ArmorTrimMainGui extends Gui {
         guiItem.getLore() == null ? new ArrayList<>() : new ArrayList<>(guiItem.getLore());
 
     // Get dynamic lore template from guis.yml
-    List<String> loreTemplate =
-        GuiFile.getConfig().getStringList("GUIS.COSMETICS.TIER-TOGGLE-LORE");
+    List<String> loreTemplate = PracticeConfig.guis().getGuis().getCosmetics().getTierToggleLore();
     for (String line : loreTemplate) {
       String processedLine = line.replace("%tier_permission%", activeTier.getPermissionNode());
       lore.add(processedLine);
@@ -307,10 +315,7 @@ public class ArmorTrimMainGui extends Gui {
     }
 
     String noPermMessage =
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.NO-TIER-PERMISSION-MESSAGE",
-                "<red>You do not have permission for any armor tier.");
+        PracticeConfig.guis().getGuis().getCosmetics().getNoTierPermissionMessage();
     Common.sendMmMessage(player, noPermMessage);
   }
 
@@ -319,10 +324,7 @@ public class ArmorTrimMainGui extends Gui {
 
     if (!player.hasPermission(sourceTier.getPermissionNode())) {
       String deniedMessage =
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.PERMISSION-DENIED-MESSAGE",
-                  "<red>You do not have permission for the selected armor tier.");
+          PracticeConfig.guis().getGuis().getCosmetics().getPermissionDeniedMessage();
       Common.sendMmMessage(player, deniedMessage);
       return;
     }
@@ -341,10 +343,7 @@ public class ArmorTrimMainGui extends Gui {
     update(true);
 
     String successMessage =
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.APPLY-ALL-TIERS-SUCCESS-MESSAGE",
-                "<green>Applied the current tier trim setup to all armor tiers.");
+        PracticeConfig.guis().getGuis().getCosmetics().getApplyAllTiersSuccessMessage();
     Common.sendMmMessage(player, successMessage);
   }
 

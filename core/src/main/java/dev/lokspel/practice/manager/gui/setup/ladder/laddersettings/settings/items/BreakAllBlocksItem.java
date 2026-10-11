@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.items;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingItem;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingType;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingsGui;
@@ -17,11 +18,27 @@ public class BreakAllBlocksItem extends SettingItem {
   public void updateItemStack() {
     if (this.ladder.isBreakAllBlocks()) {
       this.guiItem =
-          GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.BREAK-ALL-BLOCKS.ENABLED")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getSetup()
+                      .getLadder()
+                      .getSettings()
+                      .getIcons()
+                      .getBreakAllBlocks()
+                      .getEnabled())
               .setGlowing(true);
     } else {
       this.guiItem =
-          GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.BREAK-ALL-BLOCKS.DISABLED");
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getSettings()
+                  .getIcons()
+                  .getBreakAllBlocks()
+                  .getDisabled());
     }
   }
 

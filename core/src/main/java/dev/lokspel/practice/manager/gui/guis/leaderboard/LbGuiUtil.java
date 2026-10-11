@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.leaderboard;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.division.Division;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
@@ -58,19 +59,43 @@ public enum LbGuiUtil {
 
     if (opener.equals(profile.getPlayer())) {
       for (String line :
-          GuiFile.getStringList("GUIS.STATISTICS.SELECTOR.ICONS.OWN-PLAYER-STATS.LORE")) {
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getSelector()
+              .getIcons()
+              .getOwnPlayerStats()
+              .getLore()) {
         lore.add(line.replace("%player%", playerName));
       }
       displayName =
-          GuiFile.getString("GUIS.STATISTICS.SELECTOR.ICONS.OWN-PLAYER-STATS.NAME")
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getSelector()
+              .getIcons()
+              .getOwnPlayerStats()
+              .getName()
               .replace("%player%", playerName);
     } else {
       for (String line :
-          GuiFile.getStringList("GUIS.STATISTICS.SELECTOR.ICONS.PLAYER-STATS.LORE")) {
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getSelector()
+              .getIcons()
+              .getPlayerStats()
+              .getLore()) {
         lore.add(line.replace("%target%", playerName));
       }
       displayName =
-          GuiFile.getString("GUIS.STATISTICS.SELECTOR.ICONS.PLAYER-STATS.NAME")
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getSelector()
+              .getIcons()
+              .getPlayerStats()
+              .getName()
               .replace("%target%", playerName);
     }
 
@@ -85,11 +110,29 @@ public enum LbGuiUtil {
     GuiItem guiItem =
         switch (ladder.getWeightClass()) {
           case UNRANKED ->
-              GuiFile.getGuiItem("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.UNRANKED-LADDER-STATS");
+              BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getStatistics()
+                      .getPlayerStatistics()
+                      .getIcons()
+                      .getUnrankedLadderStats());
           case RANKED ->
-              GuiFile.getGuiItem("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.RANKED-LADDER-STATS");
+              BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getStatistics()
+                      .getPlayerStatistics()
+                      .getIcons()
+                      .getRankedLadderStats());
           case UNRANKED_AND_RANKED ->
-              GuiFile.getGuiItem("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.UNRANKED-RANKED-STATS");
+              BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getStatistics()
+                      .getPlayerStatistics()
+                      .getIcons()
+                      .getUnrankedRankedStats());
         };
 
     switch (ladder.getWeightClass()) {
@@ -155,7 +198,13 @@ public enum LbGuiUtil {
             : "<red>N/A";
 
     for (String line :
-        GuiFile.getStringList("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.ALL-STAT.LORE")) {
+        PracticeConfig.guis()
+            .getGuis()
+            .getStatistics()
+            .getPlayerStatistics()
+            .getIcons()
+            .getAllStat()
+            .getLore()) {
       lore.add(
           line.replace("%unranked_wins%", String.valueOf(profile.getStats().getWins(false)))
               .replace("%unranked_losses%", String.valueOf(profile.getStats().getLosses(false)))
@@ -172,7 +221,13 @@ public enum LbGuiUtil {
     }
 
     String name =
-        GuiFile.getString("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.ALL-STAT.NAME")
+        PracticeConfig.guis()
+            .getGuis()
+            .getStatistics()
+            .getPlayerStatistics()
+            .getIcons()
+            .getAllStat()
+            .getName()
             .replace("%player%", Objects.requireNonNull(profile.getPlayer().getName()));
     itemMeta.displayName(parseColor(name));
     itemMeta.lore(parseColorLore(lore));
@@ -188,8 +243,14 @@ public enum LbGuiUtil {
 
     if (leaderboard == null) {
       lore.addAll(
-          GuiFile.getStringList(
-              "GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.LADDER-LEADERBOARD.LORE.NO-LEADERBOARD"));
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getEloLeaderboard()
+              .getIcons()
+              .getLadderLeaderboard()
+              .getLore()
+              .getNoLeaderboard());
     } else {
       List<OfflinePlayer> topPlayers = new ArrayList<>();
       Map<OfflinePlayer, Integer> list = leaderboard.getList();
@@ -210,8 +271,14 @@ public enum LbGuiUtil {
           Division division = targetProfile.getStats().getDivision();
           int stat = list.get(target);
           topStrings.add(
-              GuiFile.getString(
-                      "GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.LADDER-LEADERBOARD.LORE.FORMAT")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getEloLeaderboard()
+                  .getIcons()
+                  .getLadderLeaderboard()
+                  .getLore()
+                  .getFormat()
                   .replace("%number%", String.valueOf(i))
                   .replace("%player%", target.getName())
                   .replace("%ladder_elo%", String.valueOf(stat))
@@ -223,15 +290,27 @@ public enum LbGuiUtil {
                       division != null ? Common.mmToNormal(division.getShortName()) : ""));
         } else {
           topStrings.add(
-              GuiFile.getString(
-                      "GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.LADDER-LEADERBOARD.LORE.FORMAT-NULL")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getEloLeaderboard()
+                  .getIcons()
+                  .getLadderLeaderboard()
+                  .getLore()
+                  .getFormatNull()
                   .replace("%number%", String.valueOf(i)));
         }
       }
 
       for (String line :
-          GuiFile.getStringList(
-              "GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.LADDER-LEADERBOARD.LORE.LEADERBOARD")) {
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getEloLeaderboard()
+              .getIcons()
+              .getLadderLeaderboard()
+              .getLore()
+              .getLeaderboard()) {
         if (line.contains("%top%")) {
           lore.addAll(topStrings);
         } else {
@@ -241,7 +320,13 @@ public enum LbGuiUtil {
     }
 
     String name =
-        GuiFile.getString("GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.LADDER-LEADERBOARD.NAME")
+        PracticeConfig.guis()
+            .getGuis()
+            .getStatistics()
+            .getEloLeaderboard()
+            .getIcons()
+            .getLadderLeaderboard()
+            .getName()
             .replace("%ladder%", ladder.getDisplayName())
             .replace("%number%", String.valueOf(showPlayers));
     return buildItem(ladder.getIcon(), name, lore);
@@ -255,8 +340,14 @@ public enum LbGuiUtil {
 
     if (leaderboard == null) {
       lore.addAll(
-          GuiFile.getStringList(
-              "GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.LORE.NO-LEADERBOARD"));
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getEloLeaderboard()
+              .getIcons()
+              .getGlobalLeaderboard()
+              .getLore()
+              .getNoLeaderboard());
     } else {
       List<OfflinePlayer> topPlayers = new ArrayList<>();
       Map<OfflinePlayer, Integer> list = leaderboard.getList();
@@ -277,8 +368,14 @@ public enum LbGuiUtil {
           Division division = targetProfile.getStats().getDivision();
           int stat = list.get(target);
           topStrings.add(
-              GuiFile.getString(
-                      "GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.LORE.FORMAT")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getEloLeaderboard()
+                  .getIcons()
+                  .getGlobalLeaderboard()
+                  .getLore()
+                  .getFormat()
                   .replace("%number%", String.valueOf(i))
                   .replace(
                       "%division%",
@@ -290,15 +387,27 @@ public enum LbGuiUtil {
                   .replace("%global_elo%", String.valueOf(stat)));
         } else {
           topStrings.add(
-              GuiFile.getString(
-                      "GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.LORE.FORMAT-NULL")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getEloLeaderboard()
+                  .getIcons()
+                  .getGlobalLeaderboard()
+                  .getLore()
+                  .getFormatNull()
                   .replace("%number%", String.valueOf(i)));
         }
       }
 
       for (String line :
-          GuiFile.getStringList(
-              "GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.LORE.LEADERBOARD")) {
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getEloLeaderboard()
+              .getIcons()
+              .getGlobalLeaderboard()
+              .getLore()
+              .getLeaderboard()) {
         if (line.contains("%top%")) {
           lore.addAll(topStrings);
         } else {
@@ -308,11 +417,23 @@ public enum LbGuiUtil {
     }
 
     String name =
-        GuiFile.getString("GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.NAME")
+        PracticeConfig.guis()
+            .getGuis()
+            .getStatistics()
+            .getEloLeaderboard()
+            .getIcons()
+            .getGlobalLeaderboard()
+            .getName()
             .replace("%number%", String.valueOf(showPlayers));
     Material mat =
         Material.valueOf(
-            GuiFile.getString("GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.MATERIAL"));
+            PracticeConfig.guis()
+                .getGuis()
+                .getStatistics()
+                .getEloLeaderboard()
+                .getIcons()
+                .getGlobalLeaderboard()
+                .getMaterial());
     return buildItem(mat, name, lore);
   }
 
@@ -324,8 +445,14 @@ public enum LbGuiUtil {
 
     if (leaderboard == null) {
       lore.addAll(
-          GuiFile.getStringList(
-              "GUIS.STATISTICS.WIN-LEADERBOARD.ICONS.LADDER-LEADERBOARD.LORE.NO-LEADERBOARD"));
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getWinLeaderboard()
+              .getIcons()
+              .getLadderLeaderboard()
+              .getLore()
+              .getNoLeaderboard());
     } else {
       List<OfflinePlayer> topPlayers = new ArrayList<>();
       Map<OfflinePlayer, Integer> list = leaderboard.getList();
@@ -346,8 +473,14 @@ public enum LbGuiUtil {
           Division division = targetProfile.getStats().getDivision();
           int stat = list.get(target);
           topStrings.add(
-              GuiFile.getString(
-                      "GUIS.STATISTICS.WIN-LEADERBOARD.ICONS.LADDER-LEADERBOARD.LORE.FORMAT")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getWinLeaderboard()
+                  .getIcons()
+                  .getLadderLeaderboard()
+                  .getLore()
+                  .getFormat()
                   .replace("%number%", String.valueOf(i))
                   .replace("%player%", Objects.requireNonNull(target.getName()))
                   .replace("%ladder_win%", String.valueOf(stat))
@@ -359,15 +492,27 @@ public enum LbGuiUtil {
                       division != null ? Common.mmToNormal(division.getShortName()) : ""));
         } else {
           topStrings.add(
-              GuiFile.getString(
-                      "GUIS.STATISTICS.WIN-LEADERBOARD.ICONS.LADDER-LEADERBOARD.LORE.FORMAT-NULL")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getWinLeaderboard()
+                  .getIcons()
+                  .getLadderLeaderboard()
+                  .getLore()
+                  .getFormatNull()
                   .replace("%number%", String.valueOf(i)));
         }
       }
 
       for (String line :
-          GuiFile.getStringList(
-              "GUIS.STATISTICS.WIN-LEADERBOARD.ICONS.LADDER-LEADERBOARD.LORE.LEADERBOARD")) {
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getWinLeaderboard()
+              .getIcons()
+              .getLadderLeaderboard()
+              .getLore()
+              .getLeaderboard()) {
         if (line.contains("%top%")) {
           lore.addAll(topStrings);
         } else {
@@ -377,7 +522,13 @@ public enum LbGuiUtil {
     }
 
     String name =
-        GuiFile.getString("GUIS.STATISTICS.WIN-LEADERBOARD.ICONS.LADDER-LEADERBOARD.NAME")
+        PracticeConfig.guis()
+            .getGuis()
+            .getStatistics()
+            .getWinLeaderboard()
+            .getIcons()
+            .getLadderLeaderboard()
+            .getName()
             .replace("%ladder%", ladder.getDisplayName())
             .replace("%number%", String.valueOf(showPlayers));
     return buildItem(ladder.getIcon(), name, lore);
@@ -391,8 +542,14 @@ public enum LbGuiUtil {
 
     if (leaderboard == null) {
       lore.addAll(
-          GuiFile.getStringList(
-              "GUIS.STATISTICS.WIN-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.LORE.NO-LEADERBOARD"));
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getWinLeaderboard()
+              .getIcons()
+              .getGlobalLeaderboard()
+              .getLore()
+              .getNoLeaderboard());
     } else {
       List<OfflinePlayer> topPlayers = new ArrayList<>();
       Map<OfflinePlayer, Integer> list = leaderboard.getList();
@@ -413,8 +570,14 @@ public enum LbGuiUtil {
           Division division = targetProfile.getStats().getDivision();
           int stat = list.get(target);
           topStrings.add(
-              GuiFile.getString(
-                      "GUIS.STATISTICS.WIN-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.LORE.FORMAT")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getWinLeaderboard()
+                  .getIcons()
+                  .getGlobalLeaderboard()
+                  .getLore()
+                  .getFormat()
                   .replace("%number%", String.valueOf(i))
                   .replace(
                       "%division%",
@@ -426,15 +589,27 @@ public enum LbGuiUtil {
                   .replace("%global_win%", String.valueOf(stat)));
         } else {
           topStrings.add(
-              GuiFile.getString(
-                      "GUIS.STATISTICS.WIN-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.LORE.FORMAT-NULL")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getWinLeaderboard()
+                  .getIcons()
+                  .getGlobalLeaderboard()
+                  .getLore()
+                  .getFormatNull()
                   .replace("%number%", String.valueOf(i)));
         }
       }
 
       for (String line :
-          GuiFile.getStringList(
-              "GUIS.STATISTICS.ELO-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.LORE.LEADERBOARD")) {
+          PracticeConfig.guis()
+              .getGuis()
+              .getStatistics()
+              .getEloLeaderboard()
+              .getIcons()
+              .getGlobalLeaderboard()
+              .getLore()
+              .getLeaderboard()) {
         if (line.contains("%top%")) {
           lore.addAll(topStrings);
         } else {
@@ -444,11 +619,23 @@ public enum LbGuiUtil {
     }
 
     String name =
-        GuiFile.getString("GUIS.STATISTICS.WIN-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.NAME")
+        PracticeConfig.guis()
+            .getGuis()
+            .getStatistics()
+            .getWinLeaderboard()
+            .getIcons()
+            .getGlobalLeaderboard()
+            .getName()
             .replace("%number%", String.valueOf(showPlayers));
     Material mat =
         Material.valueOf(
-            GuiFile.getString("GUIS.STATISTICS.WIN-LEADERBOARD.ICONS.GLOBAL-LEADERBOARD.MATERIAL"));
+            PracticeConfig.guis()
+                .getGuis()
+                .getStatistics()
+                .getWinLeaderboard()
+                .getIcons()
+                .getGlobalLeaderboard()
+                .getMaterial());
     return buildItem(mat, name, lore);
   }
 

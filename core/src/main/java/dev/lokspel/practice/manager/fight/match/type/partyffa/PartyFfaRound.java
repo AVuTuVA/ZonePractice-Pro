@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.match.type.partyffa;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.Round;
 import dev.lokspel.practice.manager.fight.match.interfaces.PlayerWinner;
@@ -32,13 +32,13 @@ public class PartyFfaRound extends Round implements PlayerWinner {
           this.match.sendMessage(message, true);
         }
       } else {
-        for (String line : LanguageManager.getList("MATCH.PARTY-FFA.MATCH-END-DRAW")) {
+        for (String line : PracticeConfig.language().getMatch().getPartyFfa().getMatchEndDraw()) {
           this.match.sendMessage(line, true);
         }
       }
     } else {
       if (roundWinner != null) {
-        for (String line : LanguageManager.getList("MATCH.PARTY-FFA.MATCH-END-ROUND")) {
+        for (String line : PracticeConfig.language().getMatch().getPartyFfa().getMatchEndRound()) {
           this.match.sendMessage(
               line.replace("%player%", roundWinner.getName())
                   .replace(
@@ -47,7 +47,8 @@ public class PartyFfaRound extends Round implements PlayerWinner {
               true);
         }
       } else {
-        for (String line : LanguageManager.getList("MATCH.PARTY-FFA.MATCH-END-ROUND-DRAW")) {
+        for (String line :
+            PracticeConfig.language().getMatch().getPartyFfa().getMatchEndRoundDraw()) {
           this.match.sendMessage(line, true);
         }
       }

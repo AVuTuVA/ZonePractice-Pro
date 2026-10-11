@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.event.arguments.events;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.fight.event.events.duel.sumo.SumoData;
@@ -18,7 +18,8 @@ public final class SumoArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.EVENT.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getEvent().getNoPermission());
       return;
     }
 
@@ -27,7 +28,13 @@ public final class SumoArg {
     // Checking if the event is live, if it is, it will send a message to the player and return.
     if (EventManager.getInstance().isEventLive(EventType.SUMO)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.SUMO.EVENT-LIVE"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getSumo()
+              .getEventLive());
       return;
     }
 
@@ -38,7 +45,12 @@ public final class SumoArg {
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.SUMO.EVENT-ALREADY-ENABLED"));
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getSumo()
+                .getEventAlreadyEnabled());
       }
       return;
     } else if (args.length == 2 && args[1].equalsIgnoreCase("disable")) {
@@ -47,7 +59,12 @@ public final class SumoArg {
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.SUMO.EVENT-ALREADY-DISABLED"));
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getSumo()
+                .getEventAlreadyDisabled());
       }
       return;
     } else if (args.length == 2 && args[1].equalsIgnoreCase("help")) {
@@ -59,7 +76,8 @@ public final class SumoArg {
     // Checking if the arena is enabled, if it is, it will send a message to the player and return.
     if (sumoData.isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.SUMO.CANT-EDIT"));
+          player,
+          PracticeConfig.language().getCommand().getEvent().getArguments().getSumo().getCantEdit());
       return;
     }
 
@@ -69,14 +87,21 @@ public final class SumoArg {
       kitData.setKitData(player, true);
 
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.SUMO.KIT-SET"));
+          player,
+          PracticeConfig.language().getCommand().getEvent().getArguments().getSumo().getKitSet());
     } else {
       sendHelpMsg(player, label);
     }
   }
 
   private static void sendHelpMsg(Player player, String label) {
-    for (String line : LanguageManager.getList("COMMAND.EVENT.ARGUMENTS.SUMO.COMMAND-HELP")) {
+    for (String line :
+        PracticeConfig.language()
+            .getCommand()
+            .getEvent()
+            .getArguments()
+            .getSumo()
+            .getCommandHelp()) {
       Common.sendMmMessage(player, line.replace("%label%", label));
     }
   }

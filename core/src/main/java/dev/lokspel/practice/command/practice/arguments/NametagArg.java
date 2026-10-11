@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.InventoryUtil;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -29,9 +28,15 @@ public final class NametagArg {
   }
 
   public static void run(Player player, String label, String[] args) {
-    if (!ConfigManager.getBoolean("PLAYER.LOBBY-NAMETAG.ENABLED")) {
+    if (!PracticeConfig.settings().getPlayer().getLobbyNametag().isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.NAMETAG-DISABLED"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getNametag()
+              .getNametagDisabled());
       return;
     }
 
@@ -40,7 +45,8 @@ public final class NametagArg {
             || args[1].equalsIgnoreCase("suffix")
             || args[1].equalsIgnoreCase("name"))) {
       if (!player.hasPermission("ap.practice.nametag.set")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -48,7 +54,12 @@ public final class NametagArg {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.TARGET-OFFLINE")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getTargetOffline()
                 .replace("%target%", args[2]));
         return;
       }
@@ -56,7 +67,12 @@ public final class NametagArg {
       if (player != target && target.hasPermission("ap.bypass.nametag")) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.TARGET-BYPASS")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getTargetBypass()
                 .replace("%target%", target.getName()));
         return;
       }
@@ -70,13 +86,23 @@ public final class NametagArg {
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.PREFIX-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getPrefixSet()
                 .replace("%target%", target.getName())
                 .replace("%prefix%", Common.mmToNormal(prefix)));
 
         Common.sendMmMessage(
             target,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.PLAYER-PREFIX-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getPlayerPrefixSet()
                 .replace("%player%", player.getName())
                 .replace("%prefix%", Common.mmToNormal(prefix)));
       } else if (args[1].equalsIgnoreCase("suffix")) {
@@ -87,20 +113,31 @@ public final class NametagArg {
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.SUFFIX-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getSuffixSet()
                 .replace("%target%", target.getName())
                 .replace("%suffix%", Common.mmToNormal(suffix)));
 
         Common.sendMmMessage(
             target,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.PLAYER-SUFFIX-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getPlayerSuffixSet()
                 .replace("%player%", player.getName())
                 .replace("%suffix%", Common.mmToNormal(suffix)));
       } else if (args[1].equalsIgnoreCase("name")) {
         String nameTemplate = joinArgs(args, 3);
 
         if (player != target && !player.hasPermission("ap.practice.nametag.name.others")) {
-          Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
           return;
         }
 
@@ -109,19 +146,30 @@ public final class NametagArg {
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.NAME-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getNameSet()
                 .replace("%target%", target.getName())
                 .replace("%name%", Common.mmToNormal(nameTemplate)));
 
         Common.sendMmMessage(
             target,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.PLAYER-NAME-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getPlayerNameSet()
                 .replace("%player%", player.getName())
                 .replace("%name%", Common.mmToNormal(nameTemplate)));
       }
     } else if (args.length == 3 && args[1].equalsIgnoreCase("reset")) {
       if (!player.hasPermission("ap.practice.nametag.reset")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -129,7 +177,12 @@ public final class NametagArg {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.TARGET-OFFLINE")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getTargetOffline()
                 .replace("%target%", args[2]));
         return;
       }
@@ -138,7 +191,12 @@ public final class NametagArg {
       if (player != target && target.hasPermission("ap.bypass.nametag")) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.TARGET-BYPASS")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getTargetBypass()
                 .replace("%target%", target.getName()));
         return;
       }
@@ -151,25 +209,41 @@ public final class NametagArg {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.RELOADED")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getNametag()
+              .getReloaded()
               .replace("%target%", target.getName()));
     } else {
       if (player.hasPermission("ap.practice.nametag.set")
           || player.hasPermission("ap.practice.nametag.reset")) {
         for (String line :
-            LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.COMMAND-HELP")) {
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getCommandHelp()) {
           Common.sendMmMessage(player, line.replace("%label%", label));
         }
       } else {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
       }
     }
   }
 
   public static void run(String label, String[] args) {
-    if (!ConfigManager.getBoolean("PLAYER.LOBBY-NAMETAG.ENABLED")) {
+    if (!PracticeConfig.settings().getPlayer().getLobbyNametag().isEnabled()) {
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.NAMETAG-DISABLED"));
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getNametag()
+              .getNametagDisabled());
       return;
     }
 
@@ -180,7 +254,12 @@ public final class NametagArg {
       Player target = Bukkit.getPlayer(args[2]);
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.TARGET-OFFLINE")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getTargetOffline()
                 .replace("%target%", args[2]));
         return;
       }
@@ -193,14 +272,24 @@ public final class NametagArg {
         InventoryUtil.setLobbyNametag(target, targetProfile);
 
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.PREFIX-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getPrefixSet()
                 .replace("%target%", target.getName())
                 .replace("%prefix%", Common.mmToNormal(prefix)));
 
         Common.sendMmMessage(
             target,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.PLAYER-PREFIX-SET")
-                .replace("%player%", LanguageManager.getString("CONSOLE-NAME"))
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getPlayerPrefixSet()
+                .replace("%player%", PracticeConfig.language().getConsoleName())
                 .replace("%prefix%", Common.mmToNormal(prefix)));
       } else if (args[1].equalsIgnoreCase("suffix")) {
         String suffix = joinArgs(args, 3);
@@ -209,14 +298,24 @@ public final class NametagArg {
         InventoryUtil.setLobbyNametag(target, targetProfile);
 
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.SUFFIX-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getSuffixSet()
                 .replace("%target%", target.getName())
                 .replace("%suffix%", Common.mmToNormal(suffix)));
 
         Common.sendMmMessage(
             target,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.PLAYER-SUFFIX-SET")
-                .replace("%player%", LanguageManager.getString("CONSOLE-NAME"))
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getPlayerSuffixSet()
+                .replace("%player%", PracticeConfig.language().getConsoleName())
                 .replace("%suffix%", Common.mmToNormal(suffix)));
       } else if (args[1].equalsIgnoreCase("name")) {
         String nameTemplate = joinArgs(args, 3);
@@ -225,21 +324,36 @@ public final class NametagArg {
         InventoryUtil.setLobbyNametag(target, targetProfile);
 
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.NAME-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getNameSet()
                 .replace("%target%", target.getName())
                 .replace("%name%", Common.mmToNormal(nameTemplate)));
 
         Common.sendMmMessage(
             target,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.PLAYER-NAME-SET")
-                .replace("%player%", LanguageManager.getString("CONSOLE-NAME"))
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getPlayerNameSet()
+                .replace("%player%", PracticeConfig.language().getConsoleName())
                 .replace("%name%", Common.mmToNormal(nameTemplate)));
       }
     } else if (args.length == 3 && args[1].equalsIgnoreCase("reset")) {
       Player target = Bukkit.getPlayer(args[2]);
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.TARGET-OFFLINE")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getNametag()
+                .getTargetOffline()
                 .replace("%target%", args[2]));
         return;
       }
@@ -252,11 +366,21 @@ public final class NametagArg {
       InventoryUtil.setLobbyNametag(target, targetProfile);
 
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.RELOADED")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getNametag()
+              .getReloaded()
               .replace("%target%", target.getName()));
     } else {
       for (String line :
-          LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.COMMAND-HELP")) {
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getNametag()
+              .getCommandHelp()) {
         Common.sendConsoleMmMessage(line.replace("%label%", label));
       }
     }

@@ -1,11 +1,11 @@
 package dev.lokspel.practice.manager.gui.setup.arena.arenasettings.normal;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.setup.ArenaSetupManager;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -27,11 +27,35 @@ import org.bukkit.inventory.ItemStack;
 public class ArenaMainGui extends Gui {
 
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-MAIN.ICONS.GO-BACK").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getArena()
+                  .getArenaMain()
+                  .getIcons()
+                  .getGoBack())
+          .get();
   private static final ItemStack LADDER_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-MAIN.ICONS.LADDER").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getArena()
+                  .getArenaMain()
+                  .getIcons()
+                  .getLadder())
+          .get();
   private static final ItemStack DELETE_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-MAIN.ICONS.DELETE").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getArena()
+                  .getArenaMain()
+                  .getIcons()
+                  .getDelete())
+          .get();
 
   private final Arena arena;
 
@@ -40,7 +64,12 @@ public class ArenaMainGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.ARENA.ARENA-MAIN.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getArena()
+                .getArenaMain()
+                .getTitle()
                 .replace("%arenaName%", arena.getName()),
             4));
     this.arena = arena;
@@ -138,7 +167,8 @@ public class ArenaMainGui extends Gui {
       case 35:
         if (arena.isEnabled()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.ARENA.CANT-DELETE-ENABLED"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getArena().getCantDeleteEnabled());
           return;
         }
         openConfirmGui(

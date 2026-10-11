@@ -2,8 +2,7 @@ package dev.lokspel.practice.manager.fight.event.events.ffa.oitc;
 
 import dev.lokspel.api.event.event.EventEndEvent;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.events.ffa.interfaces.FfaEvent;
@@ -22,13 +21,16 @@ import org.bukkit.inventory.ItemStack;
 public class Oitc extends FfaEvent {
 
   private static final int DEFAULT_PLAYER_LIFE =
-      ConfigManager.getInt("EVENT.OITC.SETTINGS.PLAYER-LIFE");
+      PracticeConfig.settings().getEvent().getOitc().getSettings().getPlayerLife();
 
   private final Map<Player, Integer> playerPoints = new HashMap<>();
   private final Map<Player, Integer> playerLives = new HashMap<>();
 
   public Oitc(Object starter, OitcData eventData) {
-    super(starter, eventData, "COMMAND.EVENT.ARGUMENTS.OITC");
+    super(
+        starter,
+        eventData,
+        () -> PracticeConfig.language().getCommand().getEvent().getArguments().getOitc());
   }
 
   @Override
@@ -70,7 +72,12 @@ public class Oitc extends FfaEvent {
       }
 
       this.sendMessage(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.OITC.PLAYER-DIED")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getOitc()
+              .getPlayerDied()
               .replace("%player%", player.getName())
               .replace("%startPlayerCount%", String.valueOf(playerLives.size()))
               .replace("%playerCount%", String.valueOf(players.size())),
@@ -82,7 +89,12 @@ public class Oitc extends FfaEvent {
       this.teleport(player);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.OITC.LIFE-LEFT")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getOitc()
+              .getLifeLeft()
               .replace("%life%", String.valueOf(newLife)));
     }
 
@@ -96,7 +108,12 @@ public class Oitc extends FfaEvent {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.OITC.POINTS-RECEIVED")
+        PracticeConfig.language()
+            .getCommand()
+            .getEvent()
+            .getArguments()
+            .getOitc()
+            .getPointsReceived()
             .replace("%point%", String.valueOf(point)));
   }
 
@@ -119,7 +136,12 @@ public class Oitc extends FfaEvent {
 
     if (winner != null) {
       this.sendMessage(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.OITC.WON-EVENT")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getOitc()
+              .getWonEvent()
               .replace("%winner%", winner.getName())
               .replace("%points%", String.valueOf(playerPoints.get(winner))),
           true);
@@ -128,7 +150,9 @@ public class Oitc extends FfaEvent {
         ServerManager.runConsoleCommand(cmd.replace("%player%", winner.getName()));
       }
     } else {
-      this.sendMessage(LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.OITC.NO-WINNER"), true);
+      this.sendMessage(
+          PracticeConfig.language().getCommand().getEvent().getArguments().getOitc().getNoWinner(),
+          true);
     }
   }
 

@@ -1,50 +1,48 @@
 package dev.lokspel.practice.manager.backend;
 
+import dev.lokspel.practice.config.ItemConfig;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.util.Common;
-import java.util.List;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 
 public enum BackendUtil {
   ;
 
-  public static GuiItem getGuiItem(YamlConfiguration config, String loc) {
+  public static GuiItem getGuiItem(ItemConfig item) {
     GuiItem guiItem = new GuiItem();
 
-    if (config.isString(loc + ".NAME")) {
-      guiItem.setName(config.getString(loc + ".NAME"));
+    if (item.getName() != null) {
+      guiItem.setName(item.getName());
     }
 
-    if (config.isString(loc + ".MATERIAL")) {
-      guiItem.setMaterial(Material.valueOf(config.getString(loc + ".MATERIAL")));
+    if (item.getMaterial() != null) {
+      guiItem.setMaterial(Material.valueOf(item.getMaterial()));
     }
 
-    if (config.isInt(loc + ".AMOUNT")) {
-      int amount = config.getInt(loc + ".AMOUNT");
+    if (item.getAmount() != null) {
+      int amount = item.getAmount();
       if (amount <= 0 || amount > 64) {
         amount = 1;
       }
       guiItem.setAmount(amount);
     }
 
-    if (config.isInt(loc + ".DURABILITY")) {
-      int durability = config.getInt(loc + ".DURABILITY");
+    if (item.getDurability() != null) {
+      int durability = item.getDurability();
       if (durability < 0) {
         durability = 1;
       }
       guiItem.setDurability(durability);
     }
 
-    if (config.isList(loc + ".LORE")) {
-      guiItem.setLore(config.getStringList(loc + ".LORE"));
+    if (item.getLore() != null) {
+      guiItem.setLore(item.getLore());
     }
 
-    if (config.isList(loc + ".FLAGS")) {
-      List<String> flags = config.getStringList(loc + ".FLAGS");
-      for (String flag : flags) {
+    if (item.getFlags() != null) {
+      for (String flag : item.getFlags()) {
         try {
           ItemFlag itemFlag = ItemFlag.valueOf(flag);
           guiItem.addItemFlag(itemFlag);
@@ -61,8 +59,8 @@ public enum BackendUtil {
     // Set unbreakable to prevent durability bars from showing
     guiItem.setUnbreakable(true);
 
-    if (config.isList(loc + ".ENCHANTMENTS")) {
-      for (String s : config.getStringList(loc + ".ENCHANTMENTS")) {
+    if (item.getEnchantments() != null) {
+      for (String s : item.getEnchantments()) {
         String[] enchantmentSplit = s.split(":");
         if (enchantmentSplit.length != 2) {
           continue;

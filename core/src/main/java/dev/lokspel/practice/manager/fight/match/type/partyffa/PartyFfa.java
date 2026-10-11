@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.fight.match.type.partyffa;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.Round;
@@ -42,7 +42,7 @@ public class PartyFfa extends Match {
     this.rounds.put(round.getRoundNumber(), round);
 
     if (round.getRoundNumber() == 1) {
-      for (String line : LanguageManager.getList("MATCH.PARTY-FFA.MATCH-START")) {
+      for (String line : PracticeConfig.language().getMatch().getPartyFfa().getMatchStart()) {
         this.sendMessage(
             line.replace("%matchTypeName%", MatchType.PARTY_FFA.getName(true))
                 .replace("%ladder%", ladder.getDisplayName())
@@ -139,7 +139,7 @@ public class PartyFfa extends Match {
         }
 
         // Send a death notification message
-        String playerDieMsg = LanguageManager.getString("MATCH.PARTY-FFA.PLAYER-DIE");
+        String playerDieMsg = PracticeConfig.language().getMatch().getPartyFfa().getPlayerDie();
         if (playerDieMsg != null) {
           this.sendMessage(
               playerDieMsg
@@ -181,7 +181,10 @@ public class PartyFfa extends Match {
       this.getCurrentStat(player).end(true);
 
       this.sendMessage(
-          LanguageManager.getString("MATCH.PARTY-FFA.PLAYER-LEFT")
+          PracticeConfig.language()
+              .getMatch()
+              .getPartyFfa()
+              .getPlayerLeft()
               .replace("%player%", player.getName()),
           true);
 

@@ -1,7 +1,9 @@
 package dev.lokspel.practice.manager.fight.util;
 
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.language.LadderSpecificMessages;
+import dev.lokspel.practice.config.language.MatchTypeMessages;
 import dev.lokspel.practice.manager.arena.util.BedLocation;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.enums.TeamEnum;
 import dev.lokspel.practice.manager.fight.match.interfaces.Team;
@@ -92,7 +94,7 @@ public class BedUtil {
           sendBedDestroyMessage(match, TeamEnum.TEAM1);
         }
       } else {
-        Common.sendMmMessage(player, LanguageManager.getString("MATCH.CANT-BREAK-OWN-BED"));
+        Common.sendMmMessage(player, PracticeConfig.language().getMatch().getCantBreakOwnBed());
       }
     } else if (match.getArena().getBedLoc2().getLocation().equals(bedLoc)
         || match
@@ -113,7 +115,7 @@ public class BedUtil {
           sendBedDestroyMessage(match, TeamEnum.TEAM2);
         }
       } else {
-        Common.sendMmMessage(player, LanguageManager.getString("MATCH.CANT-BREAK-OWN-BED"));
+        Common.sendMmMessage(player, PracticeConfig.language().getMatch().getCantBreakOwnBed());
       }
     }
 
@@ -131,21 +133,27 @@ public class BedUtil {
   }
 
   private static void sendBedDestroyMessage(Match match, TeamEnum team) {
-    String languagePath =
+    MatchTypeMessages matchTypeMessages = match.getType().messages();
+    MatchTypeMessages.LadderSpecific ladderSpecific = matchTypeMessages.getLadderSpecific();
+    if (ladderSpecific == null) {
+      return;
+    }
+
+    LadderSpecificMessages messages =
         switch (match.getLadder().getType()) {
-          case BEDWARS -> "MATCH." + match.getType().getPathName() + ".LADDER-SPECIFIC.BED-WARS";
-          case FIREBALL_FIGHT ->
-              "MATCH." + match.getType().getPathName() + ".LADDER-SPECIFIC.FIREBALL-FIGHT";
-          case MLG_RUSH -> "MATCH." + match.getType().getPathName() + ".LADDER-SPECIFIC.MLG-RUSH";
+          case BEDWARS -> ladderSpecific.getBedWars();
+          case FIREBALL_FIGHT -> ladderSpecific.getFireballFight();
+          case MLG_RUSH -> ladderSpecific.getMlgRush();
           default -> null;
         };
 
-    if (languagePath == null) {
+    if (messages == null) {
       return;
     }
 
     match.sendMessage(
-        LanguageManager.getString(languagePath + ".BED-DESTROYED")
+        messages
+            .getBedDestroyed()
             .replace("%team%", team.getNameMm())
             .replace("%teamColor%", team.getColorMm()),
         true);

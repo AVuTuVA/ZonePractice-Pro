@@ -3,6 +3,8 @@ package dev.lokspel.practice.manager.ladder.type;
 import static dev.lokspel.practice.util.PermanentConfig.PLACED_IN_FIGHT;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.language.LadderSpecificMessages;
+import dev.lokspel.practice.config.language.MatchTypeMessages;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
@@ -58,8 +60,9 @@ public class MlgRush extends BedFight implements LadderHandle, BlockReturnDelay 
   }
 
   @Override
-  public String getRespawnLanguagePath() {
-    return "MLG-RUSH";
+  public LadderSpecificMessages getRespawnMessages(
+      MatchTypeMessages.LadderSpecific ladderSpecific) {
+    return ladderSpecific.getMlgRush();
   }
 
   @Override

@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.division.Division;
 import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -31,7 +31,7 @@ public class RankedCommand implements CommandExecutor {
         profile.getStatus().equals(ProfileStatus.LOBBY)
             || profile.getStatus().equals(ProfileStatus.QUEUE);
     if (!lobbyOrQueue || profile.isStaffMode() || profile.isParty()) {
-      Common.sendMmMessage(player, LanguageManager.getString("CANT-USE-COMMAND"));
+      Common.sendMmMessage(player, PracticeConfig.language().getCantUseCommand());
       return false;
     }
 
@@ -52,7 +52,7 @@ public class RankedCommand implements CommandExecutor {
 
     if (profile.getRankedLeft() <= 0 && !player.hasPermission("ap.bypass.ranked.limit")) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.QUEUES.RANKED.NO-RANKED-LEFT"));
+          player, PracticeConfig.language().getCommand().getQueues().getRanked().getNoRankedLeft());
       return false;
     }
 
@@ -61,7 +61,11 @@ public class RankedCommand implements CommandExecutor {
       if (ladder == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.QUEUES.RANKED.LADDER-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getQueues()
+                .getRanked()
+                .getLadderNotFound()
                 .replace("%ladder%", args[0]));
         return false;
       }

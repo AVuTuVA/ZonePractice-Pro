@@ -1,8 +1,7 @@
 package dev.lokspel.practice.manager.spectator;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.ffa.FfaManager;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
@@ -47,7 +46,7 @@ public class SpectatorManager {
 
   public void spectateMenuUse(Player player) {
     if (!player.hasPermission("ap.spectate.menu")) {
-      Common.sendMmMessage(player, LanguageManager.getString("SPECTATE.NO-PERMISSIONS"));
+      Common.sendMmMessage(player, PracticeConfig.language().getSpectate().getNoPermissions());
       return;
     }
 
@@ -56,7 +55,7 @@ public class SpectatorManager {
 
   public static void spectateRandomMatchItemUse(Player player) {
     if (!player.hasPermission("ap.spectate.random")) {
-      Common.sendMmMessage(player, LanguageManager.getString("SPECTATE.NO-PERMISSIONS"));
+      Common.sendMmMessage(player, PracticeConfig.language().getSpectate().getNoPermissions());
       return;
     }
 
@@ -65,7 +64,7 @@ public class SpectatorManager {
       Common.sendMmMessage(
           player,
           StringUtil.replaceSecondString(
-              LanguageManager.getString("SPECTATE.RANDOM-MATCH-COOLDOWN"),
+              PracticeConfig.language().getSpectate().getRandomMatchCooldown(),
               PlayerCooldown.getLeftInDouble(player, CooldownObject.RANDOM_MATCH)));
       return;
     }
@@ -73,7 +72,7 @@ public class SpectatorManager {
     PlayerCooldown.addCooldown(
         player,
         CooldownObject.RANDOM_MATCH,
-        ConfigManager.getInt("SPECTATOR-SETTINGS.RANDOM-MATCH-COOLDOWN"));
+        PracticeConfig.settings().getSpectatorSettings().getRandomMatchCooldown());
     spectateRandomMatch(player);
   }
 
@@ -97,7 +96,7 @@ public class SpectatorManager {
     spectatables.addAll(FfaManager.getInstance().getOpenFfas());
 
     if (spectatables.isEmpty()) {
-      Common.sendMmMessage(player, LanguageManager.getString("SPECTATE.NO-MATCH"));
+      Common.sendMmMessage(player, PracticeConfig.language().getSpectate().getNoMatch());
       return;
     }
 
@@ -117,7 +116,7 @@ public class SpectatorManager {
 
     if (match.getSpectators().contains(player)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("SPECTATE.MATCH.ONLY-ONE-TO-SPECTATE"));
+          player, PracticeConfig.language().getSpectate().getMatch().getOnlyOneToSpectate());
       return;
     }
 

@@ -1,11 +1,12 @@
 package dev.lokspel.practice.manager.gui.setup.arena;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -28,9 +29,25 @@ import org.bukkit.inventory.ItemStack;
 public class ArenaSummaryGui extends Gui {
 
   private static final String STATUS_ENABLED =
-      GuiFile.getString("GUIS.SETUP.ARENA.ARENA-MANAGER.ICONS.ARENA-ICON.STATUS-NAMES.ENABLED");
+      PracticeConfig.guis()
+          .getGuis()
+          .getSetup()
+          .getArena()
+          .getArenaManager()
+          .getIcons()
+          .getArenaIcon()
+          .getStatusNames()
+          .getEnabled();
   private static final String STATUS_DISABLED =
-      GuiFile.getString("GUIS.SETUP.ARENA.ARENA-MANAGER.ICONS.ARENA-ICON.STATUS-NAMES.DISABLED");
+      PracticeConfig.guis()
+          .getGuis()
+          .getSetup()
+          .getArena()
+          .getArenaManager()
+          .getIcons()
+          .getArenaIcon()
+          .getStatusNames()
+          .getDisabled();
 
   private final int spaces = 36;
   private final Map<Integer, Map<Integer, DisplayArena>> slots = new HashMap<>();
@@ -67,7 +84,12 @@ public class ArenaSummaryGui extends Gui {
             gui.containsKey(page)
                 ? gui.get(page)
                 : InventoryUtil.createInventory(
-                    GuiFile.getString("GUIS.SETUP.ARENA.ARENA-MANAGER.TITLE")
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getArena()
+                        .getArenaManager()
+                        .getTitle()
                         .replace("%page%", String.valueOf(page)),
                     6);
         newGui.put(page, inv);
@@ -95,11 +117,27 @@ public class ArenaSummaryGui extends Gui {
         ItemStack left;
         if (PageUtil.isPageValid(displayIcons.size(), page - 1, spaces)) {
           left =
-              GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-MANAGER.ICONS.PAGE-LEFT")
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getArena()
+                          .getArenaManager()
+                          .getIcons()
+                          .getPageLeft())
                   .replace("%page%", String.valueOf(page - 1))
                   .get();
         } else {
-          left = GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-MANAGER.ICONS.BACK-TO").get();
+          left =
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getArena()
+                          .getArenaManager()
+                          .getIcons()
+                          .getBackTo())
+                  .get();
         }
         inv.setItem(45, left);
 
@@ -107,7 +145,14 @@ public class ArenaSummaryGui extends Gui {
         ItemStack right;
         if (PageUtil.isPageValid(displayIcons.size(), page + 1, spaces)) {
           right =
-              GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-MANAGER.ICONS.PAGE-RIGHT")
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getArena()
+                          .getArenaManager()
+                          .getIcons()
+                          .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get();
         } else {
@@ -207,7 +252,16 @@ public class ArenaSummaryGui extends Gui {
       return getArenaItem((Arena) arena);
     }
 
-    GuiItem guiItem = GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-MANAGER.ICONS.ARENA-ICON.FFA");
+    GuiItem guiItem =
+        BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getArena()
+                .getArenaManager()
+                .getIcons()
+                .getArenaIcon()
+                .getFfa());
 
     if (arena.getIcon() != null) {
       guiItem.setMaterial(arena.getIcon().getType());
@@ -226,9 +280,27 @@ public class ArenaSummaryGui extends Gui {
   private static ItemStack getArenaItem(Arena arena) {
     GuiItem guiItem;
     if (arena.isBuild()) {
-      guiItem = GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-MANAGER.ICONS.ARENA-ICON.BUILD");
+      guiItem =
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getArena()
+                  .getArenaManager()
+                  .getIcons()
+                  .getArenaIcon()
+                  .getBuild());
     } else {
-      guiItem = GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-MANAGER.ICONS.ARENA-ICON.NON-BUILD");
+      guiItem =
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getArena()
+                  .getArenaManager()
+                  .getIcons()
+                  .getArenaIcon()
+                  .getNonBuild());
     }
 
     if (arena.getIcon() != null) {

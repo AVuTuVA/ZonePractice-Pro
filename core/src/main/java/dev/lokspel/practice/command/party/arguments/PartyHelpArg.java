@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.party.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.Common;
 import org.bukkit.entity.Player;
 
@@ -10,9 +9,9 @@ public final class PartyHelpArg {
   private PartyHelpArg() {}
 
   public static void helpCommand(Player player, String label) {
-    String shortcut = ConfigManager.getPartyChatShortcut();
+    String shortcut = PracticeConfig.settings().getChat().getPartyChat().getShortcut();
 
-    for (String line : LanguageManager.getList("COMMAND.PARTY.ARGUMENTS.HELP")) {
+    for (String line : PracticeConfig.language().getCommand().getParty().getArguments().getHelp()) {
       if (line.contains("%shortcut%") && shortcut.isEmpty()) {
         continue;
       }

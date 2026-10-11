@@ -1,8 +1,8 @@
 package dev.lokspel.practice.command.arena.arguments.set;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.arena.ArenaGuiSetupManager;
 import dev.lokspel.practice.util.Common;
@@ -17,14 +17,20 @@ public final class SideBuildLimitArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
       return;
     }
 
     if (args.length != 4) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getSidebuildlimit()
+              .getCommandHelp()
               .replace("%label%", label)
               .replace("%label2%", args[1]));
       return;
@@ -34,7 +40,12 @@ public final class SideBuildLimitArg {
     if (arena == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.ARENA-NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getSidebuildlimit()
+              .getArenaNotExists()
               .replace("%arena%", args[2]));
       return;
     }
@@ -42,7 +53,12 @@ public final class SideBuildLimitArg {
     if (arena.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.ARENA-ENABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getSidebuildlimit()
+              .getArenaEnabled()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -50,7 +66,12 @@ public final class SideBuildLimitArg {
     if (!arena.isBuild()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.NOT-BUILD")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getSidebuildlimit()
+              .getNotBuild()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -59,7 +80,12 @@ public final class SideBuildLimitArg {
     if (sideBuildLimit < 0 || sideBuildLimit > 10) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.INVALID-NUMBER")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getSidebuildlimit()
+              .getInvalidNumber()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -73,7 +99,12 @@ public final class SideBuildLimitArg {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.SET-SIDEBUILDLIMIT")
+        PracticeConfig.language()
+            .getCommand()
+            .getArena()
+            .getArguments()
+            .getSidebuildlimit()
+            .getSetSidebuildlimit()
             .replace("%arena%", arena.getName())
             .replace("%sideBuildLimit%", args[3]));
   }

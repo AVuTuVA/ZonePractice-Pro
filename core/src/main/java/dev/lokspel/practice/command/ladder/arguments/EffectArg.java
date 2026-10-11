@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.ladder.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
 import dev.lokspel.practice.manager.ladder.LadderManager;
@@ -17,14 +17,20 @@ public final class EffectArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.LADDER.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getLadder().getNoPermission());
       return;
     }
 
     if (args.length != 3) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.EFFECT.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getEffect()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -33,7 +39,12 @@ public final class EffectArg {
     if (ladder == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.EFFECT.NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getEffect()
+              .getNotExists()
               .replace("%ladder%", args[2]));
       return;
     }
@@ -41,7 +52,12 @@ public final class EffectArg {
     if (ladder.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.EFFECT.LADDER-ENABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getEffect()
+              .getLadderEnabled()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
@@ -49,7 +65,13 @@ public final class EffectArg {
     List<PotionEffect> effects = new ArrayList<>(player.getActivePotionEffects());
     if (effects.isEmpty()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.EFFECT.NO-EFFECTS"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getEffect()
+              .getNoEffects());
       return;
     }
 
@@ -62,7 +84,12 @@ public final class EffectArg {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.EFFECT.SET-EFFECTS")
+        PracticeConfig.language()
+            .getCommand()
+            .getLadder()
+            .getArguments()
+            .getEffect()
+            .getSetEffects()
             .replace("%ladder%", ladder.getDisplayName()));
   }
 

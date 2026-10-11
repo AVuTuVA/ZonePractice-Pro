@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.fight.event.events.duel.interfaces;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.language.LanguageConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.util.Common;
@@ -83,21 +84,19 @@ public class DuelFight {
     if (loser == null) {
       for (Player player : players) {
         this.duelEvent.sendMessage(
-            LanguageManager.getString(duelEvent.getLanguagePath() + ".PLAYER-OUT")
-                .replace("%player%", player.getName()),
-            true);
+            duelEvent.getMessages().getPlayerOut().replace("%player%", player.getName()), true);
         this.duelEvent.getPlayers().remove(player);
         this.duelEvent.getSpectators().add(player);
       }
     } else {
       this.duelEvent.sendMessage(
-          LanguageManager.getString(duelEvent.getLanguagePath() + ".PLAYER-OUT")
-              .replace("%player%", loser.getName()),
-          true);
+          duelEvent.getMessages().getPlayerOut().replace("%player%", loser.getName()), true);
       this.duelEvent.getPlayers().remove(loser);
       this.duelEvent.getSpectators().add(loser);
       this.sendMessage(
-          LanguageManager.getString(duelEvent.getLanguagePath() + ".WON-FIGHT")
+          duelEvent
+              .getMessages()
+              .getWonFight()
               .replace("%player%", getOtherPlayer(loser).getName()));
     }
 
@@ -110,9 +109,7 @@ public class DuelFight {
 
         for (Player player : forward) {
           this.duelEvent.addSpectator(player, nextTarget, true, true);
-          Common.sendMmMessage(
-              player,
-              LanguageManager.getString(duelEvent.getLanguagePath() + ".SPECTATOR-FORWARDED"));
+          Common.sendMmMessage(player, duelEvent.getMessages().getSpectatorForwarded());
         }
       }
     } else {
@@ -141,12 +138,13 @@ public class DuelFight {
     Map<String, String> placeholders = new HashMap<>();
     placeholders.put("%winner%", winner.getName());
 
+    LanguageConfig.Event.Duel duelMessages = PracticeConfig.language().getEvent().getDuel();
     if (this.isFinalFightResult(loser)) {
       EventManager.getInstance()
           .sendConfiguredEventTitle(
               winner,
-              "EVENT.DUEL.EVENT-MATCH-WON-TITLE",
-              "EVENT.DUEL.EVENT-MATCH-WON-SUBTITLE",
+              duelMessages.getEventMatchWonTitle(),
+              duelMessages.getEventMatchWonSubtitle(),
               placeholders);
       return;
     }
@@ -154,19 +152,22 @@ public class DuelFight {
     EventManager.getInstance()
         .sendConfiguredEventTitle(
             winner,
-            "EVENT.DUEL.EVENT-ROUND-WON-TITLE",
-            "EVENT.DUEL.EVENT-ROUND-WON-SUBTITLE",
+            duelMessages.getEventRoundWonTitle(),
+            duelMessages.getEventRoundWonSubtitle(),
             placeholders);
 
     EventManager.getInstance()
         .sendConfiguredEventTitle(
             loser,
-            "EVENT.DUEL.EVENT-ROUND-LOST-TITLE",
-            "EVENT.DUEL.EVENT-ROUND-LOST-SUBTITLE",
+            duelMessages.getEventRoundLostTitle(),
+            duelMessages.getEventRoundLostSubtitle(),
             placeholders);
 
     String spectatorTitle =
-        LanguageManager.getString("EVENT.DUEL.EVENT-FIGHT-WON-TITLE")
+        PracticeConfig.language()
+            .getEvent()
+            .getDuel()
+            .getEventFightWonTitle()
             .replace("%winner%", winner.getName());
     for (Player spectator : this.getSpectatorRecipients(winner, loser)) {
       EventManager.getInstance().sendRawEventTitle(spectator, spectatorTitle, "");
@@ -174,15 +175,18 @@ public class DuelFight {
   }
 
   private void sendPostKillCountdownTitle(int secondsLeft) {
-    String title = LanguageManager.getString("EVENT.DUEL.POST-KILL-COUNTDOWN-TITLE");
+    String title = PracticeConfig.language().getEvent().getDuel().getPostKillCountdownTitle();
     String subtitle =
-        LanguageManager.getString("EVENT.DUEL.POST-KILL-COUNTDOWN-SUBTITLE")
+        PracticeConfig.language()
+            .getEvent()
+            .getDuel()
+            .getPostKillCountdownSubtitle()
             .replace("%seconds%", String.valueOf(secondsLeft))
             .replace(
                 "%secondName%",
                 (secondsLeft == 1
-                    ? LanguageManager.getString("SECOND-NAME.1SEC")
-                    : LanguageManager.getString("SECOND-NAME.1<SEC")));
+                    ? PracticeConfig.language().getSecondName().getOneSecond()
+                    : PracticeConfig.language().getSecondName().getUnderOneSecond()));
 
     for (Player player : this.getTitleRecipients()) {
       EventManager.getInstance().sendRawEventTitle(player, title, subtitle);

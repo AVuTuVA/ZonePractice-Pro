@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.setup.event.eventsettings;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -29,7 +29,12 @@ public class SettingsGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.EVENT.EVENT-SETTINGS.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getEvent()
+                .getEventSettings()
+                .getTitle()
                 .replace("%eventName%", eventData.getType().getName()),
             3));
     this.eventData = eventData;
@@ -46,7 +51,17 @@ public class SettingsGui extends Gui {
 
     // Back to Ladder Gui Icon
     gui.get(1)
-        .setItem(18, GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-SETTINGS.ICONS.BACK-TO").get());
+        .setItem(
+            18,
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getEvent()
+                        .getEventSettings()
+                        .getIcons()
+                        .getBackTo())
+                .get());
 
     update();
   }
@@ -107,7 +122,8 @@ public class SettingsGui extends Gui {
 
     if (eventData.isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.SETUP.EVENT.CANT-EDIT-ENABLED"));
+          player,
+          PracticeConfig.language().getCommand().getSetup().getEvent().getCantEditEnabled());
       return;
     }
 

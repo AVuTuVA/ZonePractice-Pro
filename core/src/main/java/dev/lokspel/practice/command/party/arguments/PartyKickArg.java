@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.party.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.util.Common;
@@ -18,7 +18,12 @@ public final class PartyKickArg {
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.KICK.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getKick()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -26,13 +31,20 @@ public final class PartyKickArg {
     Party party = PartyManager.getInstance().getParty(player);
     if (party == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.KICK.NO-PARTY"));
+          player,
+          PracticeConfig.language().getCommand().getParty().getArguments().getKick().getNoParty());
       return;
     }
 
     if (!party.getLeader().equals(player)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.KICK.NOT-LEADER"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getKick()
+              .getNotLeader());
       return;
     }
 
@@ -40,21 +52,37 @@ public final class PartyKickArg {
     if (target == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.KICK.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getKick()
+              .getTargetOffline()
               .replace("%target%", args[1]));
       return;
     }
 
     if (target.equals(player)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.KICK.CANT-KICK-YOURSELF"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getKick()
+              .getCantKickYourself());
       return;
     }
 
     if (!party.getMembers().contains(target)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.KICK.NOT-MEMBER")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getKick()
+              .getNotMember()
               .replace("%target%", target.getName()));
       return;
     }

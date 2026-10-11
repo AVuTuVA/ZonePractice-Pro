@@ -1,9 +1,8 @@
 package dev.lokspel.practice.command.arena.arguments.set;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -22,14 +21,20 @@ public final class IconArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
       return;
     }
 
     if (args.length != 3) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ICON.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getIcon()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -38,15 +43,25 @@ public final class IconArg {
     if (arena == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ICON.ARENA-NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getIcon()
+              .getArenaNotExists()
               .replace("%arena%", args[2]));
       return;
     }
 
-    if (arena.isEnabled() && !ConfigManager.getBoolean("SETUP.ALLOW-ICON-EDIT-WHILE-ENABLED")) {
+    if (arena.isEnabled() && !PracticeConfig.settings().getSetup().isAllowIconEditWhileEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ICON.CANT-EDIT")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getIcon()
+              .getCantEdit()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -54,14 +69,25 @@ public final class IconArg {
     ItemStack icon = PlayerUtil.getPlayerMainHand(player);
     if (icon.getType().equals(Material.AIR)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ICON.ICON-IN-HAND"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getIcon()
+              .getIconInHand());
       return;
     }
 
     if (icon.getItemMeta() == null || !icon.getItemMeta().hasDisplayName()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ICON.NO-DISPLAYNAME")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getIcon()
+              .getNoDisplayname()
               .replace("%arena%", arena.getDisplayName()));
       return;
     }
@@ -77,7 +103,12 @@ public final class IconArg {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ICON.SAVED-ICON")
+        PracticeConfig.language()
+            .getCommand()
+            .getArena()
+            .getArguments()
+            .getIcon()
+            .getSavedIcon()
             .replace("%arena%", arena.getName()));
   }
 

@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.WeightClass;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -36,7 +36,12 @@ public class CustomKitGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.LADDER.CUSTOM-KIT.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getCustomKit()
+                .getTitle()
                 .replace("%ladder%", ladder.getName()),
             6));
     this.ladder = ladder;
@@ -60,13 +65,49 @@ public class CustomKitGui extends Gui {
               inventory.clear();
 
               inventory.setItem(
-                  0, GuiFile.getGuiItem("GUIS.SETUP.LADDER.CUSTOM-KIT.ICONS.GO-BACK").get());
+                  0,
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getLadder()
+                              .getCustomKit()
+                              .getIcons()
+                              .getGoBack())
+                      .get());
               inventory.setItem(
-                  6, GuiFile.getGuiItem("GUIS.SETUP.LADDER.CUSTOM-KIT.ICONS.SAVE").get());
+                  6,
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getLadder()
+                              .getCustomKit()
+                              .getIcons()
+                              .getSave())
+                      .get());
               inventory.setItem(
-                  7, GuiFile.getGuiItem("GUIS.SETUP.LADDER.CUSTOM-KIT.ICONS.LOAD").get());
+                  7,
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getLadder()
+                              .getCustomKit()
+                              .getIcons()
+                              .getLoad())
+                      .get());
               inventory.setItem(
-                  8, GuiFile.getGuiItem("GUIS.SETUP.LADDER.CUSTOM-KIT.ICONS.CANCEL").get());
+                  8,
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getLadder()
+                              .getCustomKit()
+                              .getIcons()
+                              .getCancel())
+                      .get());
               inventory.setItem(2, getRankedItem(ladder, ranked));
 
               // Frame
@@ -163,7 +204,8 @@ public class CustomKitGui extends Gui {
       if (ladder.isEnabled()) {
         e.setCancelled(true);
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
+            player,
+            PracticeConfig.language().getCommand().getSetup().getLadder().getCantEditEnabled());
       }
     }
   }
@@ -195,24 +237,52 @@ public class CustomKitGui extends Gui {
   private static @Nullable ItemStack getRankedItem(NormalLadder ladder, boolean ranked) {
     switch (ladder.getWeightClass()) {
       case UNRANKED:
-        return GuiFile.getGuiItem(
-                "GUIS.SETUP.LADDER.CUSTOM-KIT.ICONS.SWITCH-WEIGHTCLASS.ONLY-UNRANKED")
+        return BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getLadder()
+                    .getCustomKit()
+                    .getIcons()
+                    .getSwitchWeightclass()
+                    .getOnlyUnranked())
             .replace("%weightClass%", WeightClass.UNRANKED.getName())
             .get();
       case RANKED:
-        return GuiFile.getGuiItem(
-                "GUIS.SETUP.LADDER.CUSTOM-KIT.ICONS.SWITCH-WEIGHTCLASS.ONLY-RANKED")
+        return BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getLadder()
+                    .getCustomKit()
+                    .getIcons()
+                    .getSwitchWeightclass()
+                    .getOnlyRanked())
             .replace("%weightClass%", WeightClass.RANKED.getName())
             .get();
       case UNRANKED_AND_RANKED:
         if (ranked) {
-          return GuiFile.getGuiItem(
-                  "GUIS.SETUP.LADDER.CUSTOM-KIT.ICONS.SWITCH-WEIGHTCLASS.SWITCH-TO-UNRANKED")
+          return BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getSetup()
+                      .getLadder()
+                      .getCustomKit()
+                      .getIcons()
+                      .getSwitchWeightclass()
+                      .getSwitchToUnranked())
               .replace("%weightClass%", WeightClass.UNRANKED.getName())
               .get();
         } else {
-          return GuiFile.getGuiItem(
-                  "GUIS.SETUP.LADDER.CUSTOM-KIT.ICONS.SWITCH-WEIGHTCLASS.SWITCH-TO-RANKED")
+          return BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getSetup()
+                      .getLadder()
+                      .getCustomKit()
+                      .getIcons()
+                      .getSwitchWeightclass()
+                      .getSwitchToRanked())
               .replace("%weightClass%", WeightClass.RANKED.getName())
               .get();
         }

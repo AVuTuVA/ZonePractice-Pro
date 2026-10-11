@@ -3,8 +3,8 @@ package dev.lokspel.practice.manager.fight.event.events.onevsall.tnttag;
 import dev.lokspel.api.event.event.EventEndEvent;
 import dev.lokspel.api.event.spectate.start.EventSpectateStartEvent;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
@@ -67,7 +67,12 @@ public class TntTag extends Event {
 
     this.sendExplosion(player.getLocation());
     this.sendMessage(
-        LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.TNTTAG.BLOWN-UP")
+        PracticeConfig.language()
+            .getCommand()
+            .getEvent()
+            .getArguments()
+            .getTnttag()
+            .getBlownUp()
             .replace("%player%", player.getName()),
         true);
 
@@ -114,13 +119,18 @@ public class TntTag extends Event {
       this.nextRound(round != 1);
     } else if (seconds <= 5) {
       this.sendMessage(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.TNTTAG.ROUND-STARTING")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getTnttag()
+              .getRoundStarting()
               .replace("%seconds%", String.valueOf(seconds))
               .replace(
                   "%secondName%",
                   (seconds == 1
-                      ? LanguageManager.getString("SECOND-NAME.1SEC")
-                      : LanguageManager.getString("SECOND-NAME.1<SEC"))),
+                      ? PracticeConfig.language().getSecondName().getOneSecond()
+                      : PracticeConfig.language().getSecondName().getUnderOneSecond())),
           true);
 
       SoundEffect sound = SoundManager.getInstance().getSound(SoundType.EVENT_START_COUNTDOWN);
@@ -192,7 +202,12 @@ public class TntTag extends Event {
 
     if (winner != null) {
       this.sendMessage(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.TNTTAG.WON-EVENT")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getTnttag()
+              .getWonEvent()
               .replace("%winner%", winner.getName()),
           true);
 
@@ -200,7 +215,14 @@ public class TntTag extends Event {
         ServerManager.runConsoleCommand(cmd.replace("%player%", winner.getName()));
       }
     } else {
-      this.sendMessage(LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.TNTTAG.NO-WINNER"), true);
+      this.sendMessage(
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getTnttag()
+              .getNoWinner(),
+          true);
     }
   }
 
@@ -248,7 +270,12 @@ public class TntTag extends Event {
 
     if (message && !this.status.equals(EventStatus.END)) {
       this.sendMessage(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.TNTTAG.STARTED-SPECTATING")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getTnttag()
+              .getStartedSpectating()
               .replace("%spectator%", spectator.getName()),
           true);
     }
@@ -280,18 +307,33 @@ public class TntTag extends Event {
       this.loadInv(tagger);
 
       this.sendMessage(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.TNTTAG.PLAYER-TAGGED-PLAYER")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getTnttag()
+              .getPlayerTaggedPlayer()
               .replace("%player%", tagger.getName())
               .replace("%target%", tagged.getName()),
           true);
     } else {
       this.sendMessage(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.TNTTAG.START-TAGGER")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getTnttag()
+              .getStartTagger()
               .replace("%player%", tagged.getName()),
           true);
     }
 
-    tagged.getInventory().setItem(0, ConfigManager.getGuiItem("EVENT.TNTTAG.TAGGED-ITEM").get());
+    tagged
+        .getInventory()
+        .setItem(
+            0,
+            BackendUtil.getGuiItem(PracticeConfig.settings().getEvent().getTnttag().getTaggedItem())
+                .get());
     tagged.getInventory().setItem(1, EventManager.PLAYER_TRACKER);
     tagged.getInventory().setHelmet(new ItemStack(Material.TNT));
 

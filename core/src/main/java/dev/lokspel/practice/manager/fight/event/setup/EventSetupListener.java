@@ -2,8 +2,8 @@ package dev.lokspel.practice.manager.fight.event.setup;
 
 import dev.lokspel.api.event.event.EventEndEvent;
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.util.ArenaWorldUtil;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -316,7 +316,8 @@ public class EventSetupListener implements Listener {
       Player player, EventData eventData, Action action, PlayerInteractEvent event) {
     if (eventData.isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.SETUP.EVENT.CANT-EDIT-ENABLED"));
+          player,
+          PracticeConfig.language().getCommand().getSetup().getEvent().getCantEditEnabled());
       return;
     }
 
@@ -328,7 +329,8 @@ public class EventSetupListener implements Listener {
 
     Location cornerLocation = targetBlock.getLocation();
     if (!cornerLocation.getWorld().equals(ArenaWorldUtil.getArenasWorld())) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SETUP.EVENT.ARENAS-WORLD"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getSetup().getEvent().getArenasWorld());
       return;
     }
 
@@ -337,13 +339,21 @@ public class EventSetupListener implements Listener {
       eventData.setCuboidLoc1(cornerLocation);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.SETUP.EVENT.SET-FIRST-CORNER")
+          PracticeConfig.language()
+              .getCommand()
+              .getSetup()
+              .getEvent()
+              .getSetFirstCorner()
               .replace("%event%", eventData.getType().getName()));
     } else {
       eventData.setCuboidLoc2(cornerLocation);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.SETUP.EVENT.SET-SECOND-CORNER")
+          PracticeConfig.language()
+              .getCommand()
+              .getSetup()
+              .getEvent()
+              .getSetSecondCorner()
               .replace("%event%", eventData.getType().getName()));
     }
 
@@ -355,7 +365,8 @@ public class EventSetupListener implements Listener {
       Player player, EventData eventData, Action action, PlayerInteractEvent event) {
     if (eventData.isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.SETUP.EVENT.CANT-EDIT-ENABLED"));
+          player,
+          PracticeConfig.language().getCommand().getSetup().getEvent().getCantEditEnabled());
       return;
     }
 

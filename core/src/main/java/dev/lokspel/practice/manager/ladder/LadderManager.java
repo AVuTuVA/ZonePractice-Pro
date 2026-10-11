@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.ladder;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.guis.customladder.EditorMenuGui;
 import dev.lokspel.practice.manager.gui.guis.customladder.premadecustom.CustomLadderSelectorGui;
@@ -38,7 +38,9 @@ public class LadderManager {
   @Getter private final List<NormalLadder> ladders = new ArrayList<>();
   private final File folder = new File(AstralPractice.getInstance().getDataFolder() + "/ladders");
 
-  @Getter private static final int DEFAULT_ELO = ConfigManager.getInt("QUEUE.RANKED.DEFAULT-ELO");
+  @Getter
+  private static final int DEFAULT_ELO =
+      PracticeConfig.settings().getQueue().getRanked().getDefaultElo();
 
   public NormalLadder getLadder(String ladderName) {
     for (NormalLadder ladder : ladders) {

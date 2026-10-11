@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.event.arguments.events;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.fight.event.events.ffa.oitc.OitcData;
@@ -17,7 +17,8 @@ public final class OitcArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.EVENT.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getEvent().getNoPermission());
       return;
     }
 
@@ -26,7 +27,13 @@ public final class OitcArg {
     // Checking if the event is live, if it is, it will send a message to the player and return.
     if (EventManager.getInstance().isEventLive(EventType.OITC)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.OITC.EVENT-LIVE"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getOitc()
+              .getEventLive());
       return;
     }
 
@@ -37,7 +44,12 @@ public final class OitcArg {
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.OITC.EVENT-ALREADY-ENABLED"));
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getOitc()
+                .getEventAlreadyEnabled());
       }
     } else if (args.length == 2 && args[1].equalsIgnoreCase("disable")) {
       if (oitcData.isEnabled()) {
@@ -45,7 +57,12 @@ public final class OitcArg {
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.OITC.EVENT-ALREADY-DISABLED"));
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getOitc()
+                .getEventAlreadyDisabled());
       }
     } else {
       sendHelpMsg(player, label);
@@ -53,7 +70,13 @@ public final class OitcArg {
   }
 
   private static void sendHelpMsg(Player player, String label) {
-    for (String line : LanguageManager.getList("COMMAND.EVENT.ARGUMENTS.OITC.COMMAND-HELP")) {
+    for (String line :
+        PracticeConfig.language()
+            .getCommand()
+            .getEvent()
+            .getArguments()
+            .getOitc()
+            .getCommandHelp()) {
       Common.sendMmMessage(player, line.replace("%label%", label));
     }
   }

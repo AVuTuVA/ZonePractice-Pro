@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.party.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -15,22 +14,24 @@ public final class PartyChatArg {
   private PartyChatArg() {}
 
   public static void chatCommand(Player player, String[] args) {
-    if (!ConfigManager.isPartyChatEnabled()) {
+    if (!PracticeConfig.settings().getChat().getPartyChat().isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.CHAT.DISABLED"));
+          player,
+          PracticeConfig.language().getCommand().getParty().getArguments().getChat().getDisabled());
       return;
     }
 
     Party party = PartyManager.getInstance().getParty(player);
     if (party == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.CHAT.NO-PARTY"));
+          player,
+          PracticeConfig.language().getCommand().getParty().getArguments().getChat().getNoParty());
       return;
     }
 
     if (!party.canUsePartyChat(player)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("PARTY.PARTY-CHAT-DISABLED-BY-LEADER"));
+          player, PracticeConfig.language().getParty().getPartyChatDisabledByLeader());
       return;
     }
 
@@ -40,10 +41,22 @@ public final class PartyChatArg {
 
       if (profile.isPartyChat()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.CHAT.CHAT-ENABLED"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getParty()
+                .getArguments()
+                .getChat()
+                .getChatEnabled());
       } else {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.CHAT.CHAT-DISABLED"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getParty()
+                .getArguments()
+                .getChat()
+                .getChatDisabled());
       }
       return;
     }

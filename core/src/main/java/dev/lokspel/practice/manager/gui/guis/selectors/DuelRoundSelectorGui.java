@@ -1,9 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.selectors;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.duel.DuelManager;
 import dev.lokspel.practice.manager.duel.DuelRequest;
 import dev.lokspel.practice.manager.fight.match.Match;
@@ -27,8 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class DuelRoundSelectorGui extends MatchStarterGui {
 
-  private static int MAX_ROUNDS = ConfigManager.getInt("MATCH-SETTINGS.DUEL.ROUND-SELECTOR.MAX");
-  private static int MIN_ROUNDS = ConfigManager.getInt("MATCH-SETTINGS.DUEL.ROUND-SELECTOR.MIN");
+  private static int MAX_ROUNDS =
+      PracticeConfig.settings().getMatchSettings().getDuel().getRoundSelector().getMax();
+  private static int MIN_ROUNDS =
+      PracticeConfig.settings().getMatchSettings().getDuel().getRoundSelector().getMin();
 
   static {
     if (MAX_ROUNDS > 100) {
@@ -40,17 +41,51 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
   }
 
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.DUEL-ROUND-SELECTOR.ICONS.BACK-TO").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getKitEditor()
+                  .getDuelRoundSelector()
+                  .getIcons()
+                  .getBackTo())
+          .get();
   private static final GuiItem ROUND_SELECTOR =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.DUEL-ROUND-SELECTOR.ICONS.ROUND-SELECTOR");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis()
+              .getGuis()
+              .getKitEditor()
+              .getDuelRoundSelector()
+              .getIcons()
+              .getRoundSelector());
   private static final GuiItem SHOW_LADDER =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.DUEL-ROUND-SELECTOR.ICONS.SHOW-LADDER");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis()
+              .getGuis()
+              .getKitEditor()
+              .getDuelRoundSelector()
+              .getIcons()
+              .getShowLadder());
   private static final GuiItem SHOW_ARENA =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.DUEL-ROUND-SELECTOR.ICONS.SHOW-ARENA");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis()
+              .getGuis()
+              .getKitEditor()
+              .getDuelRoundSelector()
+              .getIcons()
+              .getShowArena());
   private static final ItemStack START_MATCH_ITEM =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.DUEL-ROUND-SELECTOR.ICONS.START-MATCH").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getKitEditor()
+                  .getDuelRoundSelector()
+                  .getIcons()
+                  .getStartMatch())
+          .get();
   private static final ItemStack TEAM_SETUP_ITEM =
-      GuiFile.getGuiItem("GUIS.PARTY.PARTY-SPLIT.ICONS.TEAM-SETUP").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis().getGuis().getParty().getPartySplit().getIcons().getTeamSetup())
+          .get();
 
   private final Party party;
   private Arena arena;
@@ -67,7 +102,7 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.KIT-EDITOR.DUEL-ROUND-SELECTOR.TITLE"), 1));
+            PracticeConfig.guis().getGuis().getKitEditor().getDuelRoundSelector().getTitle(), 1));
 
     this.build();
   }
@@ -138,7 +173,7 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
     } else if (slot == 8) {
       if (!ladder.isEnabled() || !ladder.getMatchTypes().contains(matchType)) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("DUEL-ROUND-SELECTOR.LADDER-NOT-AVAILABLE"));
+            player, PracticeConfig.language().getDuelRoundSelector().getLadderNotAvailable());
 
         LadderSelectorGui ladderSelectorGui = getLadderBackToGui();
         if (ladderSelectorGui != null) {
@@ -152,7 +187,7 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
 
       if (ladder instanceof NormalLadder && ((NormalLadder) ladder).isFrozen()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("DUEL-ROUND-SELECTOR.LADDER-FROZEN"));
+            player, PracticeConfig.language().getDuelRoundSelector().getLadderFrozen());
 
         LadderSelectorGui ladderSelectorGui = getLadderBackToGui();
         if (ladderSelectorGui != null) {
@@ -166,7 +201,7 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
 
       if (arena != null && (!arena.isEnabled() || arena.isFrozen())) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("DUEL-ROUND-SELECTOR.ARENA-NOT-AVAILABLE"));
+            player, PracticeConfig.language().getDuelRoundSelector().getArenaNotAvailable());
         arena = null;
       }
 
@@ -182,7 +217,7 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
 
         if (!target.isOnline()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("DUEL-ROUND-SELECTOR.ENEMY-OFFLINE"));
+              player, PracticeConfig.language().getDuelRoundSelector().getEnemyOffline());
           player.closeInventory();
           return;
         }
@@ -202,7 +237,8 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
           if (party.getMembers().size() < 2) {
             player.closeInventory();
             Common.sendMmMessage(
-                player, LanguageManager.getString("DUEL-ROUND-SELECTOR.PARTY-NOT-ENOUGH-PLAYERS"));
+                player,
+                PracticeConfig.language().getDuelRoundSelector().getPartyNotEnoughPlayers());
             return;
           }
 
@@ -212,7 +248,8 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
 
           Match match = getMatch(party, arena, rounds);
           if (match == null) {
-            Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-AVAILABLE-ARENA"));
+            Common.sendMmMessage(
+                player, PracticeConfig.language().getParty().getNoAvailableArena());
             return;
           }
 
@@ -228,7 +265,7 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
 
           if (!PartyManager.getInstance().getParties().contains(target)) {
             Common.sendMmMessage(
-                player, LanguageManager.getString("DUEL-ROUND-SELECTOR.ENEMY-PARTY-OFFLINE"));
+                player, PracticeConfig.language().getDuelRoundSelector().getEnemyPartyOffline());
             GuiManager.getInstance().searchGui(GuiType.Party_OtherParties).open(player);
             return;
           }

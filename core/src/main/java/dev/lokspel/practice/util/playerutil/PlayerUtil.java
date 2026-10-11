@@ -1,7 +1,7 @@
 package dev.lokspel.practice.util.playerutil;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -107,7 +107,7 @@ public final class PlayerUtil {
 
   public static void sendStaffMessage(Player sender, String message) {
     String senderName =
-        sender != null ? sender.getName() : LanguageManager.getString("CONSOLE-NAME");
+        sender != null ? sender.getName() : PracticeConfig.language().getConsoleName();
 
     for (Player online : Bukkit.getOnlinePlayers()) {
       if (!online.hasPermission("ap.staffmode.chat")) {
@@ -115,7 +115,9 @@ public final class PlayerUtil {
       }
 
       String formattedMessage =
-          LanguageManager.getString("GENERAL-CHAT.STAFF-CHAT")
+          PracticeConfig.language()
+              .getGeneralChat()
+              .getStaffChat()
               .replace("%%player%%", senderName)
               .replace("%%message%%", message);
 

@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.fight.ffa.game;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.PermanentConfig;
 import dev.lokspel.practice.util.fightmapchange.FightChangeOptimized;
 import dev.lokspel.practice.util.interfaces.Runnable;
@@ -11,7 +11,8 @@ import org.bukkit.Bukkit;
 @Getter
 public class BuildRollback extends Runnable {
 
-  private static final int ROLLBACK_SECONDS = ConfigManager.getInt("FFA.ROLLBACK.SECONDS");
+  private static final int ROLLBACK_SECONDS =
+      PracticeConfig.settings().getFfa().getRollback().getSeconds();
 
   private final FightChangeOptimized fightChange;
   private final java.lang.Runnable onRollbackComplete;

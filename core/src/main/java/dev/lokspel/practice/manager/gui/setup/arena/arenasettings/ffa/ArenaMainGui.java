@@ -1,10 +1,10 @@
 package dev.lokspel.practice.manager.gui.setup.arena.arenasettings.ffa;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
 import dev.lokspel.practice.manager.arena.setup.ArenaSetupManager;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
@@ -23,26 +23,108 @@ import org.bukkit.inventory.ItemStack;
 public class ArenaMainGui extends Gui {
 
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.MAIN.ICONS.GO-BACK").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getMain()
+                  .getIcons()
+                  .getGoBack())
+          .get();
   private static final ItemStack DELETE_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.MAIN.ICONS.DELETE").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getMain()
+                  .getIcons()
+                  .getDelete())
+          .get();
   private static final ItemStack STATUS_ENABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.MAIN.ICONS.STATUS.ENABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getMain()
+                  .getIcons()
+                  .getStatus()
+                  .getEnabled())
+          .get();
   private static final ItemStack STATUS_DISABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.MAIN.ICONS.STATUS.DISABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getMain()
+                  .getIcons()
+                  .getStatus()
+                  .getDisabled())
+          .get();
   private static final ItemStack LADDER_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.MAIN.ICONS.LADDER").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getMain()
+                  .getIcons()
+                  .getLadder())
+          .get();
   private static final ItemStack SETTINGS_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.MAIN.ICONS.SETTINGS").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getMain()
+                  .getIcons()
+                  .getSettings())
+          .get();
   private static final ItemStack FFA_OPEN_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.MAIN.ICONS.OPEN-STATUS.OPEN").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getMain()
+                  .getIcons()
+                  .getOpenStatus()
+                  .getOpen())
+          .get();
   private static final ItemStack FFA_CLOSE_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.MAIN.ICONS.OPEN-STATUS.CLOSE").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getMain()
+                  .getIcons()
+                  .getOpenStatus()
+                  .getClose())
+          .get();
 
   private static final GuiItem NAME_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.MAIN.ICONS.ARENA-NAME");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis()
+              .getGuis()
+              .getSetup()
+              .getFfaArena()
+              .getMain()
+              .getIcons()
+              .getArenaName());
   private static final GuiItem LOCATION_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.MAIN.ICONS.LOCATION");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis()
+              .getGuis()
+              .getSetup()
+              .getFfaArena()
+              .getMain()
+              .getIcons()
+              .getLocation());
 
   private final FfaArena ffaArena;
   private final FfaSettingsGui ffaSettingsGui;
@@ -54,7 +136,12 @@ public class ArenaMainGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.FFA-ARENA.MAIN.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getFfaArena()
+                .getMain()
+                .getTitle()
                 .replace("%arenaName%", ffaArena.getName()),
             4));
     this.ffaSettingsGui = new FfaSettingsGui(ffaArena, this);
@@ -191,7 +278,8 @@ public class ArenaMainGui extends Gui {
       case 35:
         if (ffaArena.isEnabled()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.ARENA.CANT-DELETE-ENABLED"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getArena().getCantDeleteEnabled());
           return;
         }
         openConfirmGui(

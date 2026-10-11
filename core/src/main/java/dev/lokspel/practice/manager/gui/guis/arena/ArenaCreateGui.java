@@ -1,14 +1,13 @@
 package dev.lokspel.practice.manager.gui.guis.arena;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.ArenaType;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
 import dev.lokspel.practice.manager.arena.setup.ArenaSetupManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -38,7 +37,12 @@ public class ArenaCreateGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.ARENA-CREATE.TITLE").replace("%arena%", arenaName), 3));
+            PracticeConfig.guis()
+                .getGuis()
+                .getArenaCreate()
+                .getTitle()
+                .replace("%arena%", arenaName),
+            3));
 
     build();
   }
@@ -104,7 +108,11 @@ public class ArenaCreateGui extends Gui {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("ARENA.CREATE.ARENA-CREATED").replace("%arena%", arenaName));
+        PracticeConfig.language()
+            .getArena()
+            .getCreate()
+            .getArenaCreated()
+            .replace("%arena%", arenaName));
 
     Bukkit.getScheduler()
         .runTaskLater(

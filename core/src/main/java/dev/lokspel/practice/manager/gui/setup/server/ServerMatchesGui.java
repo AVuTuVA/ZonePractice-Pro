@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.setup.server;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.enums.WeightClass;
@@ -65,7 +65,12 @@ public class ServerMatchesGui extends Gui {
                   gui.put(
                       page,
                       InventoryUtil.createInventory(
-                          GuiFile.getString("GUIS.SETUP.SERVER.MATCHES.TITLE")
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getServer()
+                              .getMatches()
+                              .getTitle()
                               .replace("%page%", String.valueOf(page)),
                           6));
                 }
@@ -88,11 +93,27 @@ public class ServerMatchesGui extends Gui {
                 ItemStack left;
                 if (PageUtil.isPageValid(iconsList, page - 1, spaces)) {
                   left =
-                      GuiFile.getGuiItem("GUIS.SETUP.SERVER.MATCHES.ICONS.GO-PAGE-LEFT")
+                      BackendUtil.getGuiItem(
+                              PracticeConfig.guis()
+                                  .getGuis()
+                                  .getSetup()
+                                  .getServer()
+                                  .getMatches()
+                                  .getIcons()
+                                  .getGoPageLeft())
                           .replace("%page%", String.valueOf(page - 1))
                           .get();
                 } else {
-                  left = GuiFile.getGuiItem("GUIS.SETUP.SERVER.MATCHES.ICONS.BACK-TO").get();
+                  left =
+                      BackendUtil.getGuiItem(
+                              PracticeConfig.guis()
+                                  .getGuis()
+                                  .getSetup()
+                                  .getServer()
+                                  .getMatches()
+                                  .getIcons()
+                                  .getBackTo())
+                          .get();
                 }
                 inventory.setItem(45, left);
 
@@ -100,7 +121,14 @@ public class ServerMatchesGui extends Gui {
                 ItemStack right;
                 if (PageUtil.isPageValid(iconsList, page + 1, spaces)) {
                   right =
-                      GuiFile.getGuiItem("GUIS.SETUP.SERVER.MATCHES.ICONS.GO-PAGE-RIGHT")
+                      BackendUtil.getGuiItem(
+                              PracticeConfig.guis()
+                                  .getGuis()
+                                  .getSetup()
+                                  .getServer()
+                                  .getMatches()
+                                  .getIcons()
+                                  .getGoPageRight())
                           .replace("%page%", String.valueOf(page + 1))
                           .get();
                 } else {
@@ -109,7 +137,16 @@ public class ServerMatchesGui extends Gui {
                 inventory.setItem(53, right);
 
                 inventory.setItem(
-                    49, GuiFile.getGuiItem("GUIS.SETUP.SERVER.MATCHES.ICONS.REFRESH").get());
+                    49,
+                    BackendUtil.getGuiItem(
+                            PracticeConfig.guis()
+                                .getGuis()
+                                .getSetup()
+                                .getServer()
+                                .getMatches()
+                                .getIcons()
+                                .getRefresh())
+                        .get());
 
                 page++;
               }
@@ -170,7 +207,8 @@ public class ServerMatchesGui extends Gui {
       case 49:
         if (PlayerCooldown.isActive(player, CooldownObject.SERVER_SETUP_MATCH_REFRESH)) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.SERVER.WAIT-BEFORE"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getServer().getWaitBefore());
           return;
         }
 
@@ -186,20 +224,33 @@ public class ServerMatchesGui extends Gui {
               match.addSpectator(player, null, true, false);
             } else if (click.isRightClick()) {
               match.sendMessage(
-                  LanguageManager.getString("COMMAND.SETUP.SERVER.MATCH-ENDED")
+                  PracticeConfig.language()
+                      .getCommand()
+                      .getSetup()
+                      .getServer()
+                      .getMatchEnded()
                       .replace("%player%", player.getName()),
                   true);
               match.endMatch();
 
               Common.sendMmMessage(
                   player,
-                  LanguageManager.getString("COMMAND.SETUP.SERVER.PLAYER-ENDED-MATCH")
+                  PracticeConfig.language()
+                      .getCommand()
+                      .getSetup()
+                      .getServer()
+                      .getPlayerEndedMatch()
                       .replace("%matchId%", match.getId()));
               update();
             }
           } else {
             Common.sendMmMessage(
-                player, LanguageManager.getString("COMMAND.SETUP.SERVER.MATCH-ALREADY-ENDED"));
+                player,
+                PracticeConfig.language()
+                    .getCommand()
+                    .getSetup()
+                    .getServer()
+                    .getMatchAlreadyEnded());
             update();
           }
         }
@@ -210,10 +261,24 @@ public class ServerMatchesGui extends Gui {
   private ItemStack getMatchItem(Match match) {
     GuiItem guiItem =
         new GuiItem(
-            GuiFile.getString("GUIS.SETUP.SERVER.MATCHES.ICONS.MATCH-ICON.NAME"),
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getServer()
+                .getMatches()
+                .getIcons()
+                .getMatchIcon()
+                .getName(),
             match.getLadder().getIcon().getType(),
             Common.getItemDamage(match.getLadder().getIcon()),
-            GuiFile.getStringList("GUIS.SETUP.SERVER.MATCHES.ICONS.MATCH-ICON.LORE"));
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getServer()
+                .getMatches()
+                .getIcons()
+                .getMatchIcon()
+                .getLore());
     guiItem
         .replace("%matchType%", match.getType().getName(false))
         .replace("%matchId%", match.getId())

@@ -1,9 +1,12 @@
 package dev.lokspel.practice.manager.ladder.enums;
 
+import dev.lokspel.practice.config.language.LadderTypeMessages;
+import dev.lokspel.practice.config.language.LanguageConfig;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import lombok.Getter;
 import org.bukkit.Material;
 
@@ -14,9 +17,8 @@ import org.bukkit.Material;
 @Getter
 public class LadderTypeConfig {
 
-  private final String nameKey;
+  private final Function<LanguageConfig.Ladder.LadderTypes, LadderTypeMessages> messages;
   private final Material icon;
-  private final String descriptionKey;
   private final Class<?> classInstance;
 
   private boolean build = false;
@@ -27,25 +29,27 @@ public class LadderTypeConfig {
   private final List<SettingType> settingTypes = new ArrayList<>();
 
   private LadderTypeConfig(
-      String nameKey, Material icon, String descriptionKey, Class<?> classInstance) {
-    this.nameKey = nameKey;
+      Function<LanguageConfig.Ladder.LadderTypes, LadderTypeMessages> messages,
+      Material icon,
+      Class<?> classInstance) {
+    this.messages = messages;
     this.icon = icon;
-    this.descriptionKey = descriptionKey;
     this.classInstance = classInstance;
   }
 
   /**
    * Creates a new ladder type configuration builder.
    *
-   * @param nameKey Language key for the ladder name
+   * @param messages Selects the ladder's name and description section from LADDER.LADDER-TYPES
    * @param icon Material icon for the ladder
-   * @param descriptionKey Language key for the ladder description
    * @param classInstance The ladder implementation class
    * @return A new builder instance
    */
   public static LadderTypeConfig builder(
-      String nameKey, Material icon, String descriptionKey, Class<?> classInstance) {
-    return new LadderTypeConfig(nameKey, icon, descriptionKey, classInstance);
+      Function<LanguageConfig.Ladder.LadderTypes, LadderTypeMessages> messages,
+      Material icon,
+      Class<?> classInstance) {
+    return new LadderTypeConfig(messages, icon, classInstance);
   }
 
   /** Marks this ladder as requiring build mechanics. */

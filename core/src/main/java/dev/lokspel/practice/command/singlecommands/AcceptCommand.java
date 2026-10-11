@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.duel.DuelManager;
 import dev.lokspel.practice.manager.duel.DuelRequest;
 import dev.lokspel.practice.manager.party.Party;
@@ -27,7 +27,7 @@ public class AcceptCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
@@ -36,13 +36,18 @@ public class AcceptCommand implements CommandExecutor, TabCompleter {
     if (args.length != 1) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.accept.command-help").replace("%label%", label));
+          PracticeConfig.language()
+              .getCommand()
+              .getAccept()
+              .getCommandHelp()
+              .replace("%label%", label));
       return false;
     }
 
     if ((!profile.getStatus().equals(ProfileStatus.LOBBY)
         && !profile.getStatus().equals(ProfileStatus.SPECTATE))) {
-      Common.sendMmMessage(player, LanguageManager.getString("command.accept.cant-accept"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getAccept().getCantAccept());
       return false;
     }
 
@@ -51,12 +56,17 @@ public class AcceptCommand implements CommandExecutor, TabCompleter {
     if (target == null || targetProfile == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.accept.player-offline").replace("%target%", args[0]));
+          PracticeConfig.language()
+              .getCommand()
+              .getAccept()
+              .getPlayerOffline()
+              .replace("%target%", args[0]));
       return false;
     }
 
     if (target.equals(player)) {
-      Common.sendMmMessage(player, LanguageManager.getString("command.accept.self-duel"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getAccept().getSelfDuel());
       return false;
     }
 
@@ -64,7 +74,10 @@ public class AcceptCommand implements CommandExecutor, TabCompleter {
       if (!targetProfile.isParty()) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("command.accept.no-longer-party")
+            PracticeConfig.language()
+                .getCommand()
+                .getAccept()
+                .getNoLongerParty()
                 .replace("%target%", target.getName()));
         return false;
       }
@@ -86,14 +99,18 @@ public class AcceptCommand implements CommandExecutor, TabCompleter {
           } else {
             Common.sendMmMessage(
                 player,
-                LanguageManager.getString("command.accept.party-not-available")
+                PracticeConfig.language()
+                    .getCommand()
+                    .getAccept()
+                    .getPartyNotAvailable()
                     .replace("%target%", target.getName()));
           }
 
           return true;
         }
       }
-      Common.sendMmMessage(player, LanguageManager.getString("command.accept.party-no-invite"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getAccept().getPartyNoInvite());
     } else {
       List<DuelRequest> requests = DuelManager.getInstance().getRequests().get(player);
 
@@ -117,7 +134,10 @@ public class AcceptCommand implements CommandExecutor, TabCompleter {
           } else {
             Common.sendMmMessage(
                 player,
-                LanguageManager.getString("command.accept.player-not-available")
+                PracticeConfig.language()
+                    .getCommand()
+                    .getAccept()
+                    .getPlayerNotAvailable()
                     .replace("%target%", target.getName()));
           }
 
@@ -126,7 +146,10 @@ public class AcceptCommand implements CommandExecutor, TabCompleter {
       }
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.accept.player-no-invite")
+          PracticeConfig.language()
+              .getCommand()
+              .getAccept()
+              .getPlayerNoInvite()
               .replace("%target%", target.getName()));
     }
 

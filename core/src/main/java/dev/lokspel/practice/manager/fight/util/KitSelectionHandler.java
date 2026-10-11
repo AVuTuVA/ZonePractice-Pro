@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.fight.util;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.TeamEnum;
 import dev.lokspel.practice.manager.fight.match.util.CustomKit;
 import dev.lokspel.practice.manager.fight.match.util.KitUtil;
@@ -23,9 +24,11 @@ import org.bukkit.inventory.ItemStack;
 public class KitSelectionHandler {
 
   private static final GuiItem CUSTOM_KIT_ITEM =
-      ConfigManager.getGuiItem("MATCH-SETTINGS.KIT-ITEMS.CUSTOM-KIT");
+      BackendUtil.getGuiItem(
+          PracticeConfig.settings().getMatchSettings().getKitItems().getCustomKit());
   private static final GuiItem DEFAULT_KIT_ITEM =
-      ConfigManager.getGuiItem("MATCH-SETTINGS.KIT-ITEMS.DEFAULT-KIT");
+      BackendUtil.getGuiItem(
+          PracticeConfig.settings().getMatchSettings().getKitItems().getDefaultKit());
 
   private final Player player;
   private final Profile profile;

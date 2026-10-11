@@ -1,8 +1,7 @@
 package dev.lokspel.practice.manager.queue;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.division.Division;
 import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.fight.match.enums.WeightClass;
@@ -25,7 +24,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 @Getter
 public class QueueManager implements Listener {
 
-  private static final String MULTI_QUEUE_CONFIG_PATH = "QUEUE.MULTI";
   private static final String MULTI_QUEUE_PERMISSION_DEFAULT = "ap.queue.multi";
 
   private static QueueManager instance;
@@ -88,7 +86,10 @@ public class QueueManager implements Listener {
     if (ladder.isFrozen()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("QUEUES.UNRANKED.LADDER-FROZEN")
+          PracticeConfig.language()
+              .getQueues()
+              .getUnranked()
+              .getLadderFrozen()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
@@ -96,7 +97,10 @@ public class QueueManager implements Listener {
     if (!ladder.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("QUEUES.UNRANKED.LADDER-DISABLED")
+          PracticeConfig.language()
+              .getQueues()
+              .getUnranked()
+              .getLadderDisabled()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
@@ -112,7 +116,10 @@ public class QueueManager implements Listener {
     if (ladder.isFrozen()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("QUEUES.RANKED.LADDER-FROZEN")
+          PracticeConfig.language()
+              .getQueues()
+              .getRanked()
+              .getLadderFrozen()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
@@ -120,13 +127,17 @@ public class QueueManager implements Listener {
     if (!ladder.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("QUEUES.RANKED.LADDER-DISABLED")
+          PracticeConfig.language()
+              .getQueues()
+              .getRanked()
+              .getLadderDisabled()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
 
-    if (PlayerUtil.getPing(player) > ConfigManager.getInt("QUEUE.RANKED.MAX-PING")) {
-      Common.sendMmMessage(player, LanguageManager.getString("QUEUES.RANKED.HIGH-PING"));
+    if (PlayerUtil.getPing(player)
+        > PracticeConfig.settings().getQueue().getRanked().getMaxPing()) {
+      Common.sendMmMessage(player, PracticeConfig.language().getQueues().getRanked().getHighPing());
       if (!keepInventoryOpen) {
         player.closeInventory();
       }
@@ -149,7 +160,7 @@ public class QueueManager implements Listener {
 
     if (profile.getRankedLeft() <= 0 && !player.hasPermission("ap.bypass.ranked.limit")) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.QUEUES.RANKED.NO-RANKED-LEFT"));
+          player, PracticeConfig.language().getCommand().getQueues().getRanked().getNoRankedLeft());
       if (!keepInventoryOpen) {
         player.closeInventory();
       }
@@ -165,12 +176,15 @@ public class QueueManager implements Listener {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("QUEUES.RANKED.BANNED")
+          PracticeConfig.language()
+              .getQueues()
+              .getRanked()
+              .getBanned()
               .replace("%banner%", bannerName != null ? bannerName : "")
               .replace(
                   "%reason%",
                   profile.getRankedBan().getReason() == null
-                      ? LanguageManager.getString("QUEUES.RANKED.NO-REASON")
+                      ? PracticeConfig.language().getQueues().getRanked().getNoReason()
                       : profile.getRankedBan().getReason()));
 
       if (!keepInventoryOpen) {
@@ -190,7 +204,7 @@ public class QueueManager implements Listener {
   }
 
   public boolean isMultiQueueAllowed(Player player) {
-    if (!ConfigManager.getBoolean(MULTI_QUEUE_CONFIG_PATH + ".ENABLED")) {
+    if (!PracticeConfig.settings().getQueue().getMulti().isEnabled()) {
       return false;
     }
 
@@ -199,13 +213,12 @@ public class QueueManager implements Listener {
   }
 
   private String getMultiQueuePermissionNode() {
-    String path = MULTI_QUEUE_CONFIG_PATH + ".PERMISSION";
-    String permission = ConfigManager.getString(path);
-    return permission.isEmpty() ? MULTI_QUEUE_PERMISSION_DEFAULT : permission;
+    String permission = PracticeConfig.settings().getQueue().getMulti().getPermission();
+    return permission == null || permission.isEmpty() ? MULTI_QUEUE_PERMISSION_DEFAULT : permission;
   }
 
   private int getMultiQueueLimit() {
-    return ConfigManager.getInt(MULTI_QUEUE_CONFIG_PATH + ".MAX-LADDERS", 3);
+    return PracticeConfig.settings().getQueue().getMulti().getMaxLadders();
   }
 
   private void toggleQueue(
@@ -215,7 +228,8 @@ public class QueueManager implements Listener {
     boolean preserveOpenInventory = keepInventoryOpen && allowMultiQueue;
 
     if (existingQueue != null && existingQueue.isRanked() != ranked) {
-      Common.sendMmMessage(player, LanguageManager.getString("QUEUES.MULTI.CANT-MIX-TYPES"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getQueues().getMulti().getCantMixTypes());
       return;
     }
 
@@ -234,7 +248,9 @@ public class QueueManager implements Listener {
         endAllQueuesForPlayer(
             player,
             false,
-            LanguageManager.getString("QUEUES.QUEUE-STOPPED")
+            PracticeConfig.language()
+                .getQueues()
+                .getQueueStopped()
                 .replace(
                     "%weightClass%",
                     ranked ? WeightClass.RANKED.getMmName() : WeightClass.UNRANKED.getMmName())
@@ -258,7 +274,9 @@ public class QueueManager implements Listener {
         endAllQueuesForPlayer(
             player,
             false,
-            LanguageManager.getString("QUEUES.QUEUE-STOPPED")
+            PracticeConfig.language()
+                .getQueues()
+                .getQueueStopped()
                 .replace(
                     "%weightClass%",
                     ranked ? WeightClass.RANKED.getMmName() : WeightClass.UNRANKED.getMmName())
@@ -266,7 +284,9 @@ public class QueueManager implements Listener {
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("QUEUES.QUEUE-STOPPED")
+            PracticeConfig.language()
+                .getQueues()
+                .getQueueStopped()
                 .replace(
                     "%weightClass%",
                     ranked ? WeightClass.RANKED.getMmName() : WeightClass.UNRANKED.getMmName())
@@ -279,7 +299,10 @@ public class QueueManager implements Listener {
     if (limit > 0 && existingQueue.getQueuedLadders().size() >= limit) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("QUEUES.MULTI.MAX-LADDERS")
+          PracticeConfig.language()
+              .getQueues()
+              .getMulti()
+              .getMaxLadders()
               .replace("%max%", String.valueOf(limit)));
       return;
     }
@@ -287,7 +310,9 @@ public class QueueManager implements Listener {
     existingQueue.addLadder(ladder);
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("QUEUES.QUEUE-START")
+        PracticeConfig.language()
+            .getQueues()
+            .getQueueStart()
             .replace(
                 "%weightClass%",
                 ranked ? WeightClass.RANKED.getMmName() : WeightClass.UNRANKED.getMmName())

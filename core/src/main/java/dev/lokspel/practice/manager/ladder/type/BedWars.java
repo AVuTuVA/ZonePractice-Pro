@@ -2,6 +2,8 @@ package dev.lokspel.practice.manager.ladder.type;
 
 import static dev.lokspel.practice.util.PermanentConfig.PLACED_IN_FIGHT;
 
+import dev.lokspel.practice.config.language.LadderSpecificMessages;
+import dev.lokspel.practice.config.language.MatchTypeMessages;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.enums.RoundStatus;
@@ -29,8 +31,9 @@ public class BedWars extends BedFight implements LadderHandle {
   }
 
   @Override
-  public String getRespawnLanguagePath() {
-    return "BED-WARS";
+  public LadderSpecificMessages getRespawnMessages(
+      MatchTypeMessages.LadderSpecific ladderSpecific) {
+    return ladderSpecific.getBedWars();
   }
 
   @Override

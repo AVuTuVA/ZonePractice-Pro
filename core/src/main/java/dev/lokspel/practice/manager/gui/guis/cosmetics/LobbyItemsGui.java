@@ -1,6 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.ItemConfig;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -14,6 +16,7 @@ import dev.lokspel.practice.util.ItemCreateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,9 +25,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class LobbyItemsGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
+  private static final ItemStack FILLER_ITEM =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
   private static final ItemStack BACK_ITEM =
-      GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BACK-TO").get();
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+          .get();
 
   private static final int ROWS = 3;
   private static final int BACK_SLOT = 18;
@@ -38,9 +43,7 @@ public class LobbyItemsGui extends Gui {
     this.profile = profile;
     this.backToGui = backToGui;
 
-    String title =
-        GuiFile.getConfig()
-            .getString("GUIS.COSMETICS.LOBBY-ITEMS.TITLE", "<dark_gray>✦ Lobby Items");
+    String title = PracticeConfig.guis().getGuis().getCosmetics().getLobbyItems().getTitle();
     this.gui.put(1, InventoryUtil.createInventory(title, ROWS));
     build();
   }
@@ -92,10 +95,7 @@ public class LobbyItemsGui extends Gui {
 
     if (!CosmeticsPermissionManager.hasLobbyItemPermission(player, clicked)) {
       String noPerm =
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.LOBBY-ITEMS.NO-PERMISSION-MESSAGE",
-                  "<red>You don't have permission for this lobby cosmetic item!");
+          PracticeConfig.guis().getGuis().getCosmetics().getLobbyItems().getNoPermissionMessage();
       Common.sendMmMessage(player, noPerm);
       return;
     }
@@ -126,14 +126,16 @@ public class LobbyItemsGui extends Gui {
         player != null && CosmeticsPermissionManager.hasLobbyItemPermission(player, type);
     boolean active = type == selected;
 
-    String basePath = "GUIS.COSMETICS.LOBBY-ITEMS.ENTRIES." + type.name();
+    Map<String, ItemConfig> entries =
+        PracticeConfig.guis().getGuis().getCosmetics().getLobbyItems().getEntries();
+    ItemConfig entry = entries != null ? entries.get(type.name()) : null;
     final String name =
-        GuiFile.getConfig().getString(basePath + ".NAME", "<yellow>" + formatName(type));
+        entry != null && entry.getName() != null ? entry.getName() : "<yellow>" + formatName(type);
     final Material material =
-        safeMaterial(GuiFile.getConfig().getString(basePath + ".MATERIAL"), defaultMaterial(type));
+        safeMaterial(entry != null ? entry.getMaterial() : null, defaultMaterial(type));
 
-    List<String> lore = GuiFile.getConfig().getStringList(basePath + ".LORE");
-    if (lore.isEmpty()) {
+    List<String> lore = entry != null ? entry.getLore() : null;
+    if (lore == null || lore.isEmpty()) {
       lore =
           new ArrayList<>(
               List.of("", "<gray>Status: %status%", "<gray>Required: <white>%permission%", ""));

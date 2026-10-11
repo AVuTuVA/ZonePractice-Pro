@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.customladder.premadecustom;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
@@ -36,7 +36,11 @@ public class CustomLadderSumGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.KIT-EDITOR.KIT-SELECTOR.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getKitEditor()
+                .getKitSelector()
+                .getTitle()
                 .replace("%ladder%", ladder.getDisplayName())
                 .replace("%ladderOriginal%", ladder.getName()),
             4));
@@ -56,27 +60,61 @@ public class CustomLadderSumGui extends Gui {
     // Set kit columns
     for (int kit = 1; kit <= 4; kit++) {
       if (profile.getAllowedCustomKits() >= kit) {
-        GuiItem fillerItem = GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-SELECTOR.ICONS.FILLER-ITEM-2");
+        GuiItem fillerItem =
+            BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getKitEditor()
+                    .getKitSelector()
+                    .getIcons()
+                    .getFillerItem2());
 
         if (profile.getUnrankedCustomKits().get(ladder) != null
             && profile.getUnrankedCustomKits().get(ladder).get(kit) != null) {
           inventory.setItem(
               (kit - 1) * 2 + 1,
-              GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-SELECTOR.ICONS.EXISTING-KIT")
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getKitEditor()
+                          .getKitSelector()
+                          .getIcons()
+                          .getExistingKit())
                   .replace("%kit%", String.valueOf(kit))
                   .get());
           inventory.setItem(
               (kit - 1) * 2 + 1 + 9 * 2,
-              GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-SELECTOR.ICONS.EDIT-KIT").get());
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getKitEditor()
+                          .getKitSelector()
+                          .getIcons()
+                          .getEditKit())
+                  .get());
           inventory.setItem(
               (kit - 1) * 2 + 1 + 9 * 3,
-              GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-SELECTOR.ICONS.DELETE-KIT").get());
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getKitEditor()
+                          .getKitSelector()
+                          .getIcons()
+                          .getDeleteKit())
+                  .get());
 
           inventory.setItem((kit - 1) * 2 + 1 + 9, fillerItem.get());
         } else {
           inventory.setItem(
               (kit - 1) * 2 + 1,
-              GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-SELECTOR.ICONS.CREATE-KIT").get());
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getKitEditor()
+                          .getKitSelector()
+                          .getIcons()
+                          .getCreateKit())
+                  .get());
           for (int i = 1; i <= 3; i++) {
             inventory.setItem((kit - 1) * 2 + 1 + 9 * i, fillerItem.get());
           }
@@ -84,11 +122,25 @@ public class CustomLadderSumGui extends Gui {
       } else {
         inventory.setItem(
             (kit - 1) * 2 + 1,
-            GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-SELECTOR.ICONS.NO-PERMISSION").get());
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getKitEditor()
+                        .getKitSelector()
+                        .getIcons()
+                        .getNoPermission())
+                .get());
         for (int i = 1; i <= 3; i++) {
           inventory.setItem(
               (kit - 1) * 2 + 1 + 9 * i,
-              GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-SELECTOR.ICONS.FILLER-ITEM-1").get());
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getKitEditor()
+                          .getKitSelector()
+                          .getIcons()
+                          .getFillerItem1())
+                  .get());
         }
       }
     }
@@ -117,7 +169,11 @@ public class CustomLadderSumGui extends Gui {
       if (!ladder.isEnabled() || !ladder.isEditable() || ladder.isFrozen()) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("LADDER.KIT-EDITOR.KIT-SELECTOR.NOT-AVAILABLE")
+            PracticeConfig.language()
+                .getLadder()
+                .getKitEditor()
+                .getKitSelector()
+                .getNotAvailable()
                 .replace("%ladder%", ladder.getDisplayName()));
         GuiManager.getInstance().searchGui(GuiType.CustomLadder_Selector).open(player);
         return;
@@ -198,7 +254,14 @@ public class CustomLadderSumGui extends Gui {
     ProfileManager.getInstance().getProfile(player).setStatus(ProfileStatus.EDITOR);
 
     ItemStack backToItem =
-        GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-SELECTOR.ICONS.BACK-TO-KIT-SELECTOR").get();
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getKitEditor()
+                    .getKitSelector()
+                    .getIcons()
+                    .getBackToKitSelector())
+            .get();
 
     PlayerUtil.clearInventory(player);
     for (int i = 0; i < 9; i++) {

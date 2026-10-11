@@ -1,7 +1,7 @@
 package dev.lokspel.practice.listener;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.Common;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ public class PlayerPreLogin implements Listener {
   public void onPreLogin(AsyncPlayerPreLoginEvent event) {
     // Check if plugin is fully loaded
     if (!AstralPractice.isFullyLoaded()) {
-      String message = LanguageManager.getString("PLUGIN-LOADING-MESSAGE");
+      String message = PracticeConfig.language().getPluginLoadingMessage();
       if (message == null || message.isEmpty()) {
         message = "<red>The server is still loading. Please try again in a moment.";
       }
@@ -33,7 +33,7 @@ public class PlayerPreLogin implements Listener {
     String joiningPlayerName = event.getName();
     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
       if (onlinePlayer.getName().equalsIgnoreCase(joiningPlayerName)) {
-        String message = LanguageManager.getString("DUPLICATE-USERNAME-KICK");
+        String message = PracticeConfig.language().getDuplicateUsernameKick();
         if (message == null || message.isEmpty()) {
           message = "<red>A player with your username is already logged in!";
         }

@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -24,17 +24,65 @@ import org.bukkit.inventory.ItemStack;
 public class LadderMainGui extends Gui {
 
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.BACK-TO").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getBackTo())
+          .get();
   private static final ItemStack DELETE_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.DELETE").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getDelete())
+          .get();
   private static final ItemStack DESTROYABLE_BLOCK_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.DESTROYABLE-BLOCKS").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getDestroyableBlocks())
+          .get();
   private static final ItemStack INVENTORY_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.INVENTORY").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getInventory())
+          .get();
   private static final ItemStack SETTINGS_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.SETTINGS").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getSettings())
+          .get();
   private static final ItemStack MATCH_TYPE_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.MATCH-TYPE").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getMatchType())
+          .get();
 
   private final NormalLadder ladder;
 
@@ -43,7 +91,12 @@ public class LadderMainGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.LADDER.LADDER-MAIN.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getTitle()
                 .replace("%ladder%", ladder.getName()),
             4));
 
@@ -154,7 +207,8 @@ public class LadderMainGui extends Gui {
       case 35:
         if (ladder.isEnabled()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-DELETE-ENABLED"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getLadder().getCantDeleteEnabled());
           return;
         }
 
@@ -172,7 +226,14 @@ public class LadderMainGui extends Gui {
 
   private static ItemStack getNameItem(Ladder ladder) {
     GuiItem guiItem =
-        GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.LADDER-NAME")
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getLadder()
+                    .getLadderMain()
+                    .getIcons()
+                    .getLadderName())
             .replace("%ladder%", ladder.getName())
             .replace("%type%", ladder.getType().getName());
 
@@ -185,17 +246,53 @@ public class LadderMainGui extends Gui {
 
   private static ItemStack getStatusItem(Ladder ladder) {
     if (ladder.isEnabled()) {
-      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.STATUS.ENABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getStatus()
+                  .getEnabled())
+          .get();
     } else {
-      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.STATUS.DISABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getStatus()
+                  .getDisabled())
+          .get();
     }
   }
 
   private static ItemStack getFreezeItem(boolean isFrozen) {
     if (isFrozen) {
-      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.FREEZE.FROZEN").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getFreeze()
+                  .getFrozen())
+          .get();
     } else {
-      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.FREEZE.NOT-FROZEN").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getFreeze()
+                  .getNotFrozen())
+          .get();
     }
   }
 

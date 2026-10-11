@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.party.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.util.Common;
@@ -15,7 +15,12 @@ public final class PartyInfoArg {
     if (args.length != 1 && args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INFO.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getInfo()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -25,20 +30,37 @@ public final class PartyInfoArg {
       party = PartyManager.getInstance().getParty(player);
       if (party == null) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INFO.NO-PARTY"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getParty()
+                .getArguments()
+                .getInfo()
+                .getNoParty());
         return;
       }
     } else {
       if (!player.hasPermission("ap.party.info.others")) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INFO.NO-PERMISSION"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getParty()
+                .getArguments()
+                .getInfo()
+                .getNoPermission());
       }
 
       Player target = Bukkit.getPlayer(args[1]);
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INFO.NOT-ONLINE")
+            PracticeConfig.language()
+                .getCommand()
+                .getParty()
+                .getArguments()
+                .getInfo()
+                .getNotOnline()
                 .replace("%target%", args[1]));
         return;
       }
@@ -47,23 +69,39 @@ public final class PartyInfoArg {
       if (party == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.INFO.PLAYER-NO-PARTY")
+            PracticeConfig.language()
+                .getCommand()
+                .getParty()
+                .getArguments()
+                .getInfo()
+                .getPlayerNoParty()
                 .replace("%target%", target.getName()));
         return;
       }
     }
 
-    for (String line : LanguageManager.getList("COMMAND.PARTY.ARGUMENTS.INFO.PARTY-INFO")) {
+    for (String line :
+        PracticeConfig.language().getCommand().getParty().getArguments().getInfo().getPartyInfo()) {
       Common.sendMmMessage(
           player,
           line.replace("%leader%", party.getLeader().getName())
               .replace(
                   "%partyState%",
                   (party.isPublicParty()
-                      ? LanguageManager.getString(
-                          "COMMAND.PARTY.ARGUMENTS.INFO.PARTY-STATES.PUBLIC")
-                      : LanguageManager.getString(
-                          "COMMAND.PARTY.ARGUMENTS.INFO.PARTY-STATES.PRIVATE")))
+                      ? PracticeConfig.language()
+                          .getCommand()
+                          .getParty()
+                          .getArguments()
+                          .getInfo()
+                          .getPartyStates()
+                          .getPublicValue()
+                      : PracticeConfig.language()
+                          .getCommand()
+                          .getParty()
+                          .getArguments()
+                          .getInfo()
+                          .getPartyStates()
+                          .getPrivateValue()))
               .replace("%maxPlayerLimit%", String.valueOf(party.getMaxPlayerLimit()))
               .replace("%memberSize%", String.valueOf(party.getMembers().size()))
               .replace(

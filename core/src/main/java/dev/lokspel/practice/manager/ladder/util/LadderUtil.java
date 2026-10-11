@@ -3,11 +3,10 @@ package dev.lokspel.practice.manager.ladder.util;
 import static dev.lokspel.practice.util.PermanentConfig.FIGHT_ENTITY;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.util.BlockUtil;
@@ -57,16 +56,19 @@ public enum LadderUtil {
   public static void changeStatus(Player player, NormalLadder ladder) {
     if (!ladder.isEnabled()) {
       if (ladder.getIcon() == null) {
-        Common.sendMmMessage(player, LanguageManager.getString("LADDER.STATUS-CHANGE.NO-ICON"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getLadder().getStatusChange().getNoIcon());
         return;
       }
       if (!ladder.getKitData().isSet()) {
-        Common.sendMmMessage(player, LanguageManager.getString("LADDER.STATUS-CHANGE.NO-CONTENT"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getLadder().getStatusChange().getNoContent());
         return;
       }
       if (ladder instanceof SkyWars && ((SkyWars) ladder).getSkyWarsLoot() == null) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("LADDER.STATUS-CHANGE.SKYWARS.NO-LOOT"));
+            player,
+            PracticeConfig.language().getLadder().getStatusChange().getSkywars().getNoLoot());
         return;
       }
 
@@ -74,7 +76,7 @@ public enum LadderUtil {
     } else {
       if (!MatchManager.getInstance().getLiveMatchesByLadder(ladder).isEmpty()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("LADDER.STATUS-CHANGE.CANT-DISABLE"));
+            player, PracticeConfig.language().getLadder().getStatusChange().getCantDisable());
         return;
       }
 
@@ -105,7 +107,7 @@ public enum LadderUtil {
     GuiManager.getInstance().searchGui(GuiType.Queue_Ranked).update(true);
     GuiManager.getInstance().searchGui(GuiType.CustomLadder_Selector).update();
 
-    if (!ConfigManager.getBoolean("SETUP.PRESERVE-CUSTOM-KITS-ON-LADDER-DISABLE")) {
+    if (!PracticeConfig.settings().getSetup().isPreserveCustomKitsOnLadderDisable()) {
       Bukkit.getScheduler()
           .runTaskAsynchronously(
               AstralPractice.getInstance(),

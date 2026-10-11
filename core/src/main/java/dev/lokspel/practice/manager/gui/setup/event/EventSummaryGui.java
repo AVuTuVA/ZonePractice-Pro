@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.event;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import dev.lokspel.practice.manager.gui.Gui;
@@ -23,7 +24,7 @@ public class EventSummaryGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.EVENT.EVENT-MANAGER.TITLE"), 3));
+            PracticeConfig.guis().getGuis().getSetup().getEvent().getEventManager().getTitle(), 3));
 
     build();
   }
@@ -37,7 +38,17 @@ public class EventSummaryGui extends Gui {
 
     // Back to Manager Icon
     gui.get(1)
-        .setItem(18, GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MANAGER.ICONS.BACK-TO").get());
+        .setItem(
+            18,
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getEvent()
+                        .getEventManager()
+                        .getIcons()
+                        .getBackTo())
+                .get());
 
     update();
   }
@@ -46,15 +57,36 @@ public class EventSummaryGui extends Gui {
   public void update() {
     for (EventData eventData : EventManager.getInstance().getEventData().values()) {
       ItemStack icon =
-          GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MANAGER.ICONS.EVENT-ICON")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getSetup()
+                      .getEvent()
+                      .getEventManager()
+                      .getIcons()
+                      .getEventIcon())
               .replace("%eventName%", eventData.getType().getName())
               .replace(
                   "%state%",
                   eventData.isEnabled()
-                      ? GuiFile.getString(
-                          "GUIS.SETUP.EVENT.EVENT-MANAGER.ICONS.EVENT-ICON.STATUS-NAMES.ENABLED")
-                      : GuiFile.getString(
-                          "GUIS.SETUP.EVENT.EVENT-MANAGER.ICONS.EVENT-ICON.STATUS-NAMES.DISABLED"))
+                      ? PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getEvent()
+                          .getEventManager()
+                          .getIcons()
+                          .getEventIcon()
+                          .getStatusNames()
+                          .getEnabled()
+                      : PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getEvent()
+                          .getEventManager()
+                          .getIcons()
+                          .getEventIcon()
+                          .getStatusNames()
+                          .getDisabled())
               .setBaseItem(eventData.getIcon().get())
               .get();
 

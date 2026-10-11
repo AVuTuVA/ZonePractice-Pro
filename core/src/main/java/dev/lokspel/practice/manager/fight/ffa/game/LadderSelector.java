@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.fight.ffa.game;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -20,9 +20,12 @@ import org.bukkit.inventory.ItemStack;
 public class LadderSelector extends Gui {
 
   private static final GuiItem LADDER_ITEM =
-      GuiFile.getGuiItem("GUIS.FFA.LADDER-SELECTOR.ICONS.LADDER");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getFfa().getLadderSelector().getIcons().getLadder());
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.FFA.LADDER-SELECTOR.ICONS.FILLER").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis().getGuis().getFfa().getLadderSelector().getIcons().getFiller())
+          .get();
 
   private final Ffa ffa;
   private final FfaArena ffaArena;
@@ -35,7 +38,9 @@ public class LadderSelector extends Gui {
     this.ffaArena = ffa.getArena();
 
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString("GUIS.FFA.LADDER-SELECTOR.TITLE"), 3));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getFfa().getLadderSelector().getTitle(), 3));
   }
 
   @Override
@@ -105,7 +110,9 @@ public class LadderSelector extends Gui {
     if (!ffa.isOpen()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("FFA.FFA-CLOSED")
+          PracticeConfig.language()
+              .getFfa()
+              .getFfaClosed()
               .replace("%arena%", ffaArena.getDisplayName()));
       player.closeInventory();
       return;
@@ -113,7 +120,8 @@ public class LadderSelector extends Gui {
 
     if (ffa.getPlayers().containsKey(player)) {
       if (ffa.isFfaKitBlocked() && ffa.isFfaInCombat(player)) {
-        Common.sendMmMessage(player, LanguageManager.getString("FFA.COMMAND.KIT.IN-COMBAT"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getFfa().getCommand().getKit().getInCombat());
         player.closeInventory();
         return;
       }
@@ -122,7 +130,11 @@ public class LadderSelector extends Gui {
       if (oldLadder == ladder) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("FFA.COMMAND.KIT.ALREADY-IN-KIT")
+            PracticeConfig.language()
+                .getFfa()
+                .getCommand()
+                .getKit()
+                .getAlreadyInKit()
                 .replace("%ladder%", ladder.getDisplayName()));
         return;
       }

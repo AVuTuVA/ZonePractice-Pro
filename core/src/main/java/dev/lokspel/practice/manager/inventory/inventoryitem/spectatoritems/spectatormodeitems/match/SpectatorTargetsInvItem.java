@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.spectatoritems.spectatormodeitems.match;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.gui.guis.SpectatorTargetsGui;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
@@ -11,15 +11,13 @@ import org.bukkit.entity.Player;
 public class SpectatorTargetsInvItem extends InvItem {
 
   public SpectatorTargetsInvItem() {
-    super(
-        getItemStack("SPECTATOR.MATCH.NORMAL.TARGETS.ITEM"),
-        getInt("SPECTATOR.MATCH.NORMAL.TARGETS.SLOT"));
+    super(PracticeConfig.inventories().getSpectator().getMatch().getNormal().get("TARGETS"));
   }
 
   @Override
   public void handleClickEvent(Player player) {
     if (!player.hasPermission("ap.spectate.targets")) {
-      Common.sendMmMessage(player, LanguageManager.getString("SPECTATE.NO-PERMISSIONS"));
+      Common.sendMmMessage(player, PracticeConfig.language().getSpectate().getNoPermissions());
       return;
     }
 

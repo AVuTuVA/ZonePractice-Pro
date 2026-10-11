@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.lobbyitems;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
@@ -11,15 +11,13 @@ import org.bukkit.entity.Player;
 public class PartyJoinInvItem extends InvItem {
 
   public PartyJoinInvItem() {
-    super(
-        getItemStack("LOBBY-BASIC.NORMAL.PARTY-JOIN.ITEM"),
-        getInt("LOBBY-BASIC.NORMAL.PARTY-JOIN.SLOT"));
+    super(PracticeConfig.inventories().getLobbyBasic().getNormal().get("PARTY-JOIN"));
   }
 
   @Override
   public void handleClickEvent(Player player) {
     if (!PartyManager.getInstance().hasJoinablePublicParty()) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-JOINABLE-PARTY"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoJoinableParty());
       return;
     }
 

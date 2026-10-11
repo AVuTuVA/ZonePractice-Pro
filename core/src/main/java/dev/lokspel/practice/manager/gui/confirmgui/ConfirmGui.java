@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.confirmgui;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.util.InventoryUtil;
 import lombok.Getter;
@@ -12,9 +13,13 @@ import org.bukkit.inventory.ItemStack;
 public class ConfirmGui {
 
   private static final ItemStack CANCEL_ITEM =
-      GuiFile.getGuiItem("GUIS.VALIDATION-GUI.ICONS.CANCEL").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis().getGuis().getValidationGui().getIcons().getCancel())
+          .get();
   private static final ItemStack APPROVE_ITEM =
-      GuiFile.getGuiItem("GUIS.VALIDATION-GUI.ICONS.APPROVE").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis().getGuis().getValidationGui().getIcons().getApprove())
+          .get();
 
   private final ConfirmGuiType type;
   private final String description;
@@ -33,7 +38,9 @@ public class ConfirmGui {
   }
 
   private void buildInventory() {
-    inventory = InventoryUtil.createInventory(GuiFile.getString("GUIS.VALIDATION-GUI.TITLE"), 1);
+    inventory =
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getValidationGui().getTitle(), 1);
 
     for (int i = 0; i < 9; i++) {
       inventory.setItem(i, CANCEL_ITEM);

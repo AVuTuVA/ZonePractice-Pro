@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.match.type.duel;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.Round;
 import dev.lokspel.practice.manager.fight.match.interfaces.PlayerWinner;
@@ -62,7 +62,8 @@ public class DuelRound extends Round implements PlayerWinner {
             int loserOldElo = loserLadderStats.getElo();
             loserLadderStats.decreaseElo(loserEloChange);
 
-            for (String reLine : LanguageManager.getList("MATCH.DUEL.MATCH-END.RANKED-EXTENSION")) {
+            for (String reLine :
+                PracticeConfig.language().getMatch().getDuel().getMatchEnd().getRankedExtension()) {
               rankedExtension.add(
                   reLine
                       .replace("%winner%", matchWinner.getName())
@@ -84,13 +85,13 @@ public class DuelRound extends Round implements PlayerWinner {
 
         RewardCommandManager.getInstance().executeCommands(duel, duel.isRanked());
       } else {
-        for (String line : LanguageManager.getList("MATCH.DUEL.MATCH-END-DRAW")) {
+        for (String line : PracticeConfig.language().getMatch().getDuel().getMatchEndDraw()) {
           duel.sendMessage(line, true);
         }
       }
     } else {
       if (roundWinner != null) {
-        for (String line : LanguageManager.getList("MATCH.DUEL.MATCH-END-ROUND")) {
+        for (String line : PracticeConfig.language().getMatch().getDuel().getMatchEndRound()) {
           duel.sendMessage(
               line.replace("%player%", roundWinner.getName())
                   .replace(
@@ -99,7 +100,7 @@ public class DuelRound extends Round implements PlayerWinner {
               true);
         }
       } else {
-        for (String line : LanguageManager.getList("MATCH.DUEL.MATCH-END-ROUND-DRAW")) {
+        for (String line : PracticeConfig.language().getMatch().getDuel().getMatchEndRoundDraw()) {
           duel.sendMessage(line, true);
         }
       }

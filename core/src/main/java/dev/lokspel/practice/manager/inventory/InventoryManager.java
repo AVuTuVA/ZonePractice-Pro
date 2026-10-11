@@ -1,9 +1,8 @@
 package dev.lokspel.practice.manager.inventory;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.backend.BackendManager;
-import dev.lokspel.practice.manager.backend.ConfigFile;
-import dev.lokspel.practice.manager.backend.ConfigManager;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.inventory.inventories.EventQueueInventory;
 import dev.lokspel.practice.manager.inventory.inventories.LobbyInventory;
@@ -30,7 +29,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
 @Getter
-public class InventoryManager extends ConfigFile {
+public class InventoryManager {
 
   private static InventoryManager instance;
 
@@ -42,11 +41,11 @@ public class InventoryManager extends ConfigFile {
   }
 
   public static final boolean SPECTATOR_MODE_ENABLED =
-      ConfigManager.getBoolean("SPECTATOR-SETTINGS.SPECTATOR-MODE");
+      PracticeConfig.settings().getSpectatorSettings().isSpectatorMode();
   public static final boolean SPECTATOR_MENU_ENABLED =
-      ConfigManager.getBoolean("SPECTATOR-SETTINGS.SPECTATOR-MENU");
+      PracticeConfig.settings().getSpectatorSettings().isSpectatorMenu();
   public static final double STAFF_SPECTATOR_SPEED =
-      ConfigManager.getDouble("STAFF-MODE.STAFF-SPECTATOR-SPEED");
+      PracticeConfig.settings().getStaffMode().getStaffSpectatorSpeed();
 
   private final Map<Inventory.InventoryType, Inventory> inventories = new HashMap<>();
   private final List<Player> setupModePlayers = new ArrayList<>();
@@ -58,25 +57,48 @@ public class InventoryManager extends ConfigFile {
   private final InventoryTransitionService transitionService = new InventoryTransitionService(this);
 
   private InventoryManager() {
-    super("", "inventories");
-
-    reloadFile();
-
     Bukkit.getPluginManager().registerEvents(new InventoryListener(), AstralPractice.getInstance());
   }
 
   public void loadInventories() {
-    this.inventories.put(Inventory.InventoryType.LOBBY, new LobbyInventory());
-    this.inventories.put(Inventory.InventoryType.PARTY, new PartyInventory());
-    this.inventories.put(Inventory.InventoryType.MATCH_QUEUE, new MatchQueueInventory());
-    this.inventories.put(Inventory.InventoryType.EVENT_QUEUE, new EventQueueInventory());
-    this.inventories.put(Inventory.InventoryType.STAFF_MODE, new StaffInventory());
-    this.inventories.put(Inventory.InventoryType.SPECTATE_EVENT, new SpecEventInventory());
-    this.inventories.put(Inventory.InventoryType.SPECTATE_FFA, new SpecFfaInventory());
-    this.inventories.put(Inventory.InventoryType.SPECTATE_MATCH, new SpecMatchInventory());
-    this.inventories.put(Inventory.InventoryType.SPEC_MODE_LOBBY, new SpecModeLobbyInventory());
+    this.inventories.putAll(createInventories());
 
     this.getData();
+  }
+
+  /**
+   * Rebuilds every inventory from inventories.yml and moves the players and armor over. If an item
+   * cannot be built, the current inventories stay in place.
+   */
+  public void reload() {
+    Map<Inventory.InventoryType, Inventory> rebuilt = createInventories();
+    this.inventories.forEach(
+        (type, old) -> {
+          Inventory inventory = rebuilt.get(type);
+          if (inventory == null) {
+            return;
+          }
+          inventory.getPlayers().addAll(old.getPlayers());
+          inventory.getInvArmor().setArmorContent(old.getInvArmor().getArmorContent());
+        });
+
+    this.inventories.clear();
+    this.inventories.putAll(rebuilt);
+  }
+
+  private static Map<Inventory.InventoryType, Inventory> createInventories() {
+    Map<Inventory.InventoryType, Inventory> inventories = new HashMap<>();
+    inventories.put(Inventory.InventoryType.LOBBY, new LobbyInventory());
+    inventories.put(Inventory.InventoryType.PARTY, new PartyInventory());
+    inventories.put(Inventory.InventoryType.MATCH_QUEUE, new MatchQueueInventory());
+    inventories.put(Inventory.InventoryType.EVENT_QUEUE, new EventQueueInventory());
+    inventories.put(Inventory.InventoryType.STAFF_MODE, new StaffInventory());
+    inventories.put(Inventory.InventoryType.SPECTATE_EVENT, new SpecEventInventory());
+    inventories.put(Inventory.InventoryType.SPECTATE_FFA, new SpecFfaInventory());
+    inventories.put(Inventory.InventoryType.SPECTATE_MATCH, new SpecMatchInventory());
+    inventories.put(Inventory.InventoryType.SPEC_MODE_LOBBY, new SpecModeLobbyInventory());
+
+    return inventories;
   }
 
   public Inventory getPlayerInventory(Player player) {
@@ -142,7 +164,6 @@ public class InventoryManager extends ConfigFile {
     transitionService.setStaffModeInventory(player);
   }
 
-  @Override
   public void setData() {
     for (Inventory inventory : this.inventories.values()) {
       if (inventory.getInvArmor().isNull()) {
@@ -160,7 +181,6 @@ public class InventoryManager extends ConfigFile {
     BackendManager.save();
   }
 
-  @Override
   public void getData() {
     if (!BackendManager.getConfig().isConfigurationSection("INV-ARMORS")) {
       return;

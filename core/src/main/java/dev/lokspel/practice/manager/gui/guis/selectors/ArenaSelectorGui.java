@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.selectors;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.duel.DuelManager;
 import dev.lokspel.practice.manager.duel.DuelRequest;
 import dev.lokspel.practice.manager.fight.match.Match;
@@ -33,9 +33,23 @@ import org.bukkit.inventory.ItemStack;
 public class ArenaSelectorGui extends MatchStarterGui {
 
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.SELECTORS.ARENA-SELECTOR.ICONS.BACK-TO-SELECTOR").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSelectors()
+                  .getArenaSelector()
+                  .getIcons()
+                  .getBackToSelector())
+          .get();
   private static final ItemStack RANDOM_ARENA_ITEM =
-      GuiFile.getGuiItem("GUIS.SELECTORS.ARENA-SELECTOR.ICONS.RANDOM-ARENA").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSelectors()
+                  .getArenaSelector()
+                  .getIcons()
+                  .getRandomArena())
+          .get();
 
   private final int spaces = 45;
   private final Map<Integer, Map<Integer, Arena>> arenaIcons = new HashMap<>();
@@ -63,7 +77,11 @@ public class ArenaSelectorGui extends MatchStarterGui {
     for (int page = 1; PageUtil.isPageValid(arenas.size(), page, spaces) || page == 1; page++) {
       Inventory inventory = existingInventories.get(page);
       String title =
-          GuiFile.getString("GUIS.SELECTORS.ARENA-SELECTOR.TITLE")
+          PracticeConfig.guis()
+              .getGuis()
+              .getSelectors()
+              .getArenaSelector()
+              .getTitle()
               .replace("%matchType%", this.matchType.getName(false))
               .replace("%page%", String.valueOf(page));
       if (inventory == null || inventory.getSize() != 6 * 9) {
@@ -90,14 +108,26 @@ public class ArenaSelectorGui extends MatchStarterGui {
         Arena arena = arenas.get(i);
         List<String> lore = new ArrayList<>();
         for (String line :
-            GuiFile.getStringList("GUIS.SELECTORS.ARENA-SELECTOR.ICONS.ARENA-ICON.LORE")) {
+            PracticeConfig.guis()
+                .getGuis()
+                .getSelectors()
+                .getArenaSelector()
+                .getIcons()
+                .getArenaIcon()
+                .getLore()) {
           lore.add(line.replace("%arena%", arena.getDisplayName()));
         }
 
         ItemStack icon =
             ItemCreateUtil.createItem(
                 arena.getIcon(),
-                GuiFile.getString("GUIS.SELECTORS.ARENA-SELECTOR.ICONS.ARENA-ICON.NAME")
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSelectors()
+                    .getArenaSelector()
+                    .getIcons()
+                    .getArenaIcon()
+                    .getName()
                     .replace("%arena%", arena.getDisplayName()),
                 lore);
 
@@ -109,7 +139,13 @@ public class ArenaSelectorGui extends MatchStarterGui {
       ItemStack left =
           page == 1
               ? BACK_TO_ITEM
-              : GuiFile.getGuiItem("GUIS.SELECTORS.ARENA-SELECTOR.ICONS.PAGE-LEFT")
+              : BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSelectors()
+                          .getArenaSelector()
+                          .getIcons()
+                          .getPageLeft())
                   .replace("%page%", String.valueOf(page - 1))
                   .get();
       inventory.setItem(45, left);
@@ -118,7 +154,13 @@ public class ArenaSelectorGui extends MatchStarterGui {
 
       ItemStack right =
           PageUtil.isPageValid(arenas.size(), page + 1, spaces)
-              ? GuiFile.getGuiItem("GUIS.SELECTORS.ARENA-SELECTOR.ICONS.PAGE-RIGHT")
+              ? BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSelectors()
+                          .getArenaSelector()
+                          .getIcons()
+                          .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
               : GuiManager.getFILLER_ITEM();
@@ -168,14 +210,15 @@ public class ArenaSelectorGui extends MatchStarterGui {
 
     if (!ladder.isEnabled() || !ladder.getMatchTypes().contains(matchType)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("ARENA.SELECTOR.LADDER-NOT-AVAILABLE"));
+          player, PracticeConfig.language().getArena().getSelector().getLadderNotAvailable());
       backTo.update();
       backTo.open(player);
       return;
     }
 
     if (ladder instanceof NormalLadder && ((NormalLadder) ladder).isFrozen()) {
-      Common.sendMmMessage(player, LanguageManager.getString("ARENA.SELECTOR.LADDER-FROZEN"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getArena().getSelector().getLadderFrozen());
       backTo.open(player);
       return;
     }
@@ -187,7 +230,8 @@ public class ArenaSelectorGui extends MatchStarterGui {
       Player target = DuelManager.getInstance().getPendingRequestTarget().get(player);
 
       if (!target.isOnline()) {
-        Common.sendMmMessage(player, LanguageManager.getString("ARENA.SELECTOR.DUEL.TARGET-LEFT"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getArena().getSelector().getDuel().getTargetLeft());
         player.closeInventory();
         return;
       }
@@ -209,7 +253,8 @@ public class ArenaSelectorGui extends MatchStarterGui {
         Arena arena = arenaIcons.get(page).get(slot);
         if (arena.getAvailableArena() == null) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("ARENA.SELECTOR.DUEL.ARENA-NOT-AVAILABLE"));
+              player,
+              PracticeConfig.language().getArena().getSelector().getDuel().getArenaNotAvailable());
           update();
           return;
         }
@@ -234,7 +279,8 @@ public class ArenaSelectorGui extends MatchStarterGui {
         if (party.getMembers().size() < 2) {
           player.closeInventory();
           Common.sendMmMessage(
-              player, LanguageManager.getString("ARENA.SELECTOR.PARTY.NOT-ENOUGH-PLAYERS"));
+              player,
+              PracticeConfig.language().getArena().getSelector().getParty().getNotEnoughPlayers());
           return;
         }
 
@@ -244,7 +290,12 @@ public class ArenaSelectorGui extends MatchStarterGui {
 
           if (arena == null) {
             Common.sendMmMessage(
-                player, LanguageManager.getString("ARENA.SELECTOR.PARTY.NO-AVAILABLE-ARENA"));
+                player,
+                PracticeConfig.language()
+                    .getArena()
+                    .getSelector()
+                    .getParty()
+                    .getNoAvailableArena());
             return;
           }
         } else if (arenaIcons.containsKey(page) && arenaIcons.get(page).containsKey(slot)) {
@@ -255,7 +306,8 @@ public class ArenaSelectorGui extends MatchStarterGui {
 
         if (arena.getAvailableArena() == null) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("ARENA.SELECTOR.PARTY.ARENA-NOT-AVAILABLE"));
+              player,
+              PracticeConfig.language().getArena().getSelector().getParty().getArenaNotAvailable());
           update();
           return;
         }
@@ -269,7 +321,8 @@ public class ArenaSelectorGui extends MatchStarterGui {
 
           Match match = getMatch(party, arena, ladder.getRounds());
           if (match == null) {
-            Common.sendMmMessage(player, LanguageManager.getString("ARENA.SELECTOR.PARTY.ERROR"));
+            Common.sendMmMessage(
+                player, PracticeConfig.language().getArena().getSelector().getParty().getError());
             return;
           }
 
@@ -286,7 +339,12 @@ public class ArenaSelectorGui extends MatchStarterGui {
 
         if (!PartyManager.getInstance().getParties().contains(target)) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("ARENA.SELECTOR.PARTY.TARGET-PARTY-DISBANDED"));
+              player,
+              PracticeConfig.language()
+                  .getArena()
+                  .getSelector()
+                  .getParty()
+                  .getTargetPartyDisbanded());
           GuiManager.getInstance().searchGui(GuiType.Party_OtherParties).open(player);
           return;
         }
@@ -311,7 +369,11 @@ public class ArenaSelectorGui extends MatchStarterGui {
           if (arena.getAvailableArena() == null) {
             Common.sendMmMessage(
                 player,
-                LanguageManager.getString("ARENA.SELECTOR.PARTY.ARENA-CURRENTLY-NOT-AVAILABLE"));
+                PracticeConfig.language()
+                    .getArena()
+                    .getSelector()
+                    .getParty()
+                    .getArenaCurrentlyNotAvailable());
             update();
             return;
           }

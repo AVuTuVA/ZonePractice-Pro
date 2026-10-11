@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
@@ -15,7 +15,7 @@ public class SettingsCommand implements CommandExecutor {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
@@ -23,12 +23,14 @@ public class SettingsCommand implements CommandExecutor {
 
     if (!profile.getStatus().equals(ProfileStatus.LOBBY)
         && !profile.getStatus().equals(ProfileStatus.STAFF_MODE)) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SETTINGS.CANT-USE"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getSettings().getCantUse());
       return false;
     }
 
     if (!player.hasPermission("ap.settings.open")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SETTINGS.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getSettings().getNoPermission());
       return false;
     }
 

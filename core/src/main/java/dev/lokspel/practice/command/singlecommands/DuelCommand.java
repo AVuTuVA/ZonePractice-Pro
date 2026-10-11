@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.duel.DuelManager;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
 import dev.lokspel.practice.manager.gui.guis.selectors.LadderSelectorGui;
@@ -24,12 +24,13 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
     if (!player.hasPermission("ap.duel")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.DUEL.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getDuel().getNoPermission());
       return false;
     }
 
@@ -37,12 +38,17 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
 
     if (args.length != 1) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("command.duel.command-help").replace("%label%", label));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getDuel()
+              .getCommandHelp()
+              .replace("%label%", label));
       return false;
     }
 
     if (!profile.getStatus().equals(ProfileStatus.LOBBY) || profile.isParty()) {
-      Common.sendMmMessage(player, LanguageManager.getString("command.duel.cant-duel"));
+      Common.sendMmMessage(player, PracticeConfig.language().getCommand().getDuel().getCantDuel());
       return false;
     }
 
@@ -51,12 +57,16 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
     if (target == null || targetProfile == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.duel.player-offline").replace("%target%", args[0]));
+          PracticeConfig.language()
+              .getCommand()
+              .getDuel()
+              .getPlayerOffline()
+              .replace("%target%", args[0]));
       return false;
     }
 
     if (target.equals(player)) {
-      Common.sendMmMessage(player, LanguageManager.getString("command.duel.self-duel"));
+      Common.sendMmMessage(player, PracticeConfig.language().getCommand().getDuel().getSelfDuel());
       return false;
     }
 
@@ -64,7 +74,10 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
         && !player.hasPermission("ap.duel.infiniteinvite")) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.duel.already-invited")
+          PracticeConfig.language()
+              .getCommand()
+              .getDuel()
+              .getAlreadyInvited()
               .replace("%target%", target.getName()));
       return false;
     }
@@ -72,7 +85,10 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
     if (targetProfile.isParty()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.duel.player-cant-duel")
+          PracticeConfig.language()
+              .getCommand()
+              .getDuel()
+              .getPlayerCantDuel()
               .replace("%target%", target.getName()));
       return false;
     }
@@ -82,7 +98,10 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
         && !targetProfile.getStatus().equals(ProfileStatus.SPECTATE)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.duel.player-cant-duel")
+          PracticeConfig.language()
+              .getCommand()
+              .getDuel()
+              .getPlayerCantDuel()
               .replace("%target%", target.getName()));
       return false;
     }
@@ -90,7 +109,10 @@ public class DuelCommand implements CommandExecutor, TabCompleter {
     if (!targetProfile.isDuelRequest()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.duel.player-not-receive")
+          PracticeConfig.language()
+              .getCommand()
+              .getDuel()
+              .getPlayerNotReceive()
               .replace("%target%", target.getName()));
       return false;
     }

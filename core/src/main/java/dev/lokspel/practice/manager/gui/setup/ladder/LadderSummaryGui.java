@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -50,7 +51,12 @@ public class LadderSummaryGui extends Gui {
     for (int page = 1; PageUtil.isPageValid(ladders.size(), page, spaces) || page == 1; page++) {
       Inventory inventory = existingInventories.get(page);
       String title =
-          GuiFile.getString("GUIS.SETUP.LADDER.LADDER-MANAGER.TITLE")
+          PracticeConfig.guis()
+              .getGuis()
+              .getSetup()
+              .getLadder()
+              .getLadderManager()
+              .getTitle()
               .replace("%page%", String.valueOf(page));
       if (inventory == null || inventory.getSize() != 6 * 9) {
         inventory = InventoryUtil.createInventory(title, 6);
@@ -83,15 +89,37 @@ public class LadderSummaryGui extends Gui {
 
       ItemStack left =
           page == 1
-              ? GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MANAGER.ICONS.BACK-TO").get()
-              : GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MANAGER.ICONS.PAGE-LEFT")
+              ? BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getLadder()
+                          .getLadderManager()
+                          .getIcons()
+                          .getBackTo())
+                  .get()
+              : BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getLadder()
+                          .getLadderManager()
+                          .getIcons()
+                          .getPageLeft())
                   .replace("%page%", String.valueOf(page - 1))
                   .get();
       inventory.setItem(45, left);
 
       ItemStack right =
           PageUtil.isPageValid(ladders.size(), page + 1, spaces)
-              ? GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MANAGER.ICONS.PAGE-RIGHT")
+              ? BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getLadder()
+                          .getLadderManager()
+                          .getIcons()
+                          .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
               : GuiManager.getFILLER_ITEM();
@@ -150,14 +178,35 @@ public class LadderSummaryGui extends Gui {
 
   private ItemStack getLadderItem(NormalLadder ladder) {
     String enabledStatus =
-        GuiFile.getString(
-            "GUIS.SETUP.LADDER.LADDER-MANAGER.ICONS.LADDER-ICON.STATUS-NAMES.ENABLED");
+        PracticeConfig.guis()
+            .getGuis()
+            .getSetup()
+            .getLadder()
+            .getLadderManager()
+            .getIcons()
+            .getLadderIcon()
+            .getStatusNames()
+            .getEnabled();
     String disabledStatus =
-        GuiFile.getString(
-            "GUIS.SETUP.LADDER.LADDER-MANAGER.ICONS.LADDER-ICON.STATUS-NAMES.DISABLED");
+        PracticeConfig.guis()
+            .getGuis()
+            .getSetup()
+            .getLadder()
+            .getLadderManager()
+            .getIcons()
+            .getLadderIcon()
+            .getStatusNames()
+            .getDisabled();
 
     GuiItem guiItem =
-        GuiFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MANAGER.ICONS.LADDER-ICON")
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getLadder()
+                    .getLadderManager()
+                    .getIcons()
+                    .getLadderIcon())
             .replace("%ladder%", ladder.getName())
             .replace("%type%", ladder.getType().getName())
             .replace("%ladderState%", ladder.isEnabled() ? enabledStatus : disabledStatus)

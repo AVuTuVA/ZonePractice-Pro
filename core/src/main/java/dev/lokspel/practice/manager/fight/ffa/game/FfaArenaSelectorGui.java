@@ -1,8 +1,9 @@
 package dev.lokspel.practice.manager.fight.ffa.game;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.ffa.FfaManager;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
@@ -19,22 +20,41 @@ import org.bukkit.inventory.ItemStack;
 public class FfaArenaSelectorGui extends Gui {
 
   private static final String BUILD_ON =
-      GuiFile.getString("GUIS.FFA.ARENA-SELECTOR.ICONS.ARENA.BUILD-STATUS.ENABLED");
+      PracticeConfig.guis()
+          .getGuis()
+          .getFfa()
+          .getArenaSelector()
+          .getIcons()
+          .getArena()
+          .getBuildStatus()
+          .getEnabled();
   private static final String BUILD_OFF =
-      GuiFile.getString("GUIS.FFA.ARENA-SELECTOR.ICONS.ARENA.BUILD-STATUS.DISABLED");
+      PracticeConfig.guis()
+          .getGuis()
+          .getFfa()
+          .getArenaSelector()
+          .getIcons()
+          .getArena()
+          .getBuildStatus()
+          .getDisabled();
   private static final GuiItem ARENA_ITEM =
-      GuiFile.getGuiItem("GUIS.FFA.ARENA-SELECTOR.ICONS.ARENA");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getFfa().getArenaSelector().getIcons().getArena());
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.FFA.ARENA-SELECTOR.ICONS.FILLER").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis().getGuis().getFfa().getArenaSelector().getIcons().getFiller())
+          .get();
 
   private final Map<Integer, FfaArena> arenaSlots = new HashMap<>();
 
   public FfaArenaSelectorGui() {
     super(GuiType.FFA_Arena_Selector);
 
-    int rows = Math.max(1, GuiFile.getInt("GUIS.FFA.ARENA-SELECTOR.ROWS"));
+    int rows = Math.max(1, PracticeConfig.guis().getGuis().getFfa().getArenaSelector().getRows());
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString("GUIS.FFA.ARENA-SELECTOR.TITLE"), rows));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getFfa().getArenaSelector().getTitle(), rows));
   }
 
   @Override

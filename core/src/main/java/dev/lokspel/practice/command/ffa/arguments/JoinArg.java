@@ -1,8 +1,8 @@
 package dev.lokspel.practice.command.ffa.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.ffa.FfaManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -21,14 +21,21 @@ public final class JoinArg {
   public static void run(Player player, String label, String[] args) {
     if (args.length > 2) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("FFA.COMMAND.JOIN.HELP").replace("%label%", label));
+          player,
+          PracticeConfig.language()
+              .getFfa()
+              .getCommand()
+              .getJoin()
+              .getHelp()
+              .replace("%label%", label));
       return;
     }
 
     if (args.length < 2) {
       Profile profile = ProfileManager.getInstance().getProfile(player);
       if (!profile.getStatus().equals(ProfileStatus.LOBBY)) {
-        Common.sendMmMessage(player, LanguageManager.getString("FFA.COMMAND.JOIN.CANT-JOIN-FFA"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getFfa().getCommand().getJoin().getCantJoinFfa());
         return;
       }
 

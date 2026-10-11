@@ -6,7 +6,7 @@ import dev.lokspel.practice.command.ffa.arguments.KitArg;
 import dev.lokspel.practice.command.ffa.arguments.LeaveArg;
 import dev.lokspel.practice.command.ffa.arguments.ListArg;
 import dev.lokspel.practice.command.ffa.arguments.SpectateArg;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +23,7 @@ public class FfaCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 

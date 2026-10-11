@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.inventory.inventories.spectate;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.Inventory;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
@@ -20,7 +20,7 @@ import org.bukkit.inventory.PlayerInventory;
 public class SpecMatchInventory extends Inventory {
 
   private static final double SPECTATOR_SPEED =
-      ConfigManager.getDouble("SPECTATOR-SETTINGS.SPECTATOR-SPEED");
+      PracticeConfig.settings().getSpectatorSettings().getSpectatorSpeed();
 
   public SpecMatchInventory() {
     super(InventoryType.SPECTATE_MATCH);

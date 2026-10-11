@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.fight.event.events.ffa.splegg;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import java.io.IOException;
@@ -27,10 +28,13 @@ public class SpleggData extends EventData {
 
   @Override
   protected void getCustomData() {
-    this.eggLauncher = ConfigManager.getGuiItem("EVENT.SPLEGG.EGG-LAUNCHER-ITEM").get();
+    this.eggLauncher =
+        BackendUtil.getGuiItem(
+                PracticeConfig.settings().getEvent().getSplegg().getEggLauncherItem())
+            .get();
 
     List<String> configuredMaterials =
-        ConfigManager.getConfig().getStringList("EVENT.SPLEGG.BREAKABLE-MATERIALS");
+        PracticeConfig.settings().getEvent().getSplegg().getBreakableMaterials();
     if (configuredMaterials.isEmpty()) {
       this.breakableMaterials = Collections.singletonList("WOOL");
       return;

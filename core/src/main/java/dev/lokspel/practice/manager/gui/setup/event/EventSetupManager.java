@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.setup.event;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.util.ArenaWorldUtil;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import dev.lokspel.practice.manager.gui.Gui;
@@ -103,12 +103,14 @@ public class EventSetupManager implements Listener {
     e.setCancelled(true);
     if (eventData.isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.SETUP.EVENT.CANT-EDIT-ENABLED"));
+          player,
+          PracticeConfig.language().getCommand().getSetup().getEvent().getCantEditEnabled());
       return;
     }
 
     if (!player.getWorld().equals(ArenaWorldUtil.getArenasWorld())) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SETUP.EVENT.ARENAS-WORLD"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getSetup().getEvent().getArenasWorld());
       return;
     }
 
@@ -117,13 +119,21 @@ public class EventSetupManager implements Listener {
         eventData.setCuboidLoc1(block.getLocation());
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.SETUP.EVENT.SET-FIRST-CORNER")
+            PracticeConfig.language()
+                .getCommand()
+                .getSetup()
+                .getEvent()
+                .getSetFirstCorner()
                 .replace("%event%", eventData.getType().getName()));
       } else {
         eventData.setCuboidLoc2(block.getLocation());
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.SETUP.EVENT.SET-SECOND-CORNER")
+            PracticeConfig.language()
+                .getCommand()
+                .getSetup()
+                .getEvent()
+                .getSetSecondCorner()
                 .replace("%event%", eventData.getType().getName()));
       }
     } catch (Exception exception) {

@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.group.Group;
@@ -20,7 +19,8 @@ public final class RankedArg {
   public static void run(Player player, String label, String[] args) {
     if (args.length == 3 && args[1].equalsIgnoreCase("reset")) {
       if (!player.hasPermission("ap.practice.ranked.default")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -30,16 +30,27 @@ public final class RankedArg {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.TARGET-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getTargetNotFound()
                 .replace("%target%", args[2]));
         return;
       }
 
       if (player != target.getPlayer()
           && target.getPlayer().isOp()
-          && ConfigManager.getBoolean("ADMIN-SETTINGS.OP-BYPASS-RANKED-CHANGE")) {
+          && PracticeConfig.settings().getAdminSettings().isOpBypassRankedChange()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.TARGET-OP"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getTargetOp());
         return;
       }
 
@@ -49,18 +60,29 @@ public final class RankedArg {
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.RESET-DAILY-LIMIT")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getResetDailyLimit()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%dailyRankedLimit%", String.valueOf(group.getRankedLimit())));
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.NO-GROUP")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getNoGroup()
                 .replace("%target%", target.getPlayer().getName()));
       }
     } else if (args.length == 4 && args[1].equalsIgnoreCase("add")) {
       if (!player.hasPermission("ap.practice.ranked.add")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -70,23 +92,40 @@ public final class RankedArg {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.TARGET-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getTargetNotFound()
                 .replace("%target%", args[2]));
         return;
       }
 
       if (player != target.getPlayer()
           && target.getPlayer().isOp()
-          && ConfigManager.getBoolean("ADMIN-SETTINGS.OP-BYPASS-RANKED-CHANGE")) {
+          && PracticeConfig.settings().getAdminSettings().isOpBypassRankedChange()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.TARGET-OP"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getTargetOp());
         return;
       }
 
       final int extraRanked = Integer.parseInt(args[3]);
       if (extraRanked <= 0) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.INVALID-NUMBER"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getInvalidNumber());
         return;
       }
 
@@ -94,13 +133,19 @@ public final class RankedArg {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.ADD-EXTRA-RANKED")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getRanked()
+              .getAddExtraRanked()
               .replace("%extraRanked%", String.valueOf(extraRanked))
               .replace("%target%", target.getPlayer().getName())
               .replace("%newRanked%", String.valueOf(target.getRankedLeft())));
     } else if (args.length >= 3 && args[1].equalsIgnoreCase("ban")) {
       if (!player.hasPermission("ap.practice.ranked.ban")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -110,7 +155,12 @@ public final class RankedArg {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.TARGET-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getTargetNotFound()
                 .replace("%target%", args[2]));
         return;
       }
@@ -118,7 +168,12 @@ public final class RankedArg {
       if (target.getPlayer().isOp()) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.CANT-BAN-PLAYER")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getCantBanPlayer()
                 .replace("%target%", target.getPlayer().getName()));
         return;
       }
@@ -138,34 +193,60 @@ public final class RankedArg {
       if (target.getRankedBan().ban(ProfileManager.getInstance().getProfile(player), reason)) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.BAN.BANNED-FROM-RANKED")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getBan()
+                .getBannedFromRanked()
                 .replace("%target%", target.getPlayer().getName())
                 .replace(
                     "%reason%",
                     reason == null
-                        ? LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.BAN.NO-REASON")
+                        ? PracticeConfig.language()
+                            .getCommand()
+                            .getPractice()
+                            .getArguments()
+                            .getBan()
+                            .getNoReason()
                         : reason));
 
         if (target.getPlayer().isOnline()) {
           Common.sendMmMessage(
               target.getPlayer().getPlayer(),
-              LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.BAN.BANNED-FROM-RANKED-PLAYER")
+              PracticeConfig.language()
+                  .getCommand()
+                  .getPractice()
+                  .getArguments()
+                  .getBan()
+                  .getBannedFromRankedPlayer()
                   .replace("%banner%", player.getName())
                   .replace(
                       "%reason%",
                       reason == null
-                          ? LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.BAN.NO-REASON")
+                          ? PracticeConfig.language()
+                              .getCommand()
+                              .getPractice()
+                              .getArguments()
+                              .getBan()
+                              .getNoReason()
                           : reason));
         }
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.BAN.PLAYER-ALREADY-BANNED")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getBan()
+                .getPlayerAlreadyBanned()
                 .replace("%target%", target.getPlayer().getName()));
       }
     } else if (args.length == 3 && args[1].equalsIgnoreCase("unban")) {
       if (!player.hasPermission("ap.practice.ranked.unban")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -175,7 +256,12 @@ public final class RankedArg {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.TARGET-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getTargetNotFound()
                 .replace("%target%", args[2]));
         return;
       }
@@ -183,26 +269,45 @@ public final class RankedArg {
       if (target.getRankedBan().unban()) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNBAN.UNBANNED-FROM-RANKED")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnban()
+                .getUnbannedFromRanked()
                 .replace("%target%", target.getPlayer().getName()));
         if (target.getPlayer().isOnline()) {
           Common.sendMmMessage(
               target.getPlayer().getPlayer(),
-              LanguageManager.getString(
-                      "COMMAND.PRACTICE.ARGUMENTS.UNBAN.UNBANNED-FROM-RANKED-PLAYER")
+              PracticeConfig.language()
+                  .getCommand()
+                  .getPractice()
+                  .getArguments()
+                  .getUnban()
+                  .getUnbannedFromRankedPlayer()
                   .replace("%unbanner%", player.getName()));
         }
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNBAN.PLAYER-NOT-BANNED")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnban()
+                .getPlayerNotBanned()
                 .replace("%target%", target.getPlayer().getName()));
       }
     } else {
       if (player.hasPermission("ap.practice.ranked.default")
           || player.hasPermission("ap.practice.ranked.add")) {
         for (String line :
-            LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.RANKED.COMMAND-HELP")) {
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getCommandHelp()) {
           Common.sendMmMessage(player, line.replace("%label%", label));
         }
       }
@@ -216,7 +321,12 @@ public final class RankedArg {
               .getProfile(ServerManager.getInstance().resolvePlayer(args[2]));
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.TARGET-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getTargetNotFound()
                 .replace("%target%", args[2]));
         return;
       }
@@ -226,12 +336,22 @@ public final class RankedArg {
         target.setRankedLeft(group.getRankedLimit());
 
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.RESET-DAILY-LIMIT")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getResetDailyLimit()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%dailyRankedLimit%", String.valueOf(group.getRankedLimit())));
       } else {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.NO-GROUP")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getNoGroup()
                 .replace("%target%", target.getPlayer().getName()));
       }
     } else if (args.length == 4 && args[1].equalsIgnoreCase("add")) {
@@ -240,7 +360,12 @@ public final class RankedArg {
               .getProfile(ServerManager.getInstance().resolvePlayer(args[2]));
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.TARGET-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getTargetNotFound()
                 .replace("%target%", args[2]));
         return;
       }
@@ -248,20 +373,35 @@ public final class RankedArg {
       final int extraRanked = Integer.parseInt(args[3]);
       if (extraRanked <= 0) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getRanked()
+                .getInvalidNumber());
         return;
       }
 
       target.setRankedLeft(target.getRankedLeft() + extraRanked);
 
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RANKED.ADD-EXTRA-RANKED")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getRanked()
+              .getAddExtraRanked()
               .replace("%extraRanked%", String.valueOf(extraRanked))
               .replace("%target%", target.getPlayer().getName())
               .replace("%newRanked%", String.valueOf(target.getRankedLeft())));
     } else {
       for (String line :
-          LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.RANKED.COMMAND-HELP")) {
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getRanked()
+              .getCommandHelp()) {
         Common.sendConsoleMmMessage(line.replace("%label%", label));
       }
     }

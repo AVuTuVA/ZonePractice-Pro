@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.party;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -30,13 +30,22 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class OtherPartiesGui extends Gui {
 
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.PARTY.OTHER-PARTIES.ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getParty()
+                  .getOtherParties()
+                  .getIcons()
+                  .getFillerItem())
+          .get();
   private final Map<Integer, Party> partySlots = new HashMap<>();
 
   public OtherPartiesGui() {
     super(GuiType.Party_OtherParties);
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString("GUIS.PARTY.OTHER-PARTIES.TITLE"), 6));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getParty().getOtherParties().getTitle(), 6));
 
     build();
   }
@@ -103,12 +112,12 @@ public class OtherPartiesGui extends Gui {
     Party targetParty = partySlots.get(slot);
 
     if (party == targetParty) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.CANT-DUEL-OWN-PARTY"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getCantDuelOwnParty());
       return;
     }
 
     if (!targetParty.isDuelRequests()) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.CANT-DUEL-PARTY"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getCantDuelParty());
       return;
     }
 
@@ -121,7 +130,8 @@ public class OtherPartiesGui extends Gui {
       new LadderSelectorGui(profile, MatchType.PARTY_VS_PARTY).open(player);
     } else {
       Common.sendMmMessage(
-          player, LanguageManager.getString("PARTY.MATCH-REQUEST-MESSAGE.ALREADY-REQUESTED"));
+          player,
+          PracticeConfig.language().getParty().getMatchRequestMessage().getAlreadyRequested());
     }
   }
 
@@ -136,7 +146,14 @@ public class OtherPartiesGui extends Gui {
       if (count < 6) {
         if (!party.getLeader().equals(player)) {
           memberStrings.add(
-              GuiFile.getString("GUIS.PARTY.OTHER-PARTIES.ICONS.PARTY-ITEM.LORE.MEMBER-FORMAT")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getParty()
+                  .getOtherParties()
+                  .getIcons()
+                  .getPartyItem()
+                  .getLore()
+                  .getMemberFormat()
                   .replace("%player%", player.getName()));
           count++;
         }
@@ -146,7 +163,14 @@ public class OtherPartiesGui extends Gui {
     }
 
     for (String line :
-        GuiFile.getStringList("GUIS.PARTY.OTHER-PARTIES.ICONS.PARTY-ITEM.LORE.LORE")) {
+        PracticeConfig.guis()
+            .getGuis()
+            .getParty()
+            .getOtherParties()
+            .getIcons()
+            .getPartyItem()
+            .getLore()
+            .getLore()) {
       if (line.contains("%members%")) {
         lore.addAll(memberStrings);
       } else {
@@ -156,7 +180,13 @@ public class OtherPartiesGui extends Gui {
 
     itemMeta.displayName(
         Common.legacyToComponent(
-            GuiFile.getString("GUIS.PARTY.OTHER-PARTIES.ICONS.PARTY-ITEM.NAME")
+            PracticeConfig.guis()
+                .getGuis()
+                .getParty()
+                .getOtherParties()
+                .getIcons()
+                .getPartyItem()
+                .getName()
                 .replace("%leader%", party.getLeader().getName())
                 .replace("%partySize%", String.valueOf(party.getMembers().size()))));
     itemMeta.lore(lore.stream().map(Common::legacyToComponent).toList());

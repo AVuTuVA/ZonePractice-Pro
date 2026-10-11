@@ -1,8 +1,7 @@
 package dev.lokspel.practice.manager.queue.runnables;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.queue.Queue;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -10,9 +9,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class RankedSearchRunnable extends SearchRunnable {
 
   private static final int RANGE_INCREASE =
-      ConfigManager.getConfig().getInt("QUEUE.RANKED.ELO-RANGE-INCREASE");
-  private static final int ELO_RANGE_TIME = ConfigManager.getInt("QUEUE.RANKED.ELO-RANGE-TIME");
-  private int range = ConfigManager.getConfig().getInt("QUEUE.RANKED.ELO-RANGE-INCREASE");
+      PracticeConfig.settings().getQueue().getRanked().getEloRangeIncrease();
+  private static final int ELO_RANGE_TIME =
+      PracticeConfig.settings().getQueue().getRanked().getEloRangeTime();
+  private int range = PracticeConfig.settings().getQueue().getRanked().getEloRangeIncrease();
 
   public RankedSearchRunnable(final Queue queue) {
     super(queue, 0, 20L * ELO_RANGE_TIME, false);
@@ -78,7 +78,9 @@ public class RankedSearchRunnable extends SearchRunnable {
 
   private void sendMsg(int elo) {
     this.updateQueueActionBar(
-        LanguageManager.getString("QUEUES.ELO-RANGE")
+        PracticeConfig.language()
+            .getQueues()
+            .getEloRange()
             .replace("%from%", String.valueOf(elo - range))
             .replace("%to%", String.valueOf(elo + range)));
   }

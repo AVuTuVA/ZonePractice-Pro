@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.match.util;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.enums.TeamEnum;
 import dev.lokspel.practice.manager.fight.match.type.duel.Duel;
 import dev.lokspel.practice.manager.fight.match.type.partyffa.PartyFfa;
@@ -21,7 +21,7 @@ public enum EndMessageUtil {
 
     List<String> message = new ArrayList<>();
 
-    for (String line : LanguageManager.getList("MATCH.DUEL.MATCH-END.MESSAGE")) {
+    for (String line : PracticeConfig.language().getMatch().getDuel().getMatchEnd().getMessage()) {
       if (line.contains("%spectatorExtension%")) {
         List<String> spectatorNames = new ArrayList<>();
         for (Player spectator : duel.getSpectators()) {
@@ -32,7 +32,12 @@ public enum EndMessageUtil {
         }
 
         if (!spectatorNames.isEmpty()) {
-          for (String line2 : LanguageManager.getList("MATCH.DUEL.MATCH-END.SPECTATOR-EXTENSION")) {
+          for (String line2 :
+              PracticeConfig.language()
+                  .getMatch()
+                  .getDuel()
+                  .getMatchEnd()
+                  .getSpectatorExtension()) {
             message.add(
                 line2
                     .replace("%size%", String.valueOf(spectatorNames.size()))
@@ -76,7 +81,11 @@ public enum EndMessageUtil {
 
       if (partyFfa.getPlayers().contains(loser)) {
         loserString =
-            LanguageManager.getString("MATCH.PARTY-FFA.MATCH-END.LOSER-PLAYER-FORMAT")
+            PracticeConfig.language()
+                .getMatch()
+                .getPartyFfa()
+                .getMatchEnd()
+                .getLoserPlayerFormat()
                 .replace("%matchId%", partyFfa.getId())
                 .replace("%player%", loser.getName())
                 .replace(
@@ -86,7 +95,11 @@ public enum EndMessageUtil {
                         : "");
       } else {
         loserString =
-            LanguageManager.getString("MATCH.PARTY-FFA.MATCH-END.LEFT-PLAYER-FORMAT")
+            PracticeConfig.language()
+                .getMatch()
+                .getPartyFfa()
+                .getMatchEnd()
+                .getLeftPlayerFormat()
                 .replace("%player%", loser.getName());
       }
 
@@ -94,11 +107,16 @@ public enum EndMessageUtil {
       if (!losers.get(losers.size() - 1).equals(loser)) {
         losersString =
             losersString.concat(
-                LanguageManager.getString("MATCH.PARTY-FFA.MATCH-END.SEPARATOR-FORMAT"));
+                PracticeConfig.language()
+                    .getMatch()
+                    .getPartyFfa()
+                    .getMatchEnd()
+                    .getSeparatorFormat());
       }
     }
 
-    for (String line : LanguageManager.getList("MATCH.PARTY-FFA.MATCH-END.MESSAGE")) {
+    for (String line :
+        PracticeConfig.language().getMatch().getPartyFfa().getMatchEnd().getMessage()) {
       if (line.contains("%spectatorExtension%")) {
         List<String> spectators = new ArrayList<>();
         for (Player spectator : partyFfa.getSpectators()) {
@@ -110,7 +128,11 @@ public enum EndMessageUtil {
 
         if (!spectators.isEmpty()) {
           for (String line2 :
-              LanguageManager.getList("MATCH.PARTY-FFA.MATCH-END.SPECTATOR-EXTENSION")) {
+              PracticeConfig.language()
+                  .getMatch()
+                  .getPartyFfa()
+                  .getMatchEnd()
+                  .getSpectatorExtension()) {
             message.add(
                 line2
                     .replace("%size%", String.valueOf(spectators.size()))
@@ -145,7 +167,11 @@ public enum EndMessageUtil {
       // Check if player is still in the match (not left)
       if (partySplit.getPlayers().contains(winner)) {
         winnerString =
-            LanguageManager.getString("MATCH.PARTY-SPLIT.MATCH-END.WINNER-PLAYER-FORMAT")
+            PracticeConfig.language()
+                .getMatch()
+                .getPartySplit()
+                .getMatchEnd()
+                .getWinnerPlayerFormat()
                 .replace("%matchId%", partySplit.getId())
                 .replace("%player%", winner.getName())
                 .replace(
@@ -156,7 +182,11 @@ public enum EndMessageUtil {
       } else {
         // Player left the match - use left player format if available, otherwise just show name
         String leftFormat =
-            LanguageManager.getString("MATCH.PARTY-SPLIT.MATCH-END.LEFT-PLAYER-FORMAT");
+            PracticeConfig.language()
+                .getMatch()
+                .getPartySplit()
+                .getMatchEnd()
+                .getLeftPlayerFormat();
         if (leftFormat != null && !leftFormat.isEmpty()) {
           winnerString = leftFormat.replace("%player%", winner.getName());
         } else {
@@ -176,7 +206,11 @@ public enum EndMessageUtil {
       // Check if player is still in the match (not left)
       if (partySplit.getPlayers().contains(loser)) {
         loserString =
-            LanguageManager.getString("MATCH.PARTY-SPLIT.MATCH-END.LOSER-PLAYER-FORMAT")
+            PracticeConfig.language()
+                .getMatch()
+                .getPartySplit()
+                .getMatchEnd()
+                .getLoserPlayerFormat()
                 .replace("%matchId%", partySplit.getId())
                 .replace("%player%", loser.getName())
                 .replace(
@@ -187,7 +221,11 @@ public enum EndMessageUtil {
       } else {
         // Player left the match - use left player format if available, otherwise just show name
         String leftFormat =
-            LanguageManager.getString("MATCH.PARTY-SPLIT.MATCH-END.LEFT-PLAYER-FORMAT");
+            PracticeConfig.language()
+                .getMatch()
+                .getPartySplit()
+                .getMatchEnd()
+                .getLeftPlayerFormat();
         if (leftFormat != null && !leftFormat.isEmpty()) {
           loserString = leftFormat.replace("%player%", loser.getName());
         } else {
@@ -201,7 +239,8 @@ public enum EndMessageUtil {
       }
     }
 
-    for (String line : LanguageManager.getList("MATCH.PARTY-SPLIT.MATCH-END.MESSAGE")) {
+    for (String line :
+        PracticeConfig.language().getMatch().getPartySplit().getMatchEnd().getMessage()) {
       if (line.contains("%spectatorExtension%")) {
         List<String> spectators = new ArrayList<>();
         for (Player spectator : partySplit.getSpectators()) {
@@ -213,7 +252,11 @@ public enum EndMessageUtil {
 
         if (!spectators.isEmpty()) {
           for (String line2 :
-              LanguageManager.getList("MATCH.PARTY-SPLIT.MATCH-END.SPECTATOR-EXTENSION")) {
+              PracticeConfig.language()
+                  .getMatch()
+                  .getPartySplit()
+                  .getMatchEnd()
+                  .getSpectatorExtension()) {
             message.add(
                 line2
                     .replace("%size%", String.valueOf(spectators.size()))
@@ -245,7 +288,11 @@ public enum EndMessageUtil {
       // Check if player is still in the match (not left)
       if (partyVsParty.getPlayers().contains(winner)) {
         winnerString =
-            LanguageManager.getString("MATCH.PARTY-VS-PARTY.MATCH-END.WINNER-PLAYER-FORMAT")
+            PracticeConfig.language()
+                .getMatch()
+                .getPartyVsParty()
+                .getMatchEnd()
+                .getWinnerPlayerFormat()
                 .replace("%matchId%", partyVsParty.getId())
                 .replace("%player%", winner.getName())
                 .replace(
@@ -256,7 +303,11 @@ public enum EndMessageUtil {
       } else {
         // Player left the match - use left player format if available, otherwise just show name
         String leftFormat =
-            LanguageManager.getString("MATCH.PARTY-VS-PARTY.MATCH-END.LEFT-PLAYER-FORMAT");
+            PracticeConfig.language()
+                .getMatch()
+                .getPartyVsParty()
+                .getMatchEnd()
+                .getLeftPlayerFormat();
         if (leftFormat != null && !leftFormat.isEmpty()) {
           winnerString = leftFormat.replace("%player%", winner.getName());
         } else {
@@ -276,7 +327,11 @@ public enum EndMessageUtil {
       // Check if player is still in the match (not left)
       if (partyVsParty.getPlayers().contains(loser)) {
         loserString =
-            LanguageManager.getString("MATCH.PARTY-VS-PARTY.MATCH-END.LOSER-PLAYER-FORMAT")
+            PracticeConfig.language()
+                .getMatch()
+                .getPartyVsParty()
+                .getMatchEnd()
+                .getLoserPlayerFormat()
                 .replace("%matchId%", partyVsParty.getId())
                 .replace("%player%", loser.getName())
                 .replace(
@@ -287,7 +342,11 @@ public enum EndMessageUtil {
       } else {
         // Player left the match - use left player format if available, otherwise just show name
         String leftFormat =
-            LanguageManager.getString("MATCH.PARTY-VS-PARTY.MATCH-END.LEFT-PLAYER-FORMAT");
+            PracticeConfig.language()
+                .getMatch()
+                .getPartyVsParty()
+                .getMatchEnd()
+                .getLeftPlayerFormat();
         if (leftFormat != null && !leftFormat.isEmpty()) {
           loserString = leftFormat.replace("%player%", loser.getName());
         } else {
@@ -301,7 +360,8 @@ public enum EndMessageUtil {
       }
     }
 
-    for (String line : LanguageManager.getList("MATCH.PARTY-VS-PARTY.MATCH-END.MESSAGE")) {
+    for (String line :
+        PracticeConfig.language().getMatch().getPartyVsParty().getMatchEnd().getMessage()) {
       if (line.contains("%spectatorExtension%")) {
         List<String> spectators = new ArrayList<>();
         for (Player spectator : partyVsParty.getSpectators()) {
@@ -313,7 +373,11 @@ public enum EndMessageUtil {
 
         if (!spectators.isEmpty()) {
           for (String line2 :
-              LanguageManager.getList("MATCH.PARTY-VS-PARTY.MATCH-END.SPECTATOR-EXTENSION")) {
+              PracticeConfig.language()
+                  .getMatch()
+                  .getPartyVsParty()
+                  .getMatchEnd()
+                  .getSpectatorExtension()) {
             message.add(
                 line2
                     .replace("%size%", String.valueOf(spectators.size()))

@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.fight.ffa;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.enums.TeamEnum;
 import dev.lokspel.practice.manager.fight.match.util.KitUtil;
@@ -68,7 +68,7 @@ public class FfaFightPlayer extends FightPlayer {
    * they become a full combatant.
    */
   private void scheduleDefaultKitFallback() {
-    int seconds = ConfigManager.getInt("FFA.CUSTOM-KIT-SELECTION-TIME", 15);
+    int seconds = PracticeConfig.settings().getFfa().getCustomKitSelectionTime();
     Bukkit.getScheduler()
         .runTaskLater(
             AstralPractice.getInstance(),

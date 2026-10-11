@@ -1,9 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.profile;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -36,7 +35,10 @@ public class ProfileSettingsGui extends Gui {
     this.gui.put(
         1,
         dev.lokspel.practice.util.InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.PLAYER-SETTINGS.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerSettings()
+                .getTitle()
                 .replace("%player%", profile.getPlayer().getName()),
             4));
     this.profile = profile;
@@ -52,7 +54,13 @@ public class ProfileSettingsGui extends Gui {
             () -> {
               Inventory inventory = gui.get(1);
               ItemStack fillerItem =
-                  GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.FILLER-ITEM").get();
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getPlayerSettings()
+                              .getIcons()
+                              .getFillerItem())
+                      .get();
 
               for (int i = 0; i < inventory.getSize(); i++) {
                 inventory.setItem(i, fillerItem);
@@ -75,7 +83,13 @@ public class ProfileSettingsGui extends Gui {
     inventory.setItem(15, getAllowSpectatorsItem(profile.isAllowSpectate()));
     inventory.setItem(
         16,
-        GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.WORLD-TIME")
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getPlayerSettings()
+                    .getIcons()
+                    .getSidebar()
+                    .getWorldTime())
             .replace("%worldTime%", profile.getWorldTime().getName())
             .get());
     inventory.setItem(23, getFlyingItem(profile.isFlying()));
@@ -107,7 +121,9 @@ public class ProfileSettingsGui extends Gui {
       if (profile != this.profile) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("PROFILE.CANT-CHANGE-TARGET-SETTINGS")
+            PracticeConfig.language()
+                .getProfile()
+                .getCantChangeTargetSettings()
                 .replace("%target%", this.getProfile().getPlayer().getName()));
         return;
       }
@@ -116,7 +132,7 @@ public class ProfileSettingsGui extends Gui {
         Common.sendMmMessage(
             player,
             StringUtil.replaceSecondString(
-                LanguageManager.getString("PROFILE.TOGGLE-COOLDOWN"),
+                PracticeConfig.language().getProfile().getToggleCooldown(),
                 PlayerCooldown.getLeftInDouble(player, CooldownObject.PLAYER_SETTINGS)));
         return;
       }
@@ -131,10 +147,10 @@ public class ProfileSettingsGui extends Gui {
               PlayerCooldown.addCooldown(
                   player,
                   CooldownObject.PLAYER_SETTINGS,
-                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                  PracticeConfig.settings().getPlayer().getSettingsDelay());
             }
           } else {
-            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+            Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           }
 
           break;
@@ -147,10 +163,10 @@ public class ProfileSettingsGui extends Gui {
               PlayerCooldown.addCooldown(
                   player,
                   CooldownObject.PLAYER_SETTINGS,
-                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                  PracticeConfig.settings().getPlayer().getSettingsDelay());
             }
           } else {
-            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+            Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           }
 
           break;
@@ -158,7 +174,7 @@ public class ProfileSettingsGui extends Gui {
           if (player.hasPermission("ap.settings.scoreboard")) {
             if (!SidebarManager.getInstance().isSidebarGloballyEnabled()) {
               Common.sendMmMessage(
-                  player, LanguageManager.getString("PROFILE.SIDEBAR-GLOBALLY-DISABLED"));
+                  player, PracticeConfig.language().getProfile().getSidebarGloballyDisabled());
               return;
             }
 
@@ -176,10 +192,10 @@ public class ProfileSettingsGui extends Gui {
               PlayerCooldown.addCooldown(
                   player,
                   CooldownObject.PLAYER_SETTINGS,
-                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                  PracticeConfig.settings().getPlayer().getSettingsDelay());
             }
           } else {
-            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+            Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           }
 
           break;
@@ -192,10 +208,10 @@ public class ProfileSettingsGui extends Gui {
               PlayerCooldown.addCooldown(
                   player,
                   CooldownObject.PLAYER_SETTINGS,
-                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                  PracticeConfig.settings().getPlayer().getSettingsDelay());
             }
           } else {
-            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+            Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           }
 
           break;
@@ -209,13 +225,14 @@ public class ProfileSettingsGui extends Gui {
                 PlayerCooldown.addCooldown(
                     player,
                     CooldownObject.PLAYER_SETTINGS,
-                    ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                    PracticeConfig.settings().getPlayer().getSettingsDelay());
               }
             } else {
-              Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+              Common.sendMmMessage(
+                  player, PracticeConfig.language().getProfile().getNoPermission());
             }
           } else {
-            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.PRIVATE-MSG-OFF"));
+            Common.sendMmMessage(player, PracticeConfig.language().getProfile().getPrivateMsgOff());
           }
 
           break;
@@ -229,10 +246,10 @@ public class ProfileSettingsGui extends Gui {
               PlayerCooldown.addCooldown(
                   player,
                   CooldownObject.PLAYER_SETTINGS,
-                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                  PracticeConfig.settings().getPlayer().getSettingsDelay());
             }
           } else {
-            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+            Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           }
 
           break;
@@ -245,10 +262,10 @@ public class ProfileSettingsGui extends Gui {
               PlayerCooldown.addCooldown(
                   player,
                   CooldownObject.PLAYER_SETTINGS,
-                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                  PracticeConfig.settings().getPlayer().getSettingsDelay());
             }
           } else {
-            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+            Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           }
 
           break;
@@ -263,10 +280,10 @@ public class ProfileSettingsGui extends Gui {
               PlayerCooldown.addCooldown(
                   player,
                   CooldownObject.PLAYER_SETTINGS,
-                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                  PracticeConfig.settings().getPlayer().getSettingsDelay());
             }
           } else {
-            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+            Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           }
 
           break;
@@ -287,10 +304,10 @@ public class ProfileSettingsGui extends Gui {
               PlayerCooldown.addCooldown(
                   player,
                   CooldownObject.PLAYER_SETTINGS,
-                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                  PracticeConfig.settings().getPlayer().getSettingsDelay());
             }
           } else {
-            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+            Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           }
           break;
         case 21:
@@ -305,10 +322,10 @@ public class ProfileSettingsGui extends Gui {
               PlayerCooldown.addCooldown(
                   player,
                   CooldownObject.PLAYER_SETTINGS,
-                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+                  PracticeConfig.settings().getPlayer().getSettingsDelay());
             }
           } else {
-            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+            Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           }
           break;
 
@@ -320,66 +337,187 @@ public class ProfileSettingsGui extends Gui {
 
   private static ItemStack getDuelRequestItem(boolean duelRequest) {
     if (duelRequest) {
-      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.DUEL-REQUEST.ENABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerSettings()
+                  .getIcons()
+                  .getDuelRequest()
+                  .getEnabled())
+          .get();
     }
 
-    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.DUEL-REQUEST.DISABLED").get();
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerSettings()
+                .getIcons()
+                .getDuelRequest()
+                .getDisabled())
+        .get();
   }
 
   private static ItemStack getAutoQueueItem(boolean autoQueue) {
     if (autoQueue) {
-      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.AUTO-QUEUE.ENABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerSettings()
+                  .getIcons()
+                  .getAutoQueue()
+                  .getEnabled())
+          .get();
     }
 
-    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.AUTO-QUEUE.DISABLED").get();
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerSettings()
+                .getIcons()
+                .getAutoQueue()
+                .getDisabled())
+        .get();
   }
 
   private static ItemStack getSidebarItem(boolean sidebar) {
     if (sidebar) {
-      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.ENABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerSettings()
+                  .getIcons()
+                  .getSidebar()
+                  .getEnabled())
+          .get();
     }
 
-    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.DISABLED").get();
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerSettings()
+                .getIcons()
+                .getSidebar()
+                .getDisabled())
+        .get();
   }
 
   private static ItemStack getPartyInviteItem(boolean partyInvites) {
     if (partyInvites) {
-      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PARTY-INVITE.ENABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerSettings()
+                  .getIcons()
+                  .getSidebar()
+                  .getPartyInvite()
+                  .getEnabled())
+          .get();
     }
 
-    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PARTY-INVITE.DISABLED").get();
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerSettings()
+                .getIcons()
+                .getSidebar()
+                .getPartyInvite()
+                .getDisabled())
+        .get();
   }
 
   private static ItemStack getPrivateMessageItem(boolean privatMessage) {
     if (privatMessage) {
-      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PRIVATE-MESSAGE.ENABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerSettings()
+                  .getIcons()
+                  .getSidebar()
+                  .getPrivateMessage()
+                  .getEnabled())
+          .get();
     }
 
-    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PRIVATE-MESSAGE.DISABLED").get();
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerSettings()
+                .getIcons()
+                .getSidebar()
+                .getPrivateMessage()
+                .getDisabled())
+        .get();
   }
 
   private static ItemStack getHidePlayersItem(boolean hidePlayers) {
     if (!hidePlayers) {
-      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.HIDE-PLAYERS.ENABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerSettings()
+                  .getIcons()
+                  .getSidebar()
+                  .getHidePlayers()
+                  .getEnabled())
+          .get();
     }
 
-    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.HIDE-PLAYERS.DISABLED").get();
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerSettings()
+                .getIcons()
+                .getSidebar()
+                .getHidePlayers()
+                .getDisabled())
+        .get();
   }
 
   private static ItemStack getAllowSpectatorsItem(boolean allowSpectate) {
     if (allowSpectate) {
-      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.ALLOW-SPECTATORS.ENABLED")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerSettings()
+                  .getIcons()
+                  .getSidebar()
+                  .getAllowSpectators()
+                  .getEnabled())
           .get();
     }
 
-    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.ALLOW-SPECTATORS.DISABLED").get();
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerSettings()
+                .getIcons()
+                .getSidebar()
+                .getAllowSpectators()
+                .getDisabled())
+        .get();
   }
 
   private static ItemStack getFlyingItem(boolean flying) {
     if (flying) {
-      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.FLYING.ENABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerSettings()
+                  .getIcons()
+                  .getSidebar()
+                  .getFlying()
+                  .getEnabled())
+          .get();
     } else {
-      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.FLYING.DISABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerSettings()
+                  .getIcons()
+                  .getSidebar()
+                  .getFlying()
+                  .getDisabled())
+          .get();
     }
   }
 
@@ -388,7 +526,13 @@ public class ProfileSettingsGui extends Gui {
       visibility = ProfilePrefixVisibility.PREFIX_AND_SUFFIX;
     }
 
-    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PREFIX-VISIBILITY")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerSettings()
+                .getIcons()
+                .getSidebar()
+                .getPrefixVisibility())
         .replace("%prefixVisibility%", visibility.getName())
         .get();
   }

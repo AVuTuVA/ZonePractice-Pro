@@ -1,7 +1,6 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.spectatoritems.spectatormodeitems.match;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.Inventory;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
@@ -18,14 +17,13 @@ public class HideSpectatorsInvItem extends InvItem {
 
   public HideSpectatorsInvItem() {
     super(
-        getItemStack("SPECTATOR.MATCH.NORMAL.HIDE-SPECTATORS.ITEM"),
-        getInt("SPECTATOR.MATCH.NORMAL.HIDE-SPECTATORS.SLOT"));
+        PracticeConfig.inventories().getSpectator().getMatch().getNormal().get("HIDE-SPECTATORS"));
   }
 
   @Override
   public void handleClickEvent(Player player) {
     if (!player.hasPermission("ap.spectate.vanish")) {
-      Common.sendMmMessage(player, LanguageManager.getString("SPECTATE.NO-PERMISSIONS"));
+      Common.sendMmMessage(player, PracticeConfig.language().getSpectate().getNoPermissions());
       return;
     }
 
@@ -34,14 +32,14 @@ public class HideSpectatorsInvItem extends InvItem {
       Common.sendMmMessage(
           player,
           StringUtil.replaceSecondString(
-              LanguageManager.getString("SPECTATE.VANISH-COOLDOWN"),
+              PracticeConfig.language().getSpectate().getVanishCooldown(),
               PlayerCooldown.getLeftInDouble(player, CooldownObject.SPECTATOR_VANISH)));
       return;
     } else {
       PlayerCooldown.addCooldown(
           player,
           CooldownObject.SPECTATOR_VANISH,
-          ConfigManager.getInt("SPECTATOR-SETTINGS.VANISH-COOLDOWN"));
+          PracticeConfig.settings().getSpectatorSettings().getVanishCooldown());
     }
 
     Profile profile = ProfileManager.getInstance().getProfile(player);

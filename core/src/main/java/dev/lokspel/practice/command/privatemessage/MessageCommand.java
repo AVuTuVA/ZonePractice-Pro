@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.privatemessage;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.util.Common;
@@ -23,7 +23,7 @@ public class MessageCommand extends PrivateMessageCommand {
   @Override
   public void executeCommand(CommandSender sender, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return;
     }
 
@@ -32,14 +32,19 @@ public class MessageCommand extends PrivateMessageCommand {
     if (args.length < 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRIVATE-MESSAGE.MESSAGE.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPrivateMessage()
+              .getMessage()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
 
     if (!profile.isPrivateMessages()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PRIVATE-MESSAGE.MESSAGE.CANT-SEND"));
+          player,
+          PracticeConfig.language().getCommand().getPrivateMessage().getMessage().getCantSend());
       return;
     }
 
@@ -47,7 +52,11 @@ public class MessageCommand extends PrivateMessageCommand {
     if (target == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRIVATE-MESSAGE.MESSAGE.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getPrivateMessage()
+              .getMessage()
+              .getTargetOffline()
               .replace("%target%", args[0]));
       return;
     }
@@ -58,7 +67,11 @@ public class MessageCommand extends PrivateMessageCommand {
         && !player.hasPermission("ap.staffmode.see")) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRIVATE-MESSAGE.MESSAGE.TARGET-HIDE")
+          PracticeConfig.language()
+              .getCommand()
+              .getPrivateMessage()
+              .getMessage()
+              .getTargetHide()
               .replace("%target%", target.getName()));
       return;
     }
@@ -66,7 +79,11 @@ public class MessageCommand extends PrivateMessageCommand {
     if (!targetProfile.isPrivateMessages() && !player.hasPermission("ap.bypass.privatemessage")) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRIVATE-MESSAGE.MESSAGE.CANT-SEND2")
+          PracticeConfig.language()
+              .getCommand()
+              .getPrivateMessage()
+              .getMessage()
+              .getCantSend2()
               .replace("%target%", target.getName()));
       return;
     }
@@ -78,13 +95,21 @@ public class MessageCommand extends PrivateMessageCommand {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.PRIVATE-MESSAGE.MESSAGE.SENDER-MESSAGE")
+        PracticeConfig.language()
+            .getCommand()
+            .getPrivateMessage()
+            .getMessage()
+            .getSenderMessage()
             .replace("%sender%", player.getName())
             .replace("%receiver%", target.getName())
             .replace("%message%", message.toString()));
     Common.sendMmMessage(
         target,
-        LanguageManager.getString("COMMAND.PRIVATE-MESSAGE.MESSAGE.RECEIVER-MESSAGE")
+        PracticeConfig.language()
+            .getCommand()
+            .getPrivateMessage()
+            .getMessage()
+            .getReceiverMessage()
             .replace("%sender%", player.getName())
             .replace("%receiver%", target.getName())
             .replace("%message%", message.toString()));

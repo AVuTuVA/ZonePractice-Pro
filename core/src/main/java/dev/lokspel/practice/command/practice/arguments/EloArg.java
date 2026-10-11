@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
@@ -32,7 +31,8 @@ public final class EloArg {
       }
 
       if (!player.hasPermission("ap.practice.elo.default")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -41,17 +41,27 @@ public final class EloArg {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.TARGET-OFFLINE")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getTargetOffline()
                 .replace("%target%", args[2]));
         return;
       }
 
       if (player != target.getPlayer().getPlayer()
           && target.getPlayer().isOp()
-          && ConfigManager.getBoolean("ADMIN-SETTINGS.OP-BYPASS-ELO-CHANGE")) {
+          && PracticeConfig.settings().getAdminSettings().isOpBypassEloChange()) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.TARGET-OP")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getTargetOp()
                 .replace("%target%", target.getPlayer().getName()));
         return;
       }
@@ -62,7 +72,12 @@ public final class EloArg {
         if (ladder == null) {
           Common.sendMmMessage(
               player,
-              LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.LADDER-NOT-EXISTS")
+              PracticeConfig.language()
+                  .getCommand()
+                  .getPractice()
+                  .getArguments()
+                  .getElo()
+                  .getLadderNotExists()
                   .replace("%ladder%", args[3]));
           return;
         }
@@ -70,7 +85,12 @@ public final class EloArg {
         target.getStats().getLadderStat(ladder).setElo(defaultElo);
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.SPECIFIC-LADDER-ELO-RESET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getSpecificLadderEloReset()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%ladder%", ladder.getDisplayName())
                 .replace("%defaultElo%", String.valueOf(defaultElo)));
@@ -83,7 +103,12 @@ public final class EloArg {
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.ALL-LADDER-ELO-RESET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getAllLadderEloReset()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%defaultElo%", String.valueOf(defaultElo)));
       }
@@ -94,7 +119,8 @@ public final class EloArg {
       }
 
       if (!player.hasPermission("ap.practice.elo.specific")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -103,17 +129,27 @@ public final class EloArg {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.TARGET-OFFLINE")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getTargetOffline()
                 .replace("%target%", args[2]));
         return;
       }
 
       if (player != target.getPlayer().getPlayer()
           && target.getPlayer().isOp()
-          && ConfigManager.getBoolean("ADMIN-SETTINGS.OP-BYPASS-ELO-CHANGE")) {
+          && PracticeConfig.settings().getAdminSettings().isOpBypassEloChange()) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.TARGET-OP")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getTargetOp()
                 .replace("%target%", target.getPlayer().getName()));
         return;
       }
@@ -123,13 +159,25 @@ public final class EloArg {
         newElo = Integer.parseInt(args[4]);
       } catch (NumberFormatException exception) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.INVALID-NUMBER"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getInvalidNumber());
         return;
       }
 
       if (newElo < 0) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.INVALID-NUMBER"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getInvalidNumber());
         return;
       }
 
@@ -138,7 +186,12 @@ public final class EloArg {
         if (ladder == null) {
           Common.sendMmMessage(
               player,
-              LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.LADDER-NOT-EXISTS")
+              PracticeConfig.language()
+                  .getCommand()
+                  .getPractice()
+                  .getArguments()
+                  .getElo()
+                  .getLadderNotExists()
                   .replace("%ladder%", args[3]));
           return;
         }
@@ -146,7 +199,12 @@ public final class EloArg {
         target.getStats().getLadderStat(ladder).setElo(newElo);
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.SPECIFIC-LADDER-ELO-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getSpecificLadderEloSet()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%ladder%", ladder.getDisplayName())
                 .replace("%newElo%", String.valueOf(newElo)));
@@ -159,7 +217,12 @@ public final class EloArg {
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.ALL-LADDER-ELO-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getAllLadderEloSet()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%newElo%", String.valueOf(newElo)));
       }
@@ -185,7 +248,12 @@ public final class EloArg {
               .getProfile(ServerManager.getInstance().resolvePlayer(args[2]));
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.TARGET-OFFLINE")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getTargetOffline()
                 .replace("%target%", args[2]));
         return;
       }
@@ -196,14 +264,24 @@ public final class EloArg {
         NormalLadder ladder = LadderManager.getInstance().getLadder(args[3]);
         if (ladder == null) {
           Common.sendConsoleMmMessage(
-              LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.LADDER-NOT-EXISTS")
+              PracticeConfig.language()
+                  .getCommand()
+                  .getPractice()
+                  .getArguments()
+                  .getElo()
+                  .getLadderNotExists()
                   .replace("%ladder%", args[3]));
           return;
         }
 
         target.getStats().getLadderStat(ladder).setElo(defaultElo);
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.SPECIFIC-LADDER-ELO-RESET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getSpecificLadderEloReset()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%ladder%", ladder.getDisplayName())
                 .replace("%defaultElo%", String.valueOf(defaultElo)));
@@ -215,7 +293,12 @@ public final class EloArg {
         }
 
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.ALL-LADDER-ELO-RESET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getAllLadderEloReset()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%defaultElo%", String.valueOf(defaultElo)));
       }
@@ -230,7 +313,12 @@ public final class EloArg {
               .getProfile(ServerManager.getInstance().resolvePlayer(args[2]));
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.TARGET-OFFLINE")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getTargetOffline()
                 .replace("%target%", args[2]));
         return;
       }
@@ -240,13 +328,23 @@ public final class EloArg {
         newElo = Integer.parseInt(args[4]);
       } catch (NumberFormatException exception) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getInvalidNumber());
         return;
       }
 
       if (newElo < 0) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getInvalidNumber());
         return;
       }
 
@@ -254,14 +352,24 @@ public final class EloArg {
         NormalLadder ladder = LadderManager.getInstance().getLadder(args[3]);
         if (ladder == null) {
           Common.sendConsoleMmMessage(
-              LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.LADDER-NOT-EXISTS")
+              PracticeConfig.language()
+                  .getCommand()
+                  .getPractice()
+                  .getArguments()
+                  .getElo()
+                  .getLadderNotExists()
                   .replace("%ladder%", args[3]));
           return;
         }
 
         target.getStats().getLadderStat(ladder).setElo(newElo);
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.SPECIFIC-LADDER-ELO-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getSpecificLadderEloSet()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%ladder%", ladder.getDisplayName())
                 .replace("%newElo%", String.valueOf(newElo)));
@@ -273,7 +381,12 @@ public final class EloArg {
         }
 
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.ELO.ALL-LADDER-ELO-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getElo()
+                .getAllLadderEloSet()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%newElo%", String.valueOf(newElo)));
       }
@@ -283,13 +396,25 @@ public final class EloArg {
   }
 
   private static void sendHelp(Player player, String label) {
-    for (String line : LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.ELO.COMMAND-HELP")) {
+    for (String line :
+        PracticeConfig.language()
+            .getCommand()
+            .getPractice()
+            .getArguments()
+            .getElo()
+            .getCommandHelp()) {
       Common.sendMmMessage(player, line.replace("%label%", label));
     }
   }
 
   private static void sendHelp(String label) {
-    for (String line : LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.ELO.COMMAND-HELP")) {
+    for (String line :
+        PracticeConfig.language()
+            .getCommand()
+            .getPractice()
+            .getArguments()
+            .getElo()
+            .getCommandHelp()) {
       Common.sendConsoleMmMessage(line.replace("%label%", label));
     }
   }

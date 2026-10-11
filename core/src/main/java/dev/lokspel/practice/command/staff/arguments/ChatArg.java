@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.staff.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.util.Common;
@@ -14,13 +13,15 @@ public final class ChatArg {
 
   public static void run(Player player, String[] args) {
     if (!player.hasPermission("ap.staffmode.chat")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.STAFF.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getStaff().getNoPermission());
       return;
     }
 
-    if (!ConfigManager.getBoolean("CHAT.STAFF-CHAT.ENABLED")) {
+    if (!PracticeConfig.settings().getChat().getStaffChat().isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.CHAT.DISABLED"));
+          player,
+          PracticeConfig.language().getCommand().getStaff().getArguments().getChat().getDisabled());
       return;
     }
 
@@ -30,10 +31,22 @@ public final class ChatArg {
 
       if (profile.isStaffChat()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.CHAT.CHAT-ENABLED"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getChat()
+                .getChatEnabled());
       } else {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.CHAT.CHAT-DISABLED"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getStaff()
+                .getArguments()
+                .getChat()
+                .getChatDisabled());
       }
     } else {
       StringBuilder message = new StringBuilder();
@@ -46,9 +59,9 @@ public final class ChatArg {
   }
 
   public static void run(String[] args) {
-    if (!ConfigManager.getBoolean("CHAT.STAFF-CHAT.ENABLED")) {
+    if (!PracticeConfig.settings().getChat().getStaffChat().isEnabled()) {
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.CHAT.DISABLED"));
+          PracticeConfig.language().getCommand().getStaff().getArguments().getChat().getDisabled());
       return;
     }
 

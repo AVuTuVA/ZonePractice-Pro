@@ -1,8 +1,8 @@
 package dev.lokspel.practice.command.arena.arguments.set;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.arena.ArenaGuiSetupManager;
 import dev.lokspel.practice.util.Common;
@@ -18,14 +18,20 @@ public final class PartyFfaCenterArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
       return;
     }
 
     if (args.length != 3) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PARTYFFACENTER.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPartyffacenter()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -34,7 +40,12 @@ public final class PartyFfaCenterArg {
     if (arena == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PARTYFFACENTER.ARENA-NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPartyffacenter()
+              .getArenaNotExists()
               .replace("%arena%", args[2]));
       return;
     }
@@ -42,7 +53,12 @@ public final class PartyFfaCenterArg {
     if (arena.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PARTYFFACENTER.ARENA-ENABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPartyffacenter()
+              .getArenaEnabled()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -50,14 +66,25 @@ public final class PartyFfaCenterArg {
     if (arena.isBuild() && !arena.getCopies().isEmpty()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PARTYFFACENTER.CANT-EDIT")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPartyffacenter()
+              .getCantEdit()
               .replace("%arena%", arena.getName()));
       return;
     }
 
     if (arena.getCuboid() == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PARTYFFACENTER.NO-REGION"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPartyffacenter()
+              .getNoRegion());
       return;
     }
 
@@ -65,7 +92,12 @@ public final class PartyFfaCenterArg {
     if (!arena.getCuboid().contains(center)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PARTYFFACENTER.POS-OUTSIDE-REGION"));
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPartyffacenter()
+              .getPosOutsideRegion());
       return;
     }
 
@@ -77,7 +109,12 @@ public final class PartyFfaCenterArg {
         .update();
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PARTYFFACENTER.SET")
+        PracticeConfig.language()
+            .getCommand()
+            .getArena()
+            .getArguments()
+            .getPartyffacenter()
+            .getSet()
             .replace("%arena%", arena.getName()));
   }
 

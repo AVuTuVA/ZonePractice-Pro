@@ -1,9 +1,9 @@
 package dev.lokspel.practice.manager.gui.setup.server;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
@@ -36,7 +36,8 @@ public class ServerHubGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.SERVER.SERVER-MANAGER.TITLE"), 4));
+            PracticeConfig.guis().getGuis().getSetup().getServer().getServerManager().getTitle(),
+            4));
 
     this.serverSaveGui = new ServerSaveGui(this);
     this.serverMatchesGui = new ServerMatchesGui(this);
@@ -51,15 +52,43 @@ public class ServerHubGui extends Gui {
     Inventory inventory = gui.get(1);
 
     inventory.setItem(
-        27, GuiFile.getGuiItem("GUIS.SETUP.SERVER.SERVER-MANAGER.ICONS.BACK-TO").get());
+        27,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getServer()
+                    .getServerManager()
+                    .getIcons()
+                    .getBackTo())
+            .get());
 
     for (int i : new int[] {28, 29, 30, 31, 32, 33, 34, 35}) {
       inventory.setItem(i, GuiManager.getFILLER_ITEM());
     }
 
-    inventory.setItem(13, GuiFile.getGuiItem("GUIS.SETUP.SERVER.SERVER-MANAGER.ICONS.SAVE").get());
     inventory.setItem(
-        14, GuiFile.getGuiItem("GUIS.SETUP.SERVER.SERVER-MANAGER.ICONS.LOBBY-ARMORS").get());
+        13,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getServer()
+                    .getServerManager()
+                    .getIcons()
+                    .getSave())
+            .get());
+    inventory.setItem(
+        14,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getServer()
+                    .getServerManager()
+                    .getIcons()
+                    .getLobbyArmors())
+            .get());
 
     update();
   }
@@ -105,7 +134,8 @@ public class ServerHubGui extends Gui {
           } else if (click.isRightClick()) {
             if (PlayerCooldown.isActive(player, CooldownObject.SERVER_SETUP_SAVEALLDATA)) {
               Common.sendMmMessage(
-                  player, LanguageManager.getString("COMMAND.SETUP.SERVER.WAIT-BEFORE"));
+                  player,
+                  PracticeConfig.language().getCommand().getSetup().getServer().getWaitBefore());
               return;
             }
 
@@ -115,7 +145,8 @@ public class ServerHubGui extends Gui {
                     () -> ServerManager.getInstance().getAutoSaveRunnable().save());
 
             Common.sendMmMessage(
-                player, LanguageManager.getString("COMMAND.SETUP.SERVER.SAVED-ALL-FILES"));
+                player,
+                PracticeConfig.language().getCommand().getSetup().getServer().getSavedAllFiles());
 
             PlayerCooldown.addCooldown(player, CooldownObject.SERVER_SETUP_SAVEALLDATA, 15);
           }
@@ -139,7 +170,14 @@ public class ServerHubGui extends Gui {
   }
 
   private ItemStack getInformationItem() {
-    return GuiFile.getGuiItem("GUIS.SETUP.SERVER.SERVER-MANAGER.ICONS.INFORMATIONS")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getServer()
+                .getServerManager()
+                .getIcons()
+                .getInformations())
         .replace("%onlinePlayers%", String.valueOf(Bukkit.getOnlinePlayers().size()))
         .replace("%onlineStaffs%", String.valueOf(PlayerUtil.getOnlineStaff().size()))
         .replace(
@@ -150,10 +188,24 @@ public class ServerHubGui extends Gui {
         .replace(
             "%lobbyStatus%",
             ServerManager.getLobby() != null
-                ? GuiFile.getString(
-                    "GUIS.SETUP.SERVER.SERVER-MANAGER.ICONS.INFORMATIONS.STATUS-NAMES.SET")
-                : GuiFile.getString(
-                    "GUIS.SETUP.SERVER.SERVER-MANAGER.ICONS.INFORMATIONS.STATUS-NAMES.UNSET"))
+                ? PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getServer()
+                    .getServerManager()
+                    .getIcons()
+                    .getInformations()
+                    .getStatusNames()
+                    .getSet()
+                : PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getServer()
+                    .getServerManager()
+                    .getIcons()
+                    .getInformations()
+                    .getStatusNames()
+                    .getUnset())
         .replace(
             "%enabledArena%",
             String.valueOf(
@@ -168,14 +220,28 @@ public class ServerHubGui extends Gui {
   }
 
   private ItemStack getMatchesItem() {
-    return GuiFile.getGuiItem("GUIS.SETUP.SERVER.SERVER-MANAGER.ICONS.MATCHES")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getServer()
+                .getServerManager()
+                .getIcons()
+                .getMatches())
         .replace(
             "%liveMatches%", String.valueOf(MatchManager.getInstance().getLiveMatches().size()))
         .get();
   }
 
   private ItemStack getEventsItem() {
-    return GuiFile.getGuiItem("GUIS.SETUP.SERVER.SERVER-MANAGER.ICONS.EVENTS")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getServer()
+                .getServerManager()
+                .getIcons()
+                .getEvents())
         .replace("%liveEvents%", String.valueOf(EventManager.getInstance().getEvents().size()))
         .get();
   }

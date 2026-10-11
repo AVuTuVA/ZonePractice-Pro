@@ -1,9 +1,9 @@
 package dev.lokspel.practice.manager.sidebar.adapter;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.arena.ArenaManager;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.sidebar.LadderLines;
+import dev.lokspel.practice.config.sidebar.SidebarConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.events.duel.interfaces.DuelEvent;
 import dev.lokspel.practice.manager.fight.event.events.duel.interfaces.DuelFight;
@@ -39,21 +39,19 @@ import dev.lokspel.practice.manager.queue.CustomKitQueueManager;
 import dev.lokspel.practice.manager.queue.Queue;
 import dev.lokspel.practice.manager.queue.QueueManager;
 import dev.lokspel.practice.manager.queue.runnables.CustomKitSearchRunnable;
-import dev.lokspel.practice.manager.sidebar.SidebarManager;
 import dev.lokspel.practice.manager.spectator.SpectatorManager;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.NameFormatUtil;
 import dev.lokspel.practice.util.PapiUtil;
 import dev.lokspel.practice.util.StringUtil;
-import dev.lokspel.practice.util.TpsUtil;
 import dev.lokspel.practice.util.interfaces.Spectatable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 public class PracticeAdapter implements SidebarAdapter {
@@ -69,10 +67,7 @@ public class PracticeAdapter implements SidebarAdapter {
     }
 
     // Read the SIDEBAR-NAME-FORMAT config option to determine how names should be displayed.
-    String format =
-        SidebarManager.getInstance()
-            .getConfig()
-            .getString("SIDEBAR-NAME-FORMAT", "PREFIX_NAME_SUFFIX");
+    String format = PracticeConfig.sidebar().getSidebarNameFormat();
     return switch (format.toUpperCase()) {
       case "NAME_ONLY" -> NameFormatUtil.resolveName(targetProfile, target.getName(), target, null);
       case "PREFIX_NAME" ->
@@ -91,6 +86,30 @@ public class PracticeAdapter implements SidebarAdapter {
     };
   }
 
+  private static List<String> orEmpty(List<String> lines) {
+    return lines != null ? lines : List.of();
+  }
+
+  private static List<String> ladderLines(Map<String, LadderLines> ladders, Match match) {
+    LadderLines lines =
+        ladders != null ? ladders.get(match.getLadder().getName().toUpperCase()) : null;
+    if (lines == null) {
+      return List.of();
+    }
+
+    return orEmpty(
+        switch (match.getType()) {
+          case DUEL -> lines.getDuel();
+          case PARTY_FFA -> lines.getPartyFfa();
+          case PARTY_SPLIT -> lines.getPartySplit();
+          case PARTY_VS_PARTY -> lines.getPartyVsParty();
+        });
+  }
+
+  private static List<String> eventLines(Map<String, List<String>> events, Event event) {
+    return events != null ? orEmpty(events.get(event.getType().name().toUpperCase())) : List.of();
+  }
+
   private static Component parseColoredText(String text) {
     if (text == null || text.isEmpty()) {
       return Component.empty();
@@ -101,13 +120,12 @@ public class PracticeAdapter implements SidebarAdapter {
 
   @Override
   public Component getTitle(Player player) {
-    return PapiUtil.runThroughFormat(
-        player, SidebarManager.getInstance().getConfig().getString("TITLE"));
+    return PapiUtil.runThroughFormat(player, PracticeConfig.sidebar().getTitle());
   }
 
   @Override
   public List<Component> getLines(Player player) {
-    YamlConfiguration config = SidebarManager.getInstance().getConfig();
+    SidebarConfig config = PracticeConfig.sidebar();
     List<Component> sidebar = new ArrayList<>();
     Profile profile = ProfileManager.getInstance().getProfile(player);
 
@@ -130,16 +148,16 @@ public class PracticeAdapter implements SidebarAdapter {
       default -> {}
     }
 
-    buildFooterLines(player, config, profile, sidebar);
+    buildFooterLines(player, profile, sidebar);
     return sidebar;
   }
 
   private void buildLobbyLines(
-      Player player, YamlConfiguration config, Profile profile, List<Component> sidebar) {
+      Player player, SidebarConfig config, Profile profile, List<Component> sidebar) {
     Party party = PartyManager.getInstance().getParty(player);
 
     if (party == null) {
-      for (String line : config.getStringList("LOBBY.NORMAL")) {
+      for (String line : orEmpty(config.getLobby().getNormal())) {
         Component component =
             PapiUtil.runThroughFormat(player, line)
                 .replaceText(
@@ -177,7 +195,7 @@ public class PracticeAdapter implements SidebarAdapter {
         sidebar.add(component);
       }
     } else {
-      for (String line : config.getStringList("LOBBY.PARTY")) {
+      for (String line : orEmpty(config.getLobby().getParty())) {
         Component component =
             PapiUtil.runThroughFormat(player, line)
                 .replaceText(
@@ -238,7 +256,7 @@ public class PracticeAdapter implements SidebarAdapter {
   }
 
   private boolean buildQueueLines(
-      Player player, YamlConfiguration config, Profile profile, List<Component> sidebar) {
+      Player player, SidebarConfig config, Profile profile, List<Component> sidebar) {
     Queue queue = QueueManager.getInstance().getQueue(player);
     Event event = EventManager.getInstance().getEventByPlayer(player);
     CustomKitQueueManager.HostedCustomKitQueue hostedCustomKitQueue =
@@ -254,15 +272,17 @@ public class PracticeAdapter implements SidebarAdapter {
       String multiQueueCurrent = "";
 
       if (multiQueue) {
-        multiQueueLabel = ConfigManager.getString("QUEUE.MULTI.SIDEBAR.MULTIPLE-LABEL");
+        multiQueueLabel =
+            PracticeConfig.settings().getQueue().getMulti().getSidebar().getMultipleLabel();
         if (multiQueueLabel.isEmpty()) {
-          multiQueueLabel = LanguageManager.getString("QUEUES.MULTI.SIDEBAR-MULTIPLE");
+          multiQueueLabel = PracticeConfig.language().getQueues().getMulti().getSidebarMultiple();
         }
         if (multiQueueLabel.isEmpty()) {
           multiQueueLabel = "Multiple Ladders";
         }
 
-        String currentFormat = ConfigManager.getString("QUEUE.MULTI.SIDEBAR.CURRENT-LADDER-FORMAT");
+        String currentFormat =
+            PracticeConfig.settings().getQueue().getMulti().getSidebar().getCurrentLadderFormat();
         if (currentFormat.isEmpty()) {
           currentFormat = "<white>Current: <gold>%ladder%";
         }
@@ -271,11 +291,11 @@ public class PracticeAdapter implements SidebarAdapter {
         ladderDisplayName = multiQueueLabel;
       }
 
-      String duelQueuePath =
-          multiQueue && config.isList("LOBBY.DUEL-QUEUE-MULTI")
-              ? "LOBBY.DUEL-QUEUE-MULTI"
-              : "LOBBY.DUEL-QUEUE";
-      for (String line : config.getStringList(duelQueuePath)) {
+      List<String> duelQueueLines =
+          multiQueue && config.getLobby().getDuelQueueMulti() != null
+              ? config.getLobby().getDuelQueueMulti()
+              : config.getLobby().getDuelQueue();
+      for (String line : orEmpty(duelQueueLines)) {
         sidebar.add(
             PapiUtil.runThroughFormat(player, line)
                 .replaceText(
@@ -341,7 +361,7 @@ public class PracticeAdapter implements SidebarAdapter {
       }
       return true;
     } else if (hostedCustomKitQueue != null) {
-      for (String line : config.getStringList("LOBBY.CUSTOM-KIT-QUEUE.HOSTING")) {
+      for (String line : orEmpty(config.getLobby().getCustomKitQueue().getHosting())) {
         sidebar.add(
             PapiUtil.runThroughFormat(player, line)
                 .replaceText(
@@ -398,7 +418,7 @@ public class PracticeAdapter implements SidebarAdapter {
       }
       return true;
     } else if (customKitJoinSearch != null) {
-      for (String line : config.getStringList("LOBBY.CUSTOM-KIT-QUEUE.JOIN-SEARCH")) {
+      for (String line : orEmpty(config.getLobby().getCustomKitQueue().getJoinSearch())) {
         sidebar.add(
             PapiUtil.runThroughFormat(player, line)
                 .replaceText(
@@ -459,7 +479,7 @@ public class PracticeAdapter implements SidebarAdapter {
           event.getQueueRunnable() != null ? event.getQueueRunnable().getFormattedTime() : null;
 
       if (eventQueueTimeLeft != null) {
-        for (String line : config.getStringList("LOBBY.EVENT-QUEUE.STARTING")) {
+        for (String line : orEmpty(config.getLobby().getEventQueue().getStarting())) {
           sidebar.add(
               PapiUtil.runThroughFormat(player, line)
                   .replaceText(
@@ -500,7 +520,7 @@ public class PracticeAdapter implements SidebarAdapter {
                           .build()));
         }
       } else {
-        for (String line : config.getStringList("LOBBY.EVENT-QUEUE.IDLE")) {
+        for (String line : orEmpty(config.getLobby().getEventQueue().getIdle())) {
           sidebar.add(
               PapiUtil.runThroughFormat(player, line)
                   .replaceText(
@@ -540,7 +560,7 @@ public class PracticeAdapter implements SidebarAdapter {
     return false;
   }
 
-  private void buildMatchLines(Player player, YamlConfiguration config, List<Component> sidebar) {
+  private void buildMatchLines(Player player, SidebarConfig config, List<Component> sidebar) {
     Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
     if (match == null) {
       return;
@@ -549,9 +569,8 @@ public class PracticeAdapter implements SidebarAdapter {
     Ladder ladder = match.getLadder();
     LadderType ladderType = ladder.getType();
 
-    String path = "MATCH.LADDER." + ladder.getName().toUpperCase() + "." + match.getType().name();
-    List<String> configLines = config.getStringList(path);
-    boolean useLadderSpecificConfig = config.isList(path) && !configLines.isEmpty();
+    List<String> configLines = ladderLines(config.getMatch().getLadder(), match);
+    boolean useLadderSpecificConfig = !configLines.isEmpty();
 
     if (useLadderSpecificConfig) {
       switch (match.getType()) {
@@ -564,7 +583,14 @@ public class PracticeAdapter implements SidebarAdapter {
         default -> {}
       }
     } else {
-      for (String line : config.getStringList("MATCH." + match.getType().name())) {
+      for (String line :
+          orEmpty(
+              switch (match.getType()) {
+                case DUEL -> config.getMatch().getDuel();
+                case PARTY_FFA -> config.getMatch().getPartyFfa();
+                case PARTY_SPLIT -> config.getMatch().getPartySplit();
+                case PARTY_VS_PARTY -> config.getMatch().getPartyVsParty();
+              })) {
         sidebar.add(
             AdapterUtil.replaceMatchPlaceholders(
                 player, PapiUtil.runThroughFormat(player, line), match));
@@ -574,7 +600,7 @@ public class PracticeAdapter implements SidebarAdapter {
 
   private void buildDuelMatchLines(
       Player player,
-      YamlConfiguration config,
+      SidebarConfig config,
       List<Component> sidebar,
       Match match,
       LadderType ladderType) {
@@ -582,12 +608,7 @@ public class PracticeAdapter implements SidebarAdapter {
     Round round = duel.getCurrentRound();
     Player enemy = duel.getOppositePlayer(player);
 
-    for (String line :
-        config.getStringList(
-            "MATCH.LADDER."
-                + match.getLadder().getName().toUpperCase()
-                + "."
-                + match.getType().name())) {
+    for (String line : ladderLines(config.getMatch().getLadder(), match)) {
       Component component =
           AdapterUtil.replaceMatchPlaceholders(
               player, PapiUtil.runThroughFormat(player, line), duel);
@@ -638,10 +659,14 @@ public class PracticeAdapter implements SidebarAdapter {
                                                       && round
                                                           .getBedStatus()
                                                           .get(duel.getTeam(player))
-                                                  ? config.getString(
-                                                      "MATCH.BED-STATUS.NOT-DESTROYED")
-                                                  : config.getString(
-                                                      "MATCH.BED-STATUS.DESTROYED")))))
+                                                  ? config
+                                                      .getMatch()
+                                                      .getBedStatus()
+                                                      .getNotDestroyed()
+                                                  : config
+                                                      .getMatch()
+                                                      .getBedStatus()
+                                                      .getDestroyed()))))
                           .build())
                   .replaceText(
                       TextReplacementConfig.builder()
@@ -655,10 +680,14 @@ public class PracticeAdapter implements SidebarAdapter {
                                                       && round
                                                           .getBedStatus()
                                                           .get(duel.getTeam(enemy))
-                                                  ? config.getString(
-                                                      "MATCH.BED-STATUS.NOT-DESTROYED")
-                                                  : config.getString(
-                                                      "MATCH.BED-STATUS.DESTROYED")))))
+                                                  ? config
+                                                      .getMatch()
+                                                      .getBedStatus()
+                                                      .getNotDestroyed()
+                                                  : config
+                                                      .getMatch()
+                                                      .getBedStatus()
+                                                      .getDestroyed()))))
                           .build());
           break;
 
@@ -672,18 +701,13 @@ public class PracticeAdapter implements SidebarAdapter {
 
   private void buildPartyFfaMatchLines(
       Player player,
-      YamlConfiguration config,
+      SidebarConfig config,
       List<Component> sidebar,
       Match match,
       LadderType ladderType) {
     PartyFfa partyFfa = (PartyFfa) match;
 
-    for (String line :
-        config.getStringList(
-            "MATCH.LADDER."
-                + match.getLadder().getName().toUpperCase()
-                + "."
-                + match.getType().name())) {
+    for (String line : ladderLines(config.getMatch().getLadder(), match)) {
       Component component =
           AdapterUtil.replaceMatchPlaceholders(
               player, PapiUtil.runThroughFormat(player, line), partyFfa);
@@ -721,19 +745,14 @@ public class PracticeAdapter implements SidebarAdapter {
 
   private void buildPartySplitMatchLines(
       Player player,
-      YamlConfiguration config,
+      SidebarConfig config,
       List<Component> sidebar,
       Match match,
       LadderType ladderType) {
     PartySplit partySplit = (PartySplit) match;
     Round round = partySplit.getCurrentRound();
 
-    for (String line :
-        config.getStringList(
-            "MATCH.LADDER."
-                + match.getLadder().getName().toUpperCase()
-                + "."
-                + match.getType().name())) {
+    for (String line : ladderLines(config.getMatch().getLadder(), match)) {
       Component component =
           AdapterUtil.replaceMatchPlaceholders(
               player, PapiUtil.runThroughFormat(player, line), partySplit);
@@ -770,10 +789,14 @@ public class PracticeAdapter implements SidebarAdapter {
                                             Objects.requireNonNull(
                                                 round != null
                                                         && round.getBedStatus().get(TeamEnum.TEAM1)
-                                                    ? config.getString(
-                                                        "MATCH.BED-STATUS.NOT-DESTROYED")
-                                                    : config.getString(
-                                                        "MATCH.BED-STATUS.DESTROYED")))))
+                                                    ? config
+                                                        .getMatch()
+                                                        .getBedStatus()
+                                                        .getNotDestroyed()
+                                                    : config
+                                                        .getMatch()
+                                                        .getBedStatus()
+                                                        .getDestroyed()))))
                             .build())
                     .replaceText(
                         TextReplacementConfig.builder()
@@ -785,10 +808,14 @@ public class PracticeAdapter implements SidebarAdapter {
                                             Objects.requireNonNull(
                                                 round != null
                                                         && round.getBedStatus().get(TeamEnum.TEAM2)
-                                                    ? config.getString(
-                                                        "MATCH.BED-STATUS.NOT-DESTROYED")
-                                                    : config.getString(
-                                                        "MATCH.BED-STATUS.DESTROYED")))))
+                                                    ? config
+                                                        .getMatch()
+                                                        .getBedStatus()
+                                                        .getNotDestroyed()
+                                                    : config
+                                                        .getMatch()
+                                                        .getBedStatus()
+                                                        .getDestroyed()))))
                             .build());
             default -> component;
           };
@@ -799,7 +826,7 @@ public class PracticeAdapter implements SidebarAdapter {
 
   private void buildPartyVsPartyMatchLines(
       Player player,
-      YamlConfiguration config,
+      SidebarConfig config,
       List<Component> sidebar,
       Match match,
       LadderType ladderType) {
@@ -808,12 +835,7 @@ public class PracticeAdapter implements SidebarAdapter {
     TeamEnum team = partyVsParty.getTeam(player);
     TeamEnum enemyTeam = TeamUtil.getOppositeTeam(team);
 
-    for (String line :
-        config.getStringList(
-            "MATCH.LADDER."
-                + match.getLadder().getName().toUpperCase()
-                + "."
-                + match.getType().name())) {
+    for (String line : ladderLines(config.getMatch().getLadder(), match)) {
       Component component =
           AdapterUtil.replaceMatchPlaceholders(
               player, PapiUtil.runThroughFormat(player, line), partyVsParty);
@@ -846,8 +868,8 @@ public class PracticeAdapter implements SidebarAdapter {
                             .replacement(
                                 Objects.requireNonNull(
                                     round != null && round.getBedStatus().get(team)
-                                        ? config.getString("MATCH.BED-STATUS.NOT-DESTROYED")
-                                        : config.getString("MATCH.BED-STATUS.DESTROYED")))
+                                        ? config.getMatch().getBedStatus().getNotDestroyed()
+                                        : config.getMatch().getBedStatus().getDestroyed()))
                             .build())
                     .replaceText(
                         TextReplacementConfig.builder()
@@ -855,8 +877,8 @@ public class PracticeAdapter implements SidebarAdapter {
                             .replacement(
                                 Objects.requireNonNull(
                                     round != null && round.getBedStatus().get(enemyTeam)
-                                        ? config.getString("MATCH.BED-STATUS.NOT-DESTROYED")
-                                        : config.getString("MATCH.BED-STATUS.DESTROYED")))
+                                        ? config.getMatch().getBedStatus().getNotDestroyed()
+                                        : config.getMatch().getBedStatus().getDestroyed()))
                             .build());
             default -> component;
           };
@@ -865,20 +887,20 @@ public class PracticeAdapter implements SidebarAdapter {
     }
   }
 
-  private void buildFfaLines(Player player, YamlConfiguration config, List<Component> sidebar) {
+  private void buildFfaLines(Player player, SidebarConfig config, List<Component> sidebar) {
     Ffa ffa = FfaManager.getInstance().getFfaByPlayer(player);
     if (ffa == null) {
       return;
     }
 
     if (ffa.getBuildRollback() != null) {
-      for (String line : config.getStringList("FFA.GAME.BUILD")) {
+      for (String line : orEmpty(config.getFfa().getGame().getBuild())) {
         sidebar.add(
             AdapterUtil.replaceFfaPlaceholders(
                 player, PapiUtil.runThroughFormat(player, line), ffa));
       }
     } else {
-      for (String line : config.getStringList("FFA.GAME.NON-BUILD")) {
+      for (String line : orEmpty(config.getFfa().getGame().getNonBuild())) {
         sidebar.add(
             AdapterUtil.replaceFfaPlaceholders(
                 player, PapiUtil.runThroughFormat(player, line), ffa));
@@ -886,17 +908,17 @@ public class PracticeAdapter implements SidebarAdapter {
     }
   }
 
-  private void buildEventLines(Player player, YamlConfiguration config, List<Component> sidebar) {
+  private void buildEventLines(Player player, SidebarConfig config, List<Component> sidebar) {
     Event event = EventManager.getInstance().getEventByPlayer(player);
     if (event == null) {
       return;
     }
 
-    String path = "EVENT." + event.getType().name().toUpperCase();
+    List<String> eventLines = eventLines(config.getEvent(), event);
     switch (event.getType()) {
       case LMS -> {
         Lms lms = (Lms) event;
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           sidebar.add(
               PapiUtil.runThroughFormat(player, line)
                   .replaceText(
@@ -928,7 +950,7 @@ public class PracticeAdapter implements SidebarAdapter {
                 ? String.valueOf(oitc.getPlayerPoints().get(highestPointPlayer))
                 : "0";
 
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           sidebar.add(
               PapiUtil.runThroughFormat(player, line)
                   .replaceText(
@@ -965,7 +987,7 @@ public class PracticeAdapter implements SidebarAdapter {
       }
       case TNTTAG -> {
         TntTag tntTag = (TntTag) event;
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           sidebar.add(
               PapiUtil.runThroughFormat(player, line)
                   .replaceText(
@@ -987,7 +1009,7 @@ public class PracticeAdapter implements SidebarAdapter {
         DuelEvent duelEvent = (DuelEvent) event;
         DuelFight bracketFight = duelEvent.getFight(player);
         if (bracketFight != null) {
-          for (String line : config.getStringList(path)) {
+          for (String line : eventLines) {
             sidebar.add(
                 PapiUtil.runThroughFormat(player, line)
                     .replaceText(
@@ -1020,7 +1042,7 @@ public class PracticeAdapter implements SidebarAdapter {
                             .build()));
           }
         } else {
-          for (String line : config.getStringList("SPECTATE." + path)) {
+          for (String line : eventLines(config.getSpectate().getEvent(), event)) {
             sidebar.add(
                 PapiUtil.runThroughFormat(player, line)
                     .replaceText(
@@ -1051,7 +1073,7 @@ public class PracticeAdapter implements SidebarAdapter {
       }
       case SPLEGG -> {
         Splegg splegg = (Splegg) event;
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           sidebar.add(
               PapiUtil.runThroughFormat(player, line)
                   .replaceText(
@@ -1086,7 +1108,7 @@ public class PracticeAdapter implements SidebarAdapter {
       }
       case JUGGERNAUT -> {
         Juggernaut juggernaut = (Juggernaut) event;
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           sidebar.add(
               PapiUtil.runThroughFormat(player, line)
                   .replaceText(
@@ -1111,8 +1133,7 @@ public class PracticeAdapter implements SidebarAdapter {
     }
   }
 
-  private void buildSpectateLines(
-      Player player, YamlConfiguration config, List<Component> sidebar) {
+  private void buildSpectateLines(Player player, SidebarConfig config, List<Component> sidebar) {
     Spectatable spectatable = SpectatorManager.getInstance().getSpectators().get(player);
     if (spectatable == null) {
       return;
@@ -1122,12 +1143,12 @@ public class PracticeAdapter implements SidebarAdapter {
       buildSpectateMatchLines(player, config, sidebar, match);
     } else if (spectatable instanceof Ffa ffa) {
       if (ffa.getBuildRollback() != null) {
-        for (String line : config.getStringList("FFA.SPECTATE.BUILD")) {
+        for (String line : orEmpty(config.getFfa().getSpectate().getBuild())) {
           sidebar.add(
               AdapterUtil.replaceFfaSpecPlaceholders(PapiUtil.runThroughFormat(player, line), ffa));
         }
       } else {
-        for (String line : config.getStringList("FFA.SPECTATE.NON-BUILD")) {
+        for (String line : orEmpty(config.getFfa().getSpectate().getNonBuild())) {
           sidebar.add(
               AdapterUtil.replaceFfaSpecPlaceholders(PapiUtil.runThroughFormat(player, line), ffa));
         }
@@ -1138,15 +1159,10 @@ public class PracticeAdapter implements SidebarAdapter {
   }
 
   private void buildSpectateMatchLines(
-      Player player, YamlConfiguration config, List<Component> sidebar, Match match) {
+      Player player, SidebarConfig config, List<Component> sidebar, Match match) {
     Round round;
-    String path =
-        "SPECTATE.MATCH.LADDER."
-            + match.getLadder().getName().toUpperCase()
-            + "."
-            + match.getType().name();
-    List<String> configLines = config.getStringList(path);
-    boolean useLadderSpecificConfig = config.isList(path) && !configLines.isEmpty();
+    List<String> configLines = ladderLines(config.getSpectate().getMatch().getLadder(), match);
+    boolean useLadderSpecificConfig = !configLines.isEmpty();
 
     if (useLadderSpecificConfig) {
       switch (match.getType()) {
@@ -1155,7 +1171,7 @@ public class PracticeAdapter implements SidebarAdapter {
           round = duel.getCurrentRound();
           LadderType ladderType = match.getLadder().getType();
 
-          for (String line : config.getStringList(path)) {
+          for (String line : configLines) {
             switch (ladderType) {
               case BOXING:
                 Statistic player1stats = match.getCurrentStat(duel.getPlayer1());
@@ -1177,15 +1193,15 @@ public class PracticeAdapter implements SidebarAdapter {
                             (Objects.requireNonNull(
                                 round != null
                                         && round.getBedStatus().get(duel.getTeam(duel.getPlayer1()))
-                                    ? config.getString("MATCH.BED-STATUS.NOT-DESTROYED")
-                                    : config.getString("MATCH.BED-STATUS.DESTROYED"))))
+                                    ? config.getMatch().getBedStatus().getNotDestroyed()
+                                    : config.getMatch().getBedStatus().getDestroyed())))
                         .replace(
                             "%player2BedStatus%",
                             (Objects.requireNonNull(
                                 round != null
                                         && round.getBedStatus().get(duel.getTeam(duel.getPlayer2()))
-                                    ? config.getString("MATCH.BED-STATUS.NOT-DESTROYED")
-                                    : config.getString("MATCH.BED-STATUS.DESTROYED"))));
+                                    ? config.getMatch().getBedStatus().getNotDestroyed()
+                                    : config.getMatch().getBedStatus().getDestroyed())));
                 break;
 
               default:
@@ -1200,7 +1216,7 @@ public class PracticeAdapter implements SidebarAdapter {
           PartyFfa partyFfa = (PartyFfa) match;
           LadderType ladderType = match.getLadder().getType();
 
-          for (String line : config.getStringList(path)) {
+          for (String line : configLines) {
             if (ladderType == LadderType.BOXING) {
               Player player1 = MatchUtil.getBoxingTopPlayer(partyFfa, 1);
               if (player1 != null) {
@@ -1257,7 +1273,7 @@ public class PracticeAdapter implements SidebarAdapter {
           round = partySplit.getCurrentRound();
           LadderType ladderType = match.getLadder().getType();
 
-          for (String line : config.getStringList(path)) {
+          for (String line : configLines) {
             switch (ladderType) {
               case BOXING:
                 line =
@@ -1280,14 +1296,14 @@ public class PracticeAdapter implements SidebarAdapter {
                             "%team1BedStatus%",
                             (Objects.requireNonNull(
                                 round != null && round.getBedStatus().get(TeamEnum.TEAM1)
-                                    ? config.getString("MATCH.BED-STATUS.NOT-DESTROYED")
-                                    : config.getString("MATCH.BED-STATUS.DESTROYED"))))
+                                    ? config.getMatch().getBedStatus().getNotDestroyed()
+                                    : config.getMatch().getBedStatus().getDestroyed())))
                         .replace(
                             "%team2BedStatus%",
                             (Objects.requireNonNull(
                                 round != null && round.getBedStatus().get(TeamEnum.TEAM2)
-                                    ? config.getString("MATCH.BED-STATUS.NOT-DESTROYED")
-                                    : config.getString("MATCH.BED-STATUS.DESTROYED"))));
+                                    ? config.getMatch().getBedStatus().getNotDestroyed()
+                                    : config.getMatch().getBedStatus().getDestroyed())));
                 break;
 
               default:
@@ -1303,7 +1319,7 @@ public class PracticeAdapter implements SidebarAdapter {
           round = partyVsParty.getCurrentRound();
           LadderType ladderType = match.getLadder().getType();
 
-          for (String line : config.getStringList(path)) {
+          for (String line : configLines) {
             switch (ladderType) {
               case BOXING:
                 line =
@@ -1326,14 +1342,14 @@ public class PracticeAdapter implements SidebarAdapter {
                             "%team1BedStatus%",
                             (Objects.requireNonNull(
                                 round.getBedStatus().get(TeamEnum.TEAM1)
-                                    ? config.getString("MATCH.BED-STATUS.NOT-DESTROYED")
-                                    : config.getString("MATCH.BED-STATUS.DESTROYED"))))
+                                    ? config.getMatch().getBedStatus().getNotDestroyed()
+                                    : config.getMatch().getBedStatus().getDestroyed())))
                         .replace(
                             "%team2BedStatus%",
                             (Objects.requireNonNull(
                                 round.getBedStatus().get(TeamEnum.TEAM2)
-                                    ? config.getString("MATCH.BED-STATUS.NOT-DESTROYED")
-                                    : config.getString("MATCH.BED-STATUS.DESTROYED"))));
+                                    ? config.getMatch().getBedStatus().getNotDestroyed()
+                                    : config.getMatch().getBedStatus().getDestroyed())));
                 break;
 
               default:
@@ -1348,7 +1364,14 @@ public class PracticeAdapter implements SidebarAdapter {
         default -> {}
       }
     } else {
-      for (String line : config.getStringList("SPECTATE.MATCH." + match.getType().name())) {
+      for (String line :
+          orEmpty(
+              switch (match.getType()) {
+                case DUEL -> config.getSpectate().getMatch().getDuel();
+                case PARTY_FFA -> config.getSpectate().getMatch().getPartyFfa();
+                case PARTY_SPLIT -> config.getSpectate().getMatch().getPartySplit();
+                case PARTY_VS_PARTY -> config.getSpectate().getMatch().getPartyVsParty();
+              })) {
         sidebar.add(
             AdapterUtil.replaceMatchSpectatePlaceholders(
                 PapiUtil.runThroughFormat(player, line), match));
@@ -1357,12 +1380,12 @@ public class PracticeAdapter implements SidebarAdapter {
   }
 
   private void buildSpectateEventLines(
-      Player player, YamlConfiguration config, List<Component> sidebar, Event event) {
-    String path = "SPECTATE.EVENT." + event.getType().name().toUpperCase();
+      Player player, SidebarConfig config, List<Component> sidebar, Event event) {
+    List<String> eventLines = eventLines(config.getSpectate().getEvent(), event);
     switch (event.getType()) {
       case LMS -> {
         Lms lms = (Lms) event;
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           line =
               line.replace("%players%", String.valueOf(lms.getStartPlayerCount()))
                   .replace("%alivePlayers%", String.valueOf(lms.getPlayers().size()))
@@ -1382,7 +1405,7 @@ public class PracticeAdapter implements SidebarAdapter {
                 ? String.valueOf(oitc.getPlayerPoints().get(highestPointPlayer))
                 : "0";
 
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           line =
               line.replace("%topPlayer%", topPlayerName)
                   .replace("%topScore%", topPlayerScore)
@@ -1394,7 +1417,7 @@ public class PracticeAdapter implements SidebarAdapter {
       }
       case TNTTAG -> {
         TntTag tntTag = (TntTag) event;
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           line =
               line.replace(
                       "%explosionTime%",
@@ -1407,7 +1430,7 @@ public class PracticeAdapter implements SidebarAdapter {
       }
       case BRACKETS, SUMO -> {
         DuelEvent duelEvent = (DuelEvent) event;
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           line =
               line.replace("%players%", String.valueOf(duelEvent.getStartPlayerCount()))
                   .replace("%alivePlayers%", String.valueOf(duelEvent.getPlayers().size()))
@@ -1422,7 +1445,7 @@ public class PracticeAdapter implements SidebarAdapter {
       }
       case SPLEGG -> {
         Splegg splegg = (Splegg) event;
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           line =
               line.replace("%players%", String.valueOf(splegg.getStartPlayerCount()))
                   .replace("%alivePlayers%", String.valueOf(splegg.getPlayers().size()))
@@ -1436,7 +1459,7 @@ public class PracticeAdapter implements SidebarAdapter {
       }
       case JUGGERNAUT -> {
         Juggernaut juggernaut = (Juggernaut) event;
-        for (String line : config.getStringList(path)) {
+        for (String line : eventLines) {
           line =
               line.replace("%players%", String.valueOf(juggernaut.getStartPlayerCount()))
                   .replace("%alivePlayers%", String.valueOf(juggernaut.getPlayers().size() - 1))
@@ -1449,8 +1472,7 @@ public class PracticeAdapter implements SidebarAdapter {
     }
   }
 
-  private void buildFooterLines(
-      Player player, YamlConfiguration config, Profile profile, List<Component> sidebar) {
+  private void buildFooterLines(Player player, Profile profile, List<Component> sidebar) {
     Group group = profile.getGroup();
     if (group != null
         && group.getSidebarExtensionRaw() != null
@@ -1461,21 +1483,6 @@ public class PracticeAdapter implements SidebarAdapter {
             NameFormatUtil.applyPlayerPlaceholders(
                 NameFormatUtil.applyDivisionPlaceholders(extensionLine, profile),
                 player.getName()));
-      }
-    }
-
-    if (player.hasPermission("ap.admin.scoreboard")) {
-      for (String line : config.getStringList("ADMIN-EXTENSION")) {
-        line =
-            line.replace("%tps%", String.valueOf(TpsUtil.get1MinTps()))
-                .replace(
-                    "%arenas%", String.valueOf(ArenaManager.getInstance().getArenaList().size()))
-                .replace(
-                    "%enabledArenas%",
-                    String.valueOf(
-                        ArenaManager.getInstance().getEnabledArenas().size()
-                            + ArenaManager.getInstance().getEnabledFfaArenas().size()));
-        sidebar.add(PapiUtil.runThroughFormat(player, line));
       }
     }
   }

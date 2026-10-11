@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.util.Common;
@@ -20,19 +20,21 @@ public class IgnoreQueueCommand implements CommandExecutor, TabExecutor {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
     if (!player.hasPermission("ap.ignorequeue")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.IGNORE-QUEUE.NO-PERM"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getIgnoreQueue().getNoPerm());
       return false;
     }
 
     Profile profile = ProfileManager.getInstance().getProfile(player);
 
     if (args.length != 1) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.IGNORE-QUEUE.USE"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getIgnoreQueue().getUse());
       return false;
     }
 
@@ -40,13 +42,17 @@ public class IgnoreQueueCommand implements CommandExecutor, TabExecutor {
     if (target == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.IGNORE-QUEUE.PLAYER-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getIgnoreQueue()
+              .getPlayerOffline()
               .replace("%target%", args[0]));
       return false;
     }
 
     if (profile == target) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.IGNORE-QUEUE.CANT-YOURSELF"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getIgnoreQueue().getCantYourself());
       return false;
     }
 
@@ -54,12 +60,19 @@ public class IgnoreQueueCommand implements CommandExecutor, TabExecutor {
       profile.getIgnoredPlayers().add(target);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.IGNORE-QUEUE.IGNORE-ON").replace("%target%", args[0]));
+          PracticeConfig.language()
+              .getCommand()
+              .getIgnoreQueue()
+              .getIgnoreOn()
+              .replace("%target%", args[0]));
     } else {
       profile.getIgnoredPlayers().remove(target);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.IGNORE-QUEUE.IGNORE-OFF")
+          PracticeConfig.language()
+              .getCommand()
+              .getIgnoreQueue()
+              .getIgnoreOff()
               .replace("%target%", args[0]));
     }
 

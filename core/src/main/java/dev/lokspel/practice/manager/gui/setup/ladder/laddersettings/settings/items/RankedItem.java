@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.items;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -35,7 +36,15 @@ public class RankedItem extends SettingItem {
       }
     }
 
-    GuiItem guiItem = GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.WEIGHT-CLASS");
+    GuiItem guiItem =
+        BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getSettings()
+                .getIcons()
+                .getWeightClass());
 
     List<String> lore = new ArrayList<>();
     for (String line : guiItem.getLore()) {

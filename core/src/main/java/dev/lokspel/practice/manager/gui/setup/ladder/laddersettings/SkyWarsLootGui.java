@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -31,7 +31,12 @@ public class SkyWarsLootGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.LADDER.SKYWARS-LOOT.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getSkywarsLoot()
+                .getTitle()
                 .replace("%ladder%", ladder.getName()),
             6));
     this.ladder = ladder;
@@ -48,7 +53,17 @@ public class SkyWarsLootGui extends Gui {
 
     // Navigation item
     gui.get(1)
-        .setItem(45, GuiFile.getGuiItem("GUIS.SETUP.LADDER.SKYWARS-LOOT.ICONS.GO-BACK").get());
+        .setItem(
+            45,
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getLadder()
+                        .getSkywarsLoot()
+                        .getIcons()
+                        .getGoBack())
+                .get());
 
     update();
   }
@@ -86,7 +101,8 @@ public class SkyWarsLootGui extends Gui {
         if (ladder.isEnabled()) {
           e.setCancelled(true);
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getLadder().getCantEditEnabled());
         }
       }
     }

@@ -1,9 +1,8 @@
 package dev.lokspel.practice.manager.party.matchrequest;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.type.duel.Duel;
 import dev.lokspel.practice.manager.fight.match.type.playersvsplayers.partyvsparty.PartyVsParty;
@@ -64,7 +63,8 @@ public class PartyRequest {
         requestManager.getRequests().get(target).remove(partyRequest);
       }
     }.runTaskLaterAsynchronously(
-        AstralPractice.getInstance(), 20L * ConfigManager.getInt("PARTY.REQUEST-EXPIRY"));
+        AstralPractice.getInstance(),
+        20L * PracticeConfig.settings().getParty().getRequestExpiry());
   }
 
   public void sendRequestMessage() {
@@ -72,10 +72,11 @@ public class PartyRequest {
     if (arena != null) {
       arenaName = arena.getDisplayName();
     } else {
-      arenaName = LanguageManager.getString("PARTY.MATCH-REQUEST-MESSAGE.RANDOM-ARENA-NAME");
+      arenaName =
+          PracticeConfig.language().getParty().getMatchRequestMessage().getRandomArenaName();
     }
 
-    for (String line : LanguageManager.getList("PARTY.MATCH-REQUEST-MESSAGE.SENDER")) {
+    for (String line : PracticeConfig.language().getParty().getMatchRequestMessage().getSender()) {
       Common.sendMmMessage(
           sender.getLeader(),
           line.replace("%ladder%", ladder.getDisplayName())
@@ -90,7 +91,7 @@ public class PartyRequest {
                       .replace("]", "")));
     }
 
-    for (String line : LanguageManager.getList("PARTY.MATCH-REQUEST-MESSAGE.TARGET")) {
+    for (String line : PracticeConfig.language().getParty().getMatchRequestMessage().getTarget()) {
       Common.sendMmMessage(
           target.getLeader(),
           line.replace("%ladder%", ladder.getDisplayName())
@@ -114,7 +115,8 @@ public class PartyRequest {
       if (this.getArena().getAvailableArena() != null) {
         arena = this.getArena();
       } else {
-        Common.sendMmMessage(sender.getLeader(), LanguageManager.getString("PARTY.ARENA-BUSY"));
+        Common.sendMmMessage(
+            sender.getLeader(), PracticeConfig.language().getParty().getArenaBusy());
         arena = LadderUtil.getAvailableArena(ladder);
       }
     } else {
@@ -137,8 +139,8 @@ public class PartyRequest {
       target.setMatch(match);
       match.startMatch();
     } else {
-      sender.sendMessage(LanguageManager.getString("PARTY.NO-AVAILABLE-ARENA"));
-      target.sendMessage(LanguageManager.getString("PARTY.NO-AVAILABLE-ARENA"));
+      sender.sendMessage(PracticeConfig.language().getParty().getNoAvailableArena());
+      target.sendMessage(PracticeConfig.language().getParty().getNoAvailableArena());
     }
   }
 }

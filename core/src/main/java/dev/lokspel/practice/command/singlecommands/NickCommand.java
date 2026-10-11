@@ -1,8 +1,7 @@
 package dev.lokspel.practice.command.singlecommands;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.InventoryUtil;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -76,7 +75,8 @@ public class NickCommand implements CommandExecutor, TabCompleter {
 
   private static boolean isValidNickname(String rawTemplate, String playerName) {
     String plainName = getPlainName(rawTemplate, playerName);
-    return Pattern.compile(ConfigManager.getString("PLAYER.NICKNAME.VALIDATION-PATTERN"))
+    return Pattern.compile(
+            PracticeConfig.settings().getPlayer().getNickname().getValidationPattern())
         .matcher(plainName)
         .matches();
   }
@@ -84,24 +84,32 @@ public class NickCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
-    if (!ConfigManager.getBoolean("PLAYER.LOBBY-NAMETAG.ENABLED")) {
+    if (!PracticeConfig.settings().getPlayer().getLobbyNametag().isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.NAMETAG.NAMETAG-DISABLED"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getNametag()
+              .getNametagDisabled());
       return false;
     }
 
     if (!player.hasPermission("ap.nick.use")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
       return false;
     }
 
     if (args.length == 0) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.NICK.HELP").replace("%label%", label));
+          player,
+          PracticeConfig.language().getCommand().getNick().getHelp().replace("%label%", label));
       return false;
     }
 
@@ -110,12 +118,14 @@ public class NickCommand implements CommandExecutor, TabCompleter {
         Profile profile = ProfileManager.getInstance().getProfile(player);
         profile.setNameTemplate(null);
         InventoryUtil.setLobbyNametag(player, profile);
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.NICK.RESET-SELF"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getNick().getResetSelf());
         return true;
       }
 
       if (!player.hasPermission("ap.nick.reset.others")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return false;
       }
 
@@ -123,7 +133,11 @@ public class NickCommand implements CommandExecutor, TabCompleter {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.NICK.TARGET-OFFLINE").replace("%target%", args[1]));
+            PracticeConfig.language()
+                .getCommand()
+                .getNick()
+                .getTargetOffline()
+                .replace("%target%", args[1]));
         return false;
       }
 
@@ -133,12 +147,18 @@ public class NickCommand implements CommandExecutor, TabCompleter {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.NICK.RESET-OTHER")
+          PracticeConfig.language()
+              .getCommand()
+              .getNick()
+              .getResetOther()
               .replace("%target%", target.getName()));
       if (!target.equals(player)) {
         Common.sendMmMessage(
             target,
-            LanguageManager.getString("COMMAND.NICK.RESETED-BY")
+            PracticeConfig.language()
+                .getCommand()
+                .getNick()
+                .getResetedBy()
                 .replace("%player%", player.getName()));
       }
       return true;
@@ -158,19 +178,21 @@ public class NickCommand implements CommandExecutor, TabCompleter {
     String nameTemplate = joinArgs(args, templateStartIndex).trim();
     if (nameTemplate.isEmpty()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.NICK.HELP").replace("%label%", label));
+          player,
+          PracticeConfig.language().getCommand().getNick().getHelp().replace("%label%", label));
       return false;
     }
 
     if (!player.hasPermission(DIFFERENT_NAME_PERMISSION)
         && !isTemplateKeepingRealName(target, nameTemplate)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.NICK.DIFFERENT-NAME-NO-PERM"));
+          player, PracticeConfig.language().getCommand().getNick().getDifferentNameNoPerm());
       return false;
     }
 
     if (!isValidNickname(nameTemplate, target.getName())) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.NICK.INVALID-NAME"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getNick().getInvalidName());
       return false;
     }
 
@@ -180,17 +202,26 @@ public class NickCommand implements CommandExecutor, TabCompleter {
     if (target.equals(player)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.NICK.SET-SELF")
+          PracticeConfig.language()
+              .getCommand()
+              .getNick()
+              .getSetSelf()
               .replace("%name%", formattedNamePreview));
     } else {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.NICK.SET-OTHER")
+          PracticeConfig.language()
+              .getCommand()
+              .getNick()
+              .getSetOther()
               .replace("%target%", target.getName())
               .replace("%name%", formattedNamePreview));
       Common.sendMmMessage(
           target,
-          LanguageManager.getString("COMMAND.NICK.SET-BY")
+          PracticeConfig.language()
+              .getCommand()
+              .getNick()
+              .getSetBy()
               .replace("%player%", player.getName())
               .replace("%name%", formattedNamePreview));
     }

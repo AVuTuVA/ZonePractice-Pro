@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.items;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingItem;
@@ -19,9 +20,27 @@ public class EditableItem extends SettingItem {
   public void updateItemStack() {
     if (ladder.isEditable()) {
       guiItem =
-          GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.EDITABLE.ENABLED").setGlowing(true);
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getSetup()
+                      .getLadder()
+                      .getSettings()
+                      .getIcons()
+                      .getEditable()
+                      .getEnabled())
+              .setGlowing(true);
     } else {
-      guiItem = GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.EDITABLE.DISABLED");
+      guiItem =
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getSettings()
+                  .getIcons()
+                  .getEditable()
+                  .getDisabled());
     }
   }
 

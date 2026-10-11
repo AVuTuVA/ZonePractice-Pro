@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.partyitems;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
@@ -12,9 +12,7 @@ import org.bukkit.entity.Player;
 public class PartyGameInvItem extends InvItem {
 
   public PartyGameInvItem() {
-    super(
-        getItemStack("PARTY.NORMAL.HOST-PARTY-GAME.ITEM"),
-        getInt("PARTY.NORMAL.HOST-PARTY-GAME.SLOT"));
+    super(PracticeConfig.inventories().getParty().getNormal().get("HOST-PARTY-GAME"));
   }
 
   @Override
@@ -25,12 +23,13 @@ public class PartyGameInvItem extends InvItem {
     }
 
     if (!party.getLeader().equals(player)) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.NOT-LEADER"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getNotLeader());
       return;
     }
 
     if (party.getMembers().size() < 2) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.NOT-ENOUGH-PLAYER-FOR-GAME"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getParty().getNotEnoughPlayerForGame());
       return;
     }
 

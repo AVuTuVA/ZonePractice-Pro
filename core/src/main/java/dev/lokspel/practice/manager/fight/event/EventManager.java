@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.fight.event;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.fight.event.events.duel.brackets.Brackets;
@@ -74,7 +74,7 @@ public class EventManager {
   @Getter private AutoEventScheduler autoEventScheduler;
 
   public static final ItemStack PLAYER_TRACKER =
-      ConfigManager.getGuiItem("EVENT.PLAYER-TRACKER").get();
+      BackendUtil.getGuiItem(PracticeConfig.settings().getEvent().getPlayerTracker()).get();
 
   private EventManager() {
     this.events = new ArrayList<>();
@@ -173,31 +173,39 @@ public class EventManager {
               && !starter.hasPermission("ap.event.host.all"))) {
         Common.sendMmMessage(
             starter,
-            LanguageManager.getString("EVENT.CANT-HOST-EVENT")
+            PracticeConfig.language()
+                .getEvent()
+                .getCantHostEvent()
                 .replace("%event%", eventType.getName()));
         return;
       }
 
       Profile starterProfile = ProfileManager.getInstance().getProfile(starter);
       if (starterProfile == null || starterProfile.getEventStartLeft() <= 0) {
-        Common.sendMmMessage(starter, LanguageManager.getString("EVENT.CANT-HOST-EVENT-TODAY"));
+        Common.sendMmMessage(starter, PracticeConfig.language().getEvent().getCantHostEventToday());
         return;
       }
     }
 
-    if (!this.events.isEmpty() && ConfigManager.getBoolean("EVENT.MULTIPLE")) {
+    if (!this.events.isEmpty() && PracticeConfig.settings().getEvent().isMultiple()) {
       for (Event liveEvent : this.events) {
         if (liveEvent.getStatus().equals(EventStatus.COLLECTING)) {
           if (starter != null) {
             Common.sendMmMessage(
-                starter, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.HOST.CANT-HOST-NOW"));
+                starter,
+                PracticeConfig.language()
+                    .getCommand()
+                    .getEvent()
+                    .getArguments()
+                    .getHost()
+                    .getCantHostNow());
           }
           return;
         }
       }
-    } else if (!this.events.isEmpty() && !ConfigManager.getBoolean("EVENT.MULTIPLE")) {
+    } else if (!this.events.isEmpty() && !PracticeConfig.settings().getEvent().isMultiple()) {
       if (starter != null) {
-        Common.sendMmMessage(starter, LanguageManager.getString("EVENT.ONLY-ONE-EVENT"));
+        Common.sendMmMessage(starter, PracticeConfig.language().getEvent().getOnlyOneEvent());
       }
       return;
     }
@@ -206,11 +214,15 @@ public class EventManager {
       if (starter != null) {
         Common.sendMmMessage(
             starter,
-            LanguageManager.getString("EVENT.CANT-START-EVENT")
+            PracticeConfig.language()
+                .getEvent()
+                .getCantStartEvent()
                 .replace("%event%", eventType.getName()));
       } else {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("EVENT.CANT-START-EVENT")
+            PracticeConfig.language()
+                .getEvent()
+                .getCantStartEvent()
                 .replace("%event%", eventType.getName()));
       }
 
@@ -283,18 +295,18 @@ public class EventManager {
   }
 
   public int getPostKillDelayTicks() {
-    int seconds = ConfigManager.getInt("EVENT.DUEL.POST-KILL-DELAY", 3);
+    int seconds = PracticeConfig.settings().getEvent().getDuel().getPostKillDelay();
     return Math.max(0, seconds) * 20;
   }
 
   public void sendConfiguredEventTitle(
-      Player player, String titlePath, String subtitlePath, Map<String, String> placeholders) {
+      Player player, String title, String subtitle, Map<String, String> placeholders) {
     if (player == null) {
       return;
     }
 
-    String titleRaw = applyPlaceholders(LanguageManager.getString(titlePath), placeholders);
-    String subtitleRaw = applyPlaceholders(LanguageManager.getString(subtitlePath), placeholders);
+    String titleRaw = applyPlaceholders(title, placeholders);
+    String subtitleRaw = applyPlaceholders(subtitle, placeholders);
 
     TitleUtil.sendTitle(
         player,

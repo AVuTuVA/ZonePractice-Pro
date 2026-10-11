@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.util.FightUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -45,7 +46,10 @@ public class SpectatorMenuGui extends Gui {
     }
 
     List<ItemStack> iconsList = new ArrayList<>(icons.keySet());
-    ItemStack fillerItem = GuiFile.getGuiItem("GUIS.SPECTATOR-MENU.ICONS.FILLER-ITEM").get();
+    ItemStack fillerItem =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getSpectatorMenu().getIcons().getFillerItem())
+            .get();
 
     for (int page = 1; page < 20; page++) {
       if (PageUtil.isPageValid(iconsList, page, spaces) || page == 1) {
@@ -53,7 +57,10 @@ public class SpectatorMenuGui extends Gui {
           gui.put(
               page,
               InventoryUtil.createInventory(
-                  GuiFile.getString("GUIS.SPECTATOR-MENU.TITLE")
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getSpectatorMenu()
+                      .getTitle()
                       .replace("%page%", String.valueOf(page)),
                   5));
         }
@@ -78,11 +85,15 @@ public class SpectatorMenuGui extends Gui {
         ItemStack left;
         if (PageUtil.isPageValid(iconsList, page - 1, spaces)) {
           left =
-              GuiFile.getGuiItem("GUIS.SPECTATOR-MENU.ICONS.PAGE-LEFT")
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis().getGuis().getSpectatorMenu().getIcons().getPageLeft())
                   .replace("%page%", String.valueOf(page - 1))
                   .get();
         } else {
-          left = GuiFile.getGuiItem("GUIS.SPECTATOR-MENU.ICONS.CLOSE").get();
+          left =
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis().getGuis().getSpectatorMenu().getIcons().getClose())
+                  .get();
         }
         inventory.setItem(36, left);
 
@@ -90,7 +101,8 @@ public class SpectatorMenuGui extends Gui {
         ItemStack right;
         if (PageUtil.isPageValid(iconsList, page + 1, spaces)) {
           right =
-              GuiFile.getGuiItem("GUIS.SPECTATOR-MENU.ICONS.PAGE-RIGHT")
+              BackendUtil.getGuiItem(
+                      PracticeConfig.guis().getGuis().getSpectatorMenu().getIcons().getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get();
         } else {

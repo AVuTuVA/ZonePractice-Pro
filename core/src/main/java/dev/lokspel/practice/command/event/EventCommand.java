@@ -11,7 +11,7 @@ import dev.lokspel.practice.command.event.arguments.events.OitcArg;
 import dev.lokspel.practice.command.event.arguments.events.SpleggArg;
 import dev.lokspel.practice.command.event.arguments.events.SumoArg;
 import dev.lokspel.practice.command.event.arguments.events.TntTagArg;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +28,7 @@ public class EventCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 

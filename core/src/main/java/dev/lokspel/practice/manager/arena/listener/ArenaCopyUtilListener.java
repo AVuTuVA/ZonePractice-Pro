@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.arena.listener;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.ArenaCopy;
@@ -8,7 +9,6 @@ import dev.lokspel.practice.manager.arena.util.ArenaWorldUtil;
 import dev.lokspel.practice.manager.arena.util.BedLocation;
 import dev.lokspel.practice.manager.arena.util.FaweUtil;
 import dev.lokspel.practice.manager.arena.util.PortalLocation;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.arena.ArenaGuiSetupManager;
@@ -89,7 +89,9 @@ public class ArenaCopyUtilListener implements Listener {
       if (player.hasPermission("ap.setup")) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("ARENA.GENERATE-COPY")
+            PracticeConfig.language()
+                .getArena()
+                .getGenerateCopy()
                 .replace("%arena%", Common.serializeNormalToMmString(arena.getDisplayName())));
       }
     }
@@ -295,7 +297,9 @@ public class ArenaCopyUtilListener implements Listener {
           double progress = NumberUtil.roundDouble(((double) currentSize[0] / maxSize) * 100.0);
 
           String message =
-              LanguageManager.getString("ARENA.ACTION-BAR-MSG")
+              PracticeConfig.language()
+                  .getArena()
+                  .getActionBarMsg()
                   .replace(
                       "%arena%",
                       Common.serializeNormalToMmString(arenaCopy.getMainArena().getDisplayName()))
@@ -315,7 +319,9 @@ public class ArenaCopyUtilListener implements Listener {
             if (player.hasPermission("ap.setup")) {
               Common.sendMmMessage(
                   player,
-                  LanguageManager.getString("ARENA.ERROR-DURING-COPY-GENERATE")
+                  PracticeConfig.language()
+                      .getArena()
+                      .getErrorDuringCopyGenerate()
                       .replace(
                           "%arena%",
                           Common.serializeNormalToMmString(
@@ -337,7 +343,9 @@ public class ArenaCopyUtilListener implements Listener {
             if (player.hasPermission("ap.setup")) {
               Common.sendMmMessage(
                   player,
-                  LanguageManager.getString("ARENA.COPY-GENERATED")
+                  PracticeConfig.language()
+                      .getArena()
+                      .getCopyGenerated()
                       .replace("%arena%", arenaCopy.getMainArena().getDisplayName()));
             }
           }
@@ -402,7 +410,10 @@ public class ArenaCopyUtilListener implements Listener {
             if (player.hasPermission("ap.setup")) {
               Common.sendMmMessage(
                   player,
-                  LanguageManager.getString("ARENA.LAST-COPY-DELETED").replace("%arena%", arena));
+                  PracticeConfig.language()
+                      .getArena()
+                      .getLastCopyDeleted()
+                      .replace("%arena%", arena));
             }
           }
         }
@@ -508,7 +519,9 @@ public class ArenaCopyUtilListener implements Listener {
           if (player.hasPermission("ap.setup")) {
             Common.sendMmMessage(
                 player,
-                LanguageManager.getString("ARENA.ERROR-DURING-COPY-GENERATE")
+                PracticeConfig.language()
+                    .getArena()
+                    .getErrorDuringCopyGenerate()
                     .replace(
                         "%arena%",
                         Common.serializeNormalToMmString(
@@ -524,7 +537,9 @@ public class ArenaCopyUtilListener implements Listener {
         if (player.hasPermission("ap.setup")) {
           Common.sendMmMessage(
               player,
-              LanguageManager.getString("ARENA.COPY-GENERATED")
+              PracticeConfig.language()
+                  .getArena()
+                  .getCopyGenerated()
                   .replace("%arena%", arenaCopy.getMainArena().getDisplayName()));
         }
       }

@@ -1,8 +1,7 @@
 package dev.lokspel.practice.manager.queue.runnables;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.division.Division;
 import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
@@ -14,9 +13,19 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class UnrankedSearchRunnable extends SearchRunnable {
 
   private static final int SEARCH_IN_OWN_DIVISION =
-      ConfigManager.getInt("QUEUE.UNRANKED.DIVISION-SEARCH.SETTINGS.SEARCH-IN-OWN-DIVISIONS");
+      PracticeConfig.settings()
+          .getQueue()
+          .getUnranked()
+          .getDivisionSearch()
+          .getSettings()
+          .getSearchInOwnDivisions();
   private static final int SEARCH_IN_NEXT_DIVISION =
-      ConfigManager.getInt("QUEUE.UNRANKED.DIVISION-SEARCH.SETTINGS.EXTEND-DIVISION-SEARCH");
+      PracticeConfig.settings()
+          .getQueue()
+          .getUnranked()
+          .getDivisionSearch()
+          .getSettings()
+          .getExtendDivisionSearch();
 
   private final List<Division> acceptableDivisions = new ArrayList<>();
   private final Division currentDivision;
@@ -107,26 +116,38 @@ public class UnrankedSearchRunnable extends SearchRunnable {
   private void sendMsg() {
     if (acceptableDivisions.size() == 1) {
       this.updateQueueActionBar(
-          LanguageManager.getString("QUEUES.UNRANKED.SEARCHING-OWN-DIVISION")
+          PracticeConfig.language()
+              .getQueues()
+              .getUnranked()
+              .getSearchingOwnDivision()
               .replace("%division_fullName%", currentDivision.getFullName())
               .replace("%division_shortName%", currentDivision.getShortName()));
     } else if (previousDivision != null && nextDivision == null) {
       this.updateQueueActionBar(
-          LanguageManager.getString("QUEUES.UNRANKED.SEARCHING-IN-RANGE")
+          PracticeConfig.language()
+              .getQueues()
+              .getUnranked()
+              .getSearchingInRange()
               .replace("%from_fullName%", previousDivision.getFullName())
               .replace("%from_shortName%", previousDivision.getShortName())
               .replace("%to_fullName%", currentDivision.getFullName())
               .replace("%to_shortName%", currentDivision.getShortName()));
     } else if (previousDivision == null && nextDivision != null) {
       this.updateQueueActionBar(
-          LanguageManager.getString("QUEUES.UNRANKED.SEARCHING-IN-RANGE")
+          PracticeConfig.language()
+              .getQueues()
+              .getUnranked()
+              .getSearchingInRange()
               .replace("%from_fullName%", currentDivision.getFullName())
               .replace("%from_shortName%", currentDivision.getShortName())
               .replace("%to_fullName%", nextDivision.getFullName())
               .replace("%to_shortName%", nextDivision.getShortName()));
     } else if (previousDivision != null) {
       this.updateQueueActionBar(
-          LanguageManager.getString("QUEUES.UNRANKED.SEARCHING-IN-RANGE")
+          PracticeConfig.language()
+              .getQueues()
+              .getUnranked()
+              .getSearchingInRange()
               .replace("%from_fullName%", previousDivision.getFullName())
               .replace("%from_shortName%", previousDivision.getShortName())
               .replace("%to_fullName%", nextDivision.getFullName())
