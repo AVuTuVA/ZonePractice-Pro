@@ -1,13 +1,13 @@
 package dev.lokspel.practice.manager.gui.guis.profile;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.inventory.InventoryUtil;
 import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.GUIFile;
+import dev.lokspel.practice.manager.backend.GuiFile;
 import dev.lokspel.practice.manager.backend.LanguageManager;
-import dev.lokspel.practice.manager.gui.GUI;
-import dev.lokspel.practice.manager.gui.GUIManager;
-import dev.lokspel.practice.manager.gui.GUIType;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
+import dev.lokspel.practice.manager.inventory.InventoryUtil;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfilePrefixVisibility;
@@ -27,281 +27,369 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 @Getter
-public class ProfileSettingsGui extends GUI {
+public class ProfileSettingsGui extends Gui {
 
-    private final Profile profile;
+  private final Profile profile;
 
-    public ProfileSettingsGui(final Profile profile) {
-        super(GUIType.Profile_Settings);
-        this.gui.put(1, dev.lokspel.practice.util.InventoryUtil.createInventory(GUIFile.getString("GUIS.PLAYER-SETTINGS.TITLE").replace("%player%", profile.getPlayer().getName()), 4));
-        this.profile = profile;
+  public ProfileSettingsGui(final Profile profile) {
+    super(GuiType.Profile_Settings);
+    this.gui.put(
+        1,
+        dev.lokspel.practice.util.InventoryUtil.createInventory(
+            GuiFile.getString("GUIS.PLAYER-SETTINGS.TITLE")
+                .replace("%player%", profile.getPlayer().getName()),
+            4));
+    this.profile = profile;
 
-        this.build();
+    this.build();
+  }
+
+  @Override
+  public void build() {
+    Bukkit.getScheduler()
+        .runTaskAsynchronously(
+            AstralPractice.getInstance(),
+            () -> {
+              Inventory inventory = gui.get(1);
+              ItemStack fillerItem =
+                  GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.FILLER-ITEM").get();
+
+              for (int i = 0; i < inventory.getSize(); i++) {
+                inventory.setItem(i, fillerItem);
+              }
+
+              update();
+            });
+  }
+
+  @Override
+  public void update() {
+    Inventory inventory = gui.get(1);
+
+    inventory.setItem(10, getDuelRequestItem(profile.isDuelRequest()));
+    inventory.setItem(20, getAutoQueueItem(profile.isAutoQueue()));
+    inventory.setItem(11, getSidebarItem(profile.isSidebar()));
+    inventory.setItem(12, getPartyInviteItem(profile.isPartyInvites()));
+    inventory.setItem(13, getPrivateMessageItem(profile.isPrivateMessages()));
+    inventory.setItem(14, getHidePlayersItem(profile.isHidePlayers()));
+    inventory.setItem(15, getAllowSpectatorsItem(profile.isAllowSpectate()));
+    inventory.setItem(
+        16,
+        GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.WORLD-TIME")
+            .replace("%worldTime%", profile.getWorldTime().getName())
+            .get());
+    inventory.setItem(23, getFlyingItem(profile.isFlying()));
+    inventory.setItem(21, getPrefixVisibilityItem(profile.getPrefixVisibility()));
+
+    updatePlayers();
+  }
+
+  @Override
+  public void handleClickEvent(InventoryClickEvent e) {
+    Player player = (Player) e.getWhoClicked();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    ItemStack item = e.getCurrentItem();
+    final int slot = e.getRawSlot();
+
+    e.setCancelled(true);
+
+    if (profile == null) {
+      return;
+    }
+    if (item == null) {
+      return;
+    }
+    if (item.equals(GuiManager.getFILLER_ITEM())) {
+      return;
     }
 
-    @Override
-    public void build() {
-        Bukkit.getScheduler().runTaskAsynchronously(AstralPractice.getInstance(), () ->
-        {
-            Inventory inventory = gui.get(1);
-            ItemStack fillerItem = GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.FILLER-ITEM").get();
+    if (e.getView().getTopInventory().getSize() > slot) {
+      if (profile != this.profile) {
+        Common.sendMmMessage(
+            player,
+            LanguageManager.getString("PROFILE.CANT-CHANGE-TARGET-SETTINGS")
+                .replace("%target%", this.getProfile().getPlayer().getName()));
+        return;
+      }
 
-            for (int i = 0; i < inventory.getSize(); i++)
-                inventory.setItem(i, fillerItem);
+      if (PlayerCooldown.isActive(player, CooldownObject.PLAYER_SETTINGS)) {
+        Common.sendMmMessage(
+            player,
+            StringUtil.replaceSecondString(
+                LanguageManager.getString("PROFILE.TOGGLE-COOLDOWN"),
+                PlayerCooldown.getLeftInDouble(player, CooldownObject.PLAYER_SETTINGS)));
+        return;
+      }
+
+      switch (slot) {
+        case 10:
+          if (player.hasPermission("ap.settings.duelrequest")) {
+            profile.setDuelRequest(!profile.isDuelRequest());
 
             update();
-        });
-    }
+            if (!player.hasPermission("ap.bypass.cooldown")) {
+              PlayerCooldown.addCooldown(
+                  player,
+                  CooldownObject.PLAYER_SETTINGS,
+                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+            }
+          } else {
+            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          }
 
-    @Override
-    public void update() {
-        Inventory inventory = gui.get(1);
+          break;
+        case 20:
+          if (player.hasPermission("ap.settings.autoqueue")) {
+            profile.setAutoQueue(!profile.isAutoQueue());
 
-        inventory.setItem(10, getDuelRequestItem(profile.isDuelRequest()));
-        inventory.setItem(20, getAutoQueueItem(profile.isAutoQueue()));
-        inventory.setItem(11, getSidebarItem(profile.isSidebar()));
-        inventory.setItem(12, getPartyInviteItem(profile.isPartyInvites()));
-        inventory.setItem(13, getPrivateMessageItem(profile.isPrivateMessages()));
-        inventory.setItem(14, getHidePlayersItem(profile.isHidePlayers()));
-        inventory.setItem(15, getAllowSpectatorsItem(profile.isAllowSpectate()));
-        inventory.setItem(16, GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.WORLD-TIME")
-                .replace("%worldTime%", profile.getWorldTime().getName())
-                .get());
-        inventory.setItem(23, getFlyingItem(profile.isFlying()));
-        inventory.setItem(21, getPrefixVisibilityItem(profile.getPrefixVisibility()));
+            update();
+            if (!player.hasPermission("ap.bypass.cooldown")) {
+              PlayerCooldown.addCooldown(
+                  player,
+                  CooldownObject.PLAYER_SETTINGS,
+                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+            }
+          } else {
+            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          }
 
-        updatePlayers();
-    }
-
-    @Override
-    public void handleClickEvent(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        ItemStack item = e.getCurrentItem();
-        int slot = e.getRawSlot();
-
-        e.setCancelled(true);
-
-        if (profile == null) return;
-        if (item == null) return;
-        if (item.equals(GUIManager.getFILLER_ITEM())) return;
-
-        if (e.getView().getTopInventory().getSize() > slot) {
-            if (profile != this.profile) {
-                Common.sendMMMessage(player, LanguageManager.getString("PROFILE.CANT-CHANGE-TARGET-SETTINGS").replace("%target%", this.getProfile().getPlayer().getName()));
-                return;
+          break;
+        case 11:
+          if (player.hasPermission("ap.settings.scoreboard")) {
+            if (!SidebarManager.getInstance().isSidebarGloballyEnabled()) {
+              Common.sendMmMessage(
+                  player, LanguageManager.getString("PROFILE.SIDEBAR-GLOBALLY-DISABLED"));
+              return;
             }
 
-            if (PlayerCooldown.isActive(player, CooldownObject.PLAYER_SETTINGS)) {
-                Common.sendMMMessage(player, StringUtil.replaceSecondString(LanguageManager.getString("PROFILE.TOGGLE-COOLDOWN"), PlayerCooldown.getLeftInDouble(player, CooldownObject.PLAYER_SETTINGS)));
-                return;
+            profile.setSidebar(!profile.isSidebar());
+
+            if (profile.isSidebar()) {
+              SidebarManager.getInstance().loadSidebar(player);
+            } else {
+              SidebarManager.getInstance().unLoadSidebar(player);
             }
 
-            switch (slot) {
-                case 10:
-                    if (player.hasPermission("ap.settings.duelrequest")) {
-                        profile.setDuelRequest(!profile.isDuelRequest());
-
-                        update();
-                        if (!player.hasPermission("ap.bypass.cooldown"))
-                            PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
-                    } else
-                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
-
-                    break;
-                case 20:
-                    if (player.hasPermission("ap.settings.autoqueue")) {
-                        profile.setAutoQueue(!profile.isAutoQueue());
-
-                        update();
-                        if (!player.hasPermission("ap.bypass.cooldown"))
-                            PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
-                    } else
-                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
-
-                    break;
-                case 11:
-                    if (player.hasPermission("ap.settings.scoreboard")) {
-                        if (!SidebarManager.getInstance().isSidebarGloballyEnabled()) {
-                            Common.sendMMMessage(player, LanguageManager.getString("PROFILE.SIDEBAR-GLOBALLY-DISABLED"));
-                            return;
-                        }
-
-                        profile.setSidebar(!profile.isSidebar());
-
-                        if (profile.isSidebar())
-                            SidebarManager.getInstance().loadSidebar(player);
-                        else
-                            SidebarManager.getInstance().unLoadSidebar(player);
-
-                        profile.getFile().saveSidebarSetting();
-                        update();
-                        if (!player.hasPermission("ap.bypass.cooldown"))
-                            PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
-                    } else
-                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
-
-                    break;
-                case 12:
-                    if (player.hasPermission("ap.settings.partyinvite")) {
-                        profile.setPartyInvites(!profile.isPartyInvites());
-
-                        update();
-                        if (!player.hasPermission("ap.bypass.cooldown"))
-                            PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
-                    } else
-                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
-
-                    break;
-                case 13:
-                    if (player.hasPermission("ap.settings.privatemessage")) {
-                        if (player.hasPermission("ap.settings.privatemessage")) {
-                            profile.setPrivateMessages(!profile.isPrivateMessages());
-
-                            update();
-                            if (!player.hasPermission("ap.bypass.cooldown"))
-                                PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
-                        } else
-                            Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
-                    } else
-                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.PRIVATE-MSG-OFF"));
-
-                    break;
-                case 14:
-                    if (player.hasPermission("ap.settings.playerhide")) {
-                        profile.setHidePlayers(!profile.isHidePlayers());
-                        PlayerHider.getInstance().toggleLobbyVisibility(player);
-
-                        update();
-                        if (!player.hasPermission("ap.bypass.cooldown"))
-                            PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
-                    } else
-                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
-
-                    break;
-                case 15:
-                    if (player.hasPermission("ap.settings.allowspectate")) {
-                        profile.setAllowSpectate(!profile.isAllowSpectate());
-
-                        update();
-                        if (!player.hasPermission("ap.bypass.cooldown"))
-                            PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
-                    } else
-                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
-
-                    break;
-                case 16:
-                    if (player.hasPermission("ap.settings.worldtime")) {
-                        ProfileWorldTime newTime = ProfileWorldTime.getNextWorldTime(profile.getWorldTime());
-                        profile.setWorldTime(newTime);
-                        PlayerUtil.setPlayerWorldTime(player);
-
-                        update();
-                        if (!player.hasPermission("ap.bypass.cooldown"))
-                            PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
-                    } else
-                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
-
-                    break;
-                case 23:
-                    if (player.hasPermission("ap.settings.fly")) {
-                        profile.setFlying(!profile.isFlying());
-
-                        if (profile.isFlying()) {
-                            player.setAllowFlight(true);
-                            player.setFlying(true);
-                        } else {
-                            player.setFlying(false);
-                            player.setAllowFlight(false);
-                        }
-
-                        update();
-                        if (!player.hasPermission("ap.bypass.cooldown"))
-                            PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
-                    } else
-                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
-                    break;
-                case 21:
-                    if (player.hasPermission("ap.settings.prefixvisibility")) {
-                        ProfilePrefixVisibility newVisibility = ProfilePrefixVisibility.getNext(profile.getPrefixVisibility());
-                        profile.setPrefixVisibility(newVisibility);
-                        InventoryUtil.setLobbyNametag(player, profile);
-
-                        update();
-                        if (!player.hasPermission("ap.bypass.cooldown"))
-                            PlayerCooldown.addCooldown(player, CooldownObject.PLAYER_SETTINGS, ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
-                    } else
-                        Common.sendMMMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
-                    break;
+            profile.getFile().saveSidebarSetting();
+            update();
+            if (!player.hasPermission("ap.bypass.cooldown")) {
+              PlayerCooldown.addCooldown(
+                  player,
+                  CooldownObject.PLAYER_SETTINGS,
+                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
             }
-        }
+          } else {
+            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          }
+
+          break;
+        case 12:
+          if (player.hasPermission("ap.settings.partyinvite")) {
+            profile.setPartyInvites(!profile.isPartyInvites());
+
+            update();
+            if (!player.hasPermission("ap.bypass.cooldown")) {
+              PlayerCooldown.addCooldown(
+                  player,
+                  CooldownObject.PLAYER_SETTINGS,
+                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+            }
+          } else {
+            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          }
+
+          break;
+        case 13:
+          if (player.hasPermission("ap.settings.privatemessage")) {
+            if (player.hasPermission("ap.settings.privatemessage")) {
+              profile.setPrivateMessages(!profile.isPrivateMessages());
+
+              update();
+              if (!player.hasPermission("ap.bypass.cooldown")) {
+                PlayerCooldown.addCooldown(
+                    player,
+                    CooldownObject.PLAYER_SETTINGS,
+                    ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+              }
+            } else {
+              Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+            }
+          } else {
+            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.PRIVATE-MSG-OFF"));
+          }
+
+          break;
+        case 14:
+          if (player.hasPermission("ap.settings.playerhide")) {
+            profile.setHidePlayers(!profile.isHidePlayers());
+            PlayerHider.getInstance().toggleLobbyVisibility(player);
+
+            update();
+            if (!player.hasPermission("ap.bypass.cooldown")) {
+              PlayerCooldown.addCooldown(
+                  player,
+                  CooldownObject.PLAYER_SETTINGS,
+                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+            }
+          } else {
+            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          }
+
+          break;
+        case 15:
+          if (player.hasPermission("ap.settings.allowspectate")) {
+            profile.setAllowSpectate(!profile.isAllowSpectate());
+
+            update();
+            if (!player.hasPermission("ap.bypass.cooldown")) {
+              PlayerCooldown.addCooldown(
+                  player,
+                  CooldownObject.PLAYER_SETTINGS,
+                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+            }
+          } else {
+            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          }
+
+          break;
+        case 16:
+          if (player.hasPermission("ap.settings.worldtime")) {
+            ProfileWorldTime newTime = ProfileWorldTime.getNextWorldTime(profile.getWorldTime());
+            profile.setWorldTime(newTime);
+            PlayerUtil.setPlayerWorldTime(player);
+
+            update();
+            if (!player.hasPermission("ap.bypass.cooldown")) {
+              PlayerCooldown.addCooldown(
+                  player,
+                  CooldownObject.PLAYER_SETTINGS,
+                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+            }
+          } else {
+            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          }
+
+          break;
+        case 23:
+          if (player.hasPermission("ap.settings.fly")) {
+            profile.setFlying(!profile.isFlying());
+
+            if (profile.isFlying()) {
+              player.setAllowFlight(true);
+              player.setFlying(true);
+            } else {
+              player.setFlying(false);
+              player.setAllowFlight(false);
+            }
+
+            update();
+            if (!player.hasPermission("ap.bypass.cooldown")) {
+              PlayerCooldown.addCooldown(
+                  player,
+                  CooldownObject.PLAYER_SETTINGS,
+                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+            }
+          } else {
+            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          }
+          break;
+        case 21:
+          if (player.hasPermission("ap.settings.prefixvisibility")) {
+            ProfilePrefixVisibility newVisibility =
+                ProfilePrefixVisibility.getNext(profile.getPrefixVisibility());
+            profile.setPrefixVisibility(newVisibility);
+            InventoryUtil.setLobbyNametag(player, profile);
+
+            update();
+            if (!player.hasPermission("ap.bypass.cooldown")) {
+              PlayerCooldown.addCooldown(
+                  player,
+                  CooldownObject.PLAYER_SETTINGS,
+                  ConfigManager.getInt("PLAYER.SETTINGS-DELAY"));
+            }
+          } else {
+            Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          }
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
+
+  private static ItemStack getDuelRequestItem(boolean duelRequest) {
+    if (duelRequest) {
+      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.DUEL-REQUEST.ENABLED").get();
     }
 
-    private static ItemStack getDuelRequestItem(boolean duelRequest) {
-        if (duelRequest)
-            return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.DUEL-REQUEST.ENABLED").get();
+    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.DUEL-REQUEST.DISABLED").get();
+  }
 
-        return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.DUEL-REQUEST.DISABLED").get();
+  private static ItemStack getAutoQueueItem(boolean autoQueue) {
+    if (autoQueue) {
+      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.AUTO-QUEUE.ENABLED").get();
     }
 
-    private static ItemStack getAutoQueueItem(boolean autoQueue) {
-        if (autoQueue)
-            return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.AUTO-QUEUE.ENABLED").get();
+    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.AUTO-QUEUE.DISABLED").get();
+  }
 
-        return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.AUTO-QUEUE.DISABLED").get();
+  private static ItemStack getSidebarItem(boolean sidebar) {
+    if (sidebar) {
+      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.ENABLED").get();
     }
 
-    private static ItemStack getSidebarItem(boolean sidebar) {
-        if (sidebar)
-            return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.ENABLED").get();
+    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.DISABLED").get();
+  }
 
-        return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.DISABLED").get();
+  private static ItemStack getPartyInviteItem(boolean partyInvites) {
+    if (partyInvites) {
+      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PARTY-INVITE.ENABLED").get();
     }
 
-    private static ItemStack getPartyInviteItem(boolean partyInvites) {
-        if (partyInvites)
-            return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PARTY-INVITE.ENABLED").get();
+    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PARTY-INVITE.DISABLED").get();
+  }
 
-        return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PARTY-INVITE.DISABLED").get();
+  private static ItemStack getPrivateMessageItem(boolean privatMessage) {
+    if (privatMessage) {
+      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PRIVATE-MESSAGE.ENABLED").get();
     }
 
-    private static ItemStack getPrivateMessageItem(boolean privatMessage) {
-        if (privatMessage)
-            return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PRIVATE-MESSAGE.ENABLED").get();
+    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PRIVATE-MESSAGE.DISABLED").get();
+  }
 
-        return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PRIVATE-MESSAGE.DISABLED").get();
+  private static ItemStack getHidePlayersItem(boolean hidePlayers) {
+    if (!hidePlayers) {
+      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.HIDE-PLAYERS.ENABLED").get();
     }
 
-    private static ItemStack getHidePlayersItem(boolean hidePlayers) {
-        if (!hidePlayers)
-            return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.HIDE-PLAYERS.ENABLED").get();
+    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.HIDE-PLAYERS.DISABLED").get();
+  }
 
-        return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.HIDE-PLAYERS.DISABLED").get();
+  private static ItemStack getAllowSpectatorsItem(boolean allowSpectate) {
+    if (allowSpectate) {
+      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.ALLOW-SPECTATORS.ENABLED")
+          .get();
     }
 
-    private static ItemStack getAllowSpectatorsItem(boolean allowSpectate) {
-        if (allowSpectate)
-            return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.ALLOW-SPECTATORS.ENABLED").get();
+    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.ALLOW-SPECTATORS.DISABLED").get();
+  }
 
-        return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.ALLOW-SPECTATORS.DISABLED").get();
+  private static ItemStack getFlyingItem(boolean flying) {
+    if (flying) {
+      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.FLYING.ENABLED").get();
+    } else {
+      return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.FLYING.DISABLED").get();
+    }
+  }
+
+  private static ItemStack getPrefixVisibilityItem(ProfilePrefixVisibility visibility) {
+    if (visibility == null) {
+      visibility = ProfilePrefixVisibility.PREFIX_AND_SUFFIX;
     }
 
-    private static ItemStack getFlyingItem(boolean flying) {
-        if (flying) {
-            return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.FLYING.ENABLED").get();
-        } else {
-            return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.FLYING.DISABLED").get();
-        }
-    }
-
-    private static ItemStack getPrefixVisibilityItem(ProfilePrefixVisibility visibility) {
-        if (visibility == null) {
-            visibility = ProfilePrefixVisibility.PREFIX_AND_SUFFIX;
-        }
-
-        return GUIFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PREFIX-VISIBILITY")
-                .replace("%prefixVisibility%", visibility.getName())
-                .get();
-    }
-
+    return GuiFile.getGuiItem("GUIS.PLAYER-SETTINGS.ICONS.SIDEBAR.PREFIX-VISIBILITY")
+        .replace("%prefixVisibility%", visibility.getName())
+        .get();
+  }
 }

@@ -9,35 +9,35 @@ import lombok.Setter;
 @Setter
 public class LadderKnockback {
 
-    private KnockbackType knockbackType;
+  private KnockbackType knockbackType;
 
-    public LadderKnockback() {
-        knockbackType = KnockbackType.DEFAULT;
+  public LadderKnockback() {
+    knockbackType = KnockbackType.DEFAULT;
+  }
+
+  public LadderKnockback(LadderKnockback ladderKnockback) {
+    super();
+    this.knockbackType = ladderKnockback.knockbackType;
+  }
+
+  public void get(final String knockbackValue) {
+    KnockbackType knockback;
+    try {
+      knockback = KnockbackType.valueOf(knockbackValue);
+    } catch (IllegalArgumentException e) {
+      Common.sendConsoleMmMessage(
+          "<red>Invalid knockback type: " + knockbackValue + ". Defaulting to DEFAULT.");
+      knockback = KnockbackType.DEFAULT;
     }
 
-    public LadderKnockback(LadderKnockback ladderKnockback) {
-        super();
-        this.knockbackType = ladderKnockback.knockbackType;
-    }
+    knockbackType = knockback;
+  }
 
-    public void get(final String knockbackValue) {
-        KnockbackType knockback;
-        try {
-            knockback = KnockbackType.valueOf(knockbackValue);
-        } catch (IllegalArgumentException e) {
-            Common.sendConsoleMMMessage("<red>Invalid knockback type: " + knockbackValue + ". Defaulting to DEFAULT.");
-            knockback = KnockbackType.DEFAULT;
-        }
+  public String get() {
+    return knockbackType.toString();
+  }
 
-        knockbackType = knockback;
-    }
-
-    public String get() {
-        return knockbackType.toString();
-    }
-
-    public boolean isDefault() {
-        return knockbackType == KnockbackType.DEFAULT;
-    }
-
+  public boolean isDefault() {
+    return knockbackType == KnockbackType.DEFAULT;
+  }
 }

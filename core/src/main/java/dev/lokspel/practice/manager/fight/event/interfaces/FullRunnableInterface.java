@@ -7,14 +7,13 @@ import lombok.Getter;
 @Getter
 public abstract class FullRunnableInterface extends Event {
 
-    protected final StartRunnable startRunnable;
-    protected final DurationRunnable durationRunnable;
+  protected final StartRunnable startRunnable;
+  protected final DurationRunnable durationRunnable;
 
-    public FullRunnableInterface(Object starter, EventData eventData) {
-        super(starter, eventData);
+  public FullRunnableInterface(Object starter, EventData eventData) {
+    super(starter, eventData);
 
-        this.startRunnable = new StartRunnable(this);
-        this.durationRunnable = new DurationRunnable(this);
-    }
-
+    this.startRunnable = new StartRunnable(this);
+    this.durationRunnable = new DurationRunnable(this);
+  }
 }

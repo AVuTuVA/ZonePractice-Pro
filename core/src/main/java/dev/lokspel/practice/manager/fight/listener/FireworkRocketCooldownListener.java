@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.fight.listener;
 
-import dev.lokspel.practice.manager.fight.ffa.FFAManager;
-import dev.lokspel.practice.manager.fight.ffa.game.FFA;
+import dev.lokspel.practice.manager.fight.ffa.FfaManager;
+import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.enums.RoundStatus;
@@ -14,36 +14,44 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 
 public class FireworkRocketCooldownListener implements Listener {
 
-    @EventHandler
-    public void onFireworkSpawn(EntitySpawnEvent e) {
+  @EventHandler
+  public void onFireworkSpawn(EntitySpawnEvent e) {
 
-        if (!(e.getEntity() instanceof Firework firework)) return;
-        if (!(firework.getShooter() instanceof Player player)) return;
-
-        // FFA
-        FFA ffa = FFAManager.getInstance().getFFAByPlayer(player);
-        if (ffa != null) {
-
-            double duration = ffa.getPlayers().get(player).getFireworkRocketCooldown();
-            if (duration <= 0) return;
-
-            ModernItemCooldownHandler.handleFireworkRocket(player, duration, null);
-
-            return;
-        }
-
-        // Match
-        Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
-        if (match != null) {
-
-            double duration = match.getLadder().getFireworkRocketCooldown();
-            if (duration <= 0) return;
-
-            if (!match.getCurrentRound().getRoundStatus().equals(RoundStatus.LIVE)) {
-                return;
-            }
-
-            ModernItemCooldownHandler.handleFireworkRocket(player, duration, null);
-        }
+    if (!(e.getEntity() instanceof Firework firework)) {
+      return;
     }
+    if (!(firework.getShooter() instanceof Player player)) {
+      return;
+    }
+
+    // FFA
+    Ffa ffa = FfaManager.getInstance().getFfaByPlayer(player);
+    if (ffa != null) {
+
+      double duration = ffa.getPlayers().get(player).getFireworkRocketCooldown();
+      if (duration <= 0) {
+        return;
+      }
+
+      ModernItemCooldownHandler.handleFireworkRocket(player, duration, null);
+
+      return;
+    }
+
+    // Match
+    Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
+    if (match != null) {
+
+      double duration = match.getLadder().getFireworkRocketCooldown();
+      if (duration <= 0) {
+        return;
+      }
+
+      if (!match.getCurrentRound().getRoundStatus().equals(RoundStatus.LIVE)) {
+        return;
+      }
+
+      ModernItemCooldownHandler.handleFireworkRocket(player, duration, null);
+    }
+  }
 }

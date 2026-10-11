@@ -4,14 +4,14 @@ import lombok.Getter;
 
 @Getter
 public enum ActionBarPriority {
-    LOW(0),
-    NORMAL(1),
-    HIGH(2),
-    HIGHEST(3);
+  LOW(0),
+  NORMAL(1),
+  HIGH(2),
+  HIGHEST(3);
 
-    private final int weight;
+  private final int weight;
 
-    ActionBarPriority(int weight) {
-        this.weight = weight;
-    }
+  ActionBarPriority(int weight) {
+    this.weight = weight;
+  }
 }

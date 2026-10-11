@@ -12,33 +12,35 @@ import org.bukkit.entity.Player;
 
 public class DivisionsCommand implements CommandExecutor {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            Common.sendConsoleMMMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
-            return false;
-        }
-
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-
-        if (!player.hasPermission("ap.divisions.view")) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.DIVISIONS.NO-PERMISSION"));
-            return false;
-        }
-
-        if (!player.hasPermission("ap.admin")) {
-            switch (profile.getStatus()) {
-                case MATCH:
-                case FFA:
-                case EVENT:
-                    Common.sendMMMessage(player, LanguageManager.getString("COMMAND.DIVISIONS.CANT-USE"));
-                    return false;
-            }
-        }
-
-        new DivisionGui(profile, null).open(player);
-
-        return true;
+  @Override
+  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    if (!(sender instanceof Player player)) {
+      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      return false;
     }
 
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+
+    if (!player.hasPermission("ap.divisions.view")) {
+      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.DIVISIONS.NO-PERMISSION"));
+      return false;
+    }
+
+    if (!player.hasPermission("ap.admin")) {
+      switch (profile.getStatus()) {
+        case MATCH:
+        case FFA:
+        case EVENT:
+          Common.sendMmMessage(player, LanguageManager.getString("COMMAND.DIVISIONS.CANT-USE"));
+          return false;
+
+        default:
+          break;
+      }
+    }
+
+    new DivisionGui(profile, null).open(player);
+
+    return true;
+  }
 }

@@ -2,7 +2,12 @@ package dev.lokspel.practice.manager.inventory.inventories;
 
 import dev.lokspel.practice.manager.inventory.Inventory;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
-import dev.lokspel.practice.manager.inventory.inventoryitem.staffitems.*;
+import dev.lokspel.practice.manager.inventory.inventoryitem.staffitems.CheckInventoryInvItem;
+import dev.lokspel.practice.manager.inventory.inventoryitem.staffitems.HideOffInvItem;
+import dev.lokspel.practice.manager.inventory.inventoryitem.staffitems.HideOnInvItem;
+import dev.lokspel.practice.manager.inventory.inventoryitem.staffitems.LeaveSpecInvItem;
+import dev.lokspel.practice.manager.inventory.inventoryitem.staffitems.ModeOffInvItem;
+import dev.lokspel.practice.manager.inventory.inventoryitem.staffitems.RandomMatchInvItem;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
@@ -11,40 +16,43 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class StaffInventory extends Inventory {
 
-    public StaffInventory() {
-        super(InventoryType.STAFF_MODE);
+  public StaffInventory() {
+    super(InventoryType.STAFF_MODE);
 
-        this.invItems.add(new CheckInventoryInvItem());
-        this.invItems.add(new HideOnInvItem());
-        this.invItems.add(new HideOffInvItem());
-        this.invItems.add(new LeaveSpecInvItem());
-        this.invItems.add(new ModeOffInvItem());
-        this.invItems.add(new RandomMatchInvItem());
-    }
+    this.invItems.add(new CheckInventoryInvItem());
+    this.invItems.add(new HideOnInvItem());
+    this.invItems.add(new HideOffInvItem());
+    this.invItems.add(new LeaveSpecInvItem());
+    this.invItems.add(new ModeOffInvItem());
+    this.invItems.add(new RandomMatchInvItem());
+  }
 
-    @Override
-    protected void set(Player player) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        PlayerInventory playerInventory = player.getInventory();
+  @Override
+  protected void set(Player player) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    PlayerInventory playerInventory = player.getInventory();
 
-        for (InvItem invItem : invItems) {
-            int slot = invItem.getSlot();
-            if (slot == -1)
-                continue;
+    for (InvItem invItem : invItems) {
+      int slot = invItem.getSlot();
+      if (slot == -1) {
+        continue;
+      }
 
-            if (invItem instanceof HideOffInvItem) {
-                if (profile.isHideFromPlayers())
-                    continue;
-            } else if (invItem instanceof HideOnInvItem) {
-                if (!profile.isHideFromPlayers())
-                    continue;
-            } else if (invItem instanceof LeaveSpecInvItem) {
-                if (!profile.getStatus().equals(ProfileStatus.SPECTATE))
-                    continue;
-            }
-
-            playerInventory.setItem(slot, invItem.getItem());
+      if (invItem instanceof HideOffInvItem) {
+        if (profile.isHideFromPlayers()) {
+          continue;
         }
-    }
+      } else if (invItem instanceof HideOnInvItem) {
+        if (!profile.isHideFromPlayers()) {
+          continue;
+        }
+      } else if (invItem instanceof LeaveSpecInvItem) {
+        if (!profile.getStatus().equals(ProfileStatus.SPECTATE)) {
+          continue;
+        }
+      }
 
+      playerInventory.setItem(slot, invItem.getItem());
+    }
+  }
 }

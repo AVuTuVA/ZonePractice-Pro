@@ -13,48 +13,49 @@ import dev.lokspel.practice.util.Cuboid;
 import org.bukkit.Location;
 
 public enum FaweUtil {
-    ;
+  ;
 
-    public static void deleteFAWE(final Cuboid cuboid) {
-        try (EditSession editSession = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(cuboid.getWorld()))) {
-            editSession.setBlocks(
-                    (Region) new CuboidRegion(
-                            BukkitAdapter.adapt(cuboid.getLowerNE()).toBlockPoint(),
-                            BukkitAdapter.adapt(cuboid.getUpperSW()).toBlockPoint()
-                    ),
-                    BlockTypes.AIR
-            );
-            editSession.flushQueue();
-        } catch (Exception e) {
-            Common.sendConsoleMMMessage("<red>Error during delete operation: " + e.getMessage());
-        }
+  public static void deleteFawe(final Cuboid cuboid) {
+    try (EditSession editSession =
+        WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(cuboid.getWorld()))) {
+      editSession.setBlocks(
+          (Region)
+              new CuboidRegion(
+                  BukkitAdapter.adapt(cuboid.getLowerNe()).toBlockPoint(),
+                  BukkitAdapter.adapt(cuboid.getUpperSw()).toBlockPoint()),
+          BlockTypes.AIR);
+      editSession.flushQueue();
+    } catch (Exception e) {
+      Common.sendConsoleMmMessage("<red>Error during delete operation: " + e.getMessage());
     }
+  }
 
-    public static boolean copyFAWEWithResult(final Cuboid copyFrom, final Location reference, final Location newLocation) {
-        int targetX = copyFrom.getLowerX() - reference.getBlockX() + newLocation.getBlockX();
-        int targetY = copyFrom.getLowerY() - reference.getBlockY() + newLocation.getBlockY();
-        int targetZ = copyFrom.getLowerZ() - reference.getBlockZ() + newLocation.getBlockZ();
-        Location destination = new Location(ArenaWorldUtil.getArenasCopyWorld(), targetX, targetY, targetZ);
+  public static boolean copyFaweWithResult(
+      final Cuboid copyFrom, final Location reference, final Location newLocation) {
+    int targetX = copyFrom.getLowerX() - reference.getBlockX() + newLocation.getBlockX();
+    int targetY = copyFrom.getLowerY() - reference.getBlockY() + newLocation.getBlockY();
+    int targetZ = copyFrom.getLowerZ() - reference.getBlockZ() + newLocation.getBlockZ();
+    Location destination =
+        new Location(ArenaWorldUtil.getArenasCopyWorld(), targetX, targetY, targetZ);
 
-        try {
-            ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(
-                    BukkitAdapter.adapt(ArenaWorldUtil.getArenasWorld()),
-                    new CuboidRegion(
-                            BukkitAdapter.adapt(copyFrom.getLowerNE()).toBlockPoint(),
-                            BukkitAdapter.adapt(copyFrom.getUpperSW()).toBlockPoint()),
-                    BukkitAdapter.adapt(ArenaWorldUtil.getArenasCopyWorld()),
-                    BukkitAdapter.adapt(destination).toBlockPoint()
-            );
+    try {
+      ForwardExtentCopy forwardExtentCopy =
+          new ForwardExtentCopy(
+              BukkitAdapter.adapt(ArenaWorldUtil.getArenasWorld()),
+              new CuboidRegion(
+                  BukkitAdapter.adapt(copyFrom.getLowerNe()).toBlockPoint(),
+                  BukkitAdapter.adapt(copyFrom.getUpperSw()).toBlockPoint()),
+              BukkitAdapter.adapt(ArenaWorldUtil.getArenasCopyWorld()),
+              BukkitAdapter.adapt(destination).toBlockPoint());
 
-            forwardExtentCopy.setCopyingEntities(true);
+      forwardExtentCopy.setCopyingEntities(true);
 
-            Operations.complete(forwardExtentCopy);
-            return true;
+      Operations.complete(forwardExtentCopy);
+      return true;
 
-        } catch (Exception e) {
-            Common.sendConsoleMMMessage("<red>" + "Error during copy-paste operation: " + e.getMessage());
-            return false;
-        }
+    } catch (Exception e) {
+      Common.sendConsoleMmMessage("<red>" + "Error during copy-paste operation: " + e.getMessage());
+      return false;
     }
-
+  }
 }

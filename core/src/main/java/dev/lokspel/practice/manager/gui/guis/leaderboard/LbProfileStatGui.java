@@ -1,10 +1,10 @@
 package dev.lokspel.practice.manager.gui.guis.leaderboard;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GUIFile;
-import dev.lokspel.practice.manager.gui.GUI;
-import dev.lokspel.practice.manager.gui.GUIManager;
-import dev.lokspel.practice.manager.gui.GUIType;
+import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -16,69 +16,87 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class LbProfileStatGui extends GUI {
+public class LbProfileStatGui extends Gui {
 
-    private final Profile profile;
-    private final GUI backTo;
+  private final Profile profile;
+  private final Gui backTo;
 
-    public LbProfileStatGui(Profile profile, GUI backTo) {
-        super(GUIType.Leaderboard_Profile);
-        this.profile = profile;
-        this.backTo = backTo;
+  public LbProfileStatGui(Profile profile, Gui backTo) {
+    super(GuiType.Leaderboard_Profile);
+    this.profile = profile;
+    this.backTo = backTo;
 
-        this.gui.put(1, InventoryUtil.createInventory(GUIFile.getString("GUIS.STATISTICS.PLAYER-STATISTICS.TITLE").replace("%player%", profile.getPlayer().getName()), 6));
+    this.gui.put(
+        1,
+        InventoryUtil.createInventory(
+            GuiFile.getString("GUIS.STATISTICS.PLAYER-STATISTICS.TITLE")
+                .replace("%player%", profile.getPlayer().getName()),
+            6));
 
-        build();
-    }
+    build();
+  }
 
-    @Override
-    public void build() {
-        update();
-    }
+  @Override
+  public void build() {
+    update();
+  }
 
-    @Override
-    public void update() {
-        Bukkit.getScheduler().runTaskAsynchronously(AstralPractice.getInstance(), () ->
-        {
-            Inventory inventory = gui.get(1);
-            inventory.clear();
+  @Override
+  public void update() {
+    Bukkit.getScheduler()
+        .runTaskAsynchronously(
+            AstralPractice.getInstance(),
+            () -> {
+              Inventory inventory = gui.get(1);
+              inventory.clear();
 
-            for (int i = 45; i < 54; i++)
-                inventory.setItem(i, GUIManager.getFILLER_ITEM());
+              for (int i = 45; i < 54; i++) {
+                inventory.setItem(i, GuiManager.getFILLER_ITEM());
+              }
 
-            for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
-                if (!ladder.isEnabled()) continue;
+              for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
+                if (!ladder.isEnabled()) {
+                  continue;
+                }
 
                 int slot = inventory.firstEmpty();
-                if (slot == -1) break;
+                if (slot == -1) {
+                  break;
+                }
                 inventory.setItem(slot, LbGuiUtil.createLadderStatItem(profile, ladder).get());
-            }
+              }
 
-            ItemStack fillerItem = GUIFile.getGuiItem("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.FILLER-ITEM").get();
-            for (int i = 0; i < 45; i++) {
+              ItemStack fillerItem =
+                  GuiFile.getGuiItem("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.FILLER-ITEM").get();
+              for (int i = 0; i < 45; i++) {
                 ItemStack current = inventory.getItem(i);
-                if (current == null || current.getType().equals(Material.AIR))
-                    inventory.setItem(i, fillerItem);
-            }
+                if (current == null || current.getType().equals(Material.AIR)) {
+                  inventory.setItem(i, fillerItem);
+                }
+              }
 
-            inventory.setItem(45, GUIFile.getGuiItem("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.BACK-TO-HUB").get());
-            inventory.setItem(49, LbGuiUtil.createProfileAllStatItem(profile));
+              inventory.setItem(
+                  45,
+                  GuiFile.getGuiItem("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.BACK-TO-HUB").get());
+              inventory.setItem(49, LbGuiUtil.createProfileAllStatItem(profile));
 
-            updatePlayers();
-        });
+              updatePlayers();
+            });
+  }
+
+  @Override
+  public void handleClickEvent(InventoryClickEvent e) {
+    Player player = (Player) e.getWhoClicked();
+    int slot = e.getRawSlot();
+
+    e.setCancelled(true);
+
+    if (slot == 45) {
+      if (backTo != null) {
+        backTo.open(player);
+      } else {
+        player.closeInventory();
+      }
     }
-
-    @Override
-    public void handleClickEvent(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
-        int slot = e.getRawSlot();
-
-        e.setCancelled(true);
-
-        if (slot == 45) {
-            if (backTo != null) backTo.open(player);
-            else player.closeInventory();
-        }
-    }
-
+  }
 }

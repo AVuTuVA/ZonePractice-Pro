@@ -14,35 +14,38 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class EventQueueInventory extends Inventory {
 
-    public EventQueueInventory() {
-        super(InventoryType.EVENT_QUEUE);
+  public EventQueueInventory() {
+    super(InventoryType.EVENT_QUEUE);
 
-        this.invItems.add(new EventQueueLeaveInvItem());
-    }
+    this.invItems.add(new EventQueueLeaveInvItem());
+  }
 
-    @Override
-    protected void set(Player player) {
-        PlayerInventory playerInventory = player.getInventory();
+  @Override
+  protected void set(Player player) {
+    PlayerInventory playerInventory = player.getInventory();
 
-        for (InvItem invItem : invItems) {
-            int slot = invItem.getSlot();
-            if (slot == -1)
-                continue;
+    for (InvItem invItem : invItems) {
+      int slot = invItem.getSlot();
+      if (slot == -1) {
+        continue;
+      }
 
-            if (invItem instanceof EventQueueLeaveInvItem) {
-                Event event = EventManager.getInstance().getEventByPlayer(player);
-                if (event == null)
-                    continue;
-
-                ItemStack item = invItem.getItem().clone();
-                ItemMeta itemMeta = item.getItemMeta();
-                String displayName = Common.serializeComponentToLegacyString(itemMeta.displayName());
-                itemMeta.displayName(Common.legacyToComponent(StringUtil.CC(displayName.replace("%event%", event.getType().getName()))));
-                item.setItemMeta(itemMeta);
-
-                playerInventory.setItem(slot, item);
-            }
+      if (invItem instanceof EventQueueLeaveInvItem) {
+        Event event = EventManager.getInstance().getEventByPlayer(player);
+        if (event == null) {
+          continue;
         }
-    }
 
+        ItemStack item = invItem.getItem().clone();
+        ItemMeta itemMeta = item.getItemMeta();
+        String displayName = Common.serializeComponentToLegacyString(itemMeta.displayName());
+        itemMeta.displayName(
+            Common.legacyToComponent(
+                StringUtil.cc(displayName.replace("%event%", event.getType().getName()))));
+        item.setItemMeta(itemMeta);
+
+        playerInventory.setItem(slot, item);
+      }
+    }
+  }
 }

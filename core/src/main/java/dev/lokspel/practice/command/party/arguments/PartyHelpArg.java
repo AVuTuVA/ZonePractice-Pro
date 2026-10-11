@@ -7,19 +7,17 @@ import org.bukkit.entity.Player;
 
 public final class PartyHelpArg {
 
-    private PartyHelpArg() {}
+  private PartyHelpArg() {}
 
-    public static void HelpCommand(Player player, String label) {
-        String shortcut = ConfigManager.getPartyChatShortcut();
+  public static void helpCommand(Player player, String label) {
+    String shortcut = ConfigManager.getPartyChatShortcut();
 
-        for (String line : LanguageManager.getList("COMMAND.PARTY.ARGUMENTS.HELP")) {
-            if (line.contains("%shortcut%") && shortcut.isEmpty()) continue;
+    for (String line : LanguageManager.getList("COMMAND.PARTY.ARGUMENTS.HELP")) {
+      if (line.contains("%shortcut%") && shortcut.isEmpty()) {
+        continue;
+      }
 
-            Common.sendMMMessage(player, line
-                    .replace("%label%", label)
-                    .replace("%shortcut%", shortcut)
-            );
-        }
+      Common.sendMmMessage(player, line.replace("%label%", label).replace("%shortcut%", shortcut));
     }
-
+  }
 }

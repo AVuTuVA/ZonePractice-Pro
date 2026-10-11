@@ -6,6 +6,9 @@ import dev.lokspel.practice.manager.gui.guis.MatchHistoryGui;
 import dev.lokspel.practice.manager.matchhistory.MatchHistoryEntry;
 import dev.lokspel.practice.manager.matchhistory.MatchHistoryManager;
 import dev.lokspel.practice.util.Common;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -14,76 +17,81 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 public class MatchHistoryCommand implements CommandExecutor, TabCompleter {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            Common.sendConsoleMMMessage("<red>This command can only be used by players.");
-            return true;
-        }
+  @Override
+  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    if (!(sender instanceof Player player)) {
+      Common.sendConsoleMmMessage("<red>This command can only be used by players.");
+      return true;
+    }
 
-        if (!player.hasPermission("ap.matchhistory")) {
-            Common.sendMMMessage(player, LanguageManager.getString("NO-PERMISSION"));
-            return true;
-        }
+    if (!player.hasPermission("ap.matchhistory")) {
+      Common.sendMmMessage(player, LanguageManager.getString("NO-PERMISSION"));
+      return true;
+    }
 
-        // Determine target
-        final UUID targetUuid;
-        final String targetName;
+    // Determine target
+    final UUID targetUuid;
+    final String targetName;
 
-        if (args.length == 0) {
-            targetUuid = player.getUniqueId();
-            targetName = player.getName();
-        } else {
-            @SuppressWarnings("deprecation")
-            OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(args[0]);
-            if (!offlineTarget.hasPlayedBefore() && !offlineTarget.isOnline()) {
-                Common.sendMMMessage(player,
-                        LanguageManager.getString("COMMAND.MATCH-HISTORY.PLAYER-NOT-FOUND"));
-                return true;
-            }
-            targetUuid = offlineTarget.getUniqueId();
-            targetName = offlineTarget.getName() != null ? offlineTarget.getName() : args[0];
-        }
-
-        // Load async, open GUI on main thread
-        MatchHistoryManager.getInstance().loadHistoryAsync(targetUuid).thenAccept(entries -> {
-            Bukkit.getScheduler().runTask(AstralPractice.getInstance(), () -> {
-                if (!player.isOnline()) return;
-
-                if (entries == null || entries.isEmpty()) {
-                    Common.sendMMMessage(player,
-                            LanguageManager.getString("COMMAND.MATCH-HISTORY.NO-HISTORY"));
-                    return;
-                }
-
-                List<MatchHistoryEntry> display = entries.size() > 5
-                        ? entries.subList(0, 5)
-                        : entries;
-
-                new MatchHistoryGui(targetUuid, targetName, display).open(player);
-            });
-        });
-
+    if (args.length == 0) {
+      targetUuid = player.getUniqueId();
+      targetName = player.getName();
+    } else {
+      @SuppressWarnings("deprecation")
+      OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(args[0]);
+      if (!offlineTarget.hasPlayedBefore() && !offlineTarget.isOnline()) {
+        Common.sendMmMessage(
+            player, LanguageManager.getString("COMMAND.MATCH-HISTORY.PLAYER-NOT-FOUND"));
         return true;
+      }
+      targetUuid = offlineTarget.getUniqueId();
+      targetName = offlineTarget.getName() != null ? offlineTarget.getName() : args[0];
     }
 
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command,
-                                      String alias, String[] args) {
-        List<String> completions = new ArrayList<>();
-        if (args.length == 1) {
-            String partial = args[0].toLowerCase();
-            for (Player online : Bukkit.getOnlinePlayers()) {
-                if (online.getName().toLowerCase().startsWith(partial))
-                    completions.add(online.getName());
-            }
+    // Load async, open GUI on main thread
+    MatchHistoryManager.getInstance()
+        .loadHistoryAsync(targetUuid)
+        .thenAccept(
+            entries -> {
+              Bukkit.getScheduler()
+                  .runTask(
+                      AstralPractice.getInstance(),
+                      () -> {
+                        if (!player.isOnline()) {
+                          return;
+                        }
+
+                        if (entries == null || entries.isEmpty()) {
+                          Common.sendMmMessage(
+                              player,
+                              LanguageManager.getString("COMMAND.MATCH-HISTORY.NO-HISTORY"));
+                          return;
+                        }
+
+                        List<MatchHistoryEntry> display =
+                            entries.size() > 5 ? entries.subList(0, 5) : entries;
+
+                        new MatchHistoryGui(targetUuid, targetName, display).open(player);
+                      });
+            });
+
+    return true;
+  }
+
+  @Override
+  public List<String> onTabComplete(
+      CommandSender sender, Command command, String alias, String[] args) {
+    List<String> completions = new ArrayList<>();
+    if (args.length == 1) {
+      String partial = args[0].toLowerCase();
+      for (Player online : Bukkit.getOnlinePlayers()) {
+        if (online.getName().toLowerCase().startsWith(partial)) {
+          completions.add(online.getName());
         }
-        return completions;
+      }
     }
+    return completions;
+  }
 }

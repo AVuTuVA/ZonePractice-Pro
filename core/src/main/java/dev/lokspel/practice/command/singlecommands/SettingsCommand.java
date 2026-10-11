@@ -12,28 +12,28 @@ import org.bukkit.entity.Player;
 
 public class SettingsCommand implements CommandExecutor {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            Common.sendConsoleMMMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
-            return false;
-        }
-
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-
-        if (!profile.getStatus().equals(ProfileStatus.LOBBY) && !profile.getStatus().equals(ProfileStatus.STAFF_MODE)) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETTINGS.CANT-USE"));
-            return false;
-        }
-
-        if (!player.hasPermission("ap.settings.open")) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETTINGS.NO-PERMISSION"));
-            return false;
-        }
-
-        profile.getSettingsGui().open(player);
-
-        return true;
+  @Override
+  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    if (!(sender instanceof Player player)) {
+      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      return false;
     }
 
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+
+    if (!profile.getStatus().equals(ProfileStatus.LOBBY)
+        && !profile.getStatus().equals(ProfileStatus.STAFF_MODE)) {
+      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SETTINGS.CANT-USE"));
+      return false;
+    }
+
+    if (!player.hasPermission("ap.settings.open")) {
+      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SETTINGS.NO-PERMISSION"));
+      return false;
+    }
+
+    profile.getSettingsGui().open(player);
+
+    return true;
+  }
 }

@@ -5,52 +5,61 @@ import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
 import dev.lokspel.practice.manager.arena.setup.ArenaSetupManager;
 import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.util.Common;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public final class SetupArg {
 
-    private SetupArg() {}
+  private SetupArg() {}
 
-    public static void run(Player player, String label, String[] args) {
-        if (!player.hasPermission("ap.setup")) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
-            return;
-        }
-
-        if (args.length != 2) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETUP.COMMAND-HELP").replace("%label%", label));
-            return;
-        }
-
-        DisplayArena arena = ArenaManager.getInstance().getArena(args[1]);
-        if (arena == null) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETUP.ARENA-NOT-EXISTS").replace("%arena%", args[1]));
-            return;
-        }
-
-        if (arena.isEnabled()) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETUP.CANT-EDIT"));
-            return;
-        }
-
-        ArenaSetupManager.getInstance().startSetup(player, arena);
+  public static void run(Player player, String label, String[] args) {
+    if (!player.hasPermission("ap.setup")) {
+      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
+      return;
     }
 
-    public static List<String> tabComplete(Player player, String[] args) {
-        List<String> arguments = new ArrayList<>();
-        if (!player.hasPermission("ap.setup")) return arguments;
-
-        if (args.length == 2) {
-            for (DisplayArena arena : ArenaManager.getInstance().getArenaList())
-                arguments.add(arena.getName());
-
-            return StringUtil.copyPartialMatches(args[1], arguments, new ArrayList<>());
-        }
-
-        return arguments;
+    if (args.length != 2) {
+      Common.sendMmMessage(
+          player,
+          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETUP.COMMAND-HELP")
+              .replace("%label%", label));
+      return;
     }
+
+    DisplayArena arena = ArenaManager.getInstance().getArena(args[1]);
+    if (arena == null) {
+      Common.sendMmMessage(
+          player,
+          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETUP.ARENA-NOT-EXISTS")
+              .replace("%arena%", args[1]));
+      return;
+    }
+
+    if (arena.isEnabled()) {
+      Common.sendMmMessage(
+          player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETUP.CANT-EDIT"));
+      return;
+    }
+
+    ArenaSetupManager.getInstance().startSetup(player, arena);
+  }
+
+  public static List<String> tabComplete(Player player, String[] args) {
+    List<String> arguments = new ArrayList<>();
+    if (!player.hasPermission("ap.setup")) {
+      return arguments;
+    }
+
+    if (args.length == 2) {
+      for (DisplayArena arena : ArenaManager.getInstance().getArenaList()) {
+        arguments.add(arena.getName());
+      }
+
+      return StringUtil.copyPartialMatches(args[1], arguments, new ArrayList<>());
+    }
+
+    return arguments;
+  }
 }

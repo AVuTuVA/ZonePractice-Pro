@@ -5,13 +5,12 @@ import org.bukkit.entity.Player;
 
 public class PartyInfoInvItem extends InvItem {
 
-    public PartyInfoInvItem() {
-        super(getItemStack("PARTY.NORMAL.PARTY-INFO.ITEM"), getInt("PARTY.NORMAL.PARTY-INFO.SLOT"));
-    }
+  public PartyInfoInvItem() {
+    super(getItemStack("PARTY.NORMAL.PARTY-INFO.ITEM"), getInt("PARTY.NORMAL.PARTY-INFO.SLOT"));
+  }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        player.performCommand("party info");
-    }
-
+  @Override
+  public void handleClickEvent(Player player) {
+    player.performCommand("party info");
+  }
 }

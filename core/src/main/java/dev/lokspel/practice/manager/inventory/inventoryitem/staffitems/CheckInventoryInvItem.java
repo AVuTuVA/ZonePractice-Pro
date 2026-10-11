@@ -6,17 +6,18 @@ import org.bukkit.entity.Player;
 
 public class CheckInventoryInvItem extends InvItem {
 
-    public CheckInventoryInvItem() {
-        super(getItemStack("STAFF-MODE.NORMAL.PLAYER-INVENTORY.ITEM"), getInt("STAFF-MODE.NORMAL.PLAYER-INVENTORY.SLOT"));
-    }
+  public CheckInventoryInvItem() {
+    super(
+        getItemStack("STAFF-MODE.NORMAL.PLAYER-INVENTORY.ITEM"),
+        getInt("STAFF-MODE.NORMAL.PLAYER-INVENTORY.SLOT"));
+  }
 
-    public void handleClickEvent(Player player, Player target) {
-        if (target != null)
-            new PlayerInvGui(target).open(player);
+  public void handleClickEvent(Player player, Player target) {
+    if (target != null) {
+      new PlayerInvGui(target).open(player);
     }
+  }
 
-    @Override
-    public void handleClickEvent(Player player) {
-    }
-
+  @Override
+  public void handleClickEvent(Player player) {}
 }

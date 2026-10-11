@@ -9,20 +9,19 @@ import org.bukkit.entity.Player;
 
 public final class ArenasArg {
 
-    private ArenasArg() {}
+  private ArenasArg() {}
 
-    public static void run(Player player) {
-        if (!player.hasPermission("ap.practice.arenas")) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
-            return;
-        }
-
-        PlayerUtil.clearInventory(player);
-        player.setGameMode(GameMode.CREATIVE);
-        player.setAllowFlight(true);
-        player.setFlying(true);
-
-        player.teleport(ArenaWorldUtil.getArenasWorld().getSpawnLocation());
+  public static void run(Player player) {
+    if (!player.hasPermission("ap.practice.arenas")) {
+      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+      return;
     }
 
+    PlayerUtil.clearInventory(player);
+    player.setGameMode(GameMode.CREATIVE);
+    player.setAllowFlight(true);
+    player.setFlying(true);
+
+    player.teleport(ArenaWorldUtil.getArenasWorld().getSpawnLocation());
+  }
 }

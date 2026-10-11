@@ -8,16 +8,18 @@ import org.bukkit.entity.Player;
 
 public class SettingsInvItem extends InvItem {
 
-    public SettingsInvItem() {
-        super(getItemStack("LOBBY-BASIC.NORMAL.SETTINGS.ITEM"), getInt("LOBBY-BASIC.NORMAL.SETTINGS.SLOT"));
-    }
+  public SettingsInvItem() {
+    super(
+        getItemStack("LOBBY-BASIC.NORMAL.SETTINGS.ITEM"),
+        getInt("LOBBY-BASIC.NORMAL.SETTINGS.SLOT"));
+  }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        if (player.hasPermission("ap.settings.open"))
-            ProfileManager.getInstance().getProfile(player).getSettingsGui().open(player);
-        else
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETTINGS.NO-PERMISSION"));
+  @Override
+  public void handleClickEvent(Player player) {
+    if (player.hasPermission("ap.settings.open")) {
+      ProfileManager.getInstance().getProfile(player).getSettingsGui().open(player);
+    } else {
+      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SETTINGS.NO-PERMISSION"));
     }
-
+  }
 }

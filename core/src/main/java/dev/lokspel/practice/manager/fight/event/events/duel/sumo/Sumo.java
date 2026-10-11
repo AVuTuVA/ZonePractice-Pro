@@ -7,23 +7,22 @@ import org.bukkit.entity.Player;
 
 public class Sumo extends DuelEvent {
 
-    public Sumo(Object starter, SumoData sumoData) {
-        super(starter, sumoData, "COMMAND.EVENT.ARGUMENTS.SUMO");
-    }
+  public Sumo(Object starter, SumoData sumoData) {
+    super(starter, sumoData, "COMMAND.EVENT.ARGUMENTS.SUMO");
+  }
 
-    @Override
-    public SumoData getEventData() {
-        return (SumoData) eventData;
-    }
+  @Override
+  public SumoData getEventData() {
+    return (SumoData) eventData;
+  }
 
-    @Override
-    public void teleport(Player player, Location location) {
-        PlayerUtil.clearInventory(player);
-        dev.lokspel.practice.util.playerutil.PlayerUtil.setFightPlayer(player);
+  @Override
+  public void teleport(Player player, Location location) {
+    PlayerUtil.clearInventory(player);
+    dev.lokspel.practice.util.playerutil.PlayerUtil.setFightPlayer(player);
 
-        player.teleport(location);
+    player.teleport(location);
 
-        this.getEventData().getKitData().loadKitData(player, true);
-    }
-
+    this.getEventData().getKitData().loadKitData(player, true);
+  }
 }

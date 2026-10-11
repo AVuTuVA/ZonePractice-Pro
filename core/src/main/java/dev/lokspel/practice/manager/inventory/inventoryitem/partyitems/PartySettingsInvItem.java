@@ -9,20 +9,24 @@ import org.bukkit.entity.Player;
 
 public class PartySettingsInvItem extends InvItem {
 
-    public PartySettingsInvItem() {
-        super(getItemStack("PARTY.NORMAL.PARTY-SETTINGS.ITEM"), getInt("PARTY.NORMAL.PARTY-SETTINGS.SLOT"));
+  public PartySettingsInvItem() {
+    super(
+        getItemStack("PARTY.NORMAL.PARTY-SETTINGS.ITEM"),
+        getInt("PARTY.NORMAL.PARTY-SETTINGS.SLOT"));
+  }
+
+  @Override
+  public void handleClickEvent(Player player) {
+    Party party = PartyManager.getInstance().getParty(player);
+    if (party == null) {
+      return;
     }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        Party party = PartyManager.getInstance().getParty(player);
-        if (party == null) return;
-
-        if (!party.getLeader().equals(player)) {
-            Common.sendMMMessage(player, LanguageManager.getString("PARTY.NOT-LEADER"));
-            return;
-        }
-
-        party.getPartySettingsGui().open(player);
+    if (!party.getLeader().equals(player)) {
+      Common.sendMmMessage(player, LanguageManager.getString("PARTY.NOT-LEADER"));
+      return;
     }
+
+    party.getPartySettingsGui().open(player);
+  }
 }

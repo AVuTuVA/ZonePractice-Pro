@@ -9,39 +9,44 @@ import dev.lokspel.practice.util.interfaces.Runnable;
 
 public class QueueStartRunnable extends Runnable {
 
-    private final Event event;
+  private final Event event;
 
-    public QueueStartRunnable(final QueueRunnable queueRunnable) {
-        super(0, 20, false);
+  public QueueStartRunnable(final QueueRunnable queueRunnable) {
+    super(0, 20, false);
 
-        this.event = queueRunnable.getEvent();
-        this.seconds = this.event.getEventData().getWaitBeforeStart();
+    this.event = queueRunnable.getEvent();
+    this.seconds = this.event.getEventData().getWaitBeforeStart();
+  }
+
+  @Override
+  public void run() {
+    if (this.seconds == this.event.getEventData().getWaitBeforeStart()
+        || seconds == 10
+        || seconds <= 5 && seconds != 0) {
+      event.sendMessage(
+          LanguageManager.getString("EVENT.QUEUE-START-COUNTDOWN")
+              .replace("%seconds%", String.valueOf(seconds))
+              .replace(
+                  "%secondName%",
+                  (seconds == 1
+                      ? LanguageManager.getString("SECOND-NAME.1SEC")
+                      : LanguageManager.getString("SECOND-NAME.1<SEC"))),
+          false);
+
+      if (seconds <= 5) {
+        SoundEffect sound = SoundManager.getInstance().getSound(SoundType.EVENT_QUEUE_COUNTDOWN);
+        if (sound != null) {
+          sound.play(event.getPlayers());
+        }
+      }
     }
 
-    @Override
-    public void run() {
-        if (this.seconds == this.event.getEventData().getWaitBeforeStart() ||
-                seconds == 10 ||
-                seconds <= 5 &&
-                        seconds != 0) {
-            event.sendMessage(LanguageManager.getString("EVENT.QUEUE-START-COUNTDOWN")
-                            .replace("%seconds%", String.valueOf(seconds))
-                            .replace("%secondName%", (seconds == 1 ? LanguageManager.getString("SECOND-NAME.1SEC") : LanguageManager.getString("SECOND-NAME.1<SEC")))
-                    , false);
-
-            if (seconds <= 5) {
-                SoundEffect sound = SoundManager.getInstance().getSound(SoundType.EVENT_QUEUE_COUNTDOWN);
-                if (sound != null) sound.play(event.getPlayers());
-            }
-        }
-
-        if (seconds == 0) {
-            this.cancel();
-            event.start();
-            event.getQueueRunnable().cancel();
-        }
-
-        this.seconds--;
+    if (seconds == 0) {
+      this.cancel();
+      event.start();
+      event.getQueueRunnable().cancel();
     }
 
+    this.seconds--;
+  }
 }

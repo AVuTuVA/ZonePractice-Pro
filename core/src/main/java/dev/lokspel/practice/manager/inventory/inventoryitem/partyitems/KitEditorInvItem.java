@@ -5,13 +5,14 @@ import org.bukkit.entity.Player;
 
 public class KitEditorInvItem extends InvItem {
 
-    public KitEditorInvItem() {
-        super(getItemStack("PARTY.NORMAL.PARTY-KIT-EDITOR.ITEM"), getInt("PARTY.NORMAL.PARTY-KIT-EDITOR.SLOT"));
-    }
+  public KitEditorInvItem() {
+    super(
+        getItemStack("PARTY.NORMAL.PARTY-KIT-EDITOR.ITEM"),
+        getInt("PARTY.NORMAL.PARTY-KIT-EDITOR.SLOT"));
+  }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        player.performCommand("editor");
-    }
-
+  @Override
+  public void handleClickEvent(Player player) {
+    player.performCommand("editor");
+  }
 }

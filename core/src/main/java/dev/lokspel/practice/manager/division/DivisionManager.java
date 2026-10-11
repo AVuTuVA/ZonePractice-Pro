@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.division;
 
-import dev.lokspel.api.Event.Match.MatchEndEvent;
+import dev.lokspel.api.event.match.MatchEndEvent;
 import dev.lokspel.practice.AstralPractice;
 import dev.lokspel.practice.manager.backend.ConfigFile;
 import dev.lokspel.practice.manager.backend.ConfigManager;
@@ -10,270 +10,306 @@ import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.util.Common;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 public class DivisionManager extends ConfigFile implements Listener {
 
-    private final boolean COUNT_BY_WINS;
-    private final boolean COUNT_BY_ELO;
+  private final boolean countByWins;
+  private final boolean countByElo;
 
-    private static DivisionManager instance;
+  private static DivisionManager instance;
 
-    public static DivisionManager getInstance() {
-        if (instance == null)
-            instance = new DivisionManager();
-        return instance;
+  public static DivisionManager getInstance() {
+    if (instance == null) {
+      instance = new DivisionManager();
     }
+    return instance;
+  }
 
-    private final boolean divisionsEnabled = ConfigManager.getBoolean("DIVISIONS.ENABLED");
-    private final boolean newDivisionMessageEnabled = ConfigManager.getBoolean("DIVISIONS.NEW-DIVISION-MESSAGE");
-    private Division minimumForRanked;
+  private final boolean divisionsEnabled = ConfigManager.getBoolean("DIVISIONS.ENABLED");
+  private final boolean newDivisionMessageEnabled =
+      ConfigManager.getBoolean("DIVISIONS.NEW-DIVISION-MESSAGE");
+  private Division minimumForRanked;
 
-    private final List<Division> divisions = new ArrayList<>();
+  private final List<Division> divisions = new ArrayList<>();
 
-    private DivisionManager() {
-        super("", "divisions");
-        this.reloadFile();
+  private DivisionManager() {
+    super("", "divisions");
+    this.reloadFile();
 
-        boolean COUNT_BY_WINS = this.getBoolean("REQUIRE.WINS");
-        boolean COUNT_BY_ELO = this.getBoolean("REQUIRE.ELO");
-        if (!COUNT_BY_WINS && !COUNT_BY_ELO) {
-            COUNT_BY_WINS = true;
-        }
-        this.COUNT_BY_WINS = COUNT_BY_WINS;
-        this.COUNT_BY_ELO = COUNT_BY_ELO;
-
-        Bukkit.getPluginManager().registerEvents(this, AstralPractice.getInstance());
+    boolean countByWins = this.getBoolean("REQUIRE.WINS");
+    boolean countByElo = this.getBoolean("REQUIRE.ELO");
+    if (!countByWins && !countByElo) {
+      countByWins = true;
     }
+    this.countByWins = countByWins;
+    this.countByElo = countByElo;
 
-    public void reloadRanks() {
-        this.reloadFile();
-        divisions.clear();
-        this.getData();
+    Bukkit.getPluginManager().registerEvents(this, AstralPractice.getInstance());
+  }
 
-        this.setDivisions();
-    }
+  public void reloadRanks() {
+    this.reloadFile();
+    divisions.clear();
+    this.getData();
 
-    public void setDivisions() {
-        Bukkit.getScheduler().runTaskAsynchronously(AstralPractice.getInstance(), () ->
-        {
-            for (Profile profile : ProfileManager.getInstance().getProfiles().values()) {
+    this.setDivisions();
+  }
+
+  public void setDivisions() {
+    Bukkit.getScheduler()
+        .runTaskAsynchronously(
+            AstralPractice.getInstance(),
+            () -> {
+              for (Profile profile : ProfileManager.getInstance().getProfiles().values()) {
                 profile.getStats().setDivision(this.getDivision(profile));
-            }
-        });
-    }
+              }
+            });
+  }
 
-    public Division getDivision(final Profile profile) {
-        int experience = profile.getStats().getExperience();
-        int wins = profile.getStats().getGlobalWins();
-        int elo = profile.getStats().getGlobalElo();
+  public Division getDivision(final Profile profile) {
+    int experience = profile.getStats().getExperience();
+    int wins = profile.getStats().getGlobalWins();
+    int elo = profile.getStats().getGlobalElo();
 
-        for (int i = 0; i < this.divisions.size(); i++) {
-            Division division = this.divisions.get(i);
-            Division nextDivision;
-            try {
-                nextDivision = this.divisions.get(i + 1);
-            } catch (IndexOutOfBoundsException e) {
-                nextDivision = null;
-            }
+    for (int i = 0; i < this.divisions.size(); i++) {
+      Division division = this.divisions.get(i);
+      Division nextDivision;
+      try {
+        nextDivision = this.divisions.get(i + 1);
+      } catch (IndexOutOfBoundsException e) {
+        nextDivision = null;
+      }
 
-            boolean meetsExperience = division.getExperience() <= experience;
-            boolean meetsWins = !COUNT_BY_WINS || division.getWin() <= wins;
-            boolean meetsElo = !COUNT_BY_ELO || division.getElo() <= elo;
+      boolean meetsExperience = division.getExperience() <= experience;
+      boolean meetsWins = !countByWins || division.getWin() <= wins;
+      boolean meetsElo = !countByElo || division.getElo() <= elo;
 
-            if (meetsExperience && meetsWins && meetsElo) {
-                if (nextDivision == null) {
-                    return division;
-                } else {
-                    boolean nextExperience = nextDivision.getExperience() > experience;
-                    boolean nextWins = COUNT_BY_WINS && nextDivision.getWin() > wins;
-                    boolean nextElo = COUNT_BY_ELO && nextDivision.getElo() > elo;
+      if (meetsExperience && meetsWins && meetsElo) {
+        if (nextDivision == null) {
+          return division;
+        } else {
+          boolean nextExperience = nextDivision.getExperience() > experience;
+          boolean nextWins = countByWins && nextDivision.getWin() > wins;
+          boolean nextElo = countByElo && nextDivision.getElo() > elo;
 
-                    if (nextExperience || nextWins || nextElo) {
-                        return division;
-                    }
-                }
-            }
+          if (nextExperience || nextWins || nextElo) {
+            return division;
+          }
         }
-
-        return null;
+      }
     }
 
-    public Division getNextDivision(final Profile profile) {
-        return getDivision(profile.getStats().getDivision());
+    return null;
+  }
+
+  private Division getDivision(Division division) {
+    if (division == null) {
+      return null;
     }
 
-    public Division getNextDivision(final Division division) {
-        return getDivision(division);
+    int index = this.divisions.indexOf(division);
+    if (index == -1) {
+      return null;
     }
 
-    private Division getDivision(Division division) {
-        if (division == null) return null;
+    if (index + 1 >= this.divisions.size()) {
+      return null;
+    }
+    return this.divisions.get(index + 1);
+  }
 
-        int index = this.divisions.indexOf(division);
-        if (index == -1) return null;
+  public Division getNextDivision(final Profile profile) {
+    return getDivision(profile.getStats().getDivision());
+  }
 
-        if (index + 1 >= this.divisions.size()) return null;
-        return this.divisions.get(index + 1);
+  public Division getNextDivision(final Division division) {
+    return getDivision(division);
+  }
+
+  public Division getPreviousDivision(final Division division) {
+    if (division == null) {
+      return null;
     }
 
-    public Division getPreviousDivision(final Division division) {
-        if (division == null) return null;
-
-        int index = this.divisions.indexOf(division);
-        if (index == -1) return null;
-
-        if (index - 1 < 0) return null;
-        return this.divisions.get(index - 1);
+    int index = this.divisions.indexOf(division);
+    if (index == -1) {
+      return null;
     }
 
-    public int getDivisionWeight(final Division division) {
-        if (division == null) return 0;
+    if (index - 1 < 0) {
+      return null;
+    }
+    return this.divisions.get(index - 1);
+  }
 
-        if (division.getWeight() != -1) {
-            return division.getWeight();
+  public int getDivisionWeight(final Division division) {
+    if (division == null) {
+      return 0;
+    }
+
+    if (division.getWeight() != -1) {
+      return division.getWeight();
+    }
+
+    int index = this.divisions.indexOf(division);
+    if (index == -1) {
+      return 0;
+    }
+
+    return index + 1;
+  }
+
+  public boolean meetsMinimumForRanked(final Profile profile) {
+    if (profile == null || this.minimumForRanked == null) {
+      return true;
+    }
+
+    // Check against the minimum division's REQUIREMENTS, NOT ranked ELO
+    // (ranked elo is only achievable by playing ranked, which is locked behind this check)
+    int experience = profile.getStats().getExperience();
+    int wins = profile.getStats().getGlobalWins();
+
+    // Check experience requirement
+    if (experience < this.minimumForRanked.getExperience()) {
+      return false;
+    }
+
+    // Check wins requirement (only if wins are counted)
+    if (this.countByWins && wins < this.minimumForRanked.getWin()) {
+      return false;
+    }
+
+    // NOTE: We deliberately do NOT check ELO here, because:
+    // - Global ELO only comes from ranked matches
+    // - Ranked is locked behind this check
+    // - This would create an infinite loop
+    // Players can unlock ranked with experience/wins, then earn ranked elo
+
+    return true;
+  }
+
+  public void sendRankedProgressMessage(
+      final Player player, final Profile profile, final Division requirement) {
+    int currentExp = profile.getStats().getExperience();
+    int requiredExp = requirement.getExperience();
+    final int currentWins = profile.getStats().getGlobalWins();
+    final int requiredWins = requirement.getWin();
+
+    Common.sendMmMessage(player, "");
+    Common.sendMmMessage(
+        player, LanguageManager.getString("COMMAND.QUEUES.RANKED.PROGRESS-HEADER"));
+
+    // Experience progress
+    int expProgress = Math.min(100, (int) ((double) currentExp / requiredExp * 100));
+    Common.sendMmMessage(
+        player,
+        LanguageManager.getString("COMMAND.QUEUES.RANKED.PROGRESS-EXP")
+            .replace("%current%", String.valueOf(currentExp))
+            .replace("%required%", String.valueOf(requiredExp))
+            .replace("%percent%", String.valueOf(expProgress)));
+
+    // Wins progress (if wins are counted)
+    if (this.countByWins) {
+      int winsProgress = Math.min(100, (int) ((double) currentWins / requiredWins * 100));
+      Common.sendMmMessage(
+          player,
+          LanguageManager.getString("COMMAND.QUEUES.RANKED.PROGRESS-WINS")
+              .replace("%current%", String.valueOf(currentWins))
+              .replace("%required%", String.valueOf(requiredWins))
+              .replace("%percent%", String.valueOf(winsProgress)));
+    }
+
+    Common.sendMmMessage(player, "");
+  }
+
+  @Override
+  public void setData() {}
+
+  @Override
+  public void getData() {
+    int count = 0;
+    for (String divisionConfigName : config.getConfigurationSection("DIVISIONS").getKeys(false)) {
+      if (count == 28) {
+        break;
+      }
+
+      Division division =
+          new Division(
+              divisionConfigName,
+              config.getConfigurationSection("DIVISIONS." + divisionConfigName));
+      if (!division.isValid()) {
+        continue;
+      }
+
+      divisions.add(division);
+
+      count++;
+    }
+
+    divisions.sort(new DivisionComparator());
+    this.minimumForRanked =
+        getDivisionByConfigName(ConfigManager.getString("DIVISIONS.MIN-DIVISION-FOR-RANKED"));
+  }
+
+  private Division getDivisionByConfigName(final String divisionConfigName) {
+    for (Division division : this.divisions) {
+      if (division.getConfigName().equalsIgnoreCase(divisionConfigName)) {
+        return division;
+      }
+    }
+    return null;
+  }
+
+  @EventHandler
+  public void onMatchEnd(MatchEndEvent e) {
+    Match match = (Match) e.getMatch();
+    if (!(match.getLadder() instanceof NormalLadder)) {
+      return;
+    }
+
+    int expReceived = match.getDuration();
+
+    for (Player player : match.getPlayers()) {
+      Profile profile = ProfileManager.getInstance().getProfile(player);
+      profile.getStats().setExperience(profile.getStats().getExperience() + expReceived);
+
+      Common.sendMmMessage(
+          player,
+          LanguageManager.getString("MATCH.EXP-RECEIVED")
+              .replace("%exp%", String.valueOf(expReceived)));
+
+      Division oldDivision = profile.getStats().getDivision();
+      Division newDivision = this.getDivision(profile);
+
+      if (oldDivision != newDivision) {
+        profile.getStats().setDivision(newDivision);
+
+        if (this.newDivisionMessageEnabled) {
+          Common.sendMmMessage(
+              player,
+              LanguageManager.getString("MATCH.REACHED-NEW-DIVISION")
+                  .replace("%newDivision_fullName%", newDivision.getFullName())
+                  .replace("%newDivision_shortName%", newDivision.getShortName())
+                  .replace("%oldDivision_fullName%", oldDivision.getFullName())
+                  .replace("%oldDivision_shortName%", oldDivision.getShortName()));
+
+          if (newDivision == this.minimumForRanked) {
+            Common.sendMmMessage(
+                player,
+                LanguageManager.getString("MATCH.DUEL.RANKED-REQUIREMENT-REACHED")
+                    .replace("%newDivision_fullName%", newDivision.getFullName())
+                    .replace("%newDivision_shortName%", newDivision.getShortName()));
+          }
         }
-
-        int index = this.divisions.indexOf(division);
-        if (index == -1) return 0;
-
-        return index + 1;
+      }
     }
-
-    public boolean meetsMinimumForRanked(final Profile profile) {
-        if (profile == null || this.minimumForRanked == null) {
-            return true;
-        }
-
-        // Check against the minimum division's REQUIREMENTS, NOT ranked ELO
-        // (ranked elo is only achievable by playing ranked, which is locked behind this check)
-        int experience = profile.getStats().getExperience();
-        int wins = profile.getStats().getGlobalWins();
-
-        // Check experience requirement
-        if (experience < this.minimumForRanked.getExperience()) {
-            return false;
-        }
-
-        // Check wins requirement (only if wins are counted)
-        if (this.COUNT_BY_WINS && wins < this.minimumForRanked.getWin()) {
-            return false;
-        }
-
-        // NOTE: We deliberately do NOT check ELO here, because:
-        // - Global ELO only comes from ranked matches
-        // - Ranked is locked behind this check
-        // - This would create an infinite loop
-        // Players can unlock ranked with experience/wins, then earn ranked elo
-
-        return true;
-    }
-
-    public void sendRankedProgressMessage(final Player player, final Profile profile, final Division requirement) {
-        int currentExp = profile.getStats().getExperience();
-        int requiredExp = requirement.getExperience();
-        int currentWins = profile.getStats().getGlobalWins();
-        int requiredWins = requirement.getWin();
-
-        Common.sendMMMessage(player, "");
-        Common.sendMMMessage(player, LanguageManager.getString("COMMAND.QUEUES.RANKED.PROGRESS-HEADER"));
-
-        // Experience progress
-        int expProgress = Math.min(100, (int) ((double) currentExp / requiredExp * 100));
-        Common.sendMMMessage(player, LanguageManager.getString("COMMAND.QUEUES.RANKED.PROGRESS-EXP")
-                .replace("%current%", String.valueOf(currentExp))
-                .replace("%required%", String.valueOf(requiredExp))
-                .replace("%percent%", String.valueOf(expProgress))
-        );
-
-        // Wins progress (if wins are counted)
-        if (this.COUNT_BY_WINS) {
-            int winsProgress = Math.min(100, (int) ((double) currentWins / requiredWins * 100));
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.QUEUES.RANKED.PROGRESS-WINS")
-                    .replace("%current%", String.valueOf(currentWins))
-                    .replace("%required%", String.valueOf(requiredWins))
-                    .replace("%percent%", String.valueOf(winsProgress))
-            );
-        }
-
-        Common.sendMMMessage(player, "");
-    }
-
-    @Override
-    public void setData() {
-    }
-
-    @Override
-    public void getData() {
-        int count = 0;
-        for (String divisionConfigName : config.getConfigurationSection("DIVISIONS").getKeys(false)) {
-            if (count == 28) break;
-
-            Division division = new Division(divisionConfigName, config.getConfigurationSection("DIVISIONS." + divisionConfigName));
-            if (!division.isValid()) continue;
-
-            divisions.add(division);
-
-            count++;
-        }
-
-        divisions.sort(new DivisionComparator());
-        this.minimumForRanked = getDivisionByConfigName(ConfigManager.getString("DIVISIONS.MIN-DIVISION-FOR-RANKED"));
-    }
-
-    private Division getDivisionByConfigName(final String divisionConfigName) {
-        for (Division division : this.divisions)
-            if (division.getConfigName().equalsIgnoreCase(divisionConfigName))
-                return division;
-        return null;
-    }
-
-    @EventHandler
-    public void onMatchEnd(MatchEndEvent e) {
-        Match match = (Match) e.getMatch();
-        if (!(match.getLadder() instanceof NormalLadder)) {
-            return;
-        }
-
-        int expReceived = match.getDuration();
-
-        for (Player player : match.getPlayers()) {
-            Profile profile = ProfileManager.getInstance().getProfile(player);
-            profile.getStats().setExperience(profile.getStats().getExperience() + expReceived);
-
-            Common.sendMMMessage(player, LanguageManager.getString("MATCH.EXP-RECEIVED").replace("%exp%", String.valueOf(expReceived)));
-
-            Division oldDivision = profile.getStats().getDivision();
-            Division newDivision = this.getDivision(profile);
-
-            if (oldDivision != newDivision) {
-                profile.getStats().setDivision(newDivision);
-
-                if (this.newDivisionMessageEnabled) {
-                    Common.sendMMMessage(player, LanguageManager.getString("MATCH.REACHED-NEW-DIVISION")
-                            .replace("%newDivision_fullName%", newDivision.getFullName())
-                            .replace("%newDivision_shortName%", newDivision.getShortName())
-                            .replace("%oldDivision_fullName%", oldDivision.getFullName())
-                            .replace("%oldDivision_shortName%", oldDivision.getShortName())
-                    );
-
-                    if (newDivision == this.minimumForRanked) {
-                        Common.sendMMMessage(player, LanguageManager.getString("MATCH.DUEL.RANKED-REQUIREMENT-REACHED")
-                                .replace("%newDivision_fullName%", newDivision.getFullName())
-                                .replace("%newDivision_shortName%", newDivision.getShortName())
-                        );
-                    }
-                }
-            }
-        }
-    }
-
+  }
 }

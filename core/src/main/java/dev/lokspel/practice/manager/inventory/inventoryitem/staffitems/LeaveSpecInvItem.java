@@ -7,14 +7,17 @@ import org.bukkit.entity.Player;
 
 public class LeaveSpecInvItem extends InvItem {
 
-    public LeaveSpecInvItem() {
-        super(getItemStack("STAFF-MODE.NORMAL.LEAVE-SPECTATE.ITEM"), getInt("STAFF-MODE.NORMAL.LEAVE-SPECTATE.SLOT"));
-    }
+  public LeaveSpecInvItem() {
+    super(
+        getItemStack("STAFF-MODE.NORMAL.LEAVE-SPECTATE.ITEM"),
+        getInt("STAFF-MODE.NORMAL.LEAVE-SPECTATE.SLOT"));
+  }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        Spectatable spectatable = SpectatorManager.getInstance().getSpectators().get(player);
-        if (spectatable != null)
-            spectatable.removeSpectator(player);
+  @Override
+  public void handleClickEvent(Player player) {
+    Spectatable spectatable = SpectatorManager.getInstance().getSpectators().get(player);
+    if (spectatable != null) {
+      spectatable.removeSpectator(player);
     }
+  }
 }

@@ -11,6 +11,7 @@ import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
 import dev.lokspel.practice.manager.server.ServerManager;
 import dev.lokspel.practice.util.cooldown.PlayerCooldown;
+import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,88 +21,96 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.UUID;
-
 public class PlayerQuit implements Listener {
 
-    @EventHandler ( priority = EventPriority.LOWEST )
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        e.quitMessage(Component.empty());
-        final Player player = e.getPlayer();
-        NametagManager.getInstance().onPlayerQuit(player);
-        ServerManager.getInstance().onPlayerQuit(player);
-        PlayerCooldown.clearPlayer(player);
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onPlayerQuit(PlayerQuitEvent e) {
+    e.quitMessage(Component.empty());
+    final Player player = e.getPlayer();
+    NametagManager.getInstance().onPlayerQuit(player);
+    ServerManager.getInstance().onPlayerQuit(player);
+    PlayerCooldown.clearPlayer(player);
 
-        StatisticListener.getCURRENT_CPS().remove(player);
-        StatisticListener.getCPS().remove(player);
-        StatisticListener.getCURRENT_COMBO().remove(player);
+    StatisticListener.getCURRENT_CPS().remove(player);
+    StatisticListener.getCPS().remove(player);
+    StatisticListener.getCURRENT_COMBO().remove(player);
 
-        MessageCommand.latestMessage.remove(player);
-        MessageCommand.latestMessage.values().removeIf(target -> target.equals(player));
+    MessageCommand.latestMessage.remove(player);
+    MessageCommand.latestMessage.values().removeIf(target -> target.equals(player));
 
-        final Profile profile = ProfileManager.getInstance().getProfile(player);
-        final Party party = PartyManager.getInstance().getParty(player);
+    final Profile profile = ProfileManager.getInstance().getProfile(player);
+    final Party party = PartyManager.getInstance().getParty(player);
 
-        if (party != null)
-            party.removeMember(player, false);
-
-        MatchManager.getInstance().invalidateRematchByPlayer(player);
-
-        if (profile != null) {
-            profile.getActionBar().resetForReconnect();
-
-            profile.setLastJoin(System.currentTimeMillis());
-
-            // Check how many custom kits the player is allowed to save.
-            int customKitPerm = profile.getCustomKitPerm();
-            if (customKitPerm > 0) profile.setAllowedCustomKits(customKitPerm);
-
-            profile.setPlayerCustomKitSelector(null);
-
-            if (AstralPractice.getInstance().isEnabled()) {
-                Bukkit.getScheduler().runTaskLater(AstralPractice.getInstance(), () ->
-                        profile.setStatus(ProfileStatus.OFFLINE), 5L);
-
-                UUID uuid = player.getUniqueId();
-                Bukkit.getScheduler().runTaskLater(AstralPractice.getInstance(), () ->
-                        ProfileManager.getInstance().demoteOfflineProfile(uuid), 40L);
-            }
-        }
-
-        ProfileManager.getInstance().clearPlayerReference(player);
+    if (party != null) {
+      party.removeMember(player, false);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerKick(PlayerKickEvent e) {
-        Player player = e.getPlayer();
-        NametagManager.getInstance().onPlayerQuit(player);
-        ServerManager.getInstance().onPlayerQuit(player);
-        PlayerCooldown.clearPlayer(player);
+    MatchManager.getInstance().invalidateRematchByPlayer(player);
 
-        StatisticListener.getCURRENT_CPS().remove(player);
-        StatisticListener.getCPS().remove(player);
-        StatisticListener.getCURRENT_COMBO().remove(player);
+    if (profile != null) {
+      profile.getActionBar().resetForReconnect();
 
-        MessageCommand.latestMessage.remove(player);
-        MessageCommand.latestMessage.values().removeIf(target -> target.equals(player));
+      profile.setLastJoin(System.currentTimeMillis());
 
-        MatchManager.getInstance().invalidateRematchByPlayer(player);
+      // Check how many custom kits the player is allowed to save.
+      int customKitPerm = profile.getCustomKitPerm();
+      if (customKitPerm > 0) {
+        profile.setAllowedCustomKits(customKitPerm);
+      }
 
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile != null) {
-            profile.getActionBar().resetForReconnect();
-            profile.setLastJoin(System.currentTimeMillis());
+      profile.setPlayerCustomKitSelector(null);
 
-            if (AstralPractice.getInstance().isEnabled()) {
-                UUID uuid = player.getUniqueId();
-                Bukkit.getScheduler().runTaskLater(AstralPractice.getInstance(), () -> {
-                    profile.setStatus(ProfileStatus.OFFLINE);
-                    ProfileManager.getInstance().demoteOfflineProfile(uuid);
-                }, 40L);
-            }
-        }
+      if (AstralPractice.getInstance().isEnabled()) {
+        Bukkit.getScheduler()
+            .runTaskLater(
+                AstralPractice.getInstance(), () -> profile.setStatus(ProfileStatus.OFFLINE), 5L);
 
-        ProfileManager.getInstance().clearPlayerReference(player);
+        UUID uuid = player.getUniqueId();
+        Bukkit.getScheduler()
+            .runTaskLater(
+                AstralPractice.getInstance(),
+                () -> ProfileManager.getInstance().demoteOfflineProfile(uuid),
+                40L);
+      }
     }
 
+    ProfileManager.getInstance().clearPlayerReference(player);
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onPlayerKick(PlayerKickEvent e) {
+    Player player = e.getPlayer();
+    NametagManager.getInstance().onPlayerQuit(player);
+    ServerManager.getInstance().onPlayerQuit(player);
+    PlayerCooldown.clearPlayer(player);
+
+    StatisticListener.getCURRENT_CPS().remove(player);
+    StatisticListener.getCPS().remove(player);
+    StatisticListener.getCURRENT_COMBO().remove(player);
+
+    MessageCommand.latestMessage.remove(player);
+    MessageCommand.latestMessage.values().removeIf(target -> target.equals(player));
+
+    MatchManager.getInstance().invalidateRematchByPlayer(player);
+
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile != null) {
+      profile.getActionBar().resetForReconnect();
+      profile.setLastJoin(System.currentTimeMillis());
+
+      if (AstralPractice.getInstance().isEnabled()) {
+        UUID uuid = player.getUniqueId();
+        Bukkit.getScheduler()
+            .runTaskLater(
+                AstralPractice.getInstance(),
+                () -> {
+                  profile.setStatus(ProfileStatus.OFFLINE);
+                  ProfileManager.getInstance().demoteOfflineProfile(uuid);
+                },
+                40L);
+      }
+    }
+
+    ProfileManager.getInstance().clearPlayerReference(player);
+  }
 }

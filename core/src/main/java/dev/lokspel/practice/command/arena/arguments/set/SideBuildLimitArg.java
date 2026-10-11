@@ -1,0 +1,97 @@
+package dev.lokspel.practice.command.arena.arguments.set;
+
+import dev.lokspel.practice.manager.arena.ArenaManager;
+import dev.lokspel.practice.manager.arena.arenas.Arena;
+import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.gui.GuiType;
+import dev.lokspel.practice.manager.gui.setup.arena.ArenaGuiSetupManager;
+import dev.lokspel.practice.util.Common;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
+
+public final class SideBuildLimitArg {
+
+  private SideBuildLimitArg() {}
+
+  public static void run(Player player, String label, String[] args) {
+    if (!player.hasPermission("ap.setup")) {
+      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
+      return;
+    }
+
+    if (args.length != 4) {
+      Common.sendMmMessage(
+          player,
+          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.COMMAND-HELP")
+              .replace("%label%", label)
+              .replace("%label2%", args[1]));
+      return;
+    }
+
+    Arena arena = ArenaManager.getInstance().getNormalArena(args[2]);
+    if (arena == null) {
+      Common.sendMmMessage(
+          player,
+          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.ARENA-NOT-EXISTS")
+              .replace("%arena%", args[2]));
+      return;
+    }
+
+    if (arena.isEnabled()) {
+      Common.sendMmMessage(
+          player,
+          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.ARENA-ENABLED")
+              .replace("%arena%", arena.getName()));
+      return;
+    }
+
+    if (!arena.isBuild()) {
+      Common.sendMmMessage(
+          player,
+          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.NOT-BUILD")
+              .replace("%arena%", arena.getName()));
+      return;
+    }
+
+    int sideBuildLimit = Integer.parseInt(args[3]);
+    if (sideBuildLimit < 0 || sideBuildLimit > 10) {
+      Common.sendMmMessage(
+          player,
+          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.INVALID-NUMBER")
+              .replace("%arena%", arena.getName()));
+      return;
+    }
+
+    arena.setSideBuildLimit(sideBuildLimit);
+    ArenaGuiSetupManager.getInstance()
+        .getArenaSetupGuis()
+        .get(arena)
+        .get(GuiType.Arena_Main)
+        .update();
+
+    Common.sendMmMessage(
+        player,
+        LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SIDEBUILDLIMIT.SET-SIDEBUILDLIMIT")
+            .replace("%arena%", arena.getName())
+            .replace("%sideBuildLimit%", args[3]));
+  }
+
+  public static List<String> tabComplete(Player player, String[] args) {
+    List<String> arguments = new ArrayList<>();
+    if (!player.hasPermission("ap.setup")) {
+      return arguments;
+    }
+
+    if (args.length == 3) {
+      for (Arena arena : ArenaManager.getInstance().getNormalArenas()) {
+        arguments.add(arena.getName());
+      }
+
+      return StringUtil.copyPartialMatches(args[2], arguments, new ArrayList<>());
+    }
+
+    return arguments;
+  }
+}
