@@ -16,15 +16,16 @@ import org.bukkit.inventory.ItemStack;
 
 public class EditorMenuGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getKitEditor()
-                  .getEditorMenu()
-                  .getIcons()
-                  .getFillerItem())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getKitEditor()
+                .getEditorMenu()
+                .getIcons()
+                .getFillerItem())
+        .get();
+  }
 
   public EditorMenuGui() {
     super(GuiType.CustomLadder_EditorMenu);
@@ -46,7 +47,7 @@ public class EditorMenuGui extends Gui {
     Inventory inventory = this.gui.get(1);
 
     for (int i = 0; i < inventory.getSize(); i++) {
-      inventory.setItem(i, FILLER_ITEM);
+      inventory.setItem(i, fillerItem());
     }
 
     inventory.setItem(

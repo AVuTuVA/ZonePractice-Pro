@@ -48,7 +48,7 @@ public class SkyWarsLootGui extends Gui {
   public void build() {
     // Set filler items
     for (int i : new int[] {46, 47, 48, 49, 50, 51, 52, 53}) {
-      gui.get(1).setItem(i, GuiManager.getFILLER_ITEM());
+      gui.get(1).setItem(i, GuiManager.fillerItem());
     }
 
     // Navigation item
@@ -88,7 +88,7 @@ public class SkyWarsLootGui extends Gui {
     int slot = e.getRawSlot();
 
     if (inventory.getSize() > slot) {
-      if (Objects.equals(e.getCurrentItem(), GuiManager.getFILLER_ITEM()) || slot == 45) {
+      if (Objects.equals(e.getCurrentItem(), GuiManager.fillerItem()) || slot == 45) {
         e.setCancelled(true);
         if (slot == 45) {
           LadderSetupManager.getInstance()

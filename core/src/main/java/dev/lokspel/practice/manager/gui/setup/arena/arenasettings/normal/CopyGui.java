@@ -89,7 +89,7 @@ public class CopyGui extends Gui {
 
                   // Frame
                   for (int i : new int[] {18, 19, 20, 21, 23, 24, 25, 26}) {
-                    inventory.setItem(i, GuiManager.getFILLER_ITEM());
+                    inventory.setItem(i, GuiManager.fillerItem());
                   }
                   inventory.setItem(22, ArenaSetupUtil.getCopyGuiNavMainItem(arena, copies.size()));
 

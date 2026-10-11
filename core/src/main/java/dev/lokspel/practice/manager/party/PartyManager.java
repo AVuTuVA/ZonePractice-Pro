@@ -59,6 +59,19 @@ public class PartyManager implements Listener {
     GuiManager.getInstance().addGui(new PartyEventsGui());
   }
 
+  /**
+   * Re-creates the party GUIs, including every party's settings, from the reloaded configuration.
+   */
+  public void reloadGuis() {
+    GuiManager.getInstance().addGui(new OtherPartiesGui());
+    GuiManager.getInstance().addGui(new PublicPartiesGui());
+    GuiManager.getInstance().addGui(new PartyEventsGui());
+
+    for (Party party : parties) {
+      party.reloadSettingsGui();
+    }
+  }
+
   public Party getParty(Player player) {
     for (Party party : parties) {
       if (party.getMembers().contains(player)) {

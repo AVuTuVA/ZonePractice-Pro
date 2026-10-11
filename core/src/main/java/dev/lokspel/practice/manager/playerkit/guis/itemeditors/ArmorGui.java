@@ -21,12 +21,12 @@ public class ArmorGui extends ItemEditor {
     super(
         type,
         new ArrayList<>(
-            Arrays.asList(StaticItems.MAIN_ARMOR_BACK_TO_ICON, StaticItems.MAIN_ARMOR_NONE_ICON)));
+            Arrays.asList(StaticItems.mainArmorBackToIcon(), StaticItems.mainArmorNoneIcon())));
 
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            StaticItems.MAIN_ARMOR_GUI_TITLE, StaticItems.MAIN_ARMOR_GUI_SIZE));
+            StaticItems.mainArmorGuiTitle(), StaticItems.mainArmorGuiSize()));
 
     this.icons.addAll(armorIcons);
     this.build();
@@ -47,9 +47,9 @@ public class ArmorGui extends ItemEditor {
 
     KitItem kitItem = playerKitEditing.getKitItem();
     if (kitItem != null) {
-      if (icon.equals(StaticItems.MAIN_ARMOR_NONE_ICON)) {
+      if (icon.equals(StaticItems.mainArmorNoneIcon())) {
         kitItem.reset();
-      } else if (!icon.equals(StaticItems.MAIN_ARMOR_BACK_TO_ICON)) {
+      } else if (!icon.equals(StaticItems.mainArmorBackToIcon())) {
         kitItem.setItemStack(icon.getForPlayerKit());
       }
     }

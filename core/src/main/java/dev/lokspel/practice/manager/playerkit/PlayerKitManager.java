@@ -3,6 +3,7 @@ package dev.lokspel.practice.manager.playerkit;
 import dev.lokspel.practice.config.ItemConfig;
 import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.config.playerkit.Items;
+import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.ladder.abstraction.playercustom.CustomLadder;
@@ -12,10 +13,14 @@ import dev.lokspel.practice.manager.playerkit.guis.ShulkerCategoryGui;
 import dev.lokspel.practice.manager.playerkit.guis.itemeditors.ArmorGui;
 import dev.lokspel.practice.manager.playerkit.guis.itemeditors.ItemCategory;
 import dev.lokspel.practice.manager.playerkit.items.EditorIcon;
+import dev.lokspel.practice.manager.profile.Profile;
+import dev.lokspel.practice.manager.profile.ProfileManager;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -52,29 +57,55 @@ public class PlayerKitManager implements Listener {
 
     guiManager.addGui(new ItemCategory());
     guiManager.addGui(
-        new ArmorGui(GuiType.PlayerCustom_Helmet, StaticItems.MAIN_ARMOR_HELMET_ICONS));
+        new ArmorGui(GuiType.PlayerCustom_Helmet, StaticItems.mainArmorHelmetIcons()));
     guiManager.addGui(
-        new ArmorGui(GuiType.PlayerCustom_Chestplate, StaticItems.MAIN_ARMOR_CHEST_ICONS));
-    guiManager.addGui(
-        new ArmorGui(GuiType.PlayerCustom_Leggings, StaticItems.MAIN_ARMOR_LEG_ICONS));
-    guiManager.addGui(new ArmorGui(GuiType.PlayerCustom_Boots, StaticItems.MAIN_ARMOR_BOOT_ICONS));
+        new ArmorGui(GuiType.PlayerCustom_Chestplate, StaticItems.mainArmorChestIcons()));
+    guiManager.addGui(new ArmorGui(GuiType.PlayerCustom_Leggings, StaticItems.mainArmorLegIcons()));
+    guiManager.addGui(new ArmorGui(GuiType.PlayerCustom_Boots, StaticItems.mainArmorBootIcons()));
     guiManager.addGui(
         new CategoryGui(
             GuiType.PlayerCustom_Armor,
-            StaticItems.CATEGORY_ARMOR_TITLE,
-            StaticItems.CATEGORY_ARMOR_ITEMS));
+            StaticItems.categoryArmorTitle(),
+            StaticItems.categoryArmorItems()));
     guiManager.addGui(
         new CategoryGui(
             GuiType.PlayerCustom_Weapons_Tools,
-            StaticItems.CATEGORY_WEAPONS_TITLE,
-            StaticItems.CATEGORY_WEAPONS_ITEMS));
+            StaticItems.categoryWeaponsTitle(),
+            StaticItems.categoryWeaponsItems()));
     guiManager.addGui(
         new CategoryGui(
             GuiType.PlayerCustom_Bows,
-            StaticItems.CATEGORY_BOWS_TITLE,
-            StaticItems.CATEGORY_BOWS_ITEMS));
+            StaticItems.categoryBowsTitle(),
+            StaticItems.categoryBowsItems()));
     guiManager.addGui(new ShulkerCategoryGui());
     guiManager.addGui(new PotionsGui());
+  }
+
+  /**
+   * Re-creates the item editor GUIs from the reloaded configuration and drops the kit editors of
+   * custom kits, which are created again when next opened.
+   *
+   * <p>Must run before the open GUIs are closed: a kit editor that is in use keeps its instance,
+   * because the item menus return to it and its unsaved changes live in it.
+   */
+  public void reloadGuis() {
+    Set<CustomLadder> inUse = new HashSet<>();
+    Map<Player, Gui> openGuis = GuiManager.getInstance().getOpenGui();
+    for (Map.Entry<Player, PlayerKitEditing> entry : editing.entrySet()) {
+      if (openGuis.containsKey(entry.getKey())) {
+        inUse.add(entry.getValue().getCustomLadder());
+      }
+    }
+
+    for (Profile profile : ProfileManager.getInstance().getProfiles().values()) {
+      for (CustomLadder customLadder : profile.getCustomLadders()) {
+        if (!inUse.contains(customLadder)) {
+          customLadder.resetMainGui();
+        }
+      }
+    }
+
+    load();
   }
 
   /**

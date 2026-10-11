@@ -33,7 +33,7 @@ public class EventSummaryGui extends Gui {
   public void build() {
     // Frame
     for (int i = 0; i < gui.get(1).getSize(); i++) {
-      gui.get(1).setItem(i, GuiManager.getFILLER_ITEM());
+      gui.get(1).setItem(i, GuiManager.fillerItem());
     }
 
     // Back to Manager Icon
@@ -110,7 +110,7 @@ public class EventSummaryGui extends Gui {
 
     if (inventory.getSize() > slot
         && currentItem != null
-        && !currentItem.equals(GuiManager.getFILLER_ITEM())) {
+        && !currentItem.equals(GuiManager.fillerItem())) {
       if (slot == 18) {
         GuiManager.getInstance().searchGui(GuiType.Setup_Hub).open(player);
       } else if (eventSlots.containsKey(slot)) {

@@ -113,7 +113,7 @@ public class CustomKitGui extends Gui {
               // Frame
               for (int i :
                   new int[] {1, 3, 4, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 28, 37, 46}) {
-                inventory.setItem(i, GuiManager.getFILLER_ITEM());
+                inventory.setItem(i, GuiManager.fillerItem());
               }
 
               // Set Armor content
@@ -157,7 +157,7 @@ public class CustomKitGui extends Gui {
       return;
     }
 
-    if (Objects.equals(e.getCurrentItem(), GuiManager.getFILLER_ITEM())
+    if (Objects.equals(e.getCurrentItem(), GuiManager.fillerItem())
         || slot == 0
         || slot == 2
         || slot == 6
@@ -291,6 +291,6 @@ public class CustomKitGui extends Gui {
         break;
     }
 
-    return GuiManager.getFILLER_ITEM();
+    return GuiManager.fillerItem();
   }
 }

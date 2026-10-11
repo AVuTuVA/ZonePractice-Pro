@@ -52,7 +52,7 @@ public class CustomSettingGui extends Gui {
   public void build() {
     Inventory inventory = this.gui.get(1);
 
-    inventory.setItem(45, StaticItems.BACK_TO_ITEM);
+    inventory.setItem(45, StaticItems.backToItem());
 
     this.update();
   }
@@ -63,18 +63,22 @@ public class CustomSettingGui extends Gui {
 
     inventory.setItem(
         REGENERATION_SLOT,
-        ladder.isRegen() ? StaticItems.REGEN_ITEM.getFirst() : StaticItems.REGEN_ITEM.getSecond());
+        ladder.isRegen()
+            ? StaticItems.regenItem().getFirst()
+            : StaticItems.regenItem().getSecond());
     inventory.setItem(
         HUNGER_SLOT,
         ladder.isHunger()
-            ? StaticItems.HUNGER_ITEM.getFirst()
-            : StaticItems.HUNGER_ITEM.getSecond());
+            ? StaticItems.hungerItem().getFirst()
+            : StaticItems.hungerItem().getSecond());
     inventory.setItem(
         BUILD_SLOT,
-        ladder.isBuild() ? StaticItems.BUILD_ITEM.getFirst() : StaticItems.BUILD_ITEM.getSecond());
+        ladder.isBuild()
+            ? StaticItems.buildItem().getFirst()
+            : StaticItems.buildItem().getSecond());
     inventory.setItem(
         ROUNDS_SLOT,
-        StaticItems.ROUNDS_ITEM
+        StaticItems.roundsItem()
             .cloneItem()
             .replace("%rounds%", String.valueOf(ladder.getRounds()))
             .get());
@@ -82,29 +86,29 @@ public class CustomSettingGui extends Gui {
     inventory.setItem(
         HEALTH_BELOW_NAME_SLOT,
         ladder.isHealthBelowName()
-            ? StaticItems.HEALTH_BELOW_NAME_ITEM.getFirst()
-            : StaticItems.HEALTH_BELOW_NAME_ITEM.getSecond());
+            ? StaticItems.healthBelowNameItem().getFirst()
+            : StaticItems.healthBelowNameItem().getSecond());
     inventory.setItem(
         HITDELAY_SLOT,
-        StaticItems.HITDELAY_ITEM
+        StaticItems.hitdelayItem()
             .cloneItem()
             .replace("%hitdelay%", String.format("%.1f", ladder.getAttackCooldownModifier()))
             .get());
     inventory.setItem(
         ENDERPEARL_SLOT,
-        StaticItems.ENDERPEARL_ITEM
+        StaticItems.enderpearlItem()
             .cloneItem()
             .replace("%epCooldown%", String.valueOf(ladder.getEnderPearlCooldown()))
             .get());
     inventory.setItem(
         GOLDENAPPLE_SLOT,
-        StaticItems.GAPPLE_ITEM
+        StaticItems.gappleItem()
             .cloneItem()
             .replace("%gaCooldown%", String.valueOf(ladder.getGoldenAppleCooldown()))
             .get());
     inventory.setItem(
         WIND_CHARGE_SLOT,
-        StaticItems.WIND_CHARGE_ITEM
+        StaticItems.windChargeItem()
             .cloneItem()
             .replace("%windChargeCooldown%", String.valueOf(ladder.getWindChargeCooldown()))
             .get());
@@ -186,7 +190,7 @@ public class CustomSettingGui extends Gui {
   }
 
   private static ItemStack getKnockbackItem(CustomLadder ladder) {
-    GuiItem guiItem = StaticItems.KNOCKBACK_ITEM.cloneItem();
+    GuiItem guiItem = StaticItems.knockbackItem().cloneItem();
     List<String> extension = new ArrayList<>();
     List<String> lore = new ArrayList<>();
 

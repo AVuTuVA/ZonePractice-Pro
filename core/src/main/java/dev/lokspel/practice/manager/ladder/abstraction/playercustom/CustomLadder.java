@@ -99,6 +99,18 @@ public class CustomLadder extends Ladder {
     return mainGui;
   }
 
+  /**
+   * Drops the kit editor unless a player has it open, the next {@link #getMainGui()} creates it
+   * from the current files.
+   */
+  public void resetMainGui() {
+    if (mainGui == null || !mainGui.getInGuiPlayers().isEmpty()) {
+      return;
+    }
+
+    mainGui = null;
+  }
+
   @Override
   public boolean isReadyToEnable() {
     return kitData.isSet() && !matchTypes.isEmpty();

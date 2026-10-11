@@ -80,7 +80,7 @@ public class ServerMatchesGui extends Gui {
 
                 // Frame
                 for (int i : new int[] {46, 47, 48, 49, 50, 51, 52}) {
-                  inventory.setItem(i, GuiManager.getFILLER_ITEM());
+                  inventory.setItem(i, GuiManager.fillerItem());
                 }
 
                 // Match icons
@@ -132,7 +132,7 @@ public class ServerMatchesGui extends Gui {
                           .replace("%page%", String.valueOf(page + 1))
                           .get();
                 } else {
-                  right = GuiManager.getFILLER_ITEM();
+                  right = GuiManager.fillerItem();
                 }
                 inventory.setItem(53, right);
 
@@ -185,7 +185,7 @@ public class ServerMatchesGui extends Gui {
     if (inventory.getSize() <= slot) {
       return;
     }
-    if (item == GuiManager.getFILLER_ITEM()) {
+    if (item == GuiManager.fillerItem()) {
       return;
     }
 

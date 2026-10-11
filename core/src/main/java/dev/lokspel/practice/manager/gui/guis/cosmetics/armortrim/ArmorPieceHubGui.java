@@ -25,44 +25,70 @@ import org.bukkit.inventory.meta.trim.TrimPattern;
 
 public class ArmorPieceHubGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
-  private static final ItemStack BACK_TO_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  }
 
-  private static final int INVENTORY_ROWS =
-      PracticeConfig.guis().getGuis().getCosmetics().getArmorPieceHub().getInventoryRows();
-  private static final int BACK_SLOT =
-      PracticeConfig.guis().getGuis().getCosmetics().getArmorPieceHub().getSlots().getBack();
-  private static final int PREVIEW_SLOT =
-      PracticeConfig.guis().getGuis().getCosmetics().getArmorPieceHub().getSlots().getPreview();
-  private static final int PATTERN_MENU_SLOT =
-      PracticeConfig.guis().getGuis().getCosmetics().getArmorPieceHub().getSlots().getPatternMenu();
-  private static final int MATERIAL_MENU_SLOT =
-      PracticeConfig.guis()
-          .getGuis()
-          .getCosmetics()
-          .getArmorPieceHub()
-          .getSlots()
-          .getMaterialMenu();
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+        .get();
+  }
 
-  private static final Material DEFAULT_PATTERN_BUTTON_MATERIAL =
-      Material.valueOf(
-          PracticeConfig.guis()
-              .getGuis()
-              .getCosmetics()
-              .getArmorPieceHub()
-              .getPatternSelectionButton()
-              .getDefaultMaterial());
-  private static final Material DEFAULT_MATERIAL_BUTTON_MATERIAL =
-      Material.valueOf(
-          PracticeConfig.guis()
-              .getGuis()
-              .getCosmetics()
-              .getArmorPieceHub()
-              .getMaterialSelectionButton()
-              .getDefaultMaterial());
+  private static int inventoryRows() {
+    return PracticeConfig.guis().getGuis().getCosmetics().getArmorPieceHub().getInventoryRows();
+  }
+
+  private static int backSlot() {
+    return PracticeConfig.guis().getGuis().getCosmetics().getArmorPieceHub().getSlots().getBack();
+  }
+
+  private static int previewSlot() {
+    return PracticeConfig.guis()
+        .getGuis()
+        .getCosmetics()
+        .getArmorPieceHub()
+        .getSlots()
+        .getPreview();
+  }
+
+  private static int patternMenuSlot() {
+    return PracticeConfig.guis()
+        .getGuis()
+        .getCosmetics()
+        .getArmorPieceHub()
+        .getSlots()
+        .getPatternMenu();
+  }
+
+  private static int materialMenuSlot() {
+    return PracticeConfig.guis()
+        .getGuis()
+        .getCosmetics()
+        .getArmorPieceHub()
+        .getSlots()
+        .getMaterialMenu();
+  }
+
+  private static Material defaultPatternButtonMaterial() {
+    return Material.valueOf(
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getArmorPieceHub()
+            .getPatternSelectionButton()
+            .getDefaultMaterial());
+  }
+
+  private static Material defaultMaterialButtonMaterial() {
+    return Material.valueOf(
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getArmorPieceHub()
+            .getMaterialSelectionButton()
+            .getDefaultMaterial());
+  }
 
   private final Profile profile;
   private final ArmorSlot armorSlot;
@@ -76,7 +102,7 @@ public class ArmorPieceHubGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            "<dark_gray>" + armorSlot.getDisplayName() + " Cosmetics", INVENTORY_ROWS));
+            "<dark_gray>" + armorSlot.getDisplayName() + " Cosmetics", inventoryRows()));
     build();
   }
 
@@ -91,7 +117,7 @@ public class ArmorPieceHubGui extends Gui {
     inventory.clear();
 
     for (int i = 0; i < inventory.getSize(); i++) {
-      inventory.setItem(i, FILLER_ITEM);
+      inventory.setItem(i, fillerItem());
     }
 
     ArmorTrimTier tier = profile.getCosmeticsData().getActiveTier();
@@ -99,10 +125,10 @@ public class ArmorPieceHubGui extends Gui {
     TrimMaterial material = profile.getCosmeticsData().getMaterial(tier, armorSlot);
 
     inventory.setItem(
-        BACK_SLOT, BACK_TO_ITEM == null ? new ItemStack(Material.ARROW) : BACK_TO_ITEM);
-    inventory.setItem(PREVIEW_SLOT, buildPreviewItem(tier, pattern, material));
-    inventory.setItem(PATTERN_MENU_SLOT, buildPatternSelectionItem(pattern));
-    inventory.setItem(MATERIAL_MENU_SLOT, buildMaterialSelectionItem(material));
+        backSlot(), backToItem() == null ? new ItemStack(Material.ARROW) : backToItem());
+    inventory.setItem(previewSlot(), buildPreviewItem(tier, pattern, material));
+    inventory.setItem(patternMenuSlot(), buildPatternSelectionItem(pattern));
+    inventory.setItem(materialMenuSlot(), buildMaterialSelectionItem(material));
 
     updatePlayers();
   }
@@ -114,18 +140,18 @@ public class ArmorPieceHubGui extends Gui {
     Player player = (Player) e.getWhoClicked();
     int slot = e.getRawSlot();
 
-    if (slot == BACK_SLOT) {
+    if (slot == backSlot()) {
       backToGui.update(true);
       backToGui.open(player);
       return;
     }
 
-    if (slot == PATTERN_MENU_SLOT) {
+    if (slot == patternMenuSlot()) {
       new PatternSelectionGui(profile, armorSlot, this).open(player);
       return;
     }
 
-    if (slot == MATERIAL_MENU_SLOT) {
+    if (slot == materialMenuSlot()) {
       new MaterialSelectionGui(profile, armorSlot, this).open(player);
     }
   }
@@ -167,7 +193,7 @@ public class ArmorPieceHubGui extends Gui {
   }
 
   private ItemStack buildPatternSelectionItem(TrimPattern activePattern) {
-    Material buttonMaterial = DEFAULT_PATTERN_BUTTON_MATERIAL;
+    Material buttonMaterial = defaultPatternButtonMaterial();
     if (activePattern != null) {
       String patternId = CosmeticsPermissionManager.getTrimId(activePattern);
       Material activePatternMaterial =
@@ -196,7 +222,7 @@ public class ArmorPieceHubGui extends Gui {
   }
 
   private ItemStack buildMaterialSelectionItem(TrimMaterial activeMaterial) {
-    Material buttonMaterial = DEFAULT_MATERIAL_BUTTON_MATERIAL;
+    Material buttonMaterial = defaultMaterialButtonMaterial();
     if (activeMaterial != null) {
       Material activeMaterialIcon =
           resolveTrimMaterialIcon(CosmeticsPermissionManager.getTrimId(activeMaterial));

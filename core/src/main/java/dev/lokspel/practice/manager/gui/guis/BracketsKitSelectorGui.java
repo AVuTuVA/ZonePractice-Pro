@@ -54,7 +54,7 @@ public class BracketsKitSelectorGui extends Gui {
     this.selectableKits.clear();
 
     for (int i = 0; i < inventory.getSize(); i++) {
-      inventory.setItem(i, GuiManager.getFILLER_ITEM());
+      inventory.setItem(i, GuiManager.fillerItem());
     }
 
     GuiItem defaultKitIcon =

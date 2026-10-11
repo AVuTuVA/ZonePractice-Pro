@@ -72,7 +72,7 @@ public class InventoryGui extends Gui {
               inventory.clear();
 
               for (int i : new int[] {36, 37, 38, 39, 40, 41, 42, 43, 44, 46}) {
-                inventory.setItem(i, GuiManager.getFILLER_ITEM());
+                inventory.setItem(i, GuiManager.fillerItem());
               }
 
               inventory.setItem(
@@ -132,7 +132,7 @@ public class InventoryGui extends Gui {
           || slot == 46
           || slot == 47
           || slot == 48
-          || Objects.equals(e.getCurrentItem(), GuiManager.getFILLER_ITEM())) {
+          || Objects.equals(e.getCurrentItem(), GuiManager.fillerItem())) {
         e.setCancelled(true);
 
         if (slot == 45) {

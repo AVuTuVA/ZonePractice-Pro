@@ -59,7 +59,7 @@ public class LadderPreviewGui extends Gui {
 
               // Set filler items
               for (int i : new int[] {36, 37, 38, 39, 40, 41, 42, 43, 44, 46, 47, 48, 49}) {
-                gui.get(1).setItem(i, GuiManager.getFILLER_ITEM());
+                gui.get(1).setItem(i, GuiManager.fillerItem());
               }
 
               gui.get(1).setItem(45, getEffectItem());

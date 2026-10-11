@@ -26,36 +26,41 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public class ArenaMainGui extends Gui {
 
-  private static final ItemStack BACK_TO_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getArena()
-                  .getArenaMain()
-                  .getIcons()
-                  .getGoBack())
-          .get();
-  private static final ItemStack LADDER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getArena()
-                  .getArenaMain()
-                  .getIcons()
-                  .getLadder())
-          .get();
-  private static final ItemStack DELETE_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getArena()
-                  .getArenaMain()
-                  .getIcons()
-                  .getDelete())
-          .get();
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getArena()
+                .getArenaMain()
+                .getIcons()
+                .getGoBack())
+        .get();
+  }
+
+  private static ItemStack ladderItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getArena()
+                .getArenaMain()
+                .getIcons()
+                .getLadder())
+        .get();
+  }
+
+  private static ItemStack deleteItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getArena()
+                .getArenaMain()
+                .getIcons()
+                .getDelete())
+        .get();
+  }
 
   private final Arena arena;
 
@@ -81,13 +86,13 @@ public class ArenaMainGui extends Gui {
   public void build() {
     Inventory inventory = gui.get(1);
 
-    inventory.setItem(27, BACK_TO_ITEM);
+    inventory.setItem(27, backToItem());
     for (int i : new int[] {28, 29, 30, 31, 32, 33}) {
-      inventory.setItem(i, GuiManager.getFILLER_ITEM());
+      inventory.setItem(i, GuiManager.fillerItem());
     }
 
-    inventory.setItem(15, LADDER_ITEM);
-    inventory.setItem(35, DELETE_ITEM);
+    inventory.setItem(15, ladderItem());
+    inventory.setItem(35, deleteItem());
 
     update();
   }

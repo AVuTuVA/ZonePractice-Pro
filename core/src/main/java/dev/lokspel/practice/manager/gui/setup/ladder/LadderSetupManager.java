@@ -70,6 +70,12 @@ public class LadderSetupManager implements Listener {
     }
   }
 
+  /** Re-creates the summary and every ladder's setup GUIs from the reloaded configuration. */
+  public void reloadGuis() {
+    ladderSetupGuis.clear();
+    loadGuis();
+  }
+
   public void removeLadderGuis(Ladder ladder) {
     for (Gui gui : ladderSetupGuis.get(ladder).values()) {
       for (Player player : gui.getInGuiPlayers().keySet()) {

@@ -22,109 +22,127 @@ import org.bukkit.inventory.ItemStack;
 
 public class ArenaMainGui extends Gui {
 
-  private static final ItemStack BACK_TO_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getFfaArena()
-                  .getMain()
-                  .getIcons()
-                  .getGoBack())
-          .get();
-  private static final ItemStack DELETE_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getFfaArena()
-                  .getMain()
-                  .getIcons()
-                  .getDelete())
-          .get();
-  private static final ItemStack STATUS_ENABLED_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getFfaArena()
-                  .getMain()
-                  .getIcons()
-                  .getStatus()
-                  .getEnabled())
-          .get();
-  private static final ItemStack STATUS_DISABLED_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getFfaArena()
-                  .getMain()
-                  .getIcons()
-                  .getStatus()
-                  .getDisabled())
-          .get();
-  private static final ItemStack LADDER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getFfaArena()
-                  .getMain()
-                  .getIcons()
-                  .getLadder())
-          .get();
-  private static final ItemStack SETTINGS_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getFfaArena()
-                  .getMain()
-                  .getIcons()
-                  .getSettings())
-          .get();
-  private static final ItemStack FFA_OPEN_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getFfaArena()
-                  .getMain()
-                  .getIcons()
-                  .getOpenStatus()
-                  .getOpen())
-          .get();
-  private static final ItemStack FFA_CLOSE_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getFfaArena()
-                  .getMain()
-                  .getIcons()
-                  .getOpenStatus()
-                  .getClose())
-          .get();
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getFfaArena()
+                .getMain()
+                .getIcons()
+                .getGoBack())
+        .get();
+  }
 
-  private static final GuiItem NAME_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getSetup()
-              .getFfaArena()
-              .getMain()
-              .getIcons()
-              .getArenaName());
-  private static final GuiItem LOCATION_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getSetup()
-              .getFfaArena()
-              .getMain()
-              .getIcons()
-              .getLocation());
+  private static ItemStack deleteItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getFfaArena()
+                .getMain()
+                .getIcons()
+                .getDelete())
+        .get();
+  }
+
+  private static ItemStack statusEnabledItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getFfaArena()
+                .getMain()
+                .getIcons()
+                .getStatus()
+                .getEnabled())
+        .get();
+  }
+
+  private static ItemStack statusDisabledItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getFfaArena()
+                .getMain()
+                .getIcons()
+                .getStatus()
+                .getDisabled())
+        .get();
+  }
+
+  private static ItemStack ladderItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getFfaArena()
+                .getMain()
+                .getIcons()
+                .getLadder())
+        .get();
+  }
+
+  private static ItemStack settingsItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getFfaArena()
+                .getMain()
+                .getIcons()
+                .getSettings())
+        .get();
+  }
+
+  private static ItemStack ffaOpenItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getFfaArena()
+                .getMain()
+                .getIcons()
+                .getOpenStatus()
+                .getOpen())
+        .get();
+  }
+
+  private static ItemStack ffaCloseItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getFfaArena()
+                .getMain()
+                .getIcons()
+                .getOpenStatus()
+                .getClose())
+        .get();
+  }
+
+  private static GuiItem nameItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getSetup()
+            .getFfaArena()
+            .getMain()
+            .getIcons()
+            .getArenaName());
+  }
+
+  private static GuiItem locationItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getSetup()
+            .getFfaArena()
+            .getMain()
+            .getIcons()
+            .getLocation());
+  }
 
   private final FfaArena ffaArena;
   private final FfaSettingsGui ffaSettingsGui;
@@ -154,13 +172,13 @@ public class ArenaMainGui extends Gui {
     Inventory inventory = gui.get(1);
 
     for (int i : new int[] {28, 29, 30, 32, 33, 34}) {
-      inventory.setItem(i, GuiManager.getFILLER_ITEM());
+      inventory.setItem(i, GuiManager.fillerItem());
     }
 
-    inventory.setItem(14, SETTINGS_ITEM);
-    inventory.setItem(15, LADDER_ITEM);
-    inventory.setItem(27, BACK_TO_ITEM);
-    inventory.setItem(35, DELETE_ITEM);
+    inventory.setItem(14, settingsItem());
+    inventory.setItem(15, ladderItem());
+    inventory.setItem(27, backToItem());
+    inventory.setItem(35, deleteItem());
 
     update();
 
@@ -173,7 +191,7 @@ public class ArenaMainGui extends Gui {
 
     inventory.setItem(
         10,
-        NAME_ITEM
+        nameItem()
             .cloneItem()
             .replace("%arenaDisplayName%", ffaArena.getDisplayName())
             .replace("%arenaName%", ffaArena.getName())
@@ -185,13 +203,13 @@ public class ArenaMainGui extends Gui {
                     : -1)
             .get());
 
-    inventory.setItem(11, ffaArena.isEnabled() ? STATUS_ENABLED_ITEM : STATUS_DISABLED_ITEM);
+    inventory.setItem(11, ffaArena.isEnabled() ? statusEnabledItem() : statusDisabledItem());
 
-    inventory.setItem(15, LADDER_ITEM);
+    inventory.setItem(15, ladderItem());
 
     inventory.setItem(
         16,
-        LOCATION_ITEM
+        locationItem()
             .cloneItem()
             .replace("%arenaName%", ffaArena.getName())
             .replace("%arenaDisplayName%", ffaArena.getDisplayName())
@@ -202,7 +220,7 @@ public class ArenaMainGui extends Gui {
             .replace("%ffa_pos_num%", String.valueOf(ffaArena.getFfaPositions().size()))
             .get());
 
-    inventory.setItem(31, ffaArena.getFfa().isOpen() ? FFA_OPEN_ITEM : FFA_CLOSE_ITEM);
+    inventory.setItem(31, ffaArena.getFfa().isOpen() ? ffaOpenItem() : ffaCloseItem());
 
     this.updatePlayers();
   }

@@ -25,11 +25,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 /** GUI for selecting a kill effect cosmetic. Opens via the cosmetics hub → Kill Effects section. */
 public class DeathEffectsGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
-  private static final ItemStack BACK_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  }
+
+  private static ItemStack backItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+        .get();
+  }
 
   /* layout: 5 rows, last row = back + filler */
   private static final int ROWS = 4;
@@ -70,7 +74,7 @@ public class DeathEffectsGui extends Gui {
     inv.clear();
 
     for (int frameSlot : FRAME_SLOTS) {
-      inv.setItem(frameSlot, FILLER_ITEM);
+      inv.setItem(frameSlot, fillerItem());
     }
 
     DeathEffect active = profile.getCosmeticsData().getDeathEffect();
@@ -82,7 +86,7 @@ public class DeathEffectsGui extends Gui {
       inv.setItem(EFFECT_SLOTS[i], buildEffectItem(deathEffect, active, profilePlayer));
     }
 
-    inv.setItem(BACK_SLOT, BACK_ITEM != null ? BACK_ITEM : new ItemStack(Material.ARROW));
+    inv.setItem(BACK_SLOT, backItem() != null ? backItem() : new ItemStack(Material.ARROW));
     updatePlayers();
   }
 

@@ -25,36 +25,41 @@ import org.bukkit.inventory.ItemStack;
 
 public class LadderSingleGui extends Gui {
 
-  private static final GuiItem ASSIGNED_LADDER_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getSetup()
-              .getFfaArena()
-              .getArenaLaddersSingle()
-              .getIcons()
-              .getLadderIcons()
-              .getAssigned());
-  private static final GuiItem NOT_ASSIGNED_LADDER_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getSetup()
-              .getFfaArena()
-              .getArenaLaddersSingle()
-              .getIcons()
-              .getLadderIcons()
-              .getNotAssigned());
-  private static final GuiItem DISABLED_LADDER_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getSetup()
-              .getFfaArena()
-              .getArenaLaddersSingle()
-              .getIcons()
-              .getLadderIcons()
-              .getDisabled());
+  private static GuiItem assignedLadderItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getSetup()
+            .getFfaArena()
+            .getArenaLaddersSingle()
+            .getIcons()
+            .getLadderIcons()
+            .getAssigned());
+  }
+
+  private static GuiItem notAssignedLadderItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getSetup()
+            .getFfaArena()
+            .getArenaLaddersSingle()
+            .getIcons()
+            .getLadderIcons()
+            .getNotAssigned());
+  }
+
+  private static GuiItem disabledLadderItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getSetup()
+            .getFfaArena()
+            .getArenaLaddersSingle()
+            .getIcons()
+            .getLadderIcons()
+            .getDisabled());
+  }
 
   private final int spaces = 45;
   private final Map<Integer, Map<Integer, String>> ladderSlots = new HashMap<>();
@@ -101,7 +106,7 @@ public class LadderSingleGui extends Gui {
       newGui.put(page, inventory);
 
       for (int i = 45; i < 54; i++) {
-        inventory.setItem(i, GuiManager.getFILLER_ITEM());
+        inventory.setItem(i, GuiManager.fillerItem());
       }
 
       Map<Integer, String> pageSlots = new HashMap<>();
@@ -113,12 +118,12 @@ public class LadderSingleGui extends Gui {
 
         if (ladder.isEnabled()) {
           if (ffaArena.getAssignedLadders().contains(ladder)) {
-            ladderItem = replacePlaceholders(ASSIGNED_LADDER_ITEM, ladder).get();
+            ladderItem = replacePlaceholders(assignedLadderItem(), ladder).get();
           } else {
-            ladderItem = replacePlaceholders(NOT_ASSIGNED_LADDER_ITEM, ladder).get();
+            ladderItem = replacePlaceholders(notAssignedLadderItem(), ladder).get();
           }
         } else {
-          ladderItem = replacePlaceholders(DISABLED_LADDER_ITEM, ladder).get();
+          ladderItem = replacePlaceholders(disabledLadderItem(), ladder).get();
         }
 
         int slot = inventory.firstEmpty();
@@ -166,7 +171,7 @@ public class LadderSingleGui extends Gui {
                           .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
-              : GuiManager.getFILLER_ITEM();
+              : GuiManager.fillerItem();
       inventory.setItem(53, right);
     }
 

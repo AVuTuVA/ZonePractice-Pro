@@ -64,7 +64,7 @@ public class HologramMainGui extends Gui {
                         .getBackTo())
                 .get());
     for (int i : new int[] {28, 29, 30, 31, 32, 33, 34}) {
-      gui.get(1).setItem(i, GuiManager.getFILLER_ITEM());
+      gui.get(1).setItem(i, GuiManager.fillerItem());
     }
 
     gui.get(1)
@@ -109,7 +109,7 @@ public class HologramMainGui extends Gui {
     if (e.getCurrentItem() == null) {
       return;
     }
-    if (e.getCurrentItem().equals(GuiManager.getFILLER_ITEM())) {
+    if (e.getCurrentItem().equals(GuiManager.fillerItem())) {
       return;
     }
 

@@ -38,11 +38,15 @@ public class ShieldEditorGui extends Gui {
   /* Two rows of three layer slots (max 6) */
   private static final int[] LAYER_SLOTS = {19, 20, 21, 28, 29, 30};
 
-  private static final ItemStack FILLER =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
-  private static final ItemStack BACK =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
-          .get();
+  private static ItemStack filler() {
+    return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  }
+
+  private static ItemStack back() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+        .get();
+  }
 
   private final Profile profile;
 
@@ -84,7 +88,7 @@ public class ShieldEditorGui extends Gui {
       if (isLayerSlot(i)) {
         continue;
       }
-      inv.setItem(i, FILLER);
+      inv.setItem(i, filler());
     }
 
     ShieldLayout layout = getLayout();
@@ -166,7 +170,7 @@ public class ShieldEditorGui extends Gui {
     inv.setItem(REMOVE_LAYER_SLOT, removeBtn.get());
 
     // Back
-    inv.setItem(BACK_SLOT, BACK != null ? BACK : new ItemStack(Material.ARROW));
+    inv.setItem(BACK_SLOT, back() != null ? back() : new ItemStack(Material.ARROW));
 
     updatePlayers();
   }

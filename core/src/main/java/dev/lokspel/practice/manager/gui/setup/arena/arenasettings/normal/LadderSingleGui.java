@@ -72,7 +72,7 @@ public class LadderSingleGui extends Gui {
       newGui.put(page, inventory);
 
       for (int i = 45; i < 54; i++) {
-        inventory.setItem(i, GuiManager.getFILLER_ITEM());
+        inventory.setItem(i, GuiManager.fillerItem());
       }
 
       Map<Integer, String> pageSlots = new HashMap<>();
@@ -141,7 +141,7 @@ public class LadderSingleGui extends Gui {
                           .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
-              : GuiManager.getFILLER_ITEM();
+              : GuiManager.fillerItem();
       inventory.setItem(53, right);
     }
 

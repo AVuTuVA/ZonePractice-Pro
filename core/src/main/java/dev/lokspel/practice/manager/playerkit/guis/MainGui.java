@@ -44,7 +44,7 @@ public class MainGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            StaticItems.MAIN_GUI_TITLE.replace("%name%", customLadder.getDisplayName()), 6));
+            StaticItems.mainGuiTitle().replace("%name%", customLadder.getDisplayName()), 6));
     this.customLadder = customLadder;
     this.kitItems = new KitItems(customLadder.getKitData());
     this.customSettingGui = new CustomSettingGui(customLadder, this);
@@ -56,12 +56,12 @@ public class MainGui extends Gui {
   public void build() {
     Inventory inventory = gui.get(1);
 
-    inventory.setItem(0, StaticItems.MAIN_GUI_BACK);
-    inventory.setItem(3, StaticItems.MAIN_GUI_SETTINGS_ICON);
-    inventory.setItem(5, StaticItems.MAIN_GUI_RESET_KIT_ICON);
-    inventory.setItem(7, StaticItems.MAIN_GUI_SHARE_KIT);
-    inventory.setItem(8, StaticItems.MAIN_GUI_GUIDE_ICON);
-    inventory.setItem(17, StaticItems.MAIN_GUI_CHANGE_NAME);
+    inventory.setItem(0, StaticItems.mainGuiBack());
+    inventory.setItem(3, StaticItems.mainGuiSettingsIcon());
+    inventory.setItem(5, StaticItems.mainGuiResetKitIcon());
+    inventory.setItem(7, StaticItems.mainGuiShareKit());
+    inventory.setItem(8, StaticItems.mainGuiGuideIcon());
+    inventory.setItem(17, StaticItems.mainGuiChangeName());
 
     this.update();
   }
@@ -252,7 +252,7 @@ public class MainGui extends Gui {
     super.open(player);
 
     PlayerUtil.setActiveInventoryTitle(
-        player, StaticItems.MAIN_GUI_TITLE.replace("%name%", customLadder.getDisplayName()));
+        player, StaticItems.mainGuiTitle().replace("%name%", customLadder.getDisplayName()));
 
     PlayerKitManager.getInstance().getEditing().remove(player);
     PlayerKitManager.getInstance().getEditing().put(player, new PlayerKitEditing(customLadder));

@@ -19,31 +19,38 @@ import org.bukkit.inventory.ItemStack;
 
 public class FfaArenaSelectorGui extends Gui {
 
-  private static final String BUILD_ON =
-      PracticeConfig.guis()
-          .getGuis()
-          .getFfa()
-          .getArenaSelector()
-          .getIcons()
-          .getArena()
-          .getBuildStatus()
-          .getEnabled();
-  private static final String BUILD_OFF =
-      PracticeConfig.guis()
-          .getGuis()
-          .getFfa()
-          .getArenaSelector()
-          .getIcons()
-          .getArena()
-          .getBuildStatus()
-          .getDisabled();
-  private static final GuiItem ARENA_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getFfa().getArenaSelector().getIcons().getArena());
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis().getGuis().getFfa().getArenaSelector().getIcons().getFiller())
-          .get();
+  private static String buildOn() {
+    return PracticeConfig.guis()
+        .getGuis()
+        .getFfa()
+        .getArenaSelector()
+        .getIcons()
+        .getArena()
+        .getBuildStatus()
+        .getEnabled();
+  }
+
+  private static String buildOff() {
+    return PracticeConfig.guis()
+        .getGuis()
+        .getFfa()
+        .getArenaSelector()
+        .getIcons()
+        .getArena()
+        .getBuildStatus()
+        .getDisabled();
+  }
+
+  private static GuiItem arenaItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getFfa().getArenaSelector().getIcons().getArena());
+  }
+
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getFfa().getArenaSelector().getIcons().getFiller())
+        .get();
+  }
 
   private final Map<Integer, FfaArena> arenaSlots = new HashMap<>();
 
@@ -77,14 +84,15 @@ public class FfaArenaSelectorGui extends Gui {
       Ffa ffa = arena.getFfa();
 
       GuiItem guiItem =
-          ARENA_ITEM
+          arenaItem()
               .cloneItem()
               .replace("%arena%", arena.getDisplayName())
               .replace("%players%", String.valueOf(ffa.getPlayers().size()))
-              .replace("%build_status%", arena.isBuild() ? BUILD_ON : BUILD_OFF)
-              .replace("%rekit_after_kill%", arena.isReKitAfterKill() ? BUILD_ON : BUILD_OFF)
-              .replace("%health_reset_on_kill%", arena.isHealthResetOnKill() ? BUILD_ON : BUILD_OFF)
-              .replace("%lobby_after_death%", arena.isLobbyAfterDeath() ? BUILD_ON : BUILD_OFF)
+              .replace("%build_status%", arena.isBuild() ? buildOn() : buildOff())
+              .replace("%rekit_after_kill%", arena.isReKitAfterKill() ? buildOn() : buildOff())
+              .replace(
+                  "%health_reset_on_kill%", arena.isHealthResetOnKill() ? buildOn() : buildOff())
+              .replace("%lobby_after_death%", arena.isLobbyAfterDeath() ? buildOn() : buildOff())
               .replace("%ladders%", String.valueOf(arena.getAssignedLadders().size()));
 
       if (arena.getIcon() != null) {
@@ -102,7 +110,7 @@ public class FfaArenaSelectorGui extends Gui {
 
     for (int i = 0; i < inventory.getSize(); i++) {
       if (inventory.getItem(i) == null) {
-        inventory.setItem(i, FILLER_ITEM);
+        inventory.setItem(i, fillerItem());
       }
     }
 

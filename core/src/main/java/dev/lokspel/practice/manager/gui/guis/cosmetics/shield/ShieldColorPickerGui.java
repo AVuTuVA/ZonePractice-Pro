@@ -24,11 +24,15 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ShieldColorPickerGui extends Gui {
 
-  private static final ItemStack FILLER =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
-  private static final ItemStack BACK =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
-          .get();
+  private static ItemStack filler() {
+    return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  }
+
+  private static ItemStack back() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+        .get();
+  }
 
   private static final int ROWS = 5;
   private static final int BACK_SLOT = 36;
@@ -90,14 +94,14 @@ public class ShieldColorPickerGui extends Gui {
     Inventory inv = gui.get(1);
     inv.clear();
     for (int i = 0; i < inv.getSize(); i++) {
-      inv.setItem(i, FILLER);
+      inv.setItem(i, filler());
     }
 
     for (int i = 0; i < COLOR_SLOTS.length && i < DYE_COLORS.length; i++) {
       inv.setItem(COLOR_SLOTS[i], buildColorItem(DYE_COLORS[i]));
     }
 
-    inv.setItem(BACK_SLOT, BACK != null ? BACK : new ItemStack(Material.ARROW));
+    inv.setItem(BACK_SLOT, back() != null ? back() : new ItemStack(Material.ARROW));
     updatePlayers();
   }
 

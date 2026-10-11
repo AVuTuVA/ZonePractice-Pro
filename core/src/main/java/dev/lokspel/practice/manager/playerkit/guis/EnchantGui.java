@@ -39,7 +39,7 @@ public class EnchantGui extends Gui {
     this.kitItem = kitItem;
     this.maxDurability = kitItem.getMaterial().getMaxDurability();
     this.backTo = backTo;
-    this.gui.put(1, InventoryUtil.createInventory(StaticItems.ENCHANT_GUI_TITLE, 6));
+    this.gui.put(1, InventoryUtil.createInventory(StaticItems.enchantGuiTitle(), 6));
     this.build();
   }
 
@@ -47,9 +47,9 @@ public class EnchantGui extends Gui {
   public void build() {
     Inventory inventory = gui.get(1);
 
-    inventory.setItem(45, StaticItems.ENCHANT_GUI_BACK_ICON);
-    inventory.setItem(44, StaticItems.ENCHANT_GUI_CHANGE_DURABILITY_ICON);
-    inventory.setItem(53, StaticItems.ENCHANT_GUI_CLEAR_ENCHANTS_ICON);
+    inventory.setItem(45, StaticItems.enchantGuiBackIcon());
+    inventory.setItem(44, StaticItems.enchantGuiChangeDurabilityIcon());
+    inventory.setItem(53, StaticItems.enchantGuiClearEnchantsIcon());
 
     for (Enchantment enchantment : Common.getAllEnchantments()) {
       String name = kitItem.getMaterial().name().toLowerCase();
@@ -60,7 +60,7 @@ public class EnchantGui extends Gui {
 
       boolean disabled = false;
       for (Map.Entry<String, List<Enchantment>> entry :
-          StaticItems.DISABLED_ENCHANTMENTS.entrySet()) {
+          StaticItems.disabledEnchantments().entrySet()) {
         if (name.contains(entry.getKey().toLowerCase())) {
           if (entry.getValue().contains(enchantment)) {
             disabled = true;
@@ -70,7 +70,7 @@ public class EnchantGui extends Gui {
 
       if (!disabled) {
         icons.put(
-            StaticItems.ENCHANT_GUI_ENCHANT_ICON
+            StaticItems.enchantGuiEnchantIcon()
                 .cloneItem()
                 .replace(
                     "%enchantment%", StringUtil.getNormalizedName(enchantment.getKey().getKey()))
@@ -105,9 +105,9 @@ public class EnchantGui extends Gui {
               inventory.setItem(40, kitItem.get());
 
               if (kitItem.isUnbreakable()) {
-                inventory.setItem(52, StaticItems.ENCHANT_GUI_BREAKABLE_ICON);
+                inventory.setItem(52, StaticItems.enchantGuiBreakableIcon());
               } else {
-                inventory.setItem(52, StaticItems.ENCHANT_GUI_UNBREAKABLE_ICON);
+                inventory.setItem(52, StaticItems.enchantGuiUnbreakableIcon());
               }
 
               this.updatePlayers();
@@ -178,8 +178,8 @@ public class EnchantGui extends Gui {
                 })
             .text("#")
             .title(
-                StaticItems.CUSTOM_DURABILITY_GUI_TITLE.replace(
-                    "%max%", String.valueOf(maxDurability)))
+                StaticItems.customDurabilityGuiTitle()
+                    .replace("%max%", String.valueOf(maxDurability)))
             .open(player);
         break;
       case 53:
@@ -229,7 +229,7 @@ public class EnchantGui extends Gui {
 
   private static void setEnchantmentLevelPlaceholderItems(Inventory inventory) {
     for (int i = 47; i <= 51; i++) {
-      inventory.setItem(i, StaticItems.ENCHANT_GUI_SET_LEVEL_PLACEHOLDER_ICON);
+      inventory.setItem(i, StaticItems.enchantGuiSetLevelPlaceholderIcon());
     }
   }
 
@@ -244,7 +244,7 @@ public class EnchantGui extends Gui {
 
       inventory.setItem(
           i,
-          StaticItems.ENCHANTMENT_LEVEL_MAP
+          StaticItems.enchantmentLevelMap()
               .get(i - 46)
               .cloneItem()
               .replace("%enchantment%", StringUtil.getNormalizedName(enchantment.getName()))

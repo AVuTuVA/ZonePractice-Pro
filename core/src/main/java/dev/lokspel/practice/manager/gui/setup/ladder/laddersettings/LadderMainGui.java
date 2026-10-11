@@ -23,66 +23,77 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public class LadderMainGui extends Gui {
 
-  private static final ItemStack BACK_TO_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getLadder()
-                  .getLadderMain()
-                  .getIcons()
-                  .getBackTo())
-          .get();
-  private static final ItemStack DELETE_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getLadder()
-                  .getLadderMain()
-                  .getIcons()
-                  .getDelete())
-          .get();
-  private static final ItemStack DESTROYABLE_BLOCK_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getLadder()
-                  .getLadderMain()
-                  .getIcons()
-                  .getDestroyableBlocks())
-          .get();
-  private static final ItemStack INVENTORY_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getLadder()
-                  .getLadderMain()
-                  .getIcons()
-                  .getInventory())
-          .get();
-  private static final ItemStack SETTINGS_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getLadder()
-                  .getLadderMain()
-                  .getIcons()
-                  .getSettings())
-          .get();
-  private static final ItemStack MATCH_TYPE_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getLadder()
-                  .getLadderMain()
-                  .getIcons()
-                  .getMatchType())
-          .get();
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getBackTo())
+        .get();
+  }
+
+  private static ItemStack deleteItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getDelete())
+        .get();
+  }
+
+  private static ItemStack destroyableBlockItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getDestroyableBlocks())
+        .get();
+  }
+
+  private static ItemStack inventoryItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getInventory())
+        .get();
+  }
+
+  private static ItemStack settingsItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getSettings())
+        .get();
+  }
+
+  private static ItemStack matchTypeItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getMatchType())
+        .get();
+  }
 
   private final NormalLadder ladder;
 
@@ -110,19 +121,19 @@ public class LadderMainGui extends Gui {
     Inventory inventory = gui.get(1);
 
     // Navigation
-    inventory.setItem(27, BACK_TO_ITEM);
-    inventory.setItem(35, DELETE_ITEM);
+    inventory.setItem(27, backToItem());
+    inventory.setItem(35, deleteItem());
 
     for (int i : new int[] {28, 29, 30, 31, 32, 33}) {
-      inventory.setItem(i, GuiManager.getFILLER_ITEM());
+      inventory.setItem(i, GuiManager.fillerItem());
     }
 
     if (ladder.isBuild()) {
-      inventory.setItem(13, DESTROYABLE_BLOCK_ITEM);
+      inventory.setItem(13, destroyableBlockItem());
     }
-    inventory.setItem(14, INVENTORY_ITEM);
-    inventory.setItem(15, SETTINGS_ITEM);
-    inventory.setItem(16, MATCH_TYPE_ITEM);
+    inventory.setItem(14, inventoryItem());
+    inventory.setItem(15, settingsItem());
+    inventory.setItem(16, matchTypeItem());
 
     update();
   }

@@ -19,26 +19,38 @@ import org.bukkit.inventory.ItemStack;
 
 public class DivisionGui extends Gui {
 
-  private static final ItemStack BACK_TO_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getDivision().getIcons().getBackTo())
-          .get();
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis().getGuis().getDivision().getIcons().getFillerItem())
-          .get();
-  private static final ItemStack FILLER_ITEM2 =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis().getGuis().getDivision().getIcons().getFillerItem2())
-          .get();
-  private static final GuiItem PAST_DIVISION_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getDivision().getIcons().getPastDivision());
-  private static final GuiItem CURRENT_DIVISION_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getDivision().getIcons().getCurrentDivision());
-  private static final GuiItem NEXT_DIVISION_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getDivision().getIcons().getNextDivision());
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getDivision().getIcons().getBackTo())
+        .get();
+  }
+
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getDivision().getIcons().getFillerItem())
+        .get();
+  }
+
+  private static ItemStack fillerItem2() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getDivision().getIcons().getFillerItem2())
+        .get();
+  }
+
+  private static GuiItem pastDivisionItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getDivision().getIcons().getPastDivision());
+  }
+
+  private static GuiItem currentDivisionItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getDivision().getIcons().getCurrentDivision());
+  }
+
+  private static GuiItem nextDivisionItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getDivision().getIcons().getNextDivision());
+  }
 
   private final Profile profile;
   private final Gui backToGui;
@@ -71,11 +83,11 @@ public class DivisionGui extends Gui {
           0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 18, 27, 36, 17, 26, 35, 44, 45, 46, 47, 48, 49, 50, 51, 52,
           53
         }) {
-      inventory.setItem(i, FILLER_ITEM);
+      inventory.setItem(i, fillerItem());
     }
 
     if (backToGui != null) {
-      inventory.setItem(45, BACK_TO_ITEM);
+      inventory.setItem(45, backToItem());
     }
 
     for (Division division : DivisionManager.getInstance().getDivisions()) {
@@ -84,7 +96,7 @@ public class DivisionGui extends Gui {
 
     for (int i = 0; i < inventory.getSize(); i++) {
       if (inventory.getItem(i) == null) {
-        inventory.setItem(i, FILLER_ITEM2);
+        inventory.setItem(i, fillerItem2());
       }
     }
 
@@ -115,15 +127,15 @@ public class DivisionGui extends Gui {
     int currentIndex = currentDivision != null ? divisions.indexOf(currentDivision) : -1;
 
     if (division == currentDivision) {
-      guiItem = CURRENT_DIVISION_ITEM.cloneItem();
+      guiItem = currentDivisionItem().cloneItem();
       guiItem.replace("%progress_bar%", StatisticUtil.getProgressBar(100.0));
       guiItem.replace("%progress_percent%", "100.0");
     } else if (currentDivision != null && divisionIndex < currentIndex) {
-      guiItem = PAST_DIVISION_ITEM.cloneItem();
+      guiItem = pastDivisionItem().cloneItem();
       guiItem.replace("%progress_bar%", StatisticUtil.getProgressBar(100.0));
       guiItem.replace("%progress_percent%", "100.0");
     } else {
-      guiItem = NEXT_DIVISION_ITEM.cloneItem();
+      guiItem = nextDivisionItem().cloneItem();
       guiItem.replace("%current_wins%", String.valueOf(profile.getStats().getGlobalWins()));
       guiItem.replace("%current_elo%", String.valueOf(profile.getStats().getGlobalElo()));
       guiItem.replace("%current_exp%", String.valueOf(profile.getStats().getExperience()));

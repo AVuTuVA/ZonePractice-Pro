@@ -156,7 +156,7 @@ public class ShulkerBoxEditorGui extends Gui {
     }
 
     // Back button
-    inv.setItem(BACK_SLOT, StaticItems.CATEGORY_GUI_PAGE_BACK_ICON.get());
+    inv.setItem(BACK_SLOT, StaticItems.categoryGuiPageBackIcon().get());
 
     // Clear all button
     ItemStack clearItem = new ItemStack(Material.BARRIER);

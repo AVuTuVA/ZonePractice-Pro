@@ -22,15 +22,17 @@ import org.bukkit.inventory.ItemStack;
 
 public class PartySettingsGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getParty()
-                  .getPartySettings()
-                  .getIcons()
-                  .getFillerItem())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getParty()
+                .getPartySettings()
+                .getIcons()
+                .getFillerItem())
+        .get();
+  }
+
   private final Party party;
 
   public PartySettingsGui(Party party) {
@@ -48,7 +50,7 @@ public class PartySettingsGui extends Gui {
   @Override
   public void build() {
     for (int i = 0; i < gui.get(1).getSize(); i++) {
-      gui.get(1).setItem(i, FILLER_ITEM);
+      gui.get(1).setItem(i, fillerItem());
     }
 
     update();

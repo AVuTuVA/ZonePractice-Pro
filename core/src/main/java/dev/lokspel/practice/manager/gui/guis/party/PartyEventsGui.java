@@ -18,10 +18,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class PartyEventsGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis().getGuis().getParty().getPartyGames().getIcons().getFillerItem())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getParty().getPartyGames().getIcons().getFillerItem())
+        .get();
+  }
 
   public PartyEventsGui() {
     super(GuiType.Party_Events);
@@ -43,7 +44,7 @@ public class PartyEventsGui extends Gui {
     Inventory inventory = gui.get(1);
 
     for (int i = 0; i < inventory.getSize(); i++) {
-      inventory.setItem(i, FILLER_ITEM);
+      inventory.setItem(i, fillerItem());
     }
 
     inventory.setItem(

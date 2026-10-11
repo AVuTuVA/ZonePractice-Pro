@@ -148,7 +148,7 @@ public class CustomLadderSumGui extends Gui {
     // Set filler items between kits
     for (int i = 0; i < inventory.getSize(); i++) {
       if (inventory.getItem(i) == null) {
-        inventory.setItem(i, GuiManager.getFILLER_ITEM());
+        inventory.setItem(i, GuiManager.fillerItem());
       }
     }
 

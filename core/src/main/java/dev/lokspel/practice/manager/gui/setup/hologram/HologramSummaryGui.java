@@ -65,7 +65,7 @@ public class HologramSummaryGui extends Gui {
 
       // Frame
       for (int i = 18; i < 27; i++) {
-        inventory.setItem(i, GuiManager.getFILLER_ITEM());
+        inventory.setItem(i, GuiManager.fillerItem());
       }
 
       Map<Integer, Hologram> pageSlots = new HashMap<>();
@@ -126,7 +126,7 @@ public class HologramSummaryGui extends Gui {
                 .replace("%page%", String.valueOf(page + 1))
                 .get();
       } else {
-        right = GuiManager.getFILLER_ITEM();
+        right = GuiManager.fillerItem();
       }
       inventory.setItem(26, right);
     }
@@ -151,7 +151,7 @@ public class HologramSummaryGui extends Gui {
     if (currentItem == null) {
       return;
     }
-    if (currentItem.equals(GuiManager.getFILLER_ITEM())) {
+    if (currentItem.equals(GuiManager.fillerItem())) {
       return;
     }
 

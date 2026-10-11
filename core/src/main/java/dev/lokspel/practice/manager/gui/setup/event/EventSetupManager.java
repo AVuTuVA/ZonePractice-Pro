@@ -60,6 +60,12 @@ public class EventSetupManager implements Listener {
     }
   }
 
+  /** Re-creates the summary and every event's setup GUIs from the reloaded configuration. */
+  public void reloadGuis() {
+    eventSetupGuis.clear();
+    loadGuis();
+  }
+
   @EventHandler
   public void onEventCornerMarkerUse(PlayerInteractEvent e) {
     Player player = e.getPlayer();

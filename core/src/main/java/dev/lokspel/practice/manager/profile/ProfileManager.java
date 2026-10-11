@@ -275,6 +275,15 @@ public class ProfileManager {
     }
   }
 
+  /** Re-creates the settings GUI of every profile that has one from the reloaded configuration. */
+  public void reloadSettingsGuis() {
+    for (Profile profile : profiles.values()) {
+      if (profile.getSettingsGui() != null) {
+        profile.setSettingsGui(new ProfileSettingsGui(profile));
+      }
+    }
+  }
+
   public void saveProfiles() {
     // Iterate over a stable snapshot to avoid ConcurrentModificationException
     // when autosave overlaps joins/quits/profile updates.

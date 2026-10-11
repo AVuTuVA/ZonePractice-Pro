@@ -37,7 +37,7 @@ public class Party implements dev.lokspel.api.interfaces.Party {
   private final Map<Player, Long> invites = new HashMap<>();
 
   @Setter private BroadcastTask broadcastTask = new BroadcastTask(this);
-  private final PartySettingsGui partySettingsGui;
+  private PartySettingsGui partySettingsGui;
 
   @Setter private int maxPlayerLimit;
   @Setter private boolean publicParty;
@@ -83,6 +83,12 @@ public class Party implements dev.lokspel.api.interfaces.Party {
     this.partyChat = DEFAULT_PARTY_CHAT;
     this.duelRequests = DEFAULT_DUEL_REQUEST;
 
+    this.partySettingsGui =
+        (PartySettingsGui) GuiManager.getInstance().addGui(new PartySettingsGui(this));
+  }
+
+  /** Re-creates the settings GUI from the reloaded configuration. */
+  public void reloadSettingsGui() {
     this.partySettingsGui =
         (PartySettingsGui) GuiManager.getInstance().addGui(new PartySettingsGui(this));
   }
