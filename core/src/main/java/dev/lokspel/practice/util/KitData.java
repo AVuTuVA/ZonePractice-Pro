@@ -1,11 +1,9 @@
 package dev.lokspel.practice.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -38,57 +36,6 @@ public class KitData {
 
   public boolean isSet() {
     return storage != null && armor != null;
-  }
-
-  public void saveData(final FileConfiguration config, final String map) {
-    if (storage != null) {
-      config.set(
-          (map != null ? map + "." : "") + "inventory",
-          ItemSerializationUtil.itemStackArrayToBase64(storage));
-    }
-    if (armor != null) {
-      config.set(
-          (map != null ? map + "." : "") + "armor",
-          ItemSerializationUtil.itemStackArrayToBase64(armor));
-    }
-    if (extra != null) {
-      config.set(
-          (map != null ? map + "." : "") + "extra",
-          ItemSerializationUtil.itemStackArrayToBase64(extra));
-    }
-    if (!effects.isEmpty()) {
-      config.set((map != null ? map + "." : "") + "effects", effects.toArray());
-    }
-  }
-
-  public void getData(final FileConfiguration config, final String map) {
-    String storagePath = (map != null ? map + "." : "") + "inventory";
-    String armorPath = (map != null ? map + "." : "") + "armor";
-    String extraPath = (map != null ? map + "." : "") + "extra";
-    final String effectsPath = (map != null ? map + "." : "") + "effects";
-
-    if (config.isString(storagePath)) {
-      this.storage = ItemSerializationUtil.itemStackArrayFromBase64(config.getString(storagePath));
-    }
-    if (config.isString(armorPath)) {
-      this.armor = ItemSerializationUtil.itemStackArrayFromBase64(config.getString(armorPath));
-    }
-    if (config.isString(extraPath)) {
-      this.extra = ItemSerializationUtil.itemStackArrayFromBase64(config.getString(extraPath));
-    }
-    if (config.isSet(effectsPath)) {
-      this.effects = new ArrayList<>();
-      Object rawEffects = config.get(effectsPath);
-      if (rawEffects instanceof List<?> list) {
-        for (Object entry : list) {
-          if (entry instanceof PotionEffect potionEffect) {
-            this.effects.add(potionEffect);
-          }
-        }
-      } else if (rawEffects instanceof PotionEffect[] array) {
-        this.effects.addAll(Arrays.asList(array));
-      }
-    }
   }
 
   public void setKitData(final Player player, final boolean setEffect) {

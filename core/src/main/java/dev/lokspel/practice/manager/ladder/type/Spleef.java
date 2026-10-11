@@ -7,6 +7,7 @@ import dev.lokspel.practice.manager.fight.util.ChangedBlock;
 import dev.lokspel.practice.manager.fight.util.DeathCause;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.CustomConfig;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.LadderHandle;
+import dev.lokspel.practice.manager.ladder.abstraction.normal.LadderData;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.ladder.enums.LadderType;
 import dev.lokspel.practice.util.PermanentConfig;
@@ -14,7 +15,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.Event;
@@ -191,14 +191,14 @@ public class Spleef extends NormalLadder implements LadderHandle, CustomConfig {
   // -------------------------------------------------------------------------
 
   @Override
-  public void setCustomConfig(YamlConfiguration config) {
-    config.set("settings.spleef-snowball-mode", snowballMode);
+  public void writeCustomConfig(LadderData data) {
+    data.getSettings().setSpleefSnowballMode(snowballMode);
   }
 
   @Override
-  public void getCustomConfig(YamlConfiguration config) {
-    if (config.isBoolean("settings.spleef-snowball-mode")) {
-      snowballMode = config.getBoolean("settings.spleef-snowball-mode");
+  public void readCustomConfig(LadderData data) {
+    if (data.getSettings().getSpleefSnowballMode() != null) {
+      snowballMode = data.getSettings().getSpleefSnowballMode();
     }
   }
 }

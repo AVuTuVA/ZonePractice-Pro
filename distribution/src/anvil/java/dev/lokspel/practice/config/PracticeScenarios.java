@@ -18,12 +18,19 @@ import org.jetbrains.annotations.NotNull;
  *
  * <p>Build 74 of 26.1.2 is the newest Paper Anvil supports; the plugin itself targets 26.2.
  */
-final class PracticeScenarios {
-  static final String SERVER = "server";
+public final class PracticeScenarios {
+  public static final String SERVER = "server";
 
   private PracticeScenarios() {}
 
-  private static AnvilScenario paper(String name, Path dataFolder) {
+  /**
+   * Builds a server with the plugin installed.
+   *
+   * @param name scenario name
+   * @param dataFolder plugin folder to start from, or {@code null} for none
+   * @return the scenario
+   */
+  public static AnvilScenario paper(String name, Path dataFolder) {
     WorkspacePlan.WorkspacePlanBuilder workspace =
         WorkspacePlan.builder()
             .asset(
@@ -58,7 +65,13 @@ final class PracticeScenarios {
     return AnvilScenario.builder().name(name).entrypoint(SERVER).server(server).build();
   }
 
-  private static Path fixture(String name) {
+  /**
+   * Resolves a fixture folder of the anvil resources.
+   *
+   * @param name folder name
+   * @return its path
+   */
+  public static Path fixture(String name) {
     URL url = PracticeScenarios.class.getResource("/" + name);
     if (url == null) {
       throw new IllegalStateException("Missing fixture: " + name);

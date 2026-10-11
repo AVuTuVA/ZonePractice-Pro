@@ -2,6 +2,7 @@ package dev.lokspel.practice.manager.profile;
 
 import dev.lokspel.api.event.NewPlayerJoin;
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.data.DataFiles;
 import dev.lokspel.practice.manager.backend.database.Database;
 import dev.lokspel.practice.manager.backend.database.model.GlobalStatsRow;
 import dev.lokspel.practice.manager.backend.database.model.LadderStatsRow;
@@ -13,7 +14,6 @@ import dev.lokspel.practice.manager.profile.statistics.LadderStats;
 import dev.lokspel.practice.manager.profile.statistics.ProfileStat;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.StartUpCallback;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +42,6 @@ public class ProfileManager {
 
   @Getter private final Map<Player, UUID> uuids = new ConcurrentHashMap<>();
   @Getter private final Map<UUID, Profile> profiles = new ConcurrentHashMap<>();
-
-  private final File folder = new File(AstralPractice.getInstance().getDataFolder() + "/profiles");
 
   public Profile getProfile(UUID uuid) {
     if (uuid == null) {
@@ -204,25 +202,8 @@ public class ProfileManager {
 
   /** Iterates all .yml files in /profiles/ and loads each into the cache. */
   private void loadProfilesFromDisk() {
-    if (!folder.exists() && !folder.mkdirs()) {
-      Common.sendConsoleMmMessage("<red>Error: Could not create profiles folder.");
-    }
-
-    if (!folder.isDirectory()) {
-      return;
-    }
-
-    File[] files = folder.listFiles();
-    if (files == null) {
-      return;
-    }
-
-    for (File profileFile : files) {
-      if (!profileFile.isFile() || !profileFile.getName().endsWith(".yml")) {
-        continue;
-      }
-
-      UUID uuid = parseUuidFromFilename(profileFile.getName());
+    for (String profileFile : DataFiles.list("profiles")) {
+      UUID uuid = parseUuidFromFilename(profileFile.substring("profiles/".length()));
       if (uuid == null) {
         continue;
       }
@@ -380,8 +361,7 @@ public class ProfileManager {
   }
 
   private Profile loadProfileIfExists(UUID uuid, OfflinePlayer offlinePlayer) {
-    File profileFile = new File(folder, uuid.toString().toLowerCase() + ".yml");
-    if (!profileFile.exists()) {
+    if (!DataFiles.exists("profiles/" + uuid.toString().toLowerCase() + ".yml")) {
       return null;
     }
 

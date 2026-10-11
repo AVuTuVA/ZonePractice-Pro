@@ -32,7 +32,7 @@ public class InactiveProfileRunnable extends BukkitRunnable {
       long daysDiff = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
 
       if (daysDiff > deleteAfter) {
-        if (profile.getFile().getFile().delete()) {
+        if (profile.getFile().delete()) {
           ProfileManager.getInstance().getProfiles().remove(profile.getUuid());
           deleteStatsFromMariadb(profile);
 

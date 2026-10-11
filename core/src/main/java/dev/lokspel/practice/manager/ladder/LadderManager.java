@@ -2,6 +2,7 @@ package dev.lokspel.practice.manager.ladder;
 
 import dev.lokspel.practice.AstralPractice;
 import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.data.DataFiles;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.guis.customladder.EditorMenuGui;
 import dev.lokspel.practice.manager.gui.guis.customladder.premadecustom.CustomLadderSelectorGui;
@@ -10,18 +11,16 @@ import dev.lokspel.practice.manager.gui.guis.queue.RankedGui;
 import dev.lokspel.practice.manager.gui.guis.queue.UnrankedGui;
 import dev.lokspel.practice.manager.gui.guis.queue.customkit.ChooseQueueTypeGui;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
+import dev.lokspel.practice.manager.ladder.abstraction.normal.LadderData;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.ladder.enums.LadderType;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.StartUpCallback;
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class LadderManager {
 
@@ -37,7 +36,6 @@ public class LadderManager {
   private LadderManager() {}
 
   @Getter private final List<NormalLadder> ladders = new ArrayList<>();
-  private final File folder = new File(AstralPractice.getInstance().getDataFolder() + "/ladders");
 
   @Getter
   private static final int DEFAULT_ELO =
@@ -67,32 +65,28 @@ public class LadderManager {
         .runTaskAsynchronously(
             AstralPractice.getInstance(),
             () -> {
-              if (folder.isDirectory() && folder.listFiles() != null) {
-                for (File ladderFile : Objects.requireNonNull(folder.listFiles())) {
-                  if (ladderFile.isFile() && ladderFile.getName().endsWith(".yml")) {
-                    YamlConfiguration config = YamlConfiguration.loadConfiguration(ladderFile);
+              for (String file : DataFiles.list("ladders")) {
+                LadderData data = DataFiles.read(file, LadderData.class);
 
-                    if (config.isString("type")) {
-                      String name = config.getString("name");
+                if (data != null && data.getType() != null) {
+                  String name = data.getName();
 
-                      try {
-                        LadderType type = LadderType.valueOf(config.getString("type"));
+                  try {
+                    LadderType type = LadderType.valueOf(data.getType());
 
-                        ladders.add(
-                            (NormalLadder)
-                                type.getClassInstance()
-                                    .getConstructor(String.class, LadderType.class)
-                                    .newInstance(name, type));
-                      } catch (IllegalArgumentException e) {
-                        Common.sendConsoleMmMessage(
-                            "<red>Invalid ladder format for ladder " + name + ".");
-                      } catch (NoSuchMethodException
-                          | InvocationTargetException
-                          | InstantiationException
-                          | IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                      }
-                    }
+                    ladders.add(
+                        (NormalLadder)
+                            type.getClassInstance()
+                                .getConstructor(String.class, LadderType.class)
+                                .newInstance(name, type));
+                  } catch (IllegalArgumentException e) {
+                    Common.sendConsoleMmMessage(
+                        "<red>Invalid ladder format for ladder " + name + ".");
+                  } catch (NoSuchMethodException
+                      | InvocationTargetException
+                      | InstantiationException
+                      | IllegalAccessException e) {
+                    throw new RuntimeException(e);
                   }
                 }
               }

@@ -1,8 +1,10 @@
 package dev.lokspel.practice.manager.arena.arenas;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.manager.arena.ArenaLayoutData;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.NormalArena;
 import dev.lokspel.practice.util.Common;
+import java.util.Map;
 import lombok.Getter;
 
 @Getter
@@ -19,7 +21,13 @@ public class ArenaCopy extends NormalArena {
 
   public void delete() {
     AstralPractice.getArenaCopyUtilListener().deleteArena(mainArena.getDisplayName(), cuboid);
-    mainArena.getArenaFile().getConfig().set("copies." + name, null);
+    Map<String, ArenaLayoutData> copies = mainArena.getArenaFile().getData().getCopies();
+    if (copies != null) {
+      copies.remove(name);
+      if (copies.isEmpty()) {
+        mainArena.getArenaFile().getData().setCopies(null);
+      }
+    }
   }
 
   @Override

@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.arena.arenas;
 
 import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.arena.ArenaData;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.ArenaType;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 public class FfaArena extends DisplayArena {
@@ -37,7 +38,17 @@ public class FfaArena extends DisplayArena {
   private boolean allowDropItems;
 
   public FfaArena(String name) {
-    super(name, ArenaType.FFA);
+    this(name, null);
+  }
+
+  /**
+   * Creates an FFA arena from its file.
+   *
+   * @param name the arena's name
+   * @param data the file's content if it was already read, otherwise {@code null}
+   */
+  public FfaArena(String name, @Nullable ArenaData data) {
+    super(name, ArenaType.FFA, data);
 
     this.bedLoc1 = null;
     this.bedLoc2 = null;
@@ -56,69 +67,69 @@ public class FfaArena extends DisplayArena {
 
   @Override
   public void setData() {
-    YamlConfiguration config = arenaFile.getConfig();
+    ArenaData data = arenaFile.getData();
 
-    config.set("name", this.name);
-    config.set("type", this.type.toString());
-    config.set("enabled", this.enabled);
+    data.setName(this.name);
+    data.setType(this.type.toString());
+    data.setEnabled(this.enabled);
 
     if (this.getIcon() != null) {
-      config.set("icon", this.getIcon());
+      data.setIcon(this.getIcon());
     }
 
-    config.set("build", this.build);
-    config.set("reKitAfterKill", this.reKitAfterKill);
-    config.set("lobbyAfterDeath", this.lobbyAfterDeath);
-    config.set("healthResetOnKill", this.healthResetOnKill);
-    config.set("healthBelowName", this.healthBelowName);
-    config.set("mapBlowable", this.mapBlowable);
-    config.set("allowDropItems", this.allowDropItems);
+    data.setBuild(this.build);
+    data.setReKitAfterKill(this.reKitAfterKill);
+    data.setLobbyAfterDeath(this.lobbyAfterDeath);
+    data.setHealthResetOnKill(this.healthResetOnKill);
+    data.setHealthBelowName(this.healthBelowName);
+    data.setMapBlowable(this.mapBlowable);
+    data.setAllowDropItems(this.allowDropItems);
 
-    config.set("ladders", ArenaUtil.getLadderNames(this));
+    data.setLadders(ArenaUtil.getLadderNames(this));
 
-    super.setBasicData(config, "");
+    super.setBasicData(data);
 
-    arenaFile.saveFile();
+    arenaFile.save();
   }
 
   @Override
   public void getData() {
-    YamlConfiguration config = arenaFile.getConfig();
+    ArenaData data = arenaFile.getData();
 
-    if (config.isItemStack("icon")) {
-      this.setIcon(config.getItemStack("icon"));
+    if (data.getIcon() != null) {
+      this.setIcon(data.getIcon());
     }
 
-    if (config.isBoolean("build")) {
-      this.setBuild(config.getBoolean("build"));
+    if (data.getBuild() != null) {
+      this.setBuild(data.getBuild());
     }
 
-    if (config.isBoolean("reKitAfterKill")) {
-      this.setReKitAfterKill(config.getBoolean("reKitAfterKill"));
+    if (data.getReKitAfterKill() != null) {
+      this.setReKitAfterKill(data.getReKitAfterKill());
     }
 
-    if (config.isBoolean("lobbyAfterDeath")) {
-      this.setLobbyAfterDeath(config.getBoolean("lobbyAfterDeath"));
+    if (data.getLobbyAfterDeath() != null) {
+      this.setLobbyAfterDeath(data.getLobbyAfterDeath());
     }
 
-    if (config.isBoolean("healthResetOnKill")) {
-      this.setHealthResetOnKill(config.getBoolean("healthResetOnKill"));
+    if (data.getHealthResetOnKill() != null) {
+      this.setHealthResetOnKill(data.getHealthResetOnKill());
     }
 
-    if (config.isBoolean("healthBelowName")) {
-      this.setHealthBelowName(config.getBoolean("healthBelowName"));
+    if (data.getHealthBelowName() != null) {
+      this.setHealthBelowName(data.getHealthBelowName());
     }
 
-    if (config.isBoolean("mapBlowable")) {
-      this.setMapBlowable(config.getBoolean("mapBlowable"));
+    if (data.getMapBlowable() != null) {
+      this.setMapBlowable(data.getMapBlowable());
     }
 
-    if (config.isBoolean("allowDropItems")) {
-      this.setAllowDropItems(config.getBoolean("allowDropItems"));
+    if (data.getAllowDropItems() != null) {
+      this.setAllowDropItems(data.getAllowDropItems());
     }
 
-    if (config.isList("ladders")) {
-      for (String ladderName : config.getStringList("ladders")) {
+    if (data.getLadders() != null) {
+      for (String ladderName : data.getLadders()) {
         NormalLadder ladder = LadderManager.getInstance().getLadder(ladderName);
 
         if (ladder != null && ladder.isEnabled()) {
@@ -127,10 +138,10 @@ public class FfaArena extends DisplayArena {
       }
     }
 
-    super.getBasicData(config, "");
+    super.getBasicData(data);
 
-    if (config.isBoolean("enabled")) {
-      this.setEnabled(config.getBoolean("enabled"));
+    if (data.getEnabled() != null) {
+      this.setEnabled(data.getEnabled());
     }
 
     if (this.isEnabled() && !this.isReadyToEnable()) {
@@ -168,7 +179,7 @@ public class FfaArena extends DisplayArena {
   @Override
   public boolean deleteData() {
     ArenaManager.getInstance().getArenaCuboids().remove(cuboid);
-    return arenaFile.getFile().delete();
+    return arenaFile.delete();
   }
 
   public void setReKitAfterKill(boolean reKitAfterKill) throws IllegalStateException {

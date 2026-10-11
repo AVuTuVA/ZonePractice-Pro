@@ -14,13 +14,13 @@ import me.whereareiam.anvil.capability.server.Server;
 import me.whereareiam.anvil.capability.session.Session;
 
 /** What a player and the console observe of the plugin on a running server. */
-final class PracticeJourney {
+public final class PracticeJourney {
   private static final Duration WAIT = Duration.ofSeconds(20);
   private static final int JOIN_ATTEMPTS = 15;
 
   private PracticeJourney() {}
 
-  static Path dataFolder(ScenarioContext anvil) {
+  public static Path dataFolder(ScenarioContext anvil) {
     return anvil
         .processes()
         .server(PracticeScenarios.SERVER)
@@ -28,7 +28,7 @@ final class PracticeJourney {
         .resolve("plugins/AstralPractice");
   }
 
-  static void assertEnabled(ScenarioContext anvil) {
+  public static void assertEnabled(ScenarioContext anvil) {
     var server = anvil.processes().server(PracticeScenarios.SERVER);
     assertEquals(ProcessState.READY, server.state());
     String log = String.join("\n", server.console().tail(2000));
@@ -36,7 +36,8 @@ final class PracticeJourney {
     assertFalse(log.contains("Error occurred while enabling AstralPractice"), log);
   }
 
-  static SimulatedPlayer join(ScenarioContext anvil, String name) throws InterruptedException {
+  public static SimulatedPlayer join(ScenarioContext anvil, String name)
+      throws InterruptedException {
     SimulatedPlayer player = anvil.players().create(name);
     Session session = player.capability(Session.class);
     // The plugin kicks players ("still loading") until its asynchronous startup is done, which
@@ -59,7 +60,7 @@ final class PracticeJourney {
   }
 
   /** The lobby items come from inventories.yml. */
-  static void assertLobbyItems(SimulatedPlayer player) {
+  public static void assertLobbyItems(SimulatedPlayer player) {
     player
         .capability(Inventory.class)
         .matching(
@@ -67,7 +68,7 @@ final class PracticeJourney {
             WAIT);
   }
 
-  static void command(SimulatedPlayer player, String command, String expected) {
+  public static void command(SimulatedPlayer player, String command, String expected) {
     Messages messages = player.capability(Messages.class);
     int before = messages.checkpoint();
     messages.command(command);
@@ -79,7 +80,7 @@ final class PracticeJourney {
     }
   }
 
-  static void console(ScenarioContext anvil, String command, String expected) {
+  public static void console(ScenarioContext anvil, String command, String expected) {
     var console = anvil.processes().server(PracticeScenarios.SERVER).console();
     long before = console.checkpoint();
     console.sendCommand(command);

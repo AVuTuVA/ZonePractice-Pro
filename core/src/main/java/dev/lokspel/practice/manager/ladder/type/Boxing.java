@@ -11,13 +11,13 @@ import dev.lokspel.practice.manager.fight.util.stats.Statistic;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.CustomConfig;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.LadderHandle;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.ScoringLadder;
+import dev.lokspel.practice.manager.ladder.abstraction.normal.LadderData;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.ladder.enums.LadderType;
 import dev.lokspel.practice.util.playerutil.PlayerUtil;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 public class Boxing extends NormalLadder implements CustomConfig, LadderHandle, ScoringLadder {
 
   private int boxingWinHit;
-  private static final String BOXING_WINHIT_PATH = "boxing-winhit";
 
   public Boxing(String name, LadderType type) {
     super(name, type);
@@ -69,14 +68,14 @@ public class Boxing extends NormalLadder implements CustomConfig, LadderHandle, 
   }
 
   @Override
-  public void setCustomConfig(YamlConfiguration config) {
-    config.set(BOXING_WINHIT_PATH, this.boxingWinHit);
+  public void writeCustomConfig(LadderData data) {
+    data.setBoxingWinHit(this.boxingWinHit);
   }
 
   @Override
-  public void getCustomConfig(YamlConfiguration config) {
-    if (config.isInt(BOXING_WINHIT_PATH)) {
-      this.boxingWinHit = config.getInt(BOXING_WINHIT_PATH);
+  public void readCustomConfig(LadderData data) {
+    if (data.getBoxingWinHit() instanceof Integer winHit) {
+      this.boxingWinHit = winHit;
       if (this.boxingWinHit < 40 || this.boxingWinHit > 600) {
         this.boxingWinHit = 100;
       }

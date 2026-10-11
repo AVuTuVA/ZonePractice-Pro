@@ -20,6 +20,7 @@ import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsData;
 import dev.lokspel.practice.util.ItemSerializationUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -165,16 +166,21 @@ public class InventoryManager {
   }
 
   public void setData() {
+    Map<String, String> invArmors = BackendManager.data().getInvArmors();
+    if (invArmors == null) {
+      invArmors = new LinkedHashMap<>();
+      BackendManager.data().setInvArmors(invArmors);
+    }
+
     for (Inventory inventory : this.inventories.values()) {
+      String key = inventory.getType().name().toUpperCase();
       if (inventory.getInvArmor().isNull()) {
-        BackendManager.getConfig()
-            .set("INV-ARMORS." + inventory.getType().name().toUpperCase(), null);
+        invArmors.remove(key);
       } else {
-        BackendManager.getConfig()
-            .set(
-                "INV-ARMORS." + inventory.getType().name().toUpperCase(),
-                ItemSerializationUtil.itemStackArrayToBase64(
-                    inventory.getInvArmor().getArmorContent()));
+        invArmors.put(
+            key,
+            ItemSerializationUtil.itemStackArrayToBase64(
+                inventory.getInvArmor().getArmorContent()));
       }
     }
 
@@ -182,14 +188,13 @@ public class InventoryManager {
   }
 
   public void getData() {
-    if (!BackendManager.getConfig().isConfigurationSection("INV-ARMORS")) {
+    Map<String, String> invArmors = BackendManager.data().getInvArmors();
+    if (invArmors == null) {
       return;
     }
 
-    for (String key :
-        Objects.requireNonNull(BackendManager.getConfig().getConfigurationSection("INV-ARMORS"))
-            .getKeys(false)) {
-      Inventory inventory = this.inventories.get(Inventory.InventoryType.valueOf(key));
+    for (Map.Entry<String, String> entry : invArmors.entrySet()) {
+      Inventory inventory = this.inventories.get(Inventory.InventoryType.valueOf(entry.getKey()));
       if (inventory == null) {
         continue;
       }
@@ -198,8 +203,7 @@ public class InventoryManager {
           .getInvArmor()
           .setArmorContent(
               Objects.requireNonNull(
-                  ItemSerializationUtil.itemStackArrayFromBase64(
-                      BackendManager.getConfig().getString("INV-ARMORS." + key))));
+                  ItemSerializationUtil.itemStackArrayFromBase64(entry.getValue())));
     }
   }
 }

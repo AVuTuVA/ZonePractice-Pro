@@ -65,9 +65,7 @@ public abstract class NormalLadder extends Ladder {
   }
 
   public void deleteData() {
-    if (!ladderFile.getFile().delete()) {
-      System.out.println("Could not delete ladder file for ladder: " + this.getName());
-    }
+    ladderFile.delete();
   }
 
   public boolean isReadyToEnable() {

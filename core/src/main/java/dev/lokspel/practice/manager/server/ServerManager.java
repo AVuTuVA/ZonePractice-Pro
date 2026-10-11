@@ -132,31 +132,24 @@ public class ServerManager implements Listener {
       // Reload backend to ensure data is current now that worlds are loaded.
       BackendManager.reload();
 
-      Object lobbyObj = BackendManager.getConfig().get("lobby");
-      if (lobbyObj instanceof Location) {
+      LobbyData lobbyData = BackendManager.data().getLobby();
+      if (lobbyData != null && lobbyData.getSerializedType() != null) {
         // Old format: Location was stored as a ConfigurationSerializable ("==" key).
         // Read it, then immediately migrate to the new primitive-field format so
         // future async saves never attempt to serialize a Location object again.
-        lobby = (Location) lobbyObj;
-        if (lobby.getWorld() != null) {
+        World world = lobbyData.getWorld() != null ? Bukkit.getWorld(lobbyData.getWorld()) : null;
+        if (world != null) {
+          lobby = toLocation(world, lobbyData);
           writeLobbyPrimitives(lobby);
           BackendManager.save();
           Common.sendConsoleMmMessage(
               "<yellow>Migrated lobby location to primitive-field format in backend.yml.");
         }
-      } else if (BackendManager.getConfig().isConfigurationSection("lobby")) {
+      } else if (lobbyData != null) {
         // New format: plain fields — world, x, y, z, yaw, pitch.
-        String worldName = BackendManager.getConfig().getString("lobby.world");
+        String worldName = lobbyData.getWorld();
         if (worldName != null) {
-          World world = Bukkit.getWorld(worldName);
-          lobby =
-              new Location(
-                  world,
-                  BackendManager.getConfig().getDouble("lobby.x"),
-                  BackendManager.getConfig().getDouble("lobby.y"),
-                  BackendManager.getConfig().getDouble("lobby.z"),
-                  (float) BackendManager.getConfig().getDouble("lobby.yaw"),
-                  (float) BackendManager.getConfig().getDouble("lobby.pitch"));
+          lobby = toLocation(Bukkit.getWorld(worldName), lobbyData);
         }
       }
     } catch (Exception e) {
@@ -165,22 +158,35 @@ public class ServerManager implements Listener {
   }
 
   /**
-   * Writes the lobby location to the BackendManager config as individual primitive fields (world
-   * name + x/y/z/yaw/pitch) so that no {@link
-   * org.bukkit.configuration.serialization.ConfigurationSerializable} object is ever stored in the
-   * config. This prevents SnakeYAML from calling {@link Location#serialize()} during async saves,
-   * which can throw a NullPointerException if the Location's world {@code WeakReference} has been
-   * cleared.
+   * Writes the lobby location to the backend data as individual primitive fields (world name +
+   * x/y/z/yaw/pitch) so that no {@link Location} is ever stored in it. Serializing a {@link
+   * Location} during async saves can throw a NullPointerException if its world {@code
+   * WeakReference} has been cleared.
    */
   private void writeLobbyPrimitives(Location location) {
-    // Remove any existing entry (could be a Location object or an old section)
-    BackendManager.getConfig().set("lobby", null);
-    BackendManager.getConfig().set("lobby.world", location.getWorld().getName());
-    BackendManager.getConfig().set("lobby.x", location.getX());
-    BackendManager.getConfig().set("lobby.y", location.getY());
-    BackendManager.getConfig().set("lobby.z", location.getZ());
-    BackendManager.getConfig().set("lobby.yaw", (double) location.getYaw());
-    BackendManager.getConfig().set("lobby.pitch", (double) location.getPitch());
+    // Replaces any existing entry (could be a Location object or an old section)
+    LobbyData lobbyData = new LobbyData();
+    lobbyData.setWorld(location.getWorld().getName());
+    lobbyData.setPosX(location.getX());
+    lobbyData.setPosY(location.getY());
+    lobbyData.setPosZ(location.getZ());
+    lobbyData.setYaw((double) location.getYaw());
+    lobbyData.setPitch((double) location.getPitch());
+    BackendManager.data().setLobby(lobbyData);
+  }
+
+  private static Location toLocation(World world, LobbyData lobbyData) {
+    return new Location(
+        world,
+        orZero(lobbyData.getPosX()),
+        orZero(lobbyData.getPosY()),
+        orZero(lobbyData.getPosZ()),
+        (float) orZero(lobbyData.getYaw()),
+        (float) orZero(lobbyData.getPitch()));
+  }
+
+  private static double orZero(Double value) {
+    return value != null ? value : 0;
   }
 
   public void setLobby(Player player, Location newLobby) {

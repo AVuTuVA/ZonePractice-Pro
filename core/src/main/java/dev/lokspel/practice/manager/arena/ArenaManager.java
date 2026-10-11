@@ -3,6 +3,7 @@ package dev.lokspel.practice.manager.arena;
 import dev.lokspel.practice.AstralPractice;
 import dev.lokspel.practice.command.arena.arguments.CreateArg;
 import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.data.DataFiles;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.BasicArena;
@@ -14,18 +15,15 @@ import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.Cuboid;
 import dev.lokspel.practice.util.StartUpCallback;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -46,8 +44,6 @@ public class ArenaManager implements Listener {
 
   private final List<DisplayArena> arenaList = new CopyOnWriteArrayList<>();
   private final Map<Cuboid, BasicArena> arenaCuboids = new HashMap<>();
-
-  private final File folder = new File(AstralPractice.getInstance().getDataFolder() + "/arenas");
 
   private ArenaManager() {}
 
@@ -123,33 +119,34 @@ public class ArenaManager implements Listener {
         .runTaskAsynchronously(
             AstralPractice.getInstance(),
             () -> {
-              if (folder.isDirectory() && folder.listFiles() != null) {
-                for (File arenaFile : Objects.requireNonNull(folder.listFiles())) {
-                  if (arenaFile.isFile() && arenaFile.getName().endsWith(".yml")) {
-                    YamlConfiguration config = YamlConfiguration.loadConfiguration(arenaFile);
+              for (String file : DataFiles.list("arenas")) {
+                ArenaData data = DataFiles.read(file, ArenaData.class);
+                if (data == null) {
+                  continue;
+                }
 
-                    String name = config.getString("name");
-                    if (name != null && CreateArg.checkName(name) == null) {
-                      try {
-                        ArenaType type = ArenaType.valueOf(config.getString("type"));
+                String name = data.getName();
+                if (name != null && CreateArg.checkName(name) == null) {
+                  try {
+                    ArenaType type = ArenaType.valueOf(String.valueOf(data.getType()));
+                    // An arena keeps its data in the file named after it.
+                    ArenaData preloaded = file.equals(ArenaFile.path(name)) ? data : null;
 
-                        Bukkit.getScheduler()
-                            .runTask(
-                                AstralPractice.getInstance(),
-                                () -> {
-                                  if (type == ArenaType.FFA) {
-                                    arenaList.add(new FfaArena(name));
-                                  } else {
-                                    arenaList.add(new Arena(name, type));
-                                  }
-                                });
-                      } catch (IllegalArgumentException e) {
-                        Common.sendConsoleMmMessage(
-                            "<red>Can't load arena "
-                                + name
-                                + " because the type format isn't set correctly in the config.");
-                      }
-                    }
+                    Bukkit.getScheduler()
+                        .runTask(
+                            AstralPractice.getInstance(),
+                            () -> {
+                              if (type == ArenaType.FFA) {
+                                arenaList.add(new FfaArena(name, preloaded));
+                              } else {
+                                arenaList.add(new Arena(name, type, preloaded));
+                              }
+                            });
+                  } catch (IllegalArgumentException e) {
+                    Common.sendConsoleMmMessage(
+                        "<red>Can't load arena "
+                            + name
+                            + " because the type format isn't set correctly in the config.");
                   }
                 }
               }

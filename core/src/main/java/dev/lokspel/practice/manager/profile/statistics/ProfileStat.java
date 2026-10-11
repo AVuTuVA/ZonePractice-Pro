@@ -5,19 +5,19 @@ import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.profile.Profile;
+import dev.lokspel.practice.manager.profile.ProfileData;
 import dev.lokspel.practice.manager.profile.ProfileFile;
 import dev.lokspel.practice.util.NumberUtil;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ProfileStat {
 
   private final Profile profile;
   private final ProfileFile profileFile;
-  private final YamlConfiguration config;
 
   @Getter private final Map<NormalLadder, LadderStats> ladderStats = new HashMap<>();
 
@@ -33,7 +33,6 @@ public class ProfileStat {
   public ProfileStat(Profile profile) {
     this.profile = profile;
     this.profileFile = profile.getFile();
-    this.config = profileFile.getConfig();
   }
 
   public LadderStats getLadderStat(NormalLadder ladder) {
@@ -43,7 +42,7 @@ public class ProfileStat {
 
   public void createLadderStat(NormalLadder ladder) {
     if (!ladderStats.containsKey(ladder)) {
-      ladderStats.put(ladder, new LadderStats(config));
+      ladderStats.put(ladder, new LadderStats());
     }
   }
 
@@ -71,15 +70,30 @@ public class ProfileStat {
     }
   }
 
+  /**
+   * Writes the statistics into the profile file's model; values of 0 are left out of the file.
+   *
+   * @param save whether to write the file afterwards
+   */
   public void setData(boolean save) {
-    setConfigIntIfNonZero("experience", experience);
-    setConfigIntIfNonZero("winStreak", winStreak);
-    setConfigIntIfNonZero("bestWinStreak", bestWinStreak);
-    setConfigIntIfNonZero("loseStreak", loseStreak);
-    setConfigIntIfNonZero("bestLoseStreak", bestLoseStreak);
+    ProfileData data = profileFile.getProfileData();
+    data.setExperience(nonZero(experience));
+    data.setWinStreak(nonZero(winStreak));
+    data.setBestWinStreak(nonZero(bestWinStreak));
+    data.setLoseStreak(nonZero(loseStreak));
+    data.setBestLoseStreak(nonZero(bestLoseStreak));
 
+    if (data.getStats() == null) {
+      data.setStats(new ProfileData.Stats());
+    }
+    if (data.getStats().getLadderStats() == null) {
+      data.getStats().setLadderStats(new LinkedHashMap<>());
+    }
+    Map<String, LadderStatsData> stored = data.getStats().getLadderStats();
     for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
-      getLadderStat(ladder).setData(ladder.getName().toLowerCase(), ladder.isRanked());
+      LadderStatsData ladderData =
+          stored.computeIfAbsent(ladder.getName().toLowerCase(), name -> new LadderStatsData());
+      getLadderStat(ladder).setData(ladderData, ladder.isRanked());
     }
 
     if (save) {
@@ -87,30 +101,31 @@ public class ProfileStat {
     }
   }
 
-  private void setConfigIntIfNonZero(String path, int value) {
-    if (value != 0) {
-      config.set(path, value);
-    } else {
-      config.set(path, null);
-    }
+  private static Integer nonZero(int value) {
+    return value != 0 ? value : null;
   }
 
+  /** Reads the statistics from the profile file's model. */
   public void getData() {
-    setExperience(getConfigInt("experience"));
-    setWinStreak(getConfigInt("winStreak"));
-    setBestWinStreak(getConfigInt("bestWinStreak"));
-    setLoseStreak(getConfigInt("loseStreak"));
-    setBestLoseStreak(getConfigInt("bestLoseStreak"));
+    ProfileData data = profileFile.getProfileData();
+    setExperience(valueOf(data.getExperience()));
+    setWinStreak(valueOf(data.getWinStreak()));
+    setBestWinStreak(valueOf(data.getBestWinStreak()));
+    setLoseStreak(valueOf(data.getLoseStreak()));
+    setBestLoseStreak(valueOf(data.getBestLoseStreak()));
 
+    Map<String, LadderStatsData> stored =
+        data.getStats() != null ? data.getStats().getLadderStats() : null;
     for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
-      LadderStats ladderStat = new LadderStats(config);
-      ladderStat.getData(ladder.getName().toLowerCase(), ladder.isRanked());
+      LadderStats ladderStat = new LadderStats();
+      ladderStat.getData(
+          stored != null ? stored.get(ladder.getName().toLowerCase()) : null, ladder.isRanked());
       ladderStats.put(ladder, ladderStat);
     }
   }
 
-  private int getConfigInt(String path) {
-    return config.isInt(path) ? config.getInt(path) : 0;
+  private static int valueOf(Integer value) {
+    return value != null ? value : 0;
   }
 
   public void loadDefaultStats(NormalLadder ladder) {

@@ -146,7 +146,7 @@ public class PlayerCustomKitSelector extends Gui {
         if (index != -1) {
           CustomLadder copyCustomLadder = PlayerKitManager.getInstance().getCopying().get(player);
           CustomLadder newLadder =
-              new CustomLadder(copyCustomLadder, this.profile, customLadder.getMapPath());
+              new CustomLadder(copyCustomLadder, this.profile, customLadder.getKey());
 
           this.profile.getCustomLadders().set(index, newLadder);
           newLadder.getMainGui().open(player);

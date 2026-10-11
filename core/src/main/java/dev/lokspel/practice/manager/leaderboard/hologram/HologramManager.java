@@ -13,6 +13,7 @@ import dev.lokspel.practice.manager.leaderboard.types.LbSecondaryType;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -68,14 +69,14 @@ public class HologramManager {
 
   /** Loads all holograms from configuration. */
   public void loadHolograms() {
-    var config = BackendManager.getConfig();
-    if (!config.isConfigurationSection("holograms")) {
+    Map<String, HologramData> data = BackendManager.data().getHolograms();
+    if (data == null) {
       HologramSetupManager.getInstance().loadGuis();
       startHologramsWithDelay();
       return;
     }
 
-    config.getConfigurationSection("holograms").getKeys(false).forEach(this::loadHologram);
+    List.copyOf(data.keySet()).forEach(this::loadHologram);
 
     HologramSetupManager.getInstance().loadGuis();
     startHologramsWithDelay();
@@ -84,8 +85,8 @@ public class HologramManager {
   /** Loads a single hologram from configuration. */
   private void loadHologram(String name) {
     try {
-      var config = BackendManager.getConfig();
-      HologramType type = HologramType.valueOf(config.getString("holograms." + name + ".type"));
+      HologramData data = BackendManager.data().getHolograms().get(name);
+      HologramType type = HologramType.valueOf(data.getType());
 
       Hologram hologram = createHologramByType(name, type);
       if (hologram == null) {

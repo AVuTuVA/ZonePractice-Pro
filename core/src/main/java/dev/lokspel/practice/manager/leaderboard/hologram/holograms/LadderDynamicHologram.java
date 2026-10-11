@@ -6,13 +6,13 @@ import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.leaderboard.Leaderboard;
 import dev.lokspel.practice.manager.leaderboard.LeaderboardManager;
 import dev.lokspel.practice.manager.leaderboard.hologram.Hologram;
+import dev.lokspel.practice.manager.leaderboard.hologram.HologramData;
 import dev.lokspel.practice.manager.leaderboard.hologram.HologramType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 /** Dynamic hologram that rotates through multiple ladders on a timer. */
 @Getter
@@ -31,19 +31,16 @@ public class LadderDynamicHologram extends Hologram {
   }
 
   @Override
-  public void getAbstractData(YamlConfiguration config) {
+  public void getAbstractData(HologramData data) {
     ladders = new ArrayList<>();
     currentLadderIndex = -1;
 
-    String path = "holograms." + name + ".ladders";
-    if (config.isSet(path)) {
-      List<String> ladderNames = config.getStringList(path);
-      if (ladderNames != null && !ladderNames.isEmpty()) {
-        for (String ladderName : ladderNames) {
-          NormalLadder ladder = LadderManager.getInstance().getLadder(ladderName);
-          if (ladder != null && ladder.isEnabled()) {
-            ladders.add(ladder);
-          }
+    List<String> ladderNames = data.getLadders();
+    if (ladderNames != null) {
+      for (String ladderName : ladderNames) {
+        NormalLadder ladder = LadderManager.getInstance().getLadder(ladderName);
+        if (ladder != null && ladder.isEnabled()) {
+          ladders.add(ladder);
         }
       }
     }
@@ -54,12 +51,9 @@ public class LadderDynamicHologram extends Hologram {
   }
 
   @Override
-  public void setAbstractData(YamlConfiguration config) {
-    String path = "holograms." + name + ".ladders";
-    if (ladders.isEmpty()) {
-      config.set(path, null);
-    } else {
-      config.set(path, ladders.stream().map(Ladder::getName).collect(Collectors.toList()));
+  public void setAbstractData(HologramData data) {
+    if (!ladders.isEmpty()) {
+      data.setLadders(ladders.stream().map(Ladder::getName).collect(Collectors.toList()));
     }
   }
 

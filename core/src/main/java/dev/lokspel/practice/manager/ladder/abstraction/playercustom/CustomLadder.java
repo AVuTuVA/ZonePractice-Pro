@@ -8,10 +8,10 @@ import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.ladder.enums.LadderType;
 import dev.lokspel.practice.manager.playerkit.guis.MainGui;
 import dev.lokspel.practice.manager.profile.Profile;
+import dev.lokspel.practice.util.KitFileData;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 @Getter
 public class CustomLadder extends Ladder {
@@ -37,19 +37,6 @@ public class CustomLadder extends Ladder {
   private static final boolean DEFAULT_HEALTH_BELOW_NAME =
       PracticeConfig.playerKit().getDefaultSettings().isHealthBelowName();
 
-  private static final String NAME_PATH = ".settings.name";
-  private static final String REGEN_PATH = ".settings.regen";
-  private static final String HUNGER_PATH = ".settings.hunger";
-  private static final String BUILD_PATH = ".settings.build";
-  private static final String ROUNDS_PATH = ".settings.rounds";
-  private static final String HITDELAY_PATH = ".settings.hit-delay";
-  private static final String KNOCKBACK_PATH = ".settings.knockback";
-  private static final String EP_COOLDOWN_PATH = ".settings.ep-cooldown";
-  private static final String GA_COOLDOWN_PATH = ".settings.ga-cooldown";
-  private static final String WIND_CHARGE_COOLDOWN_PATH = ".settings.wind-charge-cooldown";
-  private static final String HEALTH_BELOW_NAME_PATH = ".settings.health-below-name";
-  private static final String KIT_DATA_PATH = ".kit-data";
-
   private MainGui mainGui;
 
   private static final List<MatchType> MATCH_TYPES = new ArrayList<>();
@@ -60,14 +47,36 @@ public class CustomLadder extends Ladder {
     }
   }
 
-  private final YamlConfiguration config;
-  private final String mapPath;
+  private final Profile profile;
 
-  public CustomLadder(final Profile profile, final String mapPath, final int id) {
+  /** Key of this ladder in the profile file's {@code player-custom-kit} section. */
+  private final String key;
+
+  /**
+   * Creates a player's custom ladder and loads what the profile file holds under its key.
+   *
+   * @param profile the owning profile
+   * @param key key in the profile file's {@code player-custom-kit} section, e.g. {@code "0"}
+   * @param id number shown in the default name
+   */
+  public CustomLadder(final Profile profile, final String key, final int id) {
+    this(profile, key, id, profile.getFile().getCustomLadderData(key));
+  }
+
+  /**
+   * Creates a player's custom ladder from the given data.
+   *
+   * @param profile the owning profile
+   * @param key key in the profile file's {@code player-custom-kit} section, e.g. {@code "0"}
+   * @param id number shown in the default name
+   * @param data the stored ladder, or {@code null} to keep the defaults
+   */
+  public CustomLadder(
+      final Profile profile, final String key, final int id, final CustomLadderData data) {
     super(DEFAULT_NAME.replace("%id%", String.valueOf(id)), LadderType.BASIC);
 
-    this.config = profile.getFile().getConfig();
-    this.mapPath = mapPath;
+    this.profile = profile;
+    this.key = key;
 
     this.setDisplayName(this.getName());
     this.setRegen(DEFAULT_REGEN);
@@ -81,15 +90,16 @@ public class CustomLadder extends Ladder {
     this.setHealthBelowName(DEFAULT_HEALTH_BELOW_NAME);
     this.matchTypes = new ArrayList<>(MATCH_TYPES);
 
-    this.getData();
+    if (data != null) {
+      this.load(data);
+    }
   }
 
-  public CustomLadder(
-      final CustomLadder customLadder, final Profile profile, final String mapPath) {
+  public CustomLadder(final CustomLadder customLadder, final Profile profile, final String key) {
     super(customLadder);
 
-    this.config = profile.getFile().getConfig();
-    this.mapPath = mapPath;
+    this.profile = profile;
+    this.key = key;
   }
 
   public MainGui getMainGui() {
@@ -116,51 +126,64 @@ public class CustomLadder extends Ladder {
     return kitData.isSet() && !matchTypes.isEmpty();
   }
 
+  /** Loads this ladder again from what the profile file's model holds under its key. */
   public void getData() {
-    if (config.isString(mapPath + NAME_PATH)) {
-      displayName = config.getString(mapPath + NAME_PATH);
+    CustomLadderData data = profile.getFile().getCustomLadderData(key);
+    if (data != null) {
+      load(data);
     }
-    if (config.isBoolean(mapPath + REGEN_PATH)) {
-      regen = config.getBoolean(mapPath + REGEN_PATH);
-    }
-    if (config.isBoolean(mapPath + HUNGER_PATH)) {
-      hunger = config.getBoolean(mapPath + HUNGER_PATH);
-    }
-    if (config.isBoolean(mapPath + BUILD_PATH)) {
-      this.setBuild(config.getBoolean(mapPath + BUILD_PATH));
-    }
-    if (config.isInt(mapPath + ROUNDS_PATH)) {
-      rounds = config.getInt(mapPath + ROUNDS_PATH);
-    }
-    // Handle both legacy int and new double hitdelay values
-    if (config.isDouble(mapPath + HITDELAY_PATH)) {
-      double value = config.getDouble(mapPath + HITDELAY_PATH);
-      attackCooldownModifier = Math.clamp(value, 0, 3.0);
-    } else if (config.isInt(mapPath + HITDELAY_PATH)) {
-      attackCooldownModifier = convertHitDelayToMultiplier(config.getInt(mapPath + HITDELAY_PATH));
-    }
-    if (config.isString(mapPath + KNOCKBACK_PATH)) {
-      ladderKnockback.get(config.getString(mapPath + KNOCKBACK_PATH));
-    }
-    Number epCooldown = getNumeric(mapPath + EP_COOLDOWN_PATH);
-    if (epCooldown != null) {
-      enderPearlCooldown = Math.clamp(epCooldown.doubleValue(), 0.0, 60.0);
+  }
+
+  private void load(CustomLadderData data) {
+    CustomLadderData.Settings settings = data.getSettings();
+    if (settings != null) {
+      loadSettings(settings);
     }
 
-    Number gaCooldown = getNumeric(mapPath + GA_COOLDOWN_PATH);
-    if (gaCooldown != null) {
-      goldenAppleCooldown = Math.clamp(gaCooldown.doubleValue(), 0.0, 30.0);
+    KitFileData kit = data.getKitData();
+    if (kit != null) {
+      kit.applyTo(kitData);
     }
+  }
 
-    Number windCooldown = getNumeric(mapPath + WIND_CHARGE_COOLDOWN_PATH);
-    if (windCooldown != null) {
-      windChargeCooldown = Math.clamp(windCooldown.doubleValue(), 0.0, 30.0);
+  private void loadSettings(CustomLadderData.Settings settings) {
+    if (settings.getName() != null) {
+      displayName = settings.getName();
     }
-    if (config.isBoolean(mapPath + HEALTH_BELOW_NAME_PATH)) {
-      healthBelowName = config.getBoolean(mapPath + HEALTH_BELOW_NAME_PATH);
+    if (settings.getRegen() != null) {
+      regen = settings.getRegen();
     }
-
-    kitData.getData(config, mapPath + KIT_DATA_PATH);
+    if (settings.getHunger() != null) {
+      hunger = settings.getHunger();
+    }
+    if (settings.getBuild() != null) {
+      this.setBuild(settings.getBuild());
+    }
+    if (settings.getRounds() != null) {
+      rounds = settings.getRounds();
+    }
+    // A whole number is the legacy hit delay in ticks, a decimal the multiplier
+    Number hitDelay = settings.getHitDelay();
+    if (hitDelay instanceof Integer || hitDelay instanceof Long) {
+      attackCooldownModifier = convertHitDelayToMultiplier(hitDelay.intValue());
+    } else if (hitDelay != null) {
+      attackCooldownModifier = Math.clamp(hitDelay.doubleValue(), 0, 3.0);
+    }
+    if (settings.getKnockback() != null) {
+      ladderKnockback.get(settings.getKnockback());
+    }
+    if (settings.getEnderPearlCooldown() != null) {
+      enderPearlCooldown = Math.clamp(settings.getEnderPearlCooldown().doubleValue(), 0.0, 60.0);
+    }
+    if (settings.getGoldenAppleCooldown() != null) {
+      goldenAppleCooldown = Math.clamp(settings.getGoldenAppleCooldown().doubleValue(), 0.0, 30.0);
+    }
+    if (settings.getWindChargeCooldown() != null) {
+      windChargeCooldown = Math.clamp(settings.getWindChargeCooldown().doubleValue(), 0.0, 30.0);
+    }
+    if (settings.getHealthBelowName() != null) {
+      healthBelowName = settings.getHealthBelowName();
+    }
   }
 
   @Override
@@ -176,20 +199,32 @@ public class CustomLadder extends Ladder {
     return arenas;
   }
 
+  /**
+   * Writes this ladder into the profile file's model under its key. The file itself is written by
+   * the profile's save.
+   */
   public void setData() {
-    config.set(mapPath + NAME_PATH, displayName);
-    config.set(mapPath + REGEN_PATH, regen);
-    config.set(mapPath + HUNGER_PATH, hunger);
-    config.set(mapPath + BUILD_PATH, build);
-    config.set(mapPath + ROUNDS_PATH, rounds);
-    config.set(mapPath + HITDELAY_PATH, attackCooldownModifier);
-    config.set(mapPath + KNOCKBACK_PATH, ladderKnockback.get());
-    config.set(mapPath + EP_COOLDOWN_PATH, enderPearlCooldown);
-    config.set(mapPath + GA_COOLDOWN_PATH, goldenAppleCooldown);
-    config.set(mapPath + WIND_CHARGE_COOLDOWN_PATH, windChargeCooldown);
-    config.set(mapPath + HEALTH_BELOW_NAME_PATH, healthBelowName);
+    CustomLadderData data = profile.getFile().getOrCreateCustomLadderData(key);
 
-    kitData.saveData(config, mapPath + KIT_DATA_PATH);
+    CustomLadderData.Settings settings =
+        data.getSettings() != null ? data.getSettings() : new CustomLadderData.Settings();
+    settings.setName(displayName);
+    settings.setRegen(regen);
+    settings.setHunger(hunger);
+    settings.setBuild(build);
+    settings.setRounds(rounds);
+    settings.setHitDelay(attackCooldownModifier);
+    settings.setKnockback(ladderKnockback.get());
+    settings.setEnderPearlCooldown(enderPearlCooldown);
+    settings.setGoldenAppleCooldown(goldenAppleCooldown);
+    settings.setWindChargeCooldown(windChargeCooldown);
+    settings.setHealthBelowName(healthBelowName);
+    data.setSettings(settings);
+
+    // Like before, a part of the kit that is not set leaves what the file held
+    KitFileData kit = data.getKitData() != null ? data.getKitData() : new KitFileData();
+    kit.update(kitData);
+    data.setKitData(kit);
   }
 
   @Override
@@ -217,10 +252,5 @@ public class CustomLadder extends Ladder {
       return 0;
     }
     return Math.clamp(ticks / 20.0, 0, 3.0);
-  }
-
-  private Number getNumeric(String path) {
-    Object value = config.get(path);
-    return value instanceof Number ? (Number) value : null;
   }
 }
