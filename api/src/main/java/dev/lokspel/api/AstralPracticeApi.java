@@ -13,8 +13,6 @@ import org.bukkit.entity.Player;
 
 public abstract class AstralPracticeApi {
 
-  public static final int API_VERSION = 3;
-
   public static AstralPracticeApi instance = null;
 
   public static AstralPracticeApi getInstance() {
