@@ -145,7 +145,7 @@ public class FfaListener implements Listener {
       }
 
       if (clickedBlock.getType().equals(Material.TNT)) {
-        if (!ffa.isBuild() || !ffa.isMapBlowable()) {
+        if (!ffa.isBuild()) {
           e.setCancelled(true);
           return;
         }

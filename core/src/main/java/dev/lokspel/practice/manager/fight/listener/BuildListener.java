@@ -3,6 +3,7 @@ package dev.lokspel.practice.manager.fight.listener;
 import static dev.lokspel.practice.util.PermanentConfig.PLACED_IN_FIGHT;
 
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
+import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.enums.MatchStatus;
 import dev.lokspel.practice.manager.fight.match.enums.RoundStatus;
@@ -730,6 +731,11 @@ public class BuildListener implements Listener {
       return;
     }
 
+    if (spectatable instanceof Ffa ffa && (!ffa.isBuild() || !ffa.isMapBlowable())) {
+      e.setCancelled(true);
+      return;
+    }
+
     // On 1.8.8: block is already AIR — track with Material.TNT override so rollback restores it
     // On modern: TNTPrimeEvent already captured the block; here we just register entity + fuse
     if (spectatable.isBuild() && !isTntBlockAlreadyTracked()) {
@@ -1359,6 +1365,11 @@ public class BuildListener implements Listener {
   public void onTntPrimeEvent(TNTPrimeEvent e) {
     Spectatable spectatable = getByBlock(e.getBlock());
     if (spectatable == null) {
+      return;
+    }
+
+    if (spectatable instanceof Ffa ffa && (!ffa.isBuild() || !ffa.isMapBlowable())) {
+      e.setCancelled(true);
       return;
     }
 
