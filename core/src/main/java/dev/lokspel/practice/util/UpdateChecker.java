@@ -28,18 +28,18 @@ public final class UpdateChecker {
 
               if (version.equals(current)) {
                 Common.sendConsoleMmMessage(
-                    "<gray>[AstralPractice] <green>You are using the latest version");
+                    "<gray><green>You are using the latest version");
                 return;
               }
 
               Common.sendConsoleMmMessage(
-                  "<gray>[AstralPractice] <yellow>A new version is available: <green>" + version);
+                  "<gray>[<yellow>A new version is available: <green>" + version);
               Common.sendConsoleMmMessage(
-                  "<gray>[AstralPractice] <yellow>Download: <aqua>" + DOWNLOAD_URL);
+                  "<gray><yellow>Download: <aqua>" + DOWNLOAD_URL);
             })
         .exceptionally(
             e -> {
-              plugin.getLogger().warning("[AstralPractice] Update check failed");
+              plugin.getLogger().warning("Update check failed");
               return null;
             });
   }
