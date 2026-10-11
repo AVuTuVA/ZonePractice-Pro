@@ -3,9 +3,9 @@ package dev.lokspel.practice.manager.leaderboard.hologram.holograms;
 import dev.lokspel.practice.manager.leaderboard.Leaderboard;
 import dev.lokspel.practice.manager.leaderboard.LeaderboardManager;
 import dev.lokspel.practice.manager.leaderboard.hologram.Hologram;
+import dev.lokspel.practice.manager.leaderboard.hologram.HologramData;
 import dev.lokspel.practice.manager.leaderboard.hologram.HologramType;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class GlobalHologram extends Hologram {
 
@@ -18,10 +18,10 @@ public class GlobalHologram extends Hologram {
   }
 
   @Override
-  public void getAbstractData(YamlConfiguration config) {}
+  public void getAbstractData(HologramData data) {}
 
   @Override
-  public void setAbstractData(YamlConfiguration config) {}
+  public void setAbstractData(HologramData data) {}
 
   @Override
   public boolean isReadyToEnable() {

@@ -4,6 +4,7 @@ import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
+import dev.lokspel.practice.manager.fight.event.interfaces.EventFileData;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,10 +25,10 @@ public class SpleggData extends EventData {
   }
 
   @Override
-  protected void setCustomData() {}
+  protected void setCustomData(EventFileData data) {}
 
   @Override
-  protected void getCustomData() {
+  protected void getCustomData(EventFileData data) {
     this.eggLauncher =
         BackendUtil.getGuiItem(
                 PracticeConfig.settings().getEvent().getSplegg().getEggLauncherItem())

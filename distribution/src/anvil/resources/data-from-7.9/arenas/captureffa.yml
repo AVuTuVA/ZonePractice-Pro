@@ -1,0 +1,11 @@
+name: captureffa
+type: FFA
+enabled: false
+build: false
+reKitAfterKill: false
+lobbyAfterDeath: false
+healthResetOnKill: false
+healthBelowName: false
+mapBlowable: false
+allowDropItems: false
+ladders: []

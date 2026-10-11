@@ -74,3 +74,21 @@ by `/practice reload` with an edited and then a broken `language.yml`. Run them 
 Add `--rerun` to run them again without changes. They download Paper on the first run and start real
 servers, so `./gradlew build` does not run them. They use Paper 26.1.2, the newest version Anvil
 supports. The Anvil version is `anvilVersion` in `gradle.properties`.
+
+## Data files
+
+What the plugin writes itself is kept in typed models too: `backend.yml` (lobby, lobby armor,
+holograms), `arenas/`, `ladders/`, `events/`, `profiles/` and `match-history/`. Each model sits
+beside the class that owns its file (`ArenaData` next to `ArenaFile`, `ProfileData` next to
+`ProfileFile`, ...) and is read and written with `dev.lokspel.practice.data.DataFiles`:
+
+```java
+ArenaData data = DataFiles.readOrCreate("arenas/duel1.yml", ArenaData.class, ArenaData::new);
+DataFiles.write("arenas/duel1.yml", data);
+```
+
+Bukkit objects such as `ItemStack`, `Location` and `PotionEffect` are fields of these models and keep
+the format Bukkit's `YamlConfiguration` used, so files written by earlier versions load unchanged. A
+file that cannot be read is copied aside as `<name>.yml.broken-<time>` before anything can overwrite
+it. The Anvil test `DataFilesTest` loads data files written by 7.9 and checks that saving them keeps
+every value.

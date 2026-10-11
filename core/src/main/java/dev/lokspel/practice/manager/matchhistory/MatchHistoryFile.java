@@ -1,82 +1,56 @@
 package dev.lokspel.practice.manager.matchhistory;
 
-import dev.lokspel.practice.manager.backend.ConfigFile;
+import dev.lokspel.practice.data.DataFiles;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import org.bukkit.configuration.ConfigurationSection;
 
 /**
  * YAML-backed per-player match history stored at {@code
  * plugins/AstralPractice/match-history/<uuid>.yml}.
  *
- * <p>Stores up to 5 recent match entries per player.
+ * <p>Stores up to 5 recent match entries per player. The file is read once when the history is
+ * created and kept in memory; each saved match rewrites it.
  */
-public class MatchHistoryFile extends ConfigFile {
+public class MatchHistoryFile {
 
   private static final int MAX_HISTORY = 5;
-  private static final String ROOT = "matches";
+  private static final String NO_OPPONENT = "00000000-0000-0000-0000-000000000000";
+  private static final String UNKNOWN = "Unknown";
 
   private final MatchHistory matchHistory;
+  private final String path;
+  private final MatchHistoryData data;
 
   public MatchHistoryFile(MatchHistory matchHistory) {
-    super("/match-history/", matchHistory.getUuid().toString().toLowerCase());
     this.matchHistory = matchHistory;
-
-    saveFile();
-    reloadFile();
+    this.path = "match-history/" + matchHistory.getUuid().toString().toLowerCase() + ".yml";
+    this.data = read();
   }
 
-  @Override
-  public void setData() {
-    saveFile();
+  /** Writes the matches held in memory to the file. */
+  public synchronized void setData() {
+    DataFiles.write(path, data);
   }
 
   /** Saves a new match and prunes entries beyond the cap. Returns the assigned id. */
-  public int saveMatch(MatchHistoryEntry entry) {
+  public synchronized int saveMatch(MatchHistoryEntry entry) {
     int nextId = getNextId();
-    setMatch(entry, nextId);
+    data.getMatches().put(String.valueOf(nextId), toMatch(entry));
     pruneOldMatches();
-    saveFile();
+    DataFiles.write(path, data);
     return nextId;
   }
 
-  private void setMatch(MatchHistoryEntry entry, int matchId) {
-    String match = ROOT + "." + matchId;
-
-    config.set(match + ".uuid", entry.getPlayerUuid().toString());
-    config.set(match + ".opponentUuid", entry.getOpponentUuid().toString());
-    config.set(match + ".username", entry.getPlayerName());
-    config.set(match + ".opponentName", entry.getOpponentName());
-    config.set(match + ".kitName", entry.getKitName());
-    config.set(match + ".arenaName", entry.getArenaName());
-    config.set(match + ".score", entry.getPlayerScore());
-    config.set(match + ".opponentScore", entry.getOpponentScore());
-    config.set(match + ".finalHealth", entry.getPlayerFinalHealth());
-    config.set(match + ".opponentFinalHealth", entry.getOpponentFinalHealth());
-    config.set(
-        match + ".winnerUuid",
-        entry.getWinnerUuid() != null ? entry.getWinnerUuid().toString() : "");
-    config.set(match + ".matchDuration", entry.getMatchDuration());
-    config.set(match + ".playedAt", entry.getPlayedAt());
-  }
-
-  @Override
-  public void getData() {
-    loadMatches();
-  }
-
-  private void loadMatches() {
+  /** Fills the match history's cache with the matches of the file, newest first. */
+  public synchronized void getData() {
     matchHistory.getMatches().clear();
 
-    ConfigurationSection root = config.getConfigurationSection(ROOT);
-    if (root == null) {
-      return;
-    }
-
-    for (String key : root.getKeys(false)) {
-      MatchHistoryEntry entry = loadMatch(key);
+    for (Map.Entry<String, MatchHistoryData.Match> match : data.getMatches().entrySet()) {
+      MatchHistoryEntry entry = toEntry(match.getKey(), match.getValue());
       if (entry != null) {
         matchHistory.getMatches().add(entry);
       }
@@ -85,26 +59,50 @@ public class MatchHistoryFile extends ConfigFile {
     matchHistory.getMatches().sort((a, b) -> Integer.compare(b.getMatchId(), a.getMatchId()));
   }
 
-  private MatchHistoryEntry loadMatch(String matchId) {
-    String match = ROOT + "." + matchId;
+  private MatchHistoryData read() {
+    MatchHistoryData read =
+        DataFiles.readOrCreate(path, MatchHistoryData.class, MatchHistoryData::new);
+    if (read.getMatches() == null) {
+      read.setMatches(new LinkedHashMap<>());
+    }
+    return read;
+  }
 
+  private static MatchHistoryData.Match toMatch(MatchHistoryEntry entry) {
+    MatchHistoryData.Match match = new MatchHistoryData.Match();
+    match.setUuid(entry.getPlayerUuid().toString());
+    match.setOpponentUuid(entry.getOpponentUuid().toString());
+    match.setUsername(entry.getPlayerName());
+    match.setOpponentName(entry.getOpponentName());
+    match.setKitName(entry.getKitName());
+    match.setArenaName(entry.getArenaName());
+    match.setScore(entry.getPlayerScore());
+    match.setOpponentScore(entry.getOpponentScore());
+    match.setFinalHealth(entry.getPlayerFinalHealth());
+    match.setOpponentFinalHealth(entry.getOpponentFinalHealth());
+    match.setWinnerUuid(entry.getWinnerUuid() != null ? entry.getWinnerUuid().toString() : "");
+    match.setMatchDuration(entry.getMatchDuration());
+    match.setPlayedAt(entry.getPlayedAt());
+    return match;
+  }
+
+  private MatchHistoryEntry toEntry(String matchId, MatchHistoryData.Match match) {
     try {
       return new MatchHistoryEntry(
           Integer.parseInt(matchId),
-          UUID.fromString(config.getString(match + ".uuid", matchHistory.getUuid().toString())),
-          UUID.fromString(
-              config.getString(match + ".opponentUuid", "00000000-0000-0000-0000-000000000000")),
-          config.getString(match + ".username", "Unknown"),
-          config.getString(match + ".opponentName", "Unknown"),
-          config.getString(match + ".kitName", "Unknown"),
-          config.getString(match + ".arenaName", "Unknown"),
-          config.getInt(match + ".score", 0),
-          config.getInt(match + ".opponentScore", 0),
-          config.getDouble(match + ".finalHealth", 0.0),
-          config.getDouble(match + ".opponentFinalHealth", 0.0),
+          UUID.fromString(or(match.getUuid(), matchHistory.getUuid().toString())),
+          UUID.fromString(or(match.getOpponentUuid(), NO_OPPONENT)),
+          or(match.getUsername(), UNKNOWN),
+          or(match.getOpponentName(), UNKNOWN),
+          or(match.getKitName(), UNKNOWN),
+          or(match.getArenaName(), UNKNOWN),
+          or(match.getScore(), 0),
+          or(match.getOpponentScore(), 0),
+          or(match.getFinalHealth(), 0.0),
+          or(match.getOpponentFinalHealth(), 0.0),
           getWinnerUuid(match),
-          config.getInt(match + ".matchDuration", 0),
-          config.getLong(match + ".playedAt", System.currentTimeMillis()));
+          or(match.getMatchDuration(), 0),
+          or(match.getPlayedAt(), System.currentTimeMillis()));
     } catch (Exception e) {
       Common.sendConsoleMmMessage(
           "<yellow>[MatchHistory] Skipping corrupt entry "
@@ -117,54 +115,44 @@ public class MatchHistoryFile extends ConfigFile {
     }
   }
 
-  private UUID getWinnerUuid(String match) {
-    String winnerUuid = config.getString(match + ".winnerUuid");
+  private static <T> T or(T value, T fallback) {
+    return value != null ? value : fallback;
+  }
+
+  private static UUID getWinnerUuid(MatchHistoryData.Match match) {
+    String winnerUuid = match.getWinnerUuid();
     return (winnerUuid != null && !winnerUuid.isEmpty()) ? UUID.fromString(winnerUuid) : null;
   }
 
   private int getNextId() {
-    ConfigurationSection root = config.getConfigurationSection(ROOT);
-    if (root == null) {
-      return 1;
-    }
     int max = 0;
-    for (String key : root.getKeys(false)) {
-      try {
-        int id = Integer.parseInt(key);
-        if (id > max) {
-          max = id;
-        }
-      } catch (NumberFormatException ignored) {
-        // This best-effort operation may fail without interrupting its caller.
-
-      }
+    for (int id : getIds()) {
+      max = Math.max(max, id);
     }
     return max + 1;
   }
 
   private void pruneOldMatches() {
-    ConfigurationSection root = config.getConfigurationSection(ROOT);
-    if (root == null) {
-      return;
-    }
-
-    List<Integer> ids = new ArrayList<>();
-    for (String key : root.getKeys(false)) {
-      try {
-        ids.add(Integer.parseInt(key));
-      } catch (NumberFormatException ignored) {
-        // This best-effort operation may fail without interrupting its caller.
-
-      }
-    }
-
+    List<Integer> ids = getIds();
     if (ids.size() <= MAX_HISTORY) {
       return;
     }
 
     ids.sort((a, b) -> Integer.compare(b, a)); // newest first
     for (int id : ids.subList(MAX_HISTORY, ids.size())) {
-      config.set(ROOT + "." + id, null);
+      data.getMatches().remove(String.valueOf(id));
     }
+  }
+
+  private List<Integer> getIds() {
+    List<Integer> ids = new ArrayList<>();
+    for (String key : data.getMatches().keySet()) {
+      try {
+        ids.add(Integer.parseInt(key));
+      } catch (NumberFormatException ignored) {
+        // Keys that are not match ids are left alone.
+      }
+    }
+    return ids;
   }
 }

@@ -2,6 +2,7 @@ package dev.lokspel.practice.manager.arena.util;
 
 import dev.lokspel.practice.AstralPractice;
 import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.arena.ArenaLayoutData;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.ArenaCopy;
@@ -30,7 +31,6 @@ import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -213,22 +213,27 @@ public enum ArenaUtil {
     world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
   }
 
-  public static void saveBedData(
-      final YamlConfiguration config, final String path, final BedLocation bedLocation) {
-    config.set(path + ".world", bedLocation.getWorld().getName());
-    config.set(path + ".x", bedLocation.getX());
-    config.set(path + ".y", bedLocation.getY());
-    config.set(path + ".z", bedLocation.getZ());
-    config.set(path + ".face", bedLocation.getFacing().name());
+  public static ArenaLayoutData.Bed toBedData(final BedLocation bedLocation) {
+    ArenaLayoutData.Bed bed = new ArenaLayoutData.Bed();
+    bed.setWorld(bedLocation.getWorld().getName());
+    bed.setBlockX(bedLocation.getX());
+    bed.setBlockY(bedLocation.getY());
+    bed.setBlockZ(bedLocation.getZ());
+    bed.setFace(bedLocation.getFacing().name());
+    return bed;
   }
 
-  public static BedLocation getBedData(final YamlConfiguration config, final String path) {
+  public static BedLocation getBedData(final ArenaLayoutData.Bed bed) {
     return new BedLocation(
-        Bukkit.getWorld(config.getString(path + ".world")),
-        config.getInt(path + ".x"),
-        config.getInt(path + ".y"),
-        config.getInt(path + ".z"),
-        BlockFace.valueOf(config.getString(path + ".face")));
+        Bukkit.getWorld(bed.getWorld()),
+        toInt(bed.getBlockX()),
+        toInt(bed.getBlockY()),
+        toInt(bed.getBlockZ()),
+        BlockFace.valueOf(bed.getFace()));
+  }
+
+  private static int toInt(final Double value) {
+    return value == null ? 0 : value.intValue();
   }
 
   public static boolean isArenaBedRelated(Arena arena) {

@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.arena.arenas.interfaces;
 
 import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.arena.ArenaData;
 import dev.lokspel.practice.manager.arena.ArenaFile;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.ArenaType;
@@ -23,6 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 public abstract class DisplayArena extends NormalArena {
@@ -41,13 +43,20 @@ public abstract class DisplayArena extends NormalArena {
   @Setter protected boolean build;
   @Setter protected Set<NormalLadder> assignedLadders = new HashSet<>();
 
-  protected DisplayArena(String name, ArenaType type) {
+  /**
+   * Creates an arena and opens its file.
+   *
+   * @param name the arena's name
+   * @param type the arena's type
+   * @param data the file's content if it was already read, otherwise {@code null}
+   */
+  protected DisplayArena(String name, ArenaType type, @Nullable ArenaData data) {
     super(name);
 
     this.type = type;
     this.displayName = name;
 
-    arenaFile = new ArenaFile(this);
+    arenaFile = new ArenaFile(this, data);
   }
 
   public void setIcon(final ItemStack icon) {

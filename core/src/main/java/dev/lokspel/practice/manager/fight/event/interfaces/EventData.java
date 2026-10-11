@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.fight.event.interfaces;
 
 import dev.lokspel.practice.config.PracticeConfig;
-import dev.lokspel.practice.manager.backend.ConfigFile;
+import dev.lokspel.practice.data.DataFiles;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.fight.event.setup.EventSpawnMarkerManager;
@@ -17,11 +17,13 @@ import org.bukkit.Material;
 
 @Getter
 @Setter
-public abstract class EventData extends ConfigFile {
+public abstract class EventData {
 
   protected EventType type;
   protected boolean enabled;
   protected GuiItem icon;
+
+  protected final String path;
 
   protected Cuboid cuboid;
   protected Location cuboidLoc1;
@@ -38,7 +40,7 @@ public abstract class EventData extends ConfigFile {
   protected int maxPlayer;
 
   public EventData(final EventType type) {
-    super("/events/", type.getName().toLowerCase());
+    this.path = "events/" + type.getName().toLowerCase() + ".yml";
     this.type = type;
     this.spawns = new ArrayList<>();
 
@@ -53,95 +55,124 @@ public abstract class EventData extends ConfigFile {
     this.maxPlayer = type.getMaxPlayer();
   }
 
-  @Override
+  /** Writes this event type's file. */
   public synchronized void setData() {
-    config.set("enabled", enabled);
-    config.set("icon", icon.get());
-    config.set("settings.broadcastInterval", broadcastInterval);
-    config.set("settings.waitBeforeStart", waitBeforeStart);
-    config.set("settings.maxQueueTime", maxQueueTime);
-    config.set("settings.duration", duration);
-    config.set("settings.startTime", startTime);
-    config.set("settings.minPlayer", minPlayer);
-    config.set("settings.maxPlayer", maxPlayer);
+    EventFileData data = createFileData();
+    data.setEnabled(enabled);
+    data.setIcon(icon.get());
 
-    config.set("cuboid.1", cuboidLoc1);
-    config.set("cuboid.2", cuboidLoc2);
-    config.set("spawns", spawns.isEmpty() ? null : new ArrayList<>(spawns));
+    EventFileData.Settings settings = new EventFileData.Settings();
+    settings.setBroadcastInterval(broadcastInterval);
+    settings.setWaitBeforeStart(waitBeforeStart);
+    settings.setMaxQueueTime(maxQueueTime);
+    settings.setDuration(duration);
+    settings.setStartTime(startTime);
+    settings.setMinPlayer(minPlayer);
+    settings.setMaxPlayer(maxPlayer);
+    data.setSettings(settings);
 
-    setCustomData();
+    if (cuboidLoc1 != null || cuboidLoc2 != null) {
+      EventFileData.Corners corners = new EventFileData.Corners();
+      corners.setFirst(cuboidLoc1);
+      corners.setSecond(cuboidLoc2);
+      data.setCuboid(corners);
+    }
+    data.setSpawns(spawns.isEmpty() ? null : new ArrayList<>(spawns));
 
-    saveFile();
+    setCustomData(data);
+
+    DataFiles.write(path, data);
   }
 
-  protected abstract void setCustomData();
+  /**
+   * Creates the model of this event type's file; types with their own keys return a subclass.
+   *
+   * @return an empty model
+   */
+  protected EventFileData createFileData() {
+    return new EventFileData();
+  }
 
-  @Override
+  /**
+   * Puts the keys of this event type into its file's model.
+   *
+   * @param data the model {@link #createFileData()} created
+   */
+  protected abstract void setCustomData(EventFileData data);
+
+  /** Reads this event type's file; a missing file leaves the defaults. */
   public void getData() {
     spawns.clear();
 
-    if (config.isItemStack("icon")) {
-      this.icon = new GuiItem(config.getItemStack("icon"));
+    EventFileData data = DataFiles.read(path, createFileData().getClass());
+    if (data == null) {
+      data = createFileData();
     }
 
-    if (config.isInt("settings.broadcastInterval")) {
-      this.broadcastInterval = config.getInt("settings.broadcastInterval");
+    if (data.getIcon() != null) {
+      this.icon = new GuiItem(data.getIcon());
     }
 
-    if (config.isInt("settings.waitBeforeStart")) {
-      this.waitBeforeStart = config.getInt("settings.waitBeforeStart");
-    }
-
-    if (config.isInt("settings.maxQueueTime")) {
-      this.maxQueueTime = config.getInt("settings.maxQueueTime");
-    }
-
-    if (config.isInt("settings.duration")) {
-      this.duration = config.getInt("settings.duration");
-    }
-
-    if (config.isInt("settings.startTime")) {
-      this.startTime = config.getInt("settings.startTime");
-    }
-
-    if (config.isInt("settings.minPlayer")) {
-      this.minPlayer = config.getInt("settings.minPlayer");
-    }
-
-    if (config.isInt("settings.maxPlayer")) {
-      this.maxPlayer = config.getInt("settings.maxPlayer");
-    }
-
-    if (config.isSet("cuboid.1")) {
-      this.setCuboidLoc1((Location) config.get("cuboid.1"));
-    }
-    if (config.isSet("cuboid.2")) {
-      this.setCuboidLoc2((Location) config.get("cuboid.2"));
-    }
-
-    if (config.isList("spawns")) {
-      List<?> savedSpawns = config.getList("spawns");
-      if (savedSpawns != null) {
-        for (Object obj : savedSpawns) {
-          if (obj instanceof Location location) {
-            spawns.add(location.clone());
-          }
-        }
-
-        if (cuboid != null) {
-          spawns.removeIf(spawn -> !cuboid.contains(spawn));
-        }
+    EventFileData.Settings settings = data.getSettings();
+    if (settings != null) {
+      if (settings.getBroadcastInterval() != null) {
+        this.broadcastInterval = settings.getBroadcastInterval();
+      }
+      if (settings.getWaitBeforeStart() != null) {
+        this.waitBeforeStart = settings.getWaitBeforeStart();
+      }
+      if (settings.getMaxQueueTime() != null) {
+        this.maxQueueTime = settings.getMaxQueueTime();
+      }
+      if (settings.getDuration() != null) {
+        this.duration = settings.getDuration();
+      }
+      if (settings.getStartTime() != null) {
+        this.startTime = settings.getStartTime();
+      }
+      if (settings.getMinPlayer() != null) {
+        this.minPlayer = settings.getMinPlayer();
+      }
+      if (settings.getMaxPlayer() != null) {
+        this.maxPlayer = settings.getMaxPlayer();
       }
     }
 
-    if (config.isSet("enabled")) {
-      this.enabled = config.getBoolean("enabled");
+    EventFileData.Corners corners = data.getCuboid();
+    if (corners != null) {
+      if (corners.getFirst() != null) {
+        this.setCuboidLoc1(corners.getFirst());
+      }
+      if (corners.getSecond() != null) {
+        this.setCuboidLoc2(corners.getSecond());
+      }
     }
 
-    this.getCustomData();
+    if (data.getSpawns() != null) {
+      for (Location location : data.getSpawns()) {
+        if (location != null) {
+          spawns.add(location.clone());
+        }
+      }
+
+      if (cuboid != null) {
+        spawns.removeIf(spawn -> !cuboid.contains(spawn));
+      }
+    }
+
+    if (data.getEnabled() != null) {
+      this.enabled = data.getEnabled();
+    }
+
+    this.getCustomData(data);
   }
 
-  protected abstract void getCustomData();
+  /**
+   * Reads the keys of this event type from its file's model.
+   *
+   * @param data the model read from the file, of the type {@link #createFileData()} creates
+   */
+  protected abstract void getCustomData(EventFileData data);
 
   public void addSpawn(final Location spawn) {
     if (enabled) {

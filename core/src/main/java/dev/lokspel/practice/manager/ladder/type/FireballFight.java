@@ -20,6 +20,7 @@ import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.CustomConfig;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.LadderHandle;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.BedFight;
+import dev.lokspel.practice.manager.ladder.abstraction.normal.LadderData;
 import dev.lokspel.practice.manager.ladder.enums.LadderType;
 import dev.lokspel.practice.manager.ladder.util.LadderUtil;
 import lombok.Getter;
@@ -28,7 +29,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
@@ -85,8 +85,6 @@ public class FireballFight extends BedFight implements CustomConfig, LadderHandl
 
   private double fireballCooldown;
   private boolean fireballBlockDestroy;
-  private static final String FIREBALL_COOLDOWN_PATH = "fireball-cooldown";
-  private static final String FIREBALL_BLOCK_DESTROY_PATH = "fireball-block-destroy";
 
   public FireballFight(String name, LadderType type) {
     super(name, type);
@@ -99,15 +97,15 @@ public class FireballFight extends BedFight implements CustomConfig, LadderHandl
   }
 
   @Override
-  public void setCustomConfig(YamlConfiguration config) {
-    config.set(FIREBALL_COOLDOWN_PATH, fireballCooldown);
-    config.set(FIREBALL_BLOCK_DESTROY_PATH, fireballBlockDestroy);
+  public void writeCustomConfig(LadderData data) {
+    data.setFireballCooldown(fireballCooldown);
+    data.setFireballBlockDestroy(fireballBlockDestroy);
   }
 
   @Override
-  public void getCustomConfig(YamlConfiguration config) {
-    if (config.isDouble(FIREBALL_COOLDOWN_PATH)) {
-      this.fireballCooldown = config.getDouble(FIREBALL_COOLDOWN_PATH);
+  public void readCustomConfig(LadderData data) {
+    if (data.getFireballCooldown() instanceof Double cooldown) {
+      this.fireballCooldown = cooldown;
       if (this.fireballCooldown < 0.5 || this.fireballCooldown > 15) {
         this.fireballCooldown = 1.5;
       }
@@ -115,7 +113,7 @@ public class FireballFight extends BedFight implements CustomConfig, LadderHandl
       this.fireballCooldown = 1.5;
     }
 
-    this.fireballBlockDestroy = config.getBoolean(FIREBALL_BLOCK_DESTROY_PATH, false);
+    this.fireballBlockDestroy = Boolean.TRUE.equals(data.getFireballBlockDestroy());
   }
 
   @Override

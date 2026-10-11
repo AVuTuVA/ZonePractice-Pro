@@ -7,6 +7,7 @@ import dev.lokspel.practice.manager.gui.guis.customladder.PlayerCustomKitSelecto
 import dev.lokspel.practice.manager.gui.guis.profile.ProfileSettingsGui;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.ladder.abstraction.playercustom.CustomLadder;
+import dev.lokspel.practice.manager.ladder.abstraction.playercustom.CustomLadderData;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsData;
@@ -137,8 +138,9 @@ public class Profile {
 
   // Data persistence
 
-  public void save() {
-    rankedBan.saveToConfig(file.getConfig(), "ranked-ban");
+  public synchronized void save() {
+    ProfileData data = file.getProfileData();
+    data.setRankedBan(rankedBan.setData(data.getRankedBan()));
     saveCustomLadders();
     stats.setData(false);
     file.setData();
@@ -149,7 +151,7 @@ public class Profile {
       customLadder.setData();
     }
     if (selectedCustomLadder != null) {
-      file.getConfig().set("selected-custom-ladder", customLadders.indexOf(selectedCustomLadder));
+      file.getProfileData().setSelectedCustomLadder(customLadders.indexOf(selectedCustomLadder));
     }
   }
 
@@ -158,58 +160,63 @@ public class Profile {
     file.getData();
     stats.getData();
 
-    rankedBan.loadFromConfig(file.getConfig(), "ranked-ban");
+    rankedBan.getData(file.getProfileData().getRankedBan());
 
     loadCustomLadders();
   }
 
   private void loadCustomLadders() {
-    if (!file.getConfig().isConfigurationSection("player-custom-kit")) {
+    ProfileData.PlayerCustomKits section = file.getProfileData().getPlayerCustomKits();
+    if (section == null) {
       return;
     }
 
     customLadders.clear();
-    for (String key :
-        Objects.requireNonNull(file.getConfig().getConfigurationSection("player-custom-kit"))
-            .getKeys(false)) {
-      if (!tryLoadCustomLadder(key)) {
-        break;
+    if (section.hasLegacyLadder()) {
+      loadLegacyCustomLadder(section);
+    } else {
+      for (Map.Entry<String, CustomLadderData> entry : section.getLadders().entrySet()) {
+        if (!tryLoadCustomLadder(entry.getKey(), entry.getValue())) {
+          break;
+        }
       }
     }
 
     loadSelectedCustomLadder();
   }
 
-  private boolean tryLoadCustomLadder(String key) {
+  private boolean tryLoadCustomLadder(String key, CustomLadderData data) {
     try {
       int i = Integer.parseInt(key);
       if (i < 0 || i > 5) {
         return true;
       }
 
-      customLadders.add(new CustomLadder(this, "player-custom-kit." + i, i + 1));
+      customLadders.add(new CustomLadder(this, String.valueOf(i), i + 1, data));
       return true;
     } catch (NumberFormatException e) {
-      if (file.getConfig().isConfigurationSection("player-custom-kit")) {
-        CustomLadder oldFormat = new CustomLadder(this, "player-custom-kit", 1);
-        customLadders.add(new CustomLadder(oldFormat, this, "player-custom-kit.0"));
-        file.getConfig().set("player-custom-kit", null);
-        file.saveFile();
-      }
       return false;
     }
+  }
+
+  /** Moves the single custom ladder of older versions to key {@code 0}. */
+  private void loadLegacyCustomLadder(ProfileData.PlayerCustomKits section) {
+    CustomLadderData legacy = new CustomLadderData();
+    legacy.setSettings(section.getLegacySettings());
+    legacy.setKitData(section.getLegacyKitData());
+
+    customLadders.add(new CustomLadder(this, "0", 1, legacy));
+    file.getProfileData().setPlayerCustomKits(null);
+    file.saveFile();
   }
 
   private void loadSelectedCustomLadder() {
     if (customLadders.isEmpty()) {
       return;
     }
-    if (!file.getConfig().isInt("selected-custom-ladder")) {
-      return;
-    }
 
-    int index = file.getConfig().getInt("selected-custom-ladder");
-    if (index >= 0 && index < customLadders.size()) {
+    Integer index = file.getProfileData().getSelectedCustomLadder();
+    if (index != null && index >= 0 && index < customLadders.size()) {
       selectedCustomLadder = customLadders.get(index);
     }
   }
@@ -298,8 +305,7 @@ public class Profile {
   private void syncCustomLadderCount() {
     while (customLadders.size() < group.getCustomKitLimit()) {
       customLadders.add(
-          new CustomLadder(
-              this, "player-custom-kit." + customLadders.size(), customLadders.size() + 1));
+          new CustomLadder(this, String.valueOf(customLadders.size()), customLadders.size() + 1));
     }
     while (customLadders.size() > group.getCustomKitLimit()) {
       customLadders.removeLast();

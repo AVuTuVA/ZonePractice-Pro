@@ -5,11 +5,11 @@ import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.leaderboard.Leaderboard;
 import dev.lokspel.practice.manager.leaderboard.LeaderboardManager;
 import dev.lokspel.practice.manager.leaderboard.hologram.Hologram;
+import dev.lokspel.practice.manager.leaderboard.hologram.HologramData;
 import dev.lokspel.practice.manager.leaderboard.hologram.HologramType;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 @Getter
 @Setter
@@ -26,10 +26,9 @@ public class LadderStaticHologram extends Hologram {
   }
 
   @Override
-  public void getAbstractData(YamlConfiguration config) {
-    if (config.isSet("holograms." + name + ".ladder")) {
-      NormalLadder ladder =
-          LadderManager.getInstance().getLadder(config.getString("holograms." + name + ".ladder"));
+  public void getAbstractData(HologramData data) {
+    if (data.getLadder() != null) {
+      NormalLadder ladder = LadderManager.getInstance().getLadder(data.getLadder());
       if (ladder != null && ladder.isEnabled()) {
         this.ladder = ladder;
       }
@@ -37,12 +36,8 @@ public class LadderStaticHologram extends Hologram {
   }
 
   @Override
-  public void setAbstractData(YamlConfiguration config) {
-    if (ladder != null) {
-      config.set("holograms." + name + ".ladder", ladder.getName());
-    } else {
-      config.set("holograms." + name + ".ladder", null);
-    }
+  public void setAbstractData(HologramData data) {
+    data.setLadder(ladder != null ? ladder.getName() : null);
   }
 
   @Override

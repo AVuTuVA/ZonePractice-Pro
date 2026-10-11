@@ -7,6 +7,7 @@ import dev.lokspel.practice.manager.fight.match.util.MatchUtil;
 import dev.lokspel.practice.manager.fight.util.ChangedBlock;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.CustomConfig;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.LadderHandle;
+import dev.lokspel.practice.manager.ladder.abstraction.normal.LadderData;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.ladder.enums.LadderType;
 import dev.lokspel.practice.util.ItemSerializationUtil;
@@ -16,7 +17,6 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 public class SkyWars extends NormalLadder implements CustomConfig, LadderHandle {
 
   private ItemStack[] skyWarsLoot;
-  private static final String SKYWARS_LOOT_PATH = "skywars-loot";
 
   public SkyWars(String name, LadderType type) {
     super(name, type);
@@ -42,15 +41,14 @@ public class SkyWars extends NormalLadder implements CustomConfig, LadderHandle 
   }
 
   @Override
-  public void setCustomConfig(YamlConfiguration config) {
-    config.set(SKYWARS_LOOT_PATH, ItemSerializationUtil.itemStackArrayToBase64(this.skyWarsLoot));
+  public void writeCustomConfig(LadderData data) {
+    data.setSkyWarsLoot(ItemSerializationUtil.itemStackArrayToBase64(this.skyWarsLoot));
   }
 
   @Override
-  public void getCustomConfig(YamlConfiguration config) {
-    if (config.isString(SKYWARS_LOOT_PATH)) {
-      this.skyWarsLoot =
-          ItemSerializationUtil.itemStackArrayFromBase64(config.getString(SKYWARS_LOOT_PATH));
+  public void readCustomConfig(LadderData data) {
+    if (data.getSkyWarsLoot() != null) {
+      this.skyWarsLoot = ItemSerializationUtil.itemStackArrayFromBase64(data.getSkyWarsLoot());
     }
   }
 

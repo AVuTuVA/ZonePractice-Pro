@@ -17,6 +17,7 @@ import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.StringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,7 +28,6 @@ import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,7 +46,6 @@ import org.jetbrains.annotations.NotNull;
 public abstract class Hologram {
 
   // Configuration
-  protected static final YamlConfiguration config = BackendManager.getConfig();
   private static final String NULL_LINE_FORMAT =
       PracticeConfig.settings().getLeaderboard().getHologram().getFormat().getNullLine();
   private static final double DEFAULT_SPACING = 0.25;
@@ -89,30 +88,33 @@ public abstract class Hologram {
     }
   }
 
-  public abstract void getAbstractData(YamlConfiguration config);
+  public abstract void getAbstractData(HologramData data);
 
-  public abstract void setAbstractData(YamlConfiguration config);
+  public abstract void setAbstractData(HologramData data);
 
   public abstract boolean isReadyToEnable();
 
   public abstract Leaderboard getNextLeaderboard();
 
   public void getData() {
-    enabled = config.getBoolean("holograms." + name + ".enabled", false);
-
-    if (config.isString("holograms." + name + ".lb-type")) {
-      leaderboardType = LbSecondaryType.valueOf(config.getString("holograms." + name + ".lb-type"));
+    Map<String, HologramData> holograms = BackendManager.data().getHolograms();
+    HologramData data = holograms != null ? holograms.get(name) : null;
+    if (data == null) {
+      data = new HologramData();
     }
 
-    if (config.isSet("holograms." + name + ".location")) {
-      Object loc = config.get("holograms." + name + ".location");
-      if (loc instanceof Location) {
-        baseLocation = (Location) loc;
-      }
+    enabled = data.getEnabled() != null && data.getEnabled();
+
+    if (data.getLbType() != null) {
+      leaderboardType = LbSecondaryType.valueOf(data.getLbType());
     }
 
-    showStat = config.getInt("holograms." + name + ".showStat", 10);
-    getAbstractData(config);
+    if (data.getLocation() != null) {
+      baseLocation = data.getLocation();
+    }
+
+    showStat = data.getShowStat() != null ? data.getShowStat() : 10;
+    getAbstractData(data);
   }
 
   public void setData() {
@@ -120,18 +122,24 @@ public abstract class Hologram {
       return;
     }
 
-    String path = "holograms." + name;
-    config.set(path, null);
-    config.set(path + ".enabled", enabled);
-    config.set(path + ".type", hologramType.name());
-    config.set(path + ".lb-type", leaderboardType.name());
-    config.set(path + ".showStat", showStat);
+    HologramData data = new HologramData();
+    data.setEnabled(enabled);
+    data.setType(hologramType.name());
+    data.setLbType(leaderboardType.name());
+    data.setShowStat(showStat);
 
     if (baseLocation != null) {
-      config.set(path + ".location", baseLocation);
+      data.setLocation(baseLocation);
     }
 
-    setAbstractData(config);
+    setAbstractData(data);
+
+    Map<String, HologramData> holograms = BackendManager.data().getHolograms();
+    if (holograms == null) {
+      holograms = new LinkedHashMap<>();
+      BackendManager.data().setHolograms(holograms);
+    }
+    holograms.put(name, data);
     BackendManager.save();
   }
 
@@ -443,7 +451,10 @@ public abstract class Hologram {
       hologramRunnable.cancel(false);
       HologramManager.getInstance().getHolograms().remove(this);
       HologramSetupManager.getInstance().removeHologramGuis(this);
-      config.set("holograms." + name, null);
+      Map<String, HologramData> holograms = BackendManager.data().getHolograms();
+      if (holograms != null) {
+        holograms.remove(name);
+      }
       BackendManager.save();
     }
   }

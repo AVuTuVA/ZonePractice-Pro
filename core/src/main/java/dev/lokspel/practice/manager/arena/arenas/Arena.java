@@ -1,5 +1,7 @@
 package dev.lokspel.practice.manager.arena.arenas;
 
+import dev.lokspel.practice.manager.arena.ArenaData;
+import dev.lokspel.practice.manager.arena.ArenaLayoutData;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.ArenaType;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
@@ -13,12 +15,13 @@ import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.ladder.enums.LadderType;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 public class Arena extends DisplayArena {
@@ -33,7 +36,18 @@ public class Arena extends DisplayArena {
   @Setter private int sideBuildLimit = 0;
 
   public Arena(String name, ArenaType type) {
-    super(name, type);
+    this(name, type, null);
+  }
+
+  /**
+   * Creates a normal arena from its file.
+   *
+   * @param name the arena's name
+   * @param type the arena's type
+   * @param data the file's content if it was already read, otherwise {@code null}
+   */
+  public Arena(String name, ArenaType type, @Nullable ArenaData data) {
+    super(name, type, data);
 
     this.build = type.isBuild();
     this.available = true;
@@ -48,59 +62,62 @@ public class Arena extends DisplayArena {
 
   @Override
   public void setData() {
-    YamlConfiguration config = arenaFile.getConfig();
+    ArenaData data = arenaFile.getData();
 
-    config.set("copies", null);
+    Map<String, ArenaLayoutData> copyData = new LinkedHashMap<>();
     for (ArenaCopy arenaCopy : copies) {
-      arenaCopy.setBasicData(config, "copies." + arenaCopy.getName() + ".");
+      ArenaLayoutData layout = new ArenaLayoutData();
+      arenaCopy.setBasicData(layout);
+      copyData.put(arenaCopy.getName(), layout);
     }
+    data.setCopies(copyData.isEmpty() ? null : copyData);
 
-    config.set("name", this.name);
-    config.set("type", this.type.toString());
-    config.set("enabled", this.enabled);
-    config.set("ladderTypes", ArenaUtil.getLadderTypeNames(this));
-    config.set("ladders", ArenaUtil.getLadderNames(this));
-    config.set("allowCustomKitOnMap", this.allowCustomKitOnMap);
+    data.setName(this.name);
+    data.setType(this.type.toString());
+    data.setEnabled(this.enabled);
+    data.setLadderTypes(ArenaUtil.getLadderTypeNames(this));
+    data.setLadders(ArenaUtil.getLadderNames(this));
+    data.setAllowCustomKitOnMap(this.allowCustomKitOnMap);
 
     if (this.getIcon() != null) {
-      config.set("icon", this.getIcon());
+      data.setIcon(this.getIcon());
     }
 
-    config.set("sideBuildLimit", this.getSideBuildLimit());
+    data.setSideBuildLimit(this.getSideBuildLimit());
 
-    super.setBasicData(config, "");
+    super.setBasicData(data);
 
-    arenaFile.saveFile();
+    arenaFile.save();
   }
 
   @Override
   public void getData() {
-    YamlConfiguration config = arenaFile.getConfig();
+    ArenaData data = arenaFile.getData();
 
-    if (config.isItemStack("icon")) {
-      this.setIcon(config.getItemStack("icon"));
+    if (data.getIcon() != null) {
+      this.setIcon(data.getIcon());
     }
 
-    if (config.isInt("sideBuildLimit")) {
-      this.setSideBuildLimit(config.getInt("sideBuildLimit"));
+    if (data.getSideBuildLimit() != null) {
+      this.setSideBuildLimit(data.getSideBuildLimit());
 
       if (this.getSideBuildLimit() < 0 || this.getSideBuildLimit() > 10) {
         this.setSideBuildLimit(0);
       }
     }
 
-    if (config.isBoolean("enabled")) {
-      this.setEnabled(config.getBoolean("enabled"));
+    if (data.getEnabled() != null) {
+      this.setEnabled(data.getEnabled());
     }
 
-    if (config.isList("ladderTypes")) {
-      for (String ladderTypeName : config.getStringList("ladderTypes")) {
+    if (data.getLadderTypes() != null) {
+      for (String ladderTypeName : data.getLadderTypes()) {
         assignedLadderTypes.add(LadderType.valueOf(ladderTypeName));
       }
     }
 
-    if (config.isList("ladders")) {
-      for (String ladderName : config.getStringList("ladders")) {
+    if (data.getLadders() != null) {
+      for (String ladderName : data.getLadders()) {
         NormalLadder ladder = LadderManager.getInstance().getLadder(ladderName);
 
         if (ladder != null
@@ -111,11 +128,11 @@ public class Arena extends DisplayArena {
       }
     }
 
-    if (config.isBoolean("allowCustomKitOnMap")) {
-      this.setAllowCustomKitOnMap(config.getBoolean("allowCustomKitOnMap"));
+    if (data.getAllowCustomKitOnMap() != null) {
+      this.setAllowCustomKitOnMap(data.getAllowCustomKitOnMap());
     }
 
-    super.getBasicData(config, "");
+    super.getBasicData(data);
 
     if (this.isEnabled() && !this.isReadyToEnable()) {
       this.setEnabled(false);
@@ -123,15 +140,16 @@ public class Arena extends DisplayArena {
   }
 
   private void loadCopies() {
-    if (!arenaFile.getConfig().isConfigurationSection("copies")) {
+    Map<String, ArenaLayoutData> copyData = arenaFile.getData().getCopies();
+    if (copyData == null) {
       return;
     }
 
-    for (String copyName :
-        Objects.requireNonNull(arenaFile.getConfig().getConfigurationSection("copies"))
-            .getKeys(false)) {
-      ArenaCopy arenaCopy = new ArenaCopy(copyName, this);
-      arenaCopy.getBasicData(arenaFile.getConfig(), "copies." + copyName + ".");
+    for (Map.Entry<String, ArenaLayoutData> entry : copyData.entrySet()) {
+      ArenaCopy arenaCopy = new ArenaCopy(entry.getKey(), this);
+      if (entry.getValue() != null) {
+        arenaCopy.getBasicData(entry.getValue());
+      }
       copies.add(arenaCopy);
     }
   }
@@ -173,7 +191,7 @@ public class Arena extends DisplayArena {
       deleteLastCopy(i == copies.size() - 1);
     }
 
-    arenaFile.saveFile();
+    arenaFile.save();
   }
 
   @Override
@@ -181,7 +199,7 @@ public class Arena extends DisplayArena {
     deleteCopies();
 
     ArenaManager.getInstance().getArenaCuboids().remove(cuboid);
-    return arenaFile.getFile().delete();
+    return arenaFile.delete();
   }
 
   public NormalArena getAvailableArena() {

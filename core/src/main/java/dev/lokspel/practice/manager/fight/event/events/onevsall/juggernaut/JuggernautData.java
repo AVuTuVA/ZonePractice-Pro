@@ -2,7 +2,9 @@ package dev.lokspel.practice.manager.fight.event.events.onevsall.juggernaut;
 
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
+import dev.lokspel.practice.manager.fight.event.interfaces.EventFileData;
 import dev.lokspel.practice.util.KitData;
+import dev.lokspel.practice.util.KitFileData;
 import java.io.IOException;
 import lombok.Getter;
 
@@ -17,22 +19,25 @@ public class JuggernautData extends EventData {
   }
 
   @Override
-  protected void setCustomData() {
-    if (juggernautKitData != null) {
-      juggernautKitData.saveData(this.config, "juggernaut-kit");
-    }
-
-    playerKitData.saveData(this.config, "player-kit");
+  protected EventFileData createFileData() {
+    return new JuggernautFileData();
   }
 
   @Override
-  protected void getCustomData() {
-    if (juggernautKitData != null) {
-      juggernautKitData.getData(this.config, "juggernaut-kit");
-    }
+  protected void setCustomData(EventFileData data) {
+    JuggernautFileData juggernautData = (JuggernautFileData) data;
+    juggernautData.setJuggernautKit(KitFileData.of(juggernautKitData));
+    juggernautData.setPlayerKit(KitFileData.of(playerKitData));
+  }
 
-    if (playerKitData != null) {
-      playerKitData.getData(this.config, "player-kit");
+  @Override
+  protected void getCustomData(EventFileData data) {
+    JuggernautFileData juggernautData = (JuggernautFileData) data;
+    if (juggernautData.getJuggernautKit() != null) {
+      juggernautData.getJuggernautKit().applyTo(juggernautKitData);
+    }
+    if (juggernautData.getPlayerKit() != null) {
+      juggernautData.getPlayerKit().applyTo(playerKitData);
     }
   }
 

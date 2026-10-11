@@ -2,11 +2,12 @@ package dev.lokspel.practice.manager.profile;
 
 import dev.lokspel.practice.AstralPractice;
 import dev.lokspel.practice.config.PracticeConfig;
-import dev.lokspel.practice.manager.backend.ConfigFile;
+import dev.lokspel.practice.data.DataFiles;
 import dev.lokspel.practice.manager.fight.match.util.CustomKit;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
+import dev.lokspel.practice.manager.ladder.abstraction.playercustom.CustomLadderData;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsData;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsPermissionManager;
 import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorSlot;
@@ -22,142 +23,191 @@ import dev.lokspel.practice.util.ItemSerializationUtil;
 import dev.lokspel.practice.util.NameFormatUtil;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
+import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 
-public class ProfileFile extends ConfigFile {
+/**
+ * The file of a profile, {@code profiles/<uuid>.yml}. The model is read once when the profile is
+ * created and kept: every save updates the parts this plugin manages and writes the whole model, so
+ * sections of ladders and tiers that no longer exist stay in the file as before.
+ *
+ * <p>The model is changed and written while holding the profile's lock, as saves run both on the
+ * main thread and asynchronously.
+ */
+public class ProfileFile {
+
+  private static final String FOLDER = "profiles/";
 
   private final Profile profile;
+  private final String fileName;
+  @Getter private final ProfileData profileData;
 
   public ProfileFile(Profile profile) {
-    super("/profiles/", profile.getUuid().toString().toLowerCase());
     this.profile = profile;
+    this.fileName = FOLDER + profile.getUuid().toString().toLowerCase() + ".yml";
+    this.profileData = DataFiles.readOrCreate(fileName, ProfileData.class, ProfileData::new);
 
     saveFile();
-    reloadFile();
   }
 
-  @Override
+  /** Writes the model to the file. */
+  public void saveFile() {
+    synchronized (profile) {
+      DataFiles.write(fileName, profileData);
+    }
+  }
+
+  /**
+   * Deletes the file.
+   *
+   * @return whether the file existed and was deleted
+   */
+  public boolean delete() {
+    try {
+      return Files.deleteIfExists(
+          AstralPractice.getInstance().getDataFolder().toPath().resolve(fileName));
+    } catch (IOException e) {
+      Common.sendConsoleMmMessage("<red>Couldn't delete " + fileName + ": " + e.getMessage());
+      return false;
+    }
+  }
+
+  /** Writes the profile's settings, display, cosmetics and custom kits, then the file. */
   public void setData() {
-    setJoinTimestamps();
-    setGroup();
-    setPrefix();
-    setSuffix();
-    setNameTemplate();
-    setCustomKitPerm();
-    setSettings();
-    saveCosmetics();
-    saveCustomKits();
-    saveFile();
+    synchronized (profile) {
+      setJoinTimestamps();
+      setGroup();
+      setPrefix();
+      setSuffix();
+      setNameTemplate();
+      setCustomKitPerm();
+      setSettings();
+      saveCosmetics();
+      saveCustomKits();
+      saveFile();
+    }
   }
 
   private void setJoinTimestamps() {
-    config.set("join.latest", profile.getLastJoin());
+    join().setLatest(profile.getLastJoin());
   }
 
   private void setGroup() {
-    if (profile.getGroup() != null) {
-      config.set("group", profile.getGroup().getName());
-    } else {
-      config.set("group", null);
-    }
+    profileData.setGroup(profile.getGroup() != null ? profile.getGroup().getName() : null);
   }
 
   private void setPrefix() {
-    if (profile.getPrefix() != null) {
-      config.set("prefix", AstralPractice.getMiniMessage().serialize(profile.getPrefix()));
-    } else {
-      config.set("prefix", null);
-    }
+    profileData.setPrefix(
+        profile.getPrefix() != null
+            ? AstralPractice.getMiniMessage().serialize(profile.getPrefix())
+            : null);
   }
 
   private void setSuffix() {
-    if (profile.getSuffix() != null) {
-      config.set("suffix", AstralPractice.getMiniMessage().serialize(profile.getSuffix()));
-    } else {
-      config.set("suffix", null);
-    }
+    profileData.setSuffix(
+        profile.getSuffix() != null
+            ? AstralPractice.getMiniMessage().serialize(profile.getSuffix())
+            : null);
   }
 
   private void setNameTemplate() {
     if (profile.getNameTemplate() != null && !profile.getNameTemplate().isEmpty()) {
-      config.set("name-template", profile.getNameTemplate());
+      profileData.setNameTemplate(profile.getNameTemplate());
     } else {
-      config.set("name-template", null);
+      profileData.setNameTemplate(null);
     }
   }
 
   private void setCustomKitPerm() {
     int customKitPerm = profile.getCustomKitPerm();
     if (customKitPerm > 0) {
-      config.set("allowed-custom-kits", customKitPerm);
+      profileData.setAllowedCustomKits(customKitPerm);
     }
   }
 
+  /** Writes the sidebar setting, then the file. */
   public void saveSidebarSetting() {
-    config.set("settings.sidebar", profile.isSidebar());
-    saveFile();
+    synchronized (profile) {
+      settings().setSidebar(profile.isSidebar());
+      saveFile();
+    }
   }
 
   private void setSettings() {
-    config.set("settings.duelrequest", profile.isDuelRequest());
-    config.set("settings.autoqueue", profile.isAutoQueue());
-    config.set("settings.sidebar", profile.isSidebar());
-    config.set("settings.hideplayers", profile.isHidePlayers());
-    config.set("settings.partyinvites", profile.isPartyInvites());
-    config.set("settings.allowspectate", profile.isAllowSpectate());
-    config.set("settings.flying", profile.isFlying());
-    config.set("settings.messages", profile.isPrivateMessages());
-    config.set("settings.worldtime", profile.getWorldTime().toString());
-    config.set("settings.prefix-visibility", profile.getPrefixVisibility().toString());
+    ProfileData.Settings settings = settings();
+    settings.setDuelRequest(profile.isDuelRequest());
+    settings.setAutoQueue(profile.isAutoQueue());
+    settings.setSidebar(profile.isSidebar());
+    settings.setHidePlayers(profile.isHidePlayers());
+    settings.setPartyInvites(profile.isPartyInvites());
+    settings.setAllowSpectate(profile.isAllowSpectate());
+    settings.setFlying(profile.isFlying());
+    settings.setPrivateMessages(profile.isPrivateMessages());
+    settings.setWorldTime(profile.getWorldTime().toString());
+    settings.setPrefixVisibility(profile.getPrefixVisibility().toString());
   }
 
   private void saveCosmetics() {
-    if (profile.getCosmeticsData() == null) {
+    CosmeticsData cosmeticsData = profile.getCosmeticsData();
+    if (cosmeticsData == null) {
       return;
     }
 
-    config.set("cosmetics.active-tier", profile.getCosmeticsData().getActiveTier().getId());
-    config.set("cosmetics.death-effect", profile.getCosmeticsData().getDeathEffect().getId());
-    config.set("cosmetics.lobby-item", profile.getCosmeticsData().getLobbyItemType().name());
-    config.set(
-        "cosmetics.shield.active-layout-index",
-        profile.getCosmeticsData().getActiveShieldLayoutIndex());
+    if (profileData.getCosmetics() == null) {
+      profileData.setCosmetics(new ProfileData.Cosmetics());
+    }
+    ProfileData.Cosmetics cosmetics = profileData.getCosmetics();
+    cosmetics.setActiveTier(cosmeticsData.getActiveTier().getId());
+    cosmetics.setDeathEffect(cosmeticsData.getDeathEffect().getId());
+    cosmetics.setLobbyItem(cosmeticsData.getLobbyItemType().name());
 
-    List<String> serializedShieldLayouts =
-        profile.getCosmeticsData().getShieldLayouts().stream()
-            .map(ShieldLayout::serialise)
-            .toList();
-    config.set("cosmetics.shield.layouts", serializedShieldLayouts);
+    if (cosmetics.getShield() == null) {
+      cosmetics.setShield(new ProfileData.Shield());
+    }
+    cosmetics.getShield().setActiveLayoutIndex(cosmeticsData.getActiveShieldLayoutIndex());
+    cosmetics
+        .getShield()
+        .setLayouts(
+            cosmeticsData.getShieldLayouts().stream().map(ShieldLayout::serialise).toList());
 
+    if (cosmetics.getTiers() == null) {
+      cosmetics.setTiers(new LinkedHashMap<>());
+    }
     for (ArmorTrimTier tier : ArmorTrimTier.values()) {
+      Map<String, ProfileData.Trim> slots =
+          cosmetics.getTiers().computeIfAbsent(tier.getId(), id -> new LinkedHashMap<>());
+
       for (ArmorSlot slot : ArmorSlot.values()) {
-        String basePath = "cosmetics.tiers." + tier.getId() + "." + slot.getId();
+        ProfileData.Trim trim = slots.computeIfAbsent(slot.getId(), id -> new ProfileData.Trim());
 
-        TrimPattern pattern = profile.getCosmeticsData().getPattern(tier, slot);
-        if (pattern != null) {
-          config.set(
-              basePath + ".pattern", "minecraft:" + CosmeticsPermissionManager.getTrimId(pattern));
-        } else {
-          config.set(basePath + ".pattern", null);
-        }
+        TrimPattern pattern = cosmeticsData.getPattern(tier, slot);
+        trim.setPattern(
+            pattern != null ? "minecraft:" + CosmeticsPermissionManager.getTrimId(pattern) : null);
 
-        TrimMaterial material = profile.getCosmeticsData().getMaterial(tier, slot);
-        if (material != null) {
-          config.set(
-              basePath + ".material",
-              "minecraft:" + CosmeticsPermissionManager.getTrimId(material));
-        } else {
-          config.set(basePath + ".material", null);
+        TrimMaterial material = cosmeticsData.getMaterial(tier, slot);
+        trim.setMaterial(
+            material != null
+                ? "minecraft:" + CosmeticsPermissionManager.getTrimId(material)
+                : null);
+
+        if (trim.getPattern() == null && trim.getMaterial() == null) {
+          slots.remove(slot.getId());
         }
+      }
+
+      if (slots.isEmpty()) {
+        cosmetics.getTiers().remove(tier.getId());
       }
     }
   }
@@ -166,9 +216,9 @@ public class ProfileFile extends ConfigFile {
     for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
       String name = ladder.getName().toLowerCase();
 
-      saveCustomKitSet(profile.getUnrankedCustomKits(), ladder, name, "unranked");
+      saveCustomKitSet(profile.getUnrankedCustomKits(), ladder, name, false);
       if (ladder.isRanked()) {
-        saveCustomKitSet(profile.getRankedCustomKits(), ladder, name, "ranked");
+        saveCustomKitSet(profile.getRankedCustomKits(), ladder, name, true);
       }
     }
   }
@@ -177,7 +227,7 @@ public class ProfileFile extends ConfigFile {
       Map<NormalLadder, Map<Integer, CustomKit>> kits,
       NormalLadder ladder,
       String name,
-      String type) {
+      boolean ranked) {
     if (kits.isEmpty()) {
       return;
     }
@@ -193,68 +243,67 @@ public class ProfileFile extends ConfigFile {
         continue;
       }
 
-      String base = "customkit." + name + ".kit" + i + "." + type;
-      config.set(
-          base + ".inventory",
-          ItemSerializationUtil.itemStackArrayToBase64(customKit.getInventory()));
-      config.set(
-          base + ".armor", ItemSerializationUtil.itemStackArrayToBase64(customKit.getArmor()));
-      config.set(
-          base + ".extra", ItemSerializationUtil.itemStackArrayToBase64(customKit.getExtra()));
+      if (profileData.getCustomKits() == null) {
+        profileData.setCustomKits(new LinkedHashMap<>());
+      }
+      ProfileData.CustomKit stored =
+          profileData
+              .getCustomKits()
+              .computeIfAbsent(name, ladderName -> new LinkedHashMap<>())
+              .computeIfAbsent("kit" + i, kit -> new ProfileData.CustomKit());
+
+      ProfileData.KitContents contents = ranked ? stored.getRanked() : stored.getUnranked();
+      if (contents == null) {
+        contents = new ProfileData.KitContents();
+      }
+      contents.setInventory(ItemSerializationUtil.itemStackArrayToBase64(customKit.getInventory()));
+      contents.setArmor(ItemSerializationUtil.itemStackArrayToBase64(customKit.getArmor()));
+      contents.setExtra(ItemSerializationUtil.itemStackArrayToBase64(customKit.getExtra()));
+
+      if (ranked) {
+        stored.setRanked(contents);
+      } else {
+        stored.setUnranked(contents);
+      }
     }
   }
 
+  /** Writes the data of a new profile: uuid, first join and the default settings, then the file. */
   public void setDefaultData() {
-    config.set("uuid", profile.getUuid().toString());
-    config.set("join.first", System.currentTimeMillis());
+    synchronized (profile) {
+      profileData.setUuid(profile.getUuid().toString());
+      join().setFirst(System.currentTimeMillis());
 
-    setCustomKitPerm();
+      setCustomKitPerm();
 
-    config.set(
-        "settings.duelrequest",
-        PracticeConfig.settings().getPlayer().getDefaultSettings().isDuelrequest());
-    config.set(
-        "settings.autoqueue",
-        PracticeConfig.settings().getPlayer().getDefaultSettings().isAutoqueue());
-    config.set(
-        "settings.sidebar", PracticeConfig.settings().getPlayer().getDefaultSettings().isSidebar());
-    config.set(
-        "settings.hideplayers",
-        PracticeConfig.settings().getPlayer().getDefaultSettings().isHideplayers());
-    config.set(
-        "settings.partyinvites",
-        PracticeConfig.settings().getPlayer().getDefaultSettings().isPartyinvites());
-    config.set(
-        "settings.allowspectate",
-        PracticeConfig.settings().getPlayer().getDefaultSettings().isAllowspectate());
-    config.set(
-        "settings.flying", PracticeConfig.settings().getPlayer().getDefaultSettings().isFlying());
-    config.set(
-        "settings.messages",
-        PracticeConfig.settings().getPlayer().getDefaultSettings().isPrivatemessage());
-    String defaultWorldTime =
-        PracticeConfig.settings().getPlayer().getDefaultSettings().getWorldTime();
-    try {
-      config.set(
-          "settings.worldtime",
-          ProfileWorldTime.valueOf(defaultWorldTime.toUpperCase(Locale.ROOT)).toString());
-    } catch (Exception ignored) {
-      config.set("settings.worldtime", ProfileWorldTime.DAY.toString());
+      var defaults = PracticeConfig.settings().getPlayer().getDefaultSettings();
+      ProfileData.Settings settings = settings();
+      settings.setDuelRequest(defaults.isDuelrequest());
+      settings.setAutoQueue(defaults.isAutoqueue());
+      settings.setSidebar(defaults.isSidebar());
+      settings.setHidePlayers(defaults.isHideplayers());
+      settings.setPartyInvites(defaults.isPartyinvites());
+      settings.setAllowSpectate(defaults.isAllowspectate());
+      settings.setFlying(defaults.isFlying());
+      settings.setPrivateMessages(defaults.isPrivatemessage());
+
+      try {
+        settings.setWorldTime(
+            ProfileWorldTime.valueOf(defaults.getWorldTime().toUpperCase(Locale.ROOT)).toString());
+      } catch (Exception ignored) {
+        settings.setWorldTime(ProfileWorldTime.DAY.toString());
+      }
+
+      try {
+        settings.setPrefixVisibility(
+            ProfilePrefixVisibility.valueOf(defaults.getPrefixVisibility().toUpperCase(Locale.ROOT))
+                .toString());
+      } catch (Exception ignored) {
+        settings.setPrefixVisibility(ProfilePrefixVisibility.PREFIX_AND_SUFFIX.toString());
+      }
+
+      saveFile();
     }
-
-    String defaultPrefixVisibility =
-        PracticeConfig.settings().getPlayer().getDefaultSettings().getPrefixVisibility();
-    try {
-      config.set(
-          "settings.prefix-visibility",
-          ProfilePrefixVisibility.valueOf(defaultPrefixVisibility.toUpperCase(Locale.ROOT))
-              .toString());
-    } catch (Exception ignored) {
-      config.set(
-          "settings.prefix-visibility", ProfilePrefixVisibility.PREFIX_AND_SUFFIX.toString());
-    }
-
-    saveFile();
   }
 
   /**
@@ -271,7 +320,7 @@ public class ProfileFile extends ConfigFile {
     loadSettings();
   }
 
-  @Override
+  /** Loads the profile's settings, display, cosmetics and custom kits from the model. */
   public void getData() {
     loadLightData();
     loadCosmetics();
@@ -279,21 +328,26 @@ public class ProfileFile extends ConfigFile {
   }
 
   private void loadJoinTimestamps() {
-    if (config.isLong("join.first")) {
-      profile.setFirstJoin(config.getLong("join.first"));
+    ProfileData.Join join = profileData.getJoin();
+    if (join == null) {
+      return;
     }
 
-    if (config.isLong("join.latest")) {
-      profile.setLastJoin(config.getLong("join.latest"));
+    if (join.getFirst() != null) {
+      profile.setFirstJoin(join.getFirst());
+    }
+
+    if (join.getLatest() != null) {
+      profile.setLastJoin(join.getLatest());
     }
   }
 
   private void loadGroup() {
-    if (!config.isSet("group")) {
+    if (profileData.getGroup() == null) {
       return;
     }
 
-    Group group = GroupManager.getInstance().getGroup(config.getString("group"));
+    Group group = GroupManager.getInstance().getGroup(profileData.getGroup());
     if (group != null) {
       try {
         profile.setGroup(group);
@@ -311,44 +365,43 @@ public class ProfileFile extends ConfigFile {
   }
 
   private void loadPrefix() {
-    if (config.isString("prefix")) {
-      profile.setPrefix(
-          NameFormatUtil.parseConfiguredComponent(
-              Objects.requireNonNull(config.getString("prefix"))));
+    if (profileData.getPrefix() != null) {
+      profile.setPrefix(NameFormatUtil.parseConfiguredComponent(profileData.getPrefix()));
     }
   }
 
   private void loadSuffix() {
-    if (config.isString("suffix")) {
-      profile.setSuffix(
-          NameFormatUtil.parseConfiguredComponent(
-              Objects.requireNonNull(config.getString("suffix"))));
+    if (profileData.getSuffix() != null) {
+      profile.setSuffix(NameFormatUtil.parseConfiguredComponent(profileData.getSuffix()));
     }
   }
 
   private void loadNameTemplate() {
-    if (config.isString("name-template")) {
-      profile.setNameTemplate(config.getString("name-template"));
+    if (profileData.getNameTemplate() != null) {
+      profile.setNameTemplate(profileData.getNameTemplate());
     }
   }
 
   private void loadCustomKitPerm() {
-    if (config.isInt("allowed-custom-kits")) {
-      profile.setAllowedCustomKits(config.getInt("allowed-custom-kits"));
+    if (profileData.getAllowedCustomKits() != null) {
+      profile.setAllowedCustomKits(profileData.getAllowedCustomKits());
     }
   }
 
   private void loadSettings() {
-    profile.setDuelRequest(config.getBoolean("settings.duelrequest"));
-    profile.setAutoQueue(config.getBoolean("settings.autoqueue"));
-    profile.setSidebar(config.getBoolean("settings.sidebar"));
-    profile.setHidePlayers(config.getBoolean("settings.hideplayers"));
-    profile.setPartyInvites(config.getBoolean("settings.partyinvites"));
-    profile.setAllowSpectate(config.getBoolean("settings.allowspectate"));
-    profile.setFlying(config.getBoolean("settings.flying"));
-    profile.setPrivateMessages(config.getBoolean("settings.messages"));
+    ProfileData.Settings settings =
+        profileData.getSettings() != null ? profileData.getSettings() : new ProfileData.Settings();
+    profile.setDuelRequest(isTrue(settings.getDuelRequest()));
+    profile.setAutoQueue(isTrue(settings.getAutoQueue()));
+    profile.setSidebar(isTrue(settings.getSidebar()));
+    profile.setHidePlayers(isTrue(settings.getHidePlayers()));
+    profile.setPartyInvites(isTrue(settings.getPartyInvites()));
+    profile.setAllowSpectate(isTrue(settings.getAllowSpectate()));
+    profile.setFlying(isTrue(settings.getFlying()));
+    profile.setPrivateMessages(isTrue(settings.getPrivateMessages()));
 
-    String rawWorldTime = config.getString("settings.worldtime", ProfileWorldTime.DAY.toString());
+    String rawWorldTime =
+        settings.getWorldTime() != null ? settings.getWorldTime() : ProfileWorldTime.DAY.toString();
     try {
       profile.setWorldTime(ProfileWorldTime.valueOf(rawWorldTime.toUpperCase(Locale.ROOT)));
     } catch (IllegalArgumentException ignored) {
@@ -356,8 +409,9 @@ public class ProfileFile extends ConfigFile {
     }
 
     String rawPrefixVisibility =
-        config.getString(
-            "settings.prefix-visibility", ProfilePrefixVisibility.PREFIX_AND_SUFFIX.toString());
+        settings.getPrefixVisibility() != null
+            ? settings.getPrefixVisibility()
+            : ProfilePrefixVisibility.PREFIX_AND_SUFFIX.toString();
     try {
       profile.setPrefixVisibility(
           ProfilePrefixVisibility.valueOf(rawPrefixVisibility.toUpperCase(Locale.ROOT)));
@@ -366,75 +420,89 @@ public class ProfileFile extends ConfigFile {
     }
   }
 
+  private static boolean isTrue(Boolean value) {
+    return value != null && value;
+  }
+
   private void loadCosmetics() {
+    ProfileData.Cosmetics cosmetics =
+        profileData.getCosmetics() != null
+            ? profileData.getCosmetics()
+            : new ProfileData.Cosmetics();
+    ProfileData.Shield shield =
+        cosmetics.getShield() != null ? cosmetics.getShield() : new ProfileData.Shield();
+    CosmeticsData cosmeticsData = profile.getCosmeticsData();
+
     try {
-      ArmorTrimTier activeTier =
-          ArmorTrimTier.fromId(config.getString("cosmetics.active-tier", "leather"));
-      profile.getCosmeticsData().setActiveTier(activeTier);
-      profile
-          .getCosmeticsData()
-          .setDeathEffect(DeathEffect.fromId(config.getString("cosmetics.death-effect", "none")));
-      profile
-          .getCosmeticsData()
-          .setLobbyItemType(
-              CosmeticsData.LobbyItemType.valueOf(
-                  config
-                      .getString("cosmetics.lobby-item", CosmeticsData.LobbyItemType.NONE.name())
-                      .toUpperCase(Locale.ROOT)));
+      cosmeticsData.setActiveTier(
+          ArmorTrimTier.fromId(orDefault(cosmetics.getActiveTier(), "leather")));
+      cosmeticsData.setDeathEffect(
+          DeathEffect.fromId(orDefault(cosmetics.getDeathEffect(), "none")));
+      cosmeticsData.setLobbyItemType(
+          CosmeticsData.LobbyItemType.valueOf(
+              orDefault(cosmetics.getLobbyItem(), CosmeticsData.LobbyItemType.NONE.name())
+                  .toUpperCase(Locale.ROOT)));
 
       List<ShieldLayout> shieldLayouts = new ArrayList<>();
-      for (String serializedLayout : config.getStringList("cosmetics.shield.layouts")) {
-        ShieldLayout layout = ShieldLayout.deserialise(serializedLayout);
-        if (layout != null) {
-          shieldLayouts.add(layout);
+      if (shield.getLayouts() != null) {
+        for (String serializedLayout : shield.getLayouts()) {
+          ShieldLayout layout = ShieldLayout.deserialise(serializedLayout);
+          if (layout != null) {
+            shieldLayouts.add(layout);
+          }
         }
       }
-      profile.getCosmeticsData().setShieldLayouts(shieldLayouts);
+      cosmeticsData.setShieldLayouts(shieldLayouts);
 
-      int activeShieldLayoutIndex = config.getInt("cosmetics.shield.active-layout-index", -1);
+      int activeShieldLayoutIndex =
+          shield.getActiveLayoutIndex() != null ? shield.getActiveLayoutIndex() : -1;
       if (activeShieldLayoutIndex < -1 || activeShieldLayoutIndex >= shieldLayouts.size()) {
         activeShieldLayoutIndex = -1;
       }
-      profile.getCosmeticsData().setActiveShieldLayoutIndex(activeShieldLayoutIndex);
+      cosmeticsData.setActiveShieldLayoutIndex(activeShieldLayoutIndex);
 
       boolean loadedTierData = false;
       for (ArmorTrimTier tier : ArmorTrimTier.values()) {
-        for (ArmorSlot slot : ArmorSlot.values()) {
-          String basePath = "cosmetics.tiers." + tier.getId() + "." + slot.getId();
+        Map<String, ProfileData.Trim> slots =
+            cosmetics.getTiers() != null ? cosmetics.getTiers().get(tier.getId()) : null;
+        if (slots == null) {
+          continue;
+        }
 
-          if (config.isString(basePath + ".pattern")) {
-            TrimPattern pattern = getTrimPatternByName(config.getString(basePath + ".pattern"));
-            if (pattern != null) {
-              profile.getCosmeticsData().setPattern(tier, slot, pattern);
-              loadedTierData = true;
-            }
+        for (ArmorSlot slot : ArmorSlot.values()) {
+          ProfileData.Trim trim = slots.get(slot.getId());
+          if (trim == null) {
+            continue;
           }
 
-          if (config.isString(basePath + ".material")) {
-            TrimMaterial material = getTrimMaterialByName(config.getString(basePath + ".material"));
-            if (material != null) {
-              profile.getCosmeticsData().setMaterial(tier, slot, material);
-              loadedTierData = true;
-            }
+          TrimPattern pattern = getTrimPatternByName(trim.getPattern());
+          if (pattern != null) {
+            cosmeticsData.setPattern(tier, slot, pattern);
+            loadedTierData = true;
+          }
+
+          TrimMaterial material = getTrimMaterialByName(trim.getMaterial());
+          if (material != null) {
+            cosmeticsData.setMaterial(tier, slot, material);
+            loadedTierData = true;
           }
         }
       }
 
       if (!loadedTierData) {
         for (ArmorSlot slot : ArmorSlot.values()) {
-          String legacyPath = "cosmetics." + slot.getId();
-          if (config.isString(legacyPath + ".pattern")) {
-            TrimPattern pattern = getTrimPatternByName(config.getString(legacyPath + ".pattern"));
-            if (pattern != null) {
-              profile.getCosmeticsData().setPattern(ArmorTrimTier.LEATHER, slot, pattern);
-            }
+          ProfileData.Trim legacy = cosmetics.legacyTrim(slot);
+          if (legacy == null) {
+            continue;
           }
-          if (config.isString(legacyPath + ".material")) {
-            TrimMaterial material =
-                getTrimMaterialByName(config.getString(legacyPath + ".material"));
-            if (material != null) {
-              profile.getCosmeticsData().setMaterial(ArmorTrimTier.LEATHER, slot, material);
-            }
+
+          TrimPattern pattern = getTrimPatternByName(legacy.getPattern());
+          if (pattern != null) {
+            cosmeticsData.setPattern(ArmorTrimTier.LEATHER, slot, pattern);
+          }
+          TrimMaterial material = getTrimMaterialByName(legacy.getMaterial());
+          if (material != null) {
+            cosmeticsData.setMaterial(ArmorTrimTier.LEATHER, slot, material);
           }
         }
       }
@@ -444,34 +512,45 @@ public class ProfileFile extends ConfigFile {
     }
   }
 
+  private static String orDefault(String value, String fallback) {
+    return value != null ? value : fallback;
+  }
+
   private void loadCustomKits() {
     for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
       String name = ladder.getName().toLowerCase();
 
-      profile.getUnrankedCustomKits().put(ladder, loadCustomKitSet(name, "unranked"));
+      profile.getUnrankedCustomKits().put(ladder, loadCustomKitSet(name, false));
       if (ladder.isRanked()) {
-        profile.getRankedCustomKits().put(ladder, loadCustomKitSet(name, "ranked"));
+        profile.getRankedCustomKits().put(ladder, loadCustomKitSet(name, true));
       }
     }
   }
 
-  private Map<Integer, CustomKit> loadCustomKitSet(String name, String type) {
+  private Map<Integer, CustomKit> loadCustomKitSet(String name, boolean ranked) {
     Map<Integer, CustomKit> result = new HashMap<>();
 
+    Map<String, ProfileData.CustomKit> ladderKits =
+        profileData.getCustomKits() != null ? profileData.getCustomKits().get(name) : null;
+    if (ladderKits == null) {
+      return result;
+    }
+
     for (int i = 1; i <= 4; i++) {
-      String base = "customkit." + name + ".kit" + i + "." + type;
-      if (!config.isString(base + ".inventory")) {
+      ProfileData.CustomKit stored = ladderKits.get("kit" + i);
+      ProfileData.KitContents contents =
+          stored == null ? null : ranked ? stored.getRanked() : stored.getUnranked();
+      if (contents == null || contents.getInventory() == null) {
         continue;
       }
 
       ItemStack[] inventory =
-          ItemSerializationUtil.itemStackArrayFromBase64(config.getString(base + ".inventory"));
+          ItemSerializationUtil.itemStackArrayFromBase64(contents.getInventory());
       ItemStack[] armor =
-          config.isString(base + ".armor")
-              ? ItemSerializationUtil.itemStackArrayFromBase64(config.getString(base + ".armor"))
+          contents.getArmor() != null
+              ? ItemSerializationUtil.itemStackArrayFromBase64(contents.getArmor())
               : null;
-      ItemStack[] extra =
-          ItemSerializationUtil.itemStackArrayFromBase64(config.getString(base + ".extra"));
+      ItemStack[] extra = ItemSerializationUtil.itemStackArrayFromBase64(contents.getExtra());
 
       result.put(i, new CustomKit(null, inventory, armor, extra));
     }
@@ -479,14 +558,78 @@ public class ProfileFile extends ConfigFile {
     return result;
   }
 
+  /**
+   * Removes one custom kit of a ladder, then writes the file.
+   *
+   * @param ladder the ladder
+   * @param kit the kit number, 1 to 4
+   */
   public void deleteCustomKit(Ladder ladder, int kit) {
-    config.set("customkit." + ladder.getName().toLowerCase() + ".kit" + kit, null);
-    saveFile();
+    synchronized (profile) {
+      Map<String, ProfileData.CustomKit> ladderKits =
+          profileData.getCustomKits() != null
+              ? profileData.getCustomKits().get(ladder.getName().toLowerCase())
+              : null;
+      if (ladderKits != null) {
+        ladderKits.remove("kit" + kit);
+      }
+      saveFile();
+    }
   }
 
+  /**
+   * Removes all custom kits of a ladder, then writes the file.
+   *
+   * @param ladder the ladder
+   */
   public void deleteCustomKit(Ladder ladder) {
-    config.set("customkit." + ladder.getName().toLowerCase(), null);
-    saveFile();
+    synchronized (profile) {
+      if (profileData.getCustomKits() != null) {
+        profileData.getCustomKits().remove(ladder.getName().toLowerCase());
+      }
+      saveFile();
+    }
+  }
+
+  /**
+   * Returns a player custom ladder as stored under {@code player-custom-kit}.
+   *
+   * @param key the ladder's key, e.g. {@code "0"}
+   * @return the stored ladder, or {@code null} if there is none
+   */
+  public CustomLadderData getCustomLadderData(String key) {
+    ProfileData.PlayerCustomKits section = profileData.getPlayerCustomKits();
+    return section != null ? section.getLadders().get(key) : null;
+  }
+
+  /**
+   * Returns a player custom ladder as stored under {@code player-custom-kit}, adding it if missing.
+   *
+   * @param key the ladder's key, e.g. {@code "0"}
+   * @return the stored ladder, to be updated in place
+   */
+  public CustomLadderData getOrCreateCustomLadderData(String key) {
+    if (profileData.getPlayerCustomKits() == null) {
+      profileData.setPlayerCustomKits(new ProfileData.PlayerCustomKits());
+    }
+    return profileData
+        .getPlayerCustomKits()
+        .getLadders()
+        .computeIfAbsent(key, ignored -> new CustomLadderData());
+  }
+
+  private ProfileData.Join join() {
+    if (profileData.getJoin() == null) {
+      profileData.setJoin(new ProfileData.Join());
+    }
+    return profileData.getJoin();
+  }
+
+  private ProfileData.Settings settings() {
+    if (profileData.getSettings() == null) {
+      profileData.setSettings(new ProfileData.Settings());
+    }
+    return profileData.getSettings();
   }
 
   private TrimPattern getTrimPatternByName(String name) {

@@ -10,6 +10,7 @@ dependencies {
     implementation(projects.core)
 
     anvilImplementation(libs.junit.jupiter)
+    anvilImplementation(libs.snakeyaml)
     anvilRuntimeOnly(libs.junit.platform.launcher)
     anvilRuntimeOnly(libs.anvil.protocol.mcprotocol)
 }
