@@ -82,7 +82,7 @@ public final class EloArg {
           return;
         }
 
-        target.getStats().getLadderStat(ladder).setElo(defaultElo);
+        target.getStats().setElo(ladder, defaultElo);
         Common.sendMmMessage(
             player,
             PracticeConfig.language()
@@ -97,7 +97,7 @@ public final class EloArg {
       } else {
         for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
           if (ladder.isRanked()) {
-            target.getStats().getLadderStat(ladder).setElo(defaultElo);
+            target.getStats().setElo(ladder, defaultElo);
           }
         }
 
@@ -196,7 +196,7 @@ public final class EloArg {
           return;
         }
 
-        target.getStats().getLadderStat(ladder).setElo(newElo);
+        target.getStats().setElo(ladder, newElo);
         Common.sendMmMessage(
             player,
             PracticeConfig.language()
@@ -211,7 +211,7 @@ public final class EloArg {
       } else {
         for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
           if (ladder.isRanked()) {
-            target.getStats().getLadderStat(ladder).setElo(newElo);
+            target.getStats().setElo(ladder, newElo);
           }
         }
 
@@ -274,7 +274,7 @@ public final class EloArg {
           return;
         }
 
-        target.getStats().getLadderStat(ladder).setElo(defaultElo);
+        target.getStats().setElo(ladder, defaultElo);
         Common.sendConsoleMmMessage(
             PracticeConfig.language()
                 .getCommand()
@@ -288,7 +288,7 @@ public final class EloArg {
       } else {
         for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
           if (ladder.isRanked()) {
-            target.getStats().getLadderStat(ladder).setElo(defaultElo);
+            target.getStats().setElo(ladder, defaultElo);
           }
         }
 
@@ -362,7 +362,7 @@ public final class EloArg {
           return;
         }
 
-        target.getStats().getLadderStat(ladder).setElo(newElo);
+        target.getStats().setElo(ladder, newElo);
         Common.sendConsoleMmMessage(
             PracticeConfig.language()
                 .getCommand()
@@ -376,7 +376,7 @@ public final class EloArg {
       } else {
         for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
           if (ladder.isRanked()) {
-            target.getStats().getLadderStat(ladder).setElo(newElo);
+            target.getStats().setElo(ladder, newElo);
           }
         }
 

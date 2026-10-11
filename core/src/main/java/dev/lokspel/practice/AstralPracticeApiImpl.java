@@ -3,21 +3,37 @@ package dev.lokspel.practice;
 import dev.lokspel.api.AstralPracticeApi;
 import dev.lokspel.api.enums.DivisionName;
 import dev.lokspel.api.enums.WeightClass;
+import dev.lokspel.api.interfaces.Event;
+import dev.lokspel.api.interfaces.Ffa;
+import dev.lokspel.api.interfaces.Match;
+import dev.lokspel.api.interfaces.Party;
+import dev.lokspel.api.interfaces.Queue;
 import dev.lokspel.api.utilities.PlayerNametag;
-import dev.lokspel.practice.manager.fight.match.Match;
+import dev.lokspel.practice.manager.fight.event.EventManager;
+import dev.lokspel.practice.manager.fight.ffa.FfaManager;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.inventory.InventoryUtil;
 import dev.lokspel.practice.manager.ladder.LadderManager;
+import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
+import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.group.Group;
+import dev.lokspel.practice.manager.queue.QueueManager;
+import java.util.List;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.ServicePriority;
 
 public class AstralPracticeApiImpl extends AstralPracticeApi {
 
   public static void setup() {
-    AstralPracticeApi.instance = new AstralPracticeApiImpl();
+    AstralPracticeApiImpl impl = new AstralPracticeApiImpl();
+    AstralPracticeApi.instance = impl;
+    Bukkit.getServicesManager()
+        .register(
+            AstralPracticeApi.class, impl, AstralPractice.getInstance(), ServicePriority.Normal);
   }
 
   @Override
@@ -108,7 +124,7 @@ public class AstralPracticeApiImpl extends AstralPracticeApi {
 
   @Override
   public void endMatch(Player player, String s) {
-    Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
+    var match = MatchManager.getInstance().getLiveMatchByPlayer(player);
     if (match == null) {
       return;
     }
@@ -216,5 +232,70 @@ public class AstralPracticeApiImpl extends AstralPracticeApi {
     }
 
     return InventoryUtil.getLobbyNametag(profile);
+  }
+
+  @Override
+  public Match getMatch(Player player) {
+    return MatchManager.getInstance().getLiveMatchByPlayer(player);
+  }
+
+  @Override
+  public Match getSpectatingMatch(Player player) {
+    return MatchManager.getInstance().getLiveMatchBySpectator(player);
+  }
+
+  @Override
+  public Ffa getFfa(Player player) {
+    return FfaManager.getInstance().getFfaByPlayer(player);
+  }
+
+  @Override
+  public Event getEvent(Player player) {
+    return EventManager.getInstance().getEventByPlayer(player);
+  }
+
+  @Override
+  public Party getParty(Player player) {
+    return PartyManager.getInstance().getParty(player);
+  }
+
+  @Override
+  public Queue getQueue(Player player) {
+    return QueueManager.getInstance().getQueue(player);
+  }
+
+  @Override
+  public List<String> getLadderNames() {
+    return LadderManager.getInstance().getLadders().stream().map(Ladder::getName).toList();
+  }
+
+  @Override
+  public int getLadderKills(Player player, String ladderName) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return -1;
+    }
+
+    NormalLadder ladder = LadderManager.getInstance().getLadder(ladderName);
+    if (ladder == null) {
+      return -1;
+    }
+
+    return profile.getStats().getLadderStat(ladder).getKills();
+  }
+
+  @Override
+  public int getLadderDeaths(Player player, String ladderName) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return -1;
+    }
+
+    NormalLadder ladder = LadderManager.getInstance().getLadder(ladderName);
+    if (ladder == null) {
+      return -1;
+    }
+
+    return profile.getStats().getLadderStat(ladder).getDeaths();
   }
 }

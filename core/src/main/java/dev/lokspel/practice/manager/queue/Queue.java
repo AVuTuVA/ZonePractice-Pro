@@ -366,4 +366,9 @@ public class Queue extends Runnable implements dev.lokspel.api.interfaces.Queue 
   public String getFormattedDuration() {
     return TimeUtil.formatDuration(seconds * 1000L);
   }
+
+  @Override
+  public String getLadderName() {
+    return this.ladder != null ? this.ladder.getName() : null;
+  }
 }

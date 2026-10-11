@@ -3,6 +3,7 @@ package dev.lokspel.practice;
 import com.github.retrooper.packetevents.PacketEvents;
 import dev.faststats.ErrorTracker;
 import dev.faststats.bukkit.BukkitContext;
+import dev.lokspel.api.event.AstralPracticeReadyEvent;
 import dev.lokspel.practice.command.arena.ArenaCommand;
 import dev.lokspel.practice.command.event.EventCommand;
 import dev.lokspel.practice.command.ffa.FfaCommand;
@@ -264,6 +265,8 @@ public final class AstralPractice extends JavaPlugin {
 
                                   // Mark plugin as fully loaded
                                   fullyLoaded = true;
+                                  Bukkit.getPluginManager()
+                                      .callEvent(new AstralPracticeReadyEvent());
 
                                   // Check for updates asynchronously and log to console
                                   UpdateChecker.checkAsync(AstralPractice.this);

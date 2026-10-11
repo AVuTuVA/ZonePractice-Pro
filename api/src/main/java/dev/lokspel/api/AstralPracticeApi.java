@@ -2,7 +2,13 @@ package dev.lokspel.api;
 
 import dev.lokspel.api.enums.DivisionName;
 import dev.lokspel.api.enums.WeightClass;
+import dev.lokspel.api.interfaces.Event;
+import dev.lokspel.api.interfaces.Ffa;
+import dev.lokspel.api.interfaces.Match;
+import dev.lokspel.api.interfaces.Party;
+import dev.lokspel.api.interfaces.Queue;
 import dev.lokspel.api.utilities.PlayerNametag;
+import java.util.List;
 import org.bukkit.entity.Player;
 
 public abstract class AstralPracticeApi {
@@ -11,6 +17,10 @@ public abstract class AstralPracticeApi {
 
   public static AstralPracticeApi getInstance() {
     return instance;
+  }
+
+  public static boolean isAvailable() {
+    return instance != null;
   }
 
   /**
@@ -129,4 +139,77 @@ public abstract class AstralPracticeApi {
    *     color, and suffix components.
    */
   public abstract PlayerNametag getPlayerNametag(Player player);
+
+  /**
+   * Get the match the player is participating in.
+   *
+   * @param player The player
+   * @return The match, or null if none
+   */
+  public abstract Match getMatch(Player player);
+
+  /**
+   * Get the match the player is spectating.
+   *
+   * @param player The player
+   * @return The spectated match, or null if none
+   */
+  public abstract Match getSpectatingMatch(Player player);
+
+  /**
+   * Get the FFA game the player is participating in.
+   *
+   * @param player The player
+   * @return The FFA instance, or null if none
+   */
+  public abstract Ffa getFfa(Player player);
+
+  /**
+   * Get the event the player is participating in.
+   *
+   * @param player The player
+   * @return The event instance, or null if none
+   */
+  public abstract Event getEvent(Player player);
+
+  /**
+   * Get the party the player belongs to.
+   *
+   * @param player The player
+   * @return The party, or null if none
+   */
+  public abstract Party getParty(Player player);
+
+  /**
+   * Get the queue the player is waiting in.
+   *
+   * @param player The player
+   * @return The queue, or null if none
+   */
+  public abstract Queue getQueue(Player player);
+
+  /**
+   * Get the names of all available ladders.
+   *
+   * @return List of ladder names
+   */
+  public abstract List<String> getLadderNames();
+
+  /**
+   * Get the player's kill count for a specific ladder.
+   *
+   * @param player The player
+   * @param ladderName The ladder name
+   * @return The kills count, or -1 if unavailable
+   */
+  public abstract int getLadderKills(Player player, String ladderName);
+
+  /**
+   * Get the player's death count for a specific ladder.
+   *
+   * @param player The player
+   * @param ladderName The ladder name
+   * @return The death count, or -1 if unavailable
+   */
+  public abstract int getLadderDeaths(Player player, String ladderName);
 }

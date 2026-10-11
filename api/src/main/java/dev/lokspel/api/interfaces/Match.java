@@ -39,4 +39,39 @@ public interface Match extends Spectatable {
    * @return The ladder display name of the match, or null if not set
    */
   String getLadderDisplayName();
+
+  /**
+   * Get the unique match identifier.
+   *
+   * @return The match ID
+   */
+  String getMatchId();
+
+  /**
+   * Get the name of the arena.
+   *
+   * @return The arena name
+   */
+  String getArenaName();
+
+  /**
+   * Check if the match is ranked.
+   *
+   * @return True if ranked
+   */
+  boolean isRanked();
+
+  /**
+   * Get the duration of the match in seconds.
+   *
+   * @return Duration in seconds
+   */
+  int getDurationSeconds();
+
+  /**
+   * Get the current round number of the match.
+   *
+   * @return Current round number
+   */
+  int getCurrentRoundNumber();
 }

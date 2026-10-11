@@ -1,5 +1,7 @@
 package dev.lokspel.practice.manager.profile.statistics;
 
+import dev.lokspel.api.event.EloChangeEvent;
+import dev.lokspel.api.interfaces.Match;
 import dev.lokspel.practice.manager.division.Division;
 import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.ladder.LadderManager;
@@ -13,6 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class ProfileStat {
 
@@ -67,6 +71,43 @@ public class ProfileStat {
 
     if (this.loseStreak > this.bestLoseStreak) {
       this.bestLoseStreak = this.loseStreak;
+    }
+  }
+
+  public void setElo(NormalLadder ladder, int newElo) {
+    LadderStats ladderStat = getLadderStat(ladder);
+    int oldElo = ladderStat.getElo();
+    if (oldElo == newElo) {
+      return;
+    }
+
+    ladderStat.setElo(newElo);
+    callEloChangeEvent(ladder.getName(), oldElo, newElo, null);
+  }
+
+  public void changeElo(NormalLadder ladder, int delta, Match match) {
+    LadderStats ladderStat = getLadderStat(ladder);
+    int oldElo = ladderStat.getElo();
+
+    if (delta > 0) {
+      ladderStat.increaseElo(delta);
+    } else if (delta < 0) {
+      ladderStat.decreaseElo(-delta);
+    }
+
+    int newElo = ladderStat.getElo();
+    if (oldElo == newElo) {
+      return;
+    }
+
+    callEloChangeEvent(ladder.getName(), oldElo, newElo, match);
+  }
+
+  private void callEloChangeEvent(String ladderName, int oldElo, int newElo, Match match) {
+    Player online = profile.getPlayer() != null ? profile.getPlayer().getPlayer() : null;
+    if (online != null) {
+      Bukkit.getPluginManager()
+          .callEvent(new EloChangeEvent(online, ladderName, oldElo, newElo, match));
     }
   }
 
