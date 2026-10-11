@@ -4,19 +4,18 @@ import org.bukkit.Bukkit;
 
 public final class SoftDependUtil {
 
-    private SoftDependUtil() {}
+  private SoftDependUtil() {}
 
-    public static boolean isPAPI_ENABLED = false;
-    public static boolean isFAWE_ENABLED = false;
+  public static boolean isPAPI_ENABLED = false;
+  public static boolean isFAWE_ENABLED = false;
 
-    static {
-        if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {
-            isFAWE_ENABLED = true;
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            isPAPI_ENABLED = true;
-        }
+  static {
+    if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {
+      isFAWE_ENABLED = true;
     }
 
+    if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+      isPAPI_ENABLED = true;
+    }
+  }
 }

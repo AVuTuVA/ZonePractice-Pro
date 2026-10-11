@@ -8,13 +8,12 @@ import org.bukkit.event.Event;
 
 public class Basic extends NormalLadder implements LadderHandle {
 
-    public Basic(String name, LadderType type) {
-        super(name, type);
-    }
+  public Basic(String name, LadderType type) {
+    super(name, type);
+  }
 
-    @Override
-    public boolean handleEvents(Event e, Match match) {
-        return false;
-    }
-
+  @Override
+  public boolean handleEvents(Event e, Match match) {
+    return false;
+  }
 }

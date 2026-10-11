@@ -5,21 +5,20 @@ import dev.lokspel.practice.util.interfaces.Runnable;
 
 public class StartRunnable extends Runnable {
 
-    private final Event event;
+  private final Event event;
 
-    public StartRunnable(final Event event) {
-        super(20, 20, false);
-        this.event = event;
-        this.seconds = this.event.getEventData().getStartTime();
-    }
+  public StartRunnable(final Event event) {
+    super(20, 20, false);
+    this.event = event;
+    this.seconds = this.event.getEventData().getStartTime();
+  }
 
-    @Override
-    public void run() {
-        this.event.handleStartRunnable(this);
-    }
+  @Override
+  public void run() {
+    this.event.handleStartRunnable(this);
+  }
 
-    public void decreaseTime() {
-        this.seconds--;
-    }
-
+  public void decreaseTime() {
+    this.seconds--;
+  }
 }

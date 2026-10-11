@@ -1,11 +1,11 @@
 package dev.lokspel.practice.manager.gui.guis.ladder;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GUIFile;
+import dev.lokspel.practice.manager.backend.GuiFile;
 import dev.lokspel.practice.manager.backend.LanguageManager;
-import dev.lokspel.practice.manager.gui.GUI;
-import dev.lokspel.practice.manager.gui.GUIManager;
-import dev.lokspel.practice.manager.gui.GUIType;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
@@ -15,6 +15,9 @@ import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.InventoryUtil;
 import dev.lokspel.practice.util.ItemCreateUtil;
 import dev.lokspel.practice.util.StringUtil;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,95 +26,119 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+public class LadderCreateGui extends Gui {
 
-public class LadderCreateGui extends GUI {
+  private static final int[] CONTENT_SLOTS = {
+    10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25
+  };
 
-    private static final int[] CONTENT_SLOTS = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25};
+  private final String ladderName;
+  @Getter private final Map<Integer, LadderType> typeSlots = new HashMap<>();
 
-    private final String ladderName;
-    @Getter
-    private final Map<Integer, LadderType> typeSlots = new HashMap<>();
+  public LadderCreateGui(String ladderName) {
+    super(GuiType.Ladder_Create);
+    this.ladderName = ladderName;
+    this.gui.put(
+        1,
+        InventoryUtil.createInventory(
+            GuiFile.getString("GUIS.LADDER-CREATE.TITLE").replace("%ladder%", ladderName), 4));
 
-    public LadderCreateGui(String ladderName) {
-        super(GUIType.Ladder_Create);
-        this.ladderName = ladderName;
-        this.gui.put(1, InventoryUtil.createInventory(GUIFile.getString("GUIS.LADDER-CREATE.TITLE").replace("%ladder%", ladderName), 4));
+    build();
+  }
 
-        build();
+  @Override
+  public void build() {
+    this.update();
+  }
+
+  @Override
+  public void update() {
+    Inventory inventory = gui.get(1);
+    this.typeSlots.clear();
+
+    for (int i :
+        new int[] {
+          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 19, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
+        }) {
+      inventory.setItem(i, GuiManager.getFILLER_ITEM());
     }
 
-    @Override
-    public void build() {
-        this.update();
+    for (int slot : CONTENT_SLOTS) {
+      inventory.setItem(slot, null);
     }
 
-    @Override
-    public void update() {
-        Inventory inventory = gui.get(1);
-        this.typeSlots.clear();
+    int index = 0;
+    for (LadderType type : LadderType.values()) {
+      if (index >= CONTENT_SLOTS.length) {
+        Common.sendConsoleMmMessage(
+            "<yellow>Warning: LadderCreateGui has no free slot for ladder type <white>"
+                + type.name());
+        break;
+      }
 
-        for (int i : new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 19, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35})
-            inventory.setItem(i, GUIManager.getFILLER_ITEM());
+      ItemStack item = ItemCreateUtil.createItem("<yellow>" + type.getName(), type.getIcon());
+      ItemMeta itemMeta = item.getItemMeta();
+      itemMeta.lore(
+          StringUtil.cc(type.getDescription()).stream().map(Common::legacyToComponent).toList());
+      item.setItemMeta(itemMeta);
 
-        for (int slot : CONTENT_SLOTS)
-            inventory.setItem(slot, null);
+      int slot = CONTENT_SLOTS[index++];
+      typeSlots.put(slot, type);
 
-        int index = 0;
-        for (LadderType type : LadderType.values()) {
-            if (index >= CONTENT_SLOTS.length) {
-                Common.sendConsoleMMMessage("<yellow>Warning: LadderCreateGui has no free slot for ladder type <white>" + type.name());
-                break;
-            }
-
-            ItemStack item = ItemCreateUtil.createItem("<yellow>" + type.getName(), type.getIcon());
-            ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.lore(StringUtil.CC(type.getDescription()).stream().map(Common::legacyToComponent).toList());
-            item.setItemMeta(itemMeta);
-
-            int slot = CONTENT_SLOTS[index++];
-            typeSlots.put(slot, type);
-
-            inventory.setItem(slot, item);
-        }
-
-        updatePlayers();
+      inventory.setItem(slot, item);
     }
 
-    @Override
-    public void handleClickEvent(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
-        int slot = e.getRawSlot();
+    updatePlayers();
+  }
 
-        e.setCancelled(true);
+  @Override
+  public void handleClickEvent(InventoryClickEvent e) {
+    Player player = (Player) e.getWhoClicked();
+    int slot = e.getRawSlot();
 
-        if (!typeSlots.containsKey(slot)) return;
+    e.setCancelled(true);
 
-        createLadder(player, typeSlots.get(slot));
+    if (!typeSlots.containsKey(slot)) {
+      return;
     }
 
-    private void createLadder(Player player, LadderType type) {
-        try {
-            NormalLadder ladder = (NormalLadder) type.getClassInstance().getConstructor(String.class, LadderType.class).newInstance(ladderName, type);
+    createLadder(player, typeSlots.get(slot));
+  }
 
-            ladder.setData();
+  private void createLadder(Player player, LadderType type) {
+    try {
+      NormalLadder ladder =
+          (NormalLadder)
+              type.getClassInstance()
+                  .getConstructor(String.class, LadderType.class)
+                  .newInstance(ladderName, type);
 
-            LadderManager.getInstance().getLadders().add(ladder);
-            LadderManager.getInstance().getLadders().sort(Comparator.comparing(Ladder::getName));
+      ladder.setData();
 
-            LadderSetupManager.getInstance().buildLadderSetupGUIs(ladder);
-            GUIManager.getInstance().searchGUI(GUIType.Ladder_Summary).update();
-            GUIManager.getInstance().searchGUI(GUIType.Arena_Summary).update();
+      LadderManager.getInstance().getLadders().add(ladder);
+      LadderManager.getInstance().getLadders().sort(Comparator.comparing(Ladder::getName));
 
-            Common.sendMMMessage(player, LanguageManager.getString("LADDER.CREATE.LADDER-CREATED").replace("%ladder%", ladderName));
+      LadderSetupManager.getInstance().buildLadderSetupGuis(ladder);
+      GuiManager.getInstance().searchGui(GuiType.Ladder_Summary).update();
+      GuiManager.getInstance().searchGui(GuiType.Arena_Summary).update();
 
-            Bukkit.getScheduler().runTaskLater(AstralPractice.getInstance(), () ->
-                    LadderSetupManager.getInstance().getLadderSetupGUIs().get(ladder).get(GUIType.Ladder_Main).open(player), 3L);
-        } catch (Exception e) {
-            Common.sendConsoleMMMessage("<red>Error. Please contact us on discord.");
-        }
+      Common.sendMmMessage(
+          player,
+          LanguageManager.getString("LADDER.CREATE.LADDER-CREATED")
+              .replace("%ladder%", ladderName));
+
+      Bukkit.getScheduler()
+          .runTaskLater(
+              AstralPractice.getInstance(),
+              () ->
+                  LadderSetupManager.getInstance()
+                      .getLadderSetupGuis()
+                      .get(ladder)
+                      .get(GuiType.Ladder_Main)
+                      .open(player),
+              3L);
+    } catch (Exception e) {
+      Common.sendConsoleMmMessage("<red>Error. Please contact us on discord.");
     }
-
+  }
 }

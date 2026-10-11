@@ -1,16 +1,24 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GUIFile;
+import dev.lokspel.practice.manager.backend.GuiFile;
 import dev.lokspel.practice.manager.backend.LanguageManager;
-import dev.lokspel.practice.manager.gui.GUI;
-import dev.lokspel.practice.manager.gui.GUIItem;
-import dev.lokspel.practice.manager.gui.GUIManager;
-import dev.lokspel.practice.manager.gui.GUIType;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiItem;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
-import dev.lokspel.practice.util.*;
+import dev.lokspel.practice.util.ArmorUtil;
+import dev.lokspel.practice.util.Common;
+import dev.lokspel.practice.util.InventoryUtil;
+import dev.lokspel.practice.util.KitData;
+import dev.lokspel.practice.util.TimeUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -24,166 +32,214 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+public class InventoryGui extends Gui {
 
-public class InventoryGui extends GUI {
+  @Getter private final NormalLadder ladder;
+  private final KitData kitData;
 
-    @Getter
-    private final NormalLadder ladder;
-    private final KitData kitData;
+  public InventoryGui(NormalLadder ladder) {
+    super(GuiType.Ladder_Inventory);
+    this.gui.put(
+        1,
+        InventoryUtil.createInventory(
+            GuiFile.getString("GUIS.SETUP.LADDER.INVENTORY.TITLE")
+                .replace("%ladder%", ladder.getName()),
+            6));
 
-    public InventoryGui(NormalLadder ladder) {
-        super(GUIType.Ladder_Inventory);
-        this.gui.put(1, InventoryUtil.createInventory(GUIFile.getString("GUIS.SETUP.LADDER.INVENTORY.TITLE").replace("%ladder%", ladder.getName()), 6));
+    this.ladder = ladder;
+    this.kitData = ladder.getKitData();
 
-        this.ladder = ladder;
-        this.kitData = ladder.getKitData();
+    build();
+  }
 
-        build();
-    }
+  @Override
+  public void build() {
+    update();
+  }
 
-    @Override
-    public void build() {
-        update();
-    }
+  @Override
+  public void update() {
+    Bukkit.getScheduler()
+        .runTaskAsynchronously(
+            AstralPractice.getInstance(),
+            () -> {
+              Inventory inventory = gui.get(1);
+              inventory.clear();
 
-    @Override
-    public void update() {
-        Bukkit.getScheduler().runTaskAsynchronously(AstralPractice.getInstance(), () ->
-        {
-            Inventory inventory = gui.get(1);
-            inventory.clear();
+              for (int i : new int[] {36, 37, 38, 39, 40, 41, 42, 43, 44, 46}) {
+                inventory.setItem(i, GuiManager.getFILLER_ITEM());
+              }
 
-            for (int i : new int[]{36, 37, 38, 39, 40, 41, 42, 43, 44, 46})
-                inventory.setItem(i, GUIManager.getFILLER_ITEM());
+              inventory.setItem(
+                  45, GuiFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.BACK-TO").get());
+              inventory.setItem(47, getCustomKitEditorItem(ladder));
+              inventory.setItem(48, getEffectItem(kitData.getEffects()));
 
-            inventory.setItem(45, GUIFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.BACK-TO").get());
-            inventory.setItem(47, getCustomKitEditorItem(ladder));
-            inventory.setItem(48, getEffectItem(kitData.getEffects()));
-
-            if (kitData.isSet()) {
+              if (kitData.isSet()) {
                 // Inventory content
                 List<ItemStack> inventoryContent = Arrays.asList(kitData.getStorage());
                 List<ItemStack> firstLine = new ArrayList<>();
                 for (int i = 0; i < 36; i++) {
-                    if (i < 9)
-                        firstLine.add(inventoryContent.get(i));
+                  if (i < 9) {
+                    firstLine.add(inventoryContent.get(i));
+                  }
 
-                    if (i < 27)
-                        inventory.setItem(i, inventoryContent.get(i + 9));
-                    else
-                        inventory.setItem(i, firstLine.get(i - 27));
+                  if (i < 27) {
+                    inventory.setItem(i, inventoryContent.get(i + 9));
+                  } else {
+                    inventory.setItem(i, firstLine.get(i - 27));
+                  }
                 }
 
                 // Armor content
                 List<ItemStack> armorContent = new ArrayList<>(Arrays.asList(kitData.getArmor()));
                 for (int i = 50; i < 54; i++) {
-                    inventory.setItem(i, armorContent.get(i - 50));
+                  inventory.setItem(i, armorContent.get(i - 50));
                 }
 
-                if (kitData.getExtra() != null)
-                    inventory.setItem(49, kitData.getExtra()[0]);
-            }
-
-            updatePlayers();
-        });
-    }
-
-    @Override
-    public void handleClickEvent(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
-        Inventory inventory = e.getView().getTopInventory();
-        ClickType click = e.getClick();
-        int slot = e.getRawSlot();
-
-        if (inventory.getSize() > slot) {
-            if (slot == 45 || slot == 46 || slot == 47 || slot == 48 || Objects.equals(e.getCurrentItem(), GUIManager.getFILLER_ITEM())) {
-                e.setCancelled(true);
-
-                if (slot == 45)
-                    LadderSetupManager.getInstance().getLadderSetupGUIs().get(ladder).get(GUIType.Ladder_Main).open(player);
-                if (slot == 47 && ladder.isEditable())
-                    LadderSetupManager.getInstance().getLadderSetupGUIs().get(ladder).get(GUIType.Ladder_CustomKitExtra_unRanked).open(player);
-            } else {
-                if (!ladder.isEnabled()) {
-                    if (click.equals(ClickType.LEFT) || click.equals(ClickType.RIGHT)) {
-                        if (!player.getItemOnCursor().getType().equals(Material.AIR)) {
-                            if (slot == 50 && !ArmorUtil.isBoots(player.getItemOnCursor())) e.setCancelled(true);
-                            if (slot == 51 && !ArmorUtil.isLeggings(player.getItemOnCursor())) e.setCancelled(true);
-                            if (slot == 52 && !ArmorUtil.isChestplate(player.getItemOnCursor())) e.setCancelled(true);
-                            if (slot == 53 && !ArmorUtil.isHelmet(player.getItemOnCursor())) e.setCancelled(true);
-                        }
-                    } else e.setCancelled(true);
-                } else {
-                    e.setCancelled(true);
-                    Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
+                if (kitData.getExtra() != null) {
+                  inventory.setItem(49, kitData.getExtra()[0]);
                 }
-            }
-        }
-    }
+              }
 
-    public void handleCloseEvent(InventoryCloseEvent e) {
-        if (LadderManager.getInstance().getLadders().contains(ladder) && !ladder.isEnabled())
-            this.save();
-    }
+              updatePlayers();
+            });
+  }
 
-    @Override
-    public void handleDragEvent(InventoryDragEvent e) {
+  @Override
+  public void handleClickEvent(InventoryClickEvent e) {
+    Player player = (Player) e.getWhoClicked();
+    Inventory inventory = e.getView().getTopInventory();
+    ClickType click = e.getClick();
+    int slot = e.getRawSlot();
+
+    if (inventory.getSize() > slot) {
+      if (slot == 45
+          || slot == 46
+          || slot == 47
+          || slot == 48
+          || Objects.equals(e.getCurrentItem(), GuiManager.getFILLER_ITEM())) {
         e.setCancelled(true);
-    }
 
-    public void save() {
-        List<ItemStack> inventoryContent = new ArrayList<>();
-        List<ItemStack> armorContent = new ArrayList<>();
-
-        Inventory inventory = gui.get(1);
-        for (int i = 27; i < 36; i++) inventoryContent.add(inventory.getItem(i));
-        for (int i = 0; i < 27; i++) inventoryContent.add(inventory.getItem(i));
-        for (int i = 50; i < 54; i++) armorContent.add(inventory.getItem(i));
-
-        List<ItemStack> extraContent = new ArrayList<>();
-        extraContent.add(inventory.getItem(49));
-        kitData.setExtra(extraContent.toArray(new ItemStack[0]));
-
-        kitData.setStorage(inventoryContent.toArray(new ItemStack[0]));
-        kitData.setArmor(armorContent.toArray(new ItemStack[0]));
-    }
-
-
-    private static ItemStack getCustomKitEditorItem(NormalLadder ladder) {
-        if (ladder.isEditable())
-            return GUIFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.CUSTOM-KIT-EDITOR.EDITABLE").get();
-        else
-            return GUIFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.CUSTOM-KIT-EDITOR.NOT-EDITABLE").get();
-    }
-
-    private ItemStack getEffectItem(List<PotionEffect> effects) {
-        if (!effects.isEmpty()) {
-            GUIItem guiItem = GUIFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.EFFECTS.HAS-EFFECT").replace("%ladder%", ladder.getName());
-
-            List<String> effectStrings = new ArrayList<>();
-            for (PotionEffect potionEffect : effects)
-                effectStrings.add(GUIFile.getString("GUIS.SETUP.LADDER.INVENTORY.ICONS.EFFECTS.HAS-EFFECT.EFFECT-FORMAT")
-                        .replace("%name%", StringUtils.capitalize(potionEffect.getType().getKey().getKey().replace("_", " ").toLowerCase()))
-                        .replace("%amplifier%", String.valueOf(potionEffect.getAmplifier() + 1))
-                        .replace("%time%", TimeUtil.formatDuration((potionEffect.getDuration() / 20) * 1000L))
-                );
-
-            List<String> lore = new ArrayList<>();
-            for (String line : guiItem.getLore()) {
-                if (line.contains("%effects%"))
-                    lore.addAll(effectStrings);
-                else
-                    lore.add(line);
+        if (slot == 45) {
+          LadderSetupManager.getInstance()
+              .getLadderSetupGuis()
+              .get(ladder)
+              .get(GuiType.Ladder_Main)
+              .open(player);
+        }
+        if (slot == 47 && ladder.isEditable()) {
+          LadderSetupManager.getInstance()
+              .getLadderSetupGuis()
+              .get(ladder)
+              .get(GuiType.Ladder_CustomKitExtra_unRanked)
+              .open(player);
+        }
+      } else {
+        if (!ladder.isEnabled()) {
+          if (click.equals(ClickType.LEFT) || click.equals(ClickType.RIGHT)) {
+            if (!player.getItemOnCursor().getType().equals(Material.AIR)) {
+              if (slot == 50 && !ArmorUtil.isBoots(player.getItemOnCursor())) {
+                e.setCancelled(true);
+              }
+              if (slot == 51 && !ArmorUtil.isLeggings(player.getItemOnCursor())) {
+                e.setCancelled(true);
+              }
+              if (slot == 52 && !ArmorUtil.isChestplate(player.getItemOnCursor())) {
+                e.setCancelled(true);
+              }
+              if (slot == 53 && !ArmorUtil.isHelmet(player.getItemOnCursor())) {
+                e.setCancelled(true);
+              }
             }
+          } else {
+            e.setCancelled(true);
+          }
+        } else {
+          e.setCancelled(true);
+          Common.sendMmMessage(
+              player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
+        }
+      }
+    }
+  }
 
-            guiItem.setLore(lore);
-            return guiItem.get();
-        } else
-            return GUIFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.EFFECTS.NO-EFFECT").get();
+  public void handleCloseEvent(InventoryCloseEvent e) {
+    if (LadderManager.getInstance().getLadders().contains(ladder) && !ladder.isEnabled()) {
+      this.save();
+    }
+  }
+
+  @Override
+  public void handleDragEvent(InventoryDragEvent e) {
+    e.setCancelled(true);
+  }
+
+  public void save() {
+    List<ItemStack> inventoryContent = new ArrayList<>();
+    List<ItemStack> armorContent = new ArrayList<>();
+
+    Inventory inventory = gui.get(1);
+    for (int i = 27; i < 36; i++) {
+      inventoryContent.add(inventory.getItem(i));
+    }
+    for (int i = 0; i < 27; i++) {
+      inventoryContent.add(inventory.getItem(i));
+    }
+    for (int i = 50; i < 54; i++) {
+      armorContent.add(inventory.getItem(i));
     }
 
+    List<ItemStack> extraContent = new ArrayList<>();
+    extraContent.add(inventory.getItem(49));
+    kitData.setExtra(extraContent.toArray(new ItemStack[0]));
+
+    kitData.setStorage(inventoryContent.toArray(new ItemStack[0]));
+    kitData.setArmor(armorContent.toArray(new ItemStack[0]));
+  }
+
+  private static ItemStack getCustomKitEditorItem(NormalLadder ladder) {
+    if (ladder.isEditable()) {
+      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.CUSTOM-KIT-EDITOR.EDITABLE")
+          .get();
+    } else {
+      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.CUSTOM-KIT-EDITOR.NOT-EDITABLE")
+          .get();
+    }
+  }
+
+  private ItemStack getEffectItem(List<PotionEffect> effects) {
+    if (!effects.isEmpty()) {
+      GuiItem guiItem =
+          GuiFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.EFFECTS.HAS-EFFECT")
+              .replace("%ladder%", ladder.getName());
+
+      List<String> effectStrings = new ArrayList<>();
+      for (PotionEffect potionEffect : effects) {
+        effectStrings.add(
+            GuiFile.getString("GUIS.SETUP.LADDER.INVENTORY.ICONS.EFFECTS.HAS-EFFECT.EFFECT-FORMAT")
+                .replace(
+                    "%name%",
+                    StringUtils.capitalize(
+                        potionEffect.getType().getKey().getKey().replace("_", " ").toLowerCase()))
+                .replace("%amplifier%", String.valueOf(potionEffect.getAmplifier() + 1))
+                .replace(
+                    "%time%", TimeUtil.formatDuration((potionEffect.getDuration() / 20) * 1000L)));
+      }
+
+      List<String> lore = new ArrayList<>();
+      for (String line : guiItem.getLore()) {
+        if (line.contains("%effects%")) {
+          lore.addAll(effectStrings);
+        } else {
+          lore.add(line);
+        }
+      }
+
+      guiItem.setLore(lore);
+      return guiItem.get();
+    } else {
+      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.EFFECTS.NO-EFFECT").get();
+    }
+  }
 }

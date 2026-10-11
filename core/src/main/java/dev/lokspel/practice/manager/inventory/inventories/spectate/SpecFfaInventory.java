@@ -9,25 +9,25 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class SpecFfaInventory extends Inventory {
 
-    public SpecFfaInventory() {
-        super(InventoryType.SPECTATE_FFA);
+  public SpecFfaInventory() {
+    super(InventoryType.SPECTATE_FFA);
 
-        this.invItems.add(new LeaveFfaSpecInvItem());
+    this.invItems.add(new LeaveFfaSpecInvItem());
+  }
+
+  @Override
+  protected void set(Player player) {
+    PlayerUtil.clearPlayer(player, true, true, false);
+
+    PlayerInventory playerInventory = player.getInventory();
+
+    for (InvItem invItem : invItems) {
+      int slot = invItem.getSlot();
+      if (slot == -1) {
+        continue;
+      }
+
+      playerInventory.setItem(slot, invItem.getItem());
     }
-
-    @Override
-    protected void set(Player player) {
-        PlayerUtil.clearPlayer(player, true, true, false);
-
-        PlayerInventory playerInventory = player.getInventory();
-
-        for (InvItem invItem : invItems) {
-            int slot = invItem.getSlot();
-            if (slot == -1)
-                continue;
-
-            playerInventory.setItem(slot, invItem.getItem());
-        }
-    }
-
+  }
 }

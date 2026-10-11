@@ -9,19 +9,19 @@ import org.bukkit.scheduler.BukkitRunnable;
 @Getter
 public class MariadbSaveRunnable extends BukkitRunnable {
 
-    private final int interval = ConfigManager.getInt("MARIADB-DATABASE.SAVE-PERIOD");
+  private final int interval = ConfigManager.getInt("MARIADB-DATABASE.SAVE-PERIOD");
 
-    public void begin() {
-        this.runTaskTimerAsynchronously(AstralPractice.getInstance(), interval * 60 * 20L, interval * 60 * 20L);
-    }
+  public void begin() {
+    this.runTaskTimerAsynchronously(
+        AstralPractice.getInstance(), interval * 60 * 20L, interval * 60 * 20L);
+  }
 
-    @Override
-    public void run() {
-        save();
-    }
+  @Override
+  public void run() {
+    save();
+  }
 
-    public void save() {
-        ProfileManager.getInstance().saveProfilesToDatabase();
-    }
-
+  public void save() {
+    ProfileManager.getInstance().saveProfilesToDatabase();
+  }
 }

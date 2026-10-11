@@ -4,8 +4,8 @@ import dev.lokspel.practice.manager.backend.ConfigManager;
 import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.events.duel.brackets.Brackets;
-import dev.lokspel.practice.manager.fight.event.events.ffa.lms.LMS;
-import dev.lokspel.practice.manager.fight.event.events.onevsall.tnttag.TNTTag;
+import dev.lokspel.practice.manager.fight.event.events.ffa.lms.Lms;
+import dev.lokspel.practice.manager.fight.event.events.onevsall.tnttag.TntTag;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
 import dev.lokspel.practice.manager.fight.event.util.EventUtil;
 import dev.lokspel.practice.manager.fight.util.BlockUtil;
@@ -26,334 +26,346 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerEggThrowEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EventListener implements Listener {
 
-    private final EventManager eventManager;
+  private final EventManager eventManager;
 
-    public EventListener(EventManager eventManager) {
-        this.eventManager = eventManager;
+  public EventListener(EventManager eventManager) {
+    this.eventManager = eventManager;
+  }
+
+  @EventHandler
+  public void onTrackerUse(PlayerInteractEvent e) {
+    Player player = e.getPlayer();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+
+    if (profile == null) {
+      return;
     }
 
-    @EventHandler
-    public void onTrackerUse(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
+    }
 
-        if (profile == null) {
-            return;
-        }
+    if (!e.getAction().equals(Action.RIGHT_CLICK_AIR)
+        && !e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+      return;
+    }
 
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
+    Event event = EventManager.getInstance().getEventByPlayer(player);
+    if (event == null) {
+      return;
+    }
 
-        if (!e.getAction().equals(Action.RIGHT_CLICK_AIR) && !e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            return;
-        }
+    if (!event.getStatus().equals(EventStatus.LIVE)) {
+      return;
+    }
 
-        Event event = EventManager.getInstance().getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
+    ItemStack item = PlayerUtil.getItemInUse(player, EventManager.PLAYER_TRACKER.getType());
+    if (item == null) {
+      return;
+    }
 
-        if (!event.getStatus().equals(EventStatus.LIVE)) {
-            return;
-        }
+    if (!item.equals(EventManager.PLAYER_TRACKER)) {
+      return;
+    }
 
-        ItemStack item = PlayerUtil.getItemInUse(player, EventManager.PLAYER_TRACKER.getType());
-        if (item == null) {
-            return;
-        }
+    e.setCancelled(true);
+    EventUtil.sendCompassTracker(player);
+  }
 
-        if (!item.equals(EventManager.PLAYER_TRACKER)) {
-            return;
-        }
+  @EventHandler
+  public void onBlockBreak(BlockBreakEvent e) {
+    Player player = e.getPlayer();
 
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
+    }
+
+    e.setCancelled(true);
+  }
+
+  @EventHandler
+  public void onBlockPlace(BlockPlaceEvent e) {
+    Player player = e.getPlayer();
+
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
+    }
+
+    e.setCancelled(true);
+  }
+
+  @EventHandler
+  public void onHunger(FoodLevelChangeEvent e) {
+    Player player = (Player) e.getEntity();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+
+    if (profile == null) {
+      return;
+    }
+
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
+    }
+
+    Event event = EventManager.getInstance().getEventByPlayer(player);
+    if (event == null) {
+      return;
+    }
+
+    if (!(event instanceof Brackets) && !(event instanceof Lms)) {
+      e.setFoodLevel(20);
+    }
+  }
+
+  @EventHandler
+  public void onEnderPearlLaunch(ProjectileLaunchEvent e) {
+    if (!(e.getEntity() instanceof EnderPearl enderPearl)) {
+      return;
+    }
+
+    if (!(enderPearl.getShooter() instanceof Player player)) {
+      return;
+    }
+
+    Event event = EventManager.getInstance().getEventByPlayer(player);
+    if (event == null) {
+      return;
+    }
+
+    if (!event.getStatus().equals(EventStatus.LIVE)) {
+      e.setCancelled(true);
+    } else {
+      int duration = ConfigManager.getInt("EVENT.ENDERPEARL-COOLDOWN");
+      if (duration <= 0) {
+        return;
+      }
+
+      if (!PlayerCooldown.isActive(player, CooldownObject.ENDER_PEARL)) {
+        EnderpearlRunnable enderPearlCountdown = new EnderpearlRunnable(player, duration);
+        enderPearlCountdown.begin();
+      } else {
         e.setCancelled(true);
-        EventUtil.sendCompassTracker(player);
+
+        Common.sendMmMessage(
+            player,
+            StringUtil.replaceSecondString(
+                LanguageManager.getString("EVENT.ENDERPEARL-COOLDOWN"),
+                PlayerCooldown.getLeftInDouble(player, CooldownObject.ENDER_PEARL)));
+        player.updateInventory();
+      }
+    }
+  }
+
+  @EventHandler
+  public void onEntityExplode(EntityExplodeEvent e) {
+    Entity entity = e.getEntity();
+
+    if (BlockUtil.hasMetadata(entity, TntTag.TNT_TAG_TNT_METADATA)) {
+      e.blockList().clear();
+    }
+  }
+
+  /** Event listeners interface. */
+  @EventHandler
+  public void onDamage(EntityDamageEvent e) {
+    if (!(e.getEntity() instanceof Player player)) {
+      return;
     }
 
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent e) {
-        Player player = e.getPlayer();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
 
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
-
-        e.setCancelled(true);
+    if (profile == null) {
+      return;
     }
 
-    @EventHandler
-    public void onBlockPlace(BlockPlaceEvent e) {
-        Player player = e.getPlayer();
-
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
-
-        e.setCancelled(true);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
     }
 
-    @EventHandler
-    public void onHunger(FoodLevelChangeEvent e) {
-        Player player = (Player) e.getEntity();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-
-        if (profile == null) {
-            return;
-        }
-
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
-
-        Event event = EventManager.getInstance().getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        if (!(event instanceof Brackets) && !(event instanceof LMS)) {
-            e.setFoodLevel(20);
-        }
+    Event event = eventManager.getEventByPlayer(player);
+    if (event == null) {
+      return;
     }
 
-    @EventHandler
-    public void onEnderPearlLaunch(ProjectileLaunchEvent e) {
-        if (!(e.getEntity() instanceof EnderPearl enderPearl)) {
-            return;
-        }
+    eventManager.getEventListeners().get(event.getType()).onEntityDamage(event, e);
+  }
 
-        if (!(enderPearl.getShooter() instanceof Player player)) {
-            return;
-        }
-
-        Event event = EventManager.getInstance().getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        if (!event.getStatus().equals(EventStatus.LIVE)) {
-            e.setCancelled(true);
-        } else {
-            int duration = ConfigManager.getInt("EVENT.ENDERPEARL-COOLDOWN");
-            if (duration <= 0) return;
-
-            if (!PlayerCooldown.isActive(player, CooldownObject.ENDER_PEARL)) {
-                EnderpearlRunnable enderPearlCountdown = new EnderpearlRunnable(player, duration);
-                enderPearlCountdown.begin();
-            } else {
-                e.setCancelled(true);
-
-                Common.sendMMMessage(player, StringUtil.replaceSecondString(LanguageManager.getString("EVENT.ENDERPEARL-COOLDOWN"), PlayerCooldown.getLeftInDouble(player, CooldownObject.ENDER_PEARL)));
-                player.updateInventory();
-            }
-        }
+  @EventHandler
+  public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+    if (!(e.getEntity() instanceof Player player)) {
+      return;
     }
 
-    @EventHandler
-    public void onEntityExplode(EntityExplodeEvent e) {
-        Entity entity = e.getEntity();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
 
-        if (BlockUtil.hasMetadata(entity, TNTTag.TNT_TAG_TNT_METADATA)) {
-            e.blockList().clear();
-        }
+    if (profile == null) {
+      return;
     }
 
-
-    /**
-     * Event listeners interface
-     */
-
-    @EventHandler
-    public void onDamage(EntityDamageEvent e) {
-        if (!(e.getEntity() instanceof Player player)) {
-            return;
-        }
-
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-
-        if (profile == null) {
-            return;
-        }
-
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
-
-        Event event = eventManager.getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        eventManager.getEventListeners().get(event.getType()).onEntityDamage(event, e);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
     }
 
-    @EventHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof Player player)) {
-            return;
-        }
-
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-
-        if (profile == null) {
-            return;
-        }
-
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
-
-        Event event = eventManager.getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        eventManager.getEventListeners().get(event.getType()).onEntityDamageByEntity(event, e);
+    Event event = eventManager.getEventByPlayer(player);
+    if (event == null) {
+      return;
     }
 
-    @EventHandler
-    public void onProjectileLaunch(ProjectileLaunchEvent e) {
-        if (!(e.getEntity().getShooter() instanceof Player player)) {
-            return;
-        }
+    eventManager.getEventListeners().get(event.getType()).onEntityDamageByEntity(event, e);
+  }
 
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
-
-        Event event = eventManager.getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        eventManager.getEventListeners().get(event.getType()).onProjectileLaunch(event, e);
+  @EventHandler
+  public void onProjectileLaunch(ProjectileLaunchEvent e) {
+    if (!(e.getEntity().getShooter() instanceof Player player)) {
+      return;
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        Player player = e.getPlayer();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
-
-        Event event = eventManager.getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        eventManager.getEventListeners().get(event.getType()).onPlayerQuit(event, e);
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
     }
 
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        Player player = e.getPlayer();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
-
-        Event event = eventManager.getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        eventManager.getEventListeners().get(event.getType()).onPlayerMove(event, e);
+    Event event = eventManager.getEventByPlayer(player);
+    if (event == null) {
+      return;
     }
 
-    @EventHandler
-    public void onPlayerEggThrow(final PlayerEggThrowEvent e) {
-        Player player = e.getPlayer();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
+    eventManager.getEventListeners().get(event.getType()).onProjectileLaunch(event, e);
+  }
 
-        Event event = eventManager.getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        eventManager.getEventListeners().get(event.getType()).onPlayerEggThrow(event, e);
+  @EventHandler
+  public void onPlayerQuit(PlayerQuitEvent e) {
+    Player player = e.getPlayer();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
     }
 
-    @EventHandler
-    public void onPlayerDropItem(final PlayerDropItemEvent e) {
-        Player player = e.getPlayer();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
-
-        Event event = eventManager.getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        eventManager.getEventListeners().get(event.getType()).onPlayerDropItem(event, e);
-
-        if (!e.isCancelled()) {
-            Entity drop = e.getItemDrop();
-            event.getFightChange().addEntityChange(drop);
-        }
+    Event event = eventManager.getEventByPlayer(player);
+    if (event == null) {
+      return;
     }
 
-    @EventHandler
-    public void onPlayerInteract(final PlayerInteractEvent e) {
-        Player player = e.getPlayer();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
+    eventManager.getEventListeners().get(event.getType()).onPlayerQuit(event, e);
+  }
 
-        Event event = eventManager.getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        eventManager.getEventListeners().get(event.getType()).onPlayerInteract(event, e);
+  @EventHandler
+  public void onPlayerMove(PlayerMoveEvent e) {
+    Player player = e.getPlayer();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
     }
 
-    @EventHandler
-    public void onInventoryClick(final InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player player)) {
-            return;
-        }
-
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
-
-        Event event = eventManager.getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
-
-        eventManager.getEventListeners().get(event.getType()).onInventoryClick(event, e);
+    Event event = eventManager.getEventByPlayer(player);
+    if (event == null) {
+      return;
     }
 
-    @EventHandler
-    public void onPlayerItemHeld(final PlayerItemHeldEvent e) {
-        Player player = e.getPlayer();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
-            return;
-        }
+    eventManager.getEventListeners().get(event.getType()).onPlayerMove(event, e);
+  }
 
-        Event event = eventManager.getEventByPlayer(player);
-        if (event == null) {
-            return;
-        }
+  @EventHandler
+  public void onPlayerEggThrow(final PlayerEggThrowEvent e) {
+    Player player = e.getPlayer();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
     }
+
+    Event event = eventManager.getEventByPlayer(player);
+    if (event == null) {
+      return;
+    }
+
+    eventManager.getEventListeners().get(event.getType()).onPlayerEggThrow(event, e);
+  }
+
+  @EventHandler
+  public void onPlayerDropItem(final PlayerDropItemEvent e) {
+    Player player = e.getPlayer();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
+    }
+
+    Event event = eventManager.getEventByPlayer(player);
+    if (event == null) {
+      return;
+    }
+
+    eventManager.getEventListeners().get(event.getType()).onPlayerDropItem(event, e);
+
+    if (!e.isCancelled()) {
+      Entity drop = e.getItemDrop();
+      event.getFightChange().addEntityChange(drop);
+    }
+  }
+
+  @EventHandler
+  public void onPlayerInteract(final PlayerInteractEvent e) {
+    Player player = e.getPlayer();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
+    }
+
+    Event event = eventManager.getEventByPlayer(player);
+    if (event == null) {
+      return;
+    }
+
+    eventManager.getEventListeners().get(event.getType()).onPlayerInteract(event, e);
+  }
+
+  @EventHandler
+  public void onInventoryClick(final InventoryClickEvent e) {
+    if (!(e.getWhoClicked() instanceof Player player)) {
+      return;
+    }
+
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
+    }
+
+    Event event = eventManager.getEventByPlayer(player);
+    if (event == null) {
+      return;
+    }
+
+    eventManager.getEventListeners().get(event.getType()).onInventoryClick(event, e);
+  }
+
+  @EventHandler
+  public void onPlayerItemHeld(final PlayerItemHeldEvent e) {
+    Player player = e.getPlayer();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.EVENT)) {
+      return;
+    }
+
+    Event event = eventManager.getEventByPlayer(player);
+    if (event == null) {
+      return;
+    }
+  }
 }

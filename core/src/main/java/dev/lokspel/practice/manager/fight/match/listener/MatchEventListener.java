@@ -21,103 +21,124 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
- * Handles match-specific events that are NOT related to ladder settings.
- * Events here are core match mechanics (teleportation, projectile tracking, kit selection, etc.)
- * <p>
- * For setting-specific events, see CentralizedSettingListener.
+ * Handles match-specific events that are NOT related to ladder settings. Events here are core match
+ * mechanics (teleportation, projectile tracking, kit selection, etc.)
+ *
+ * <p>For setting-specific events, see CentralizedSettingListener.
  */
 public class MatchEventListener implements Listener {
 
-    @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
-        Action action = e.getAction();
+  @EventHandler
+  public void onPlayerInteract(PlayerInteractEvent e) {
+    Player player = e.getPlayer();
+    Action action = e.getAction();
 
-        Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
-        if (match == null) return;
-        if (!action.equals(Action.RIGHT_CLICK_AIR) && !action.equals(Action.RIGHT_CLICK_BLOCK)) return;
-
-        Block clickedBlock = e.getClickedBlock();
-        if (action.equals(Action.RIGHT_CLICK_BLOCK) && clickedBlock != null) {
-            if (clickedBlock.getType().equals(Material.CHEST) || clickedBlock.getType().equals(Material.TRAPPED_CHEST)) {
-                match.addBlockChange(new ChangedBlock(clickedBlock));
-            }
-        }
+    Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
+    if (match == null) {
+      return;
+    }
+    if (!action.equals(Action.RIGHT_CLICK_AIR) && !action.equals(Action.RIGHT_CLICK_BLOCK)) {
+      return;
     }
 
-    @EventHandler
-    public void onProjectileLaunch(ProjectileLaunchEvent e) {
-        if (!(e.getEntity().getShooter() instanceof Player player)) return;
+    Block clickedBlock = e.getClickedBlock();
+    if (action.equals(Action.RIGHT_CLICK_BLOCK) && clickedBlock != null) {
+      if (clickedBlock.getType().equals(Material.CHEST)
+          || clickedBlock.getType().equals(Material.TRAPPED_CHEST)) {
+        match.addBlockChange(new ChangedBlock(clickedBlock));
+      }
+    }
+  }
 
-        Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
-        if (match == null) return;
-
-        match.addEntityChange(e.getEntity());
+  @EventHandler
+  public void onProjectileLaunch(ProjectileLaunchEvent e) {
+    if (!(e.getEntity().getShooter() instanceof Player player)) {
+      return;
     }
 
-    @EventHandler
-    public void onPlayerTeleport(PlayerTeleportEvent e) {
-        Match match = MatchManager.getInstance().getLiveMatchByPlayer(e.getPlayer());
-        if (match == null) return;
-
-        if (match.getStatus().equals(MatchStatus.END) || match.getStatus().equals(MatchStatus.OVER))
-            return;
-
-        if (!match.getArena().getCuboid().contains(e.getTo()))
-            e.setCancelled(true);
+    Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
+    if (match == null) {
+      return;
     }
 
-    @EventHandler ( priority = EventPriority.HIGHEST )
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        Player player = e.getPlayer();
+    match.addEntityChange(e.getEntity());
+  }
 
-        Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
-        if (match == null) return;
-
-        match.removePlayer(player, true);
+  @EventHandler
+  public void onPlayerTeleport(PlayerTeleportEvent e) {
+    Match match = MatchManager.getInstance().getLiveMatchByPlayer(e.getPlayer());
+    if (match == null) {
+      return;
     }
 
-    /**
-     * Kit Selection Listeners
-     */
-    @EventHandler
-    public void onPlayerChooseKit(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
-
-        Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
-        if (match == null) return;
-
-        MatchFightPlayer matchFightPlayer = match.getMatchPlayers().get(player);
-        if (matchFightPlayer == null) return;
-
-        if (!matchFightPlayer.isHasChosenKit()) {
-            e.setCancelled(true);
-
-            TeamEnum playerTeam;
-            if (match instanceof Team) {
-                playerTeam = ((Team) match).getTeam(player);
-            } else {
-                playerTeam = TeamEnum.TEAM1;
-            }
-
-            matchFightPlayer.setChosenKit(player.getInventory().getHeldItemSlot(), playerTeam);
-        }
+    if (match.getStatus().equals(MatchStatus.END) || match.getStatus().equals(MatchStatus.OVER)) {
+      return;
     }
 
-    @EventHandler
-    public void onPlayerChooseKit(InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player player)) {
-            return;
-        }
-
-        Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
-        if (match == null) return;
-
-        MatchFightPlayer matchFightPlayer = match.getMatchPlayers().get(player);
-        if (matchFightPlayer == null) return;
-
-        if (!matchFightPlayer.isHasChosenKit()) {
-            e.setCancelled(true);
-        }
+    if (!match.getArena().getCuboid().contains(e.getTo())) {
+      e.setCancelled(true);
     }
+  }
+
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onPlayerQuit(PlayerQuitEvent e) {
+    Player player = e.getPlayer();
+
+    Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
+    if (match == null) {
+      return;
+    }
+
+    match.removePlayer(player, true);
+  }
+
+  /** Kit Selection Listeners. */
+  @EventHandler
+  public void onPlayerChooseKit(PlayerInteractEvent e) {
+    Player player = e.getPlayer();
+
+    Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
+    if (match == null) {
+      return;
+    }
+
+    MatchFightPlayer matchFightPlayer = match.getMatchPlayers().get(player);
+    if (matchFightPlayer == null) {
+      return;
+    }
+
+    if (!matchFightPlayer.isHasChosenKit()) {
+      e.setCancelled(true);
+
+      TeamEnum playerTeam;
+      if (match instanceof Team) {
+        playerTeam = ((Team) match).getTeam(player);
+      } else {
+        playerTeam = TeamEnum.TEAM1;
+      }
+
+      matchFightPlayer.setChosenKit(player.getInventory().getHeldItemSlot(), playerTeam);
+    }
+  }
+
+  @EventHandler
+  public void onPlayerChooseKit(InventoryClickEvent e) {
+    if (!(e.getWhoClicked() instanceof Player player)) {
+      return;
+    }
+
+    Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
+    if (match == null) {
+      return;
+    }
+
+    MatchFightPlayer matchFightPlayer = match.getMatchPlayers().get(player);
+    if (matchFightPlayer == null) {
+      return;
+    }
+
+    if (!matchFightPlayer.isHasChosenKit()) {
+      e.setCancelled(true);
+    }
+  }
 }

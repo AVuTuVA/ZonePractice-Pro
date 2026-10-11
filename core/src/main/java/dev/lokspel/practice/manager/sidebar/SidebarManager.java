@@ -8,6 +8,9 @@ import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.sidebar.adapter.PracticeAdapter;
 import dev.lokspel.practice.manager.sidebar.adapter.SidebarAdapter;
 import dev.lokspel.practice.util.Common;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Getter;
 import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
 import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
@@ -20,239 +23,262 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 public class SidebarManager extends ConfigFile implements Listener {
 
-    private static SidebarManager instance;
+  private static SidebarManager instance;
 
-    public static SidebarManager getInstance() {
-        if (instance == null)
-            instance = new SidebarManager();
-        return instance;
+  public static SidebarManager getInstance() {
+    if (instance == null) {
+      instance = new SidebarManager();
+    }
+    return instance;
+  }
+
+  @Getter private ScoreboardLibrary scoreboardLibrary;
+
+  private final Map<Player, PracticeSidebar> boards = new HashMap<>();
+  @Getter private final SidebarAdapter sidebarAdapter;
+  private BukkitTask updateTask;
+
+  private SidebarManager() {
+    super("", "sidebar");
+    this.sidebarAdapter = new PracticeAdapter();
+
+    Bukkit.getServer().getPluginManager().registerEvents(this, AstralPractice.getInstance());
+  }
+
+  public void load() {
+    if (!isSidebarGloballyEnabled()) {
+      return;
     }
 
-    @Getter
-    private ScoreboardLibrary scoreboardLibrary;
+    ensureScoreboardLibrary();
+    startUpdateTask();
+  }
 
-    private final Map<Player, PracticeSidebar> boards = new HashMap<>();
-    @Getter
-    private final SidebarAdapter sidebarAdapter;
-    private BukkitTask updateTask;
+  public boolean isSidebarGloballyEnabled() {
+    return ConfigManager.getBoolean("SIDEBAR.ENABLED");
+  }
 
-    private SidebarManager() {
-        super("", "sidebar");
-        this.sidebarAdapter = new PracticeAdapter();
-
-        Bukkit.getServer().getPluginManager().registerEvents(this, AstralPractice.getInstance());
+  private void ensureScoreboardLibrary() {
+    if (scoreboardLibrary != null) {
+      return;
     }
 
-    public void load() {
-        if (!isSidebarGloballyEnabled()) {
-            return;
-        }
+    try {
+      scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(AstralPractice.getInstance());
+    } catch (NoPacketAdapterAvailableException e) {
+      // If no packet adapter was found, you can fallback to the no-op implementation:
+      scoreboardLibrary = new NoopScoreboardLibrary();
+      Common.sendConsoleMmMessage("<red>No scoreboard packet adapter available!");
+    }
+  }
 
-        ensureScoreboardLibrary();
-        startUpdateTask();
+  private void startUpdateTask() {
+    if (!isSidebarGloballyEnabled()) {
+      stopUpdateTask();
+      return;
     }
 
-    public boolean isSidebarGloballyEnabled() {
-        return ConfigManager.getBoolean("SIDEBAR.ENABLED");
+    if (updateTask != null) {
+      updateTask.cancel();
     }
 
-    private void ensureScoreboardLibrary() {
-        if (scoreboardLibrary != null) {
-            return;
-        }
+    updateTask =
+        Bukkit.getScheduler()
+            .runTaskTimerAsynchronously(
+                AstralPractice.getInstance(),
+                () -> {
+                  for (PracticeSidebar practiceSidebar : new ArrayList<>(boards.values())) {
+                    if (practiceSidebar == null
+                        || practiceSidebar.getSidebar() == null
+                        || practiceSidebar.getSidebar().closed()) {
+                      continue;
+                    }
+                    practiceSidebar.update();
+                  }
+                },
+                20L,
+                ConfigManager.getInt("SIDEBAR.UPDATE-TIME"));
+  }
 
-        try {
-            scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(AstralPractice.getInstance());
-        } catch (NoPacketAdapterAvailableException e) {
-            // If no packet adapter was found, you can fallback to the no-op implementation:
-            scoreboardLibrary = new NoopScoreboardLibrary();
-            Common.sendConsoleMMMessage("<red>No scoreboard packet adapter available!");
-        }
+  private void stopUpdateTask() {
+    if (updateTask != null) {
+      updateTask.cancel();
+      updateTask = null;
     }
+  }
 
-    private void startUpdateTask() {
-        if (!isSidebarGloballyEnabled()) {
-            stopUpdateTask();
-            return;
-        }
+  @EventHandler
+  public void onJoin(PlayerJoinEvent e) {
+    Player player = e.getPlayer();
 
-        if (updateTask != null) {
-            updateTask.cancel();
-        }
+    Bukkit.getScheduler()
+        .runTaskLater(
+            AstralPractice.getInstance(),
+            () -> {
+              if (!isSidebarGloballyEnabled()) {
+                return;
+              }
 
-        updateTask = Bukkit.getScheduler().runTaskTimerAsynchronously(AstralPractice.getInstance(), () -> {
-            for (PracticeSidebar practiceSidebar : new ArrayList<>(boards.values())) {
-                if (practiceSidebar == null || practiceSidebar.getSidebar() == null || practiceSidebar.getSidebar().closed()) {
-                    continue;
-                }
-                practiceSidebar.update();
-            }
-        }, 20L, ConfigManager.getInt("SIDEBAR.UPDATE-TIME"));
-    }
+              // Don't call profile.load() here — the profile is already loaded,
+              // and reloading from disk would overwrite an unsaved toggle.
+              Profile profile = ProfileManager.getInstance().getProfile(player);
+              if (profile == null) {
+                return;
+              }
 
-    private void stopUpdateTask() {
-        if (updateTask != null) {
-            updateTask.cancel();
-            updateTask = null;
-        }
-    }
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        Player player = e.getPlayer();
-
-        Bukkit.getScheduler().runTaskLater(AstralPractice.getInstance(), () ->
-        {
-            if (!isSidebarGloballyEnabled()) return;
-
-            // Don't call profile.load() here — the profile is already loaded,
-            // and reloading from disk would overwrite an unsaved toggle.
-            Profile profile = ProfileManager.getInstance().getProfile(player);
-            if (profile == null) return;
-
-            if (profile.isSidebar())
+              if (profile.isSidebar()) {
                 loadSidebar(player);
-        }, 10L);
-    }
+              }
+            },
+            10L);
+  }
 
-    @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
-        Player player = e.getPlayer();
+  @EventHandler
+  public void onQuit(PlayerQuitEvent e) {
+    Player player = e.getPlayer();
 
-        Bukkit.getScheduler().runTaskLater(AstralPractice.getInstance(), () -> {
-            if (Bukkit.getPlayer(player.getUniqueId()) != null) {
+    Bukkit.getScheduler()
+        .runTaskLater(
+            AstralPractice.getInstance(),
+            () -> {
+              if (Bukkit.getPlayer(player.getUniqueId()) != null) {
                 return;
-            }
+              }
 
-            unLoadSidebar(player);
-        }, 1L);
+              unLoadSidebar(player);
+            },
+            1L);
+  }
+
+  public void loadSidebar(Player player) {
+    if (!isSidebarGloballyEnabled()) {
+      return;
     }
 
-    public void loadSidebar(Player player) {
-        if (!isSidebarGloballyEnabled())
-            return;
-
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null || !profile.isSidebar())
-            return;
-
-        // If sidebar already exists, ensure it's still open before returning
-        if (boards.containsKey(player)) {
-            PracticeSidebar sidebar = boards.get(player);
-            if (sidebar != null && sidebar.getSidebar() != null && !sidebar.getSidebar().closed()) {
-                return;
-            }
-            // If the sidebar was closed, remove it so we can recreate it
-            boards.remove(player);
-        }
-
-        ensureScoreboardLibrary();
-
-        boards.put(player, new PracticeSidebar(this, scoreboardLibrary.createSidebar(), player));
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null || !profile.isSidebar()) {
+      return;
     }
 
-    public void unLoadSidebar(Player player) {
-        if (!boards.containsKey(player))
-            return;
-
-        PracticeSidebar sidebar = boards.get(player);
-        if (sidebar.getSidebar() != null) {
-            sidebar.getSidebar().close();
-            boards.remove(player);
-        }
+    // If sidebar already exists, ensure it's still open before returning
+    if (boards.containsKey(player)) {
+      PracticeSidebar sidebar = boards.get(player);
+      if (sidebar != null && sidebar.getSidebar() != null && !sidebar.getSidebar().closed()) {
+        return;
+      }
+      // If the sidebar was closed, remove it so we can recreate it
+      boards.remove(player);
     }
 
-    /**
-     * Immediately updates a specific player's scoreboard
-     * This is useful for real-time updates (e.g., hit counter)
-     *
-     * @param player the player whose scoreboard should be updated
-     */
-    public void updatePlayerSidebar(Player player) {
-        if (!isSidebarGloballyEnabled())
-            return;
+    ensureScoreboardLibrary();
 
-        if (!boards.containsKey(player))
-            return;
+    boards.put(player, new PracticeSidebar(this, scoreboardLibrary.createSidebar(), player));
+  }
 
-        PracticeSidebar sidebar = boards.get(player);
-        if (sidebar != null && sidebar.getSidebar() != null && !sidebar.getSidebar().closed()) {
-            sidebar.update();
-        }
+  public void unLoadSidebar(Player player) {
+    if (!boards.containsKey(player)) {
+      return;
     }
 
-    /**
-     * Immediately updates multiple players' scoreboards
-     * This is useful for real-time updates involving multiple players
-     *
-     * @param players the players whose scoreboards should be updated
-     */
-    public void updatePlayersSidebar(Player... players) {
-        for (Player player : players) {
-            updatePlayerSidebar(player);
-        }
+    PracticeSidebar sidebar = boards.get(player);
+    if (sidebar.getSidebar() != null) {
+      sidebar.getSidebar().close();
+      boards.remove(player);
+    }
+  }
+
+  /**
+   * Immediately updates a specific player's scoreboard. This is useful for real-time updates (e.g.,
+   * hit counter).
+   *
+   * @param player the player whose scoreboard should be updated
+   */
+  public void updatePlayerSidebar(Player player) {
+    if (!isSidebarGloballyEnabled()) {
+      return;
     }
 
-    public void reloadSidebarConfig() {
-        reloadFile();
+    if (!boards.containsKey(player)) {
+      return;
+    }
 
-        Bukkit.getScheduler().runTask(AstralPractice.getInstance(), () -> {
-            if (!isSidebarGloballyEnabled()) {
+    PracticeSidebar sidebar = boards.get(player);
+    if (sidebar != null && sidebar.getSidebar() != null && !sidebar.getSidebar().closed()) {
+      sidebar.update();
+    }
+  }
+
+  /**
+   * Immediately updates multiple players' scoreboards. This is useful for real-time updates
+   * involving multiple players.
+   *
+   * @param players the players whose scoreboards should be updated
+   */
+  public void updatePlayersSidebar(Player... players) {
+    for (Player player : players) {
+      updatePlayerSidebar(player);
+    }
+  }
+
+  public void reloadSidebarConfig() {
+    reloadFile();
+
+    Bukkit.getScheduler()
+        .runTask(
+            AstralPractice.getInstance(),
+            () -> {
+              if (!isSidebarGloballyEnabled()) {
                 for (Player player : new ArrayList<>(boards.keySet())) {
-                    unLoadSidebar(player);
+                  unLoadSidebar(player);
                 }
                 stopUpdateTask();
                 return;
-            }
+              }
 
-            ensureScoreboardLibrary();
-            startUpdateTask();
+              ensureScoreboardLibrary();
+              startUpdateTask();
 
-            for (Player player : Bukkit.getOnlinePlayers()) {
+              for (Player player : Bukkit.getOnlinePlayers()) {
                 Profile profile = ProfileManager.getInstance().getProfile(player);
                 if (profile == null) {
-                    continue;
+                  continue;
                 }
 
                 if (profile.isSidebar()) {
-                    loadSidebar(player);
+                  loadSidebar(player);
                 } else {
-                    unLoadSidebar(player);
+                  unLoadSidebar(player);
                 }
-            }
+              }
 
-            for (Player player : new ArrayList<>(boards.keySet())) {
+              for (Player player : new ArrayList<>(boards.keySet())) {
                 updatePlayerSidebar(player);
-            }
-        });
+              }
+            });
+  }
+
+  @Override
+  public void setData() {}
+
+  @Override
+  public void getData() {}
+
+  public void close() {
+    stopUpdateTask();
+
+    for (Player player : new ArrayList<>(boards.keySet())) {
+      unLoadSidebar(player);
     }
 
-    @Override
-    public void setData() {
+    try {
+      if (scoreboardLibrary != null) {
+        scoreboardLibrary.close();
+      }
+    } catch (IllegalStateException ignored) {
+      // This best-effort operation may fail without interrupting its caller.
+
     }
-
-    @Override
-    public void getData() {
-    }
-
-    public void close() {
-        stopUpdateTask();
-
-        for (Player player : new ArrayList<>(boards.keySet())) {
-            unLoadSidebar(player);
-        }
-
-        try {
-            if (scoreboardLibrary != null) {
-                scoreboardLibrary.close();
-            }
-        } catch (IllegalStateException ignored) {
-        }
-    }
+  }
 }

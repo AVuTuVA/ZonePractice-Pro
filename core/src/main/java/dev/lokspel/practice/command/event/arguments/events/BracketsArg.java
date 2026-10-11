@@ -1,0 +1,103 @@
+package dev.lokspel.practice.command.event.arguments.events;
+
+import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.fight.event.EventManager;
+import dev.lokspel.practice.manager.fight.event.enums.EventType;
+import dev.lokspel.practice.manager.fight.event.events.duel.brackets.BracketsData;
+import dev.lokspel.practice.manager.fight.event.util.EventUtil;
+import dev.lokspel.practice.util.Common;
+import dev.lokspel.practice.util.KitData;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
+
+public final class BracketsArg {
+
+  private BracketsArg() {}
+
+  public static void run(Player player, String label, String[] args) {
+    if (!player.hasPermission("ap.setup")) {
+      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.EVENT.NO-PERMISSION"));
+      return;
+    }
+
+    // Checking if the event is live, if it is, it will send a message to the player and return.
+    if (EventManager.getInstance().isEventLive(EventType.BRACKETS)) {
+      Common.sendMmMessage(
+          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.BRACKETS.EVENT-LIVE"));
+      return;
+    }
+
+    BracketsData bracketsData =
+        (BracketsData) EventManager.getInstance().getEventData().get(EventType.BRACKETS);
+    // Checking if the player is trying to enable or disable the arena.
+    if (args.length == 2 && args[1].equalsIgnoreCase("enable")) {
+      if (!bracketsData.isEnabled()) {
+        EventUtil.changeStatus(bracketsData, player);
+      } else {
+        Common.sendMmMessage(
+            player,
+            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.BRACKETS.EVENT-ALREADY-ENABLED"));
+      }
+
+      return;
+    } else if (args.length == 2 && args[1].equalsIgnoreCase("disable")) {
+      if (bracketsData.isEnabled()) {
+        EventUtil.changeStatus(bracketsData, player);
+      } else {
+        Common.sendMmMessage(
+            player,
+            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.BRACKETS.EVENT-ALREADY-DISABLED"));
+      }
+
+      return;
+    } else if (args.length == 2 && args[1].equalsIgnoreCase("help")) {
+      sendHelpMsg(player, label);
+
+      return;
+    }
+
+    // Checking if the arena is enabled, if it is, it will send a message to the player and return.
+    if (bracketsData.isEnabled()) {
+      Common.sendMmMessage(
+          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.BRACKETS.CANT-EDIT"));
+      return;
+    }
+
+    // Setting the kit for the event.
+    if (args.length == 2 && args[1].equalsIgnoreCase("setkit")) {
+      KitData kitData = bracketsData.getKitData();
+      kitData.setKitData(player, true);
+
+      Common.sendMmMessage(
+          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.BRACKETS.KIT-SET"));
+    } else {
+      sendHelpMsg(player, label);
+    }
+  }
+
+  private static void sendHelpMsg(Player player, String label) {
+    for (String line : LanguageManager.getList("COMMAND.EVENT.ARGUMENTS.BRACKETS.COMMAND-HELP")) {
+      Common.sendMmMessage(player, line.replace("%label%", label));
+    }
+  }
+
+  public static List<String> tabComplete(Player player, String[] args) {
+    List<String> arguments = new ArrayList<>();
+
+    if (!player.hasPermission("ap.setup")) {
+      return arguments;
+    }
+
+    if (args.length == 2) {
+      arguments.add("setkit");
+      arguments.add("enable");
+      arguments.add("disable");
+
+      return StringUtil.copyPartialMatches(args[1], arguments, new ArrayList<>());
+    }
+
+    return arguments;
+  }
+}

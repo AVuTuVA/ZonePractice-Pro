@@ -1,15 +1,19 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings;
 
-import dev.lokspel.practice.manager.backend.GUIFile;
+import dev.lokspel.practice.manager.backend.GuiFile;
 import dev.lokspel.practice.manager.backend.LanguageManager;
-import dev.lokspel.practice.manager.gui.GUI;
-import dev.lokspel.practice.manager.gui.GUIManager;
-import dev.lokspel.practice.manager.gui.GUIType;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.type.SkyWars;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.InventoryUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -17,80 +21,90 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 @Getter
-public class SkyWarsLootGui extends GUI {
+public class SkyWarsLootGui extends Gui {
 
-    private final SkyWars ladder;
+  private final SkyWars ladder;
 
-    public SkyWarsLootGui(SkyWars ladder) {
-        super(GUIType.Ladder_SkyWarsLoot);
-        this.gui.put(1, InventoryUtil.createInventory(GUIFile.getString("GUIS.SETUP.LADDER.SKYWARS-LOOT.TITLE").replace("%ladder%", ladder.getName()), 6));
-        this.ladder = ladder;
+  public SkyWarsLootGui(SkyWars ladder) {
+    super(GuiType.Ladder_SkyWarsLoot);
+    this.gui.put(
+        1,
+        InventoryUtil.createInventory(
+            GuiFile.getString("GUIS.SETUP.LADDER.SKYWARS-LOOT.TITLE")
+                .replace("%ladder%", ladder.getName()),
+            6));
+    this.ladder = ladder;
 
-        build();
+    build();
+  }
+
+  @Override
+  public void build() {
+    // Set filler items
+    for (int i : new int[] {46, 47, 48, 49, 50, 51, 52, 53}) {
+      gui.get(1).setItem(i, GuiManager.getFILLER_ITEM());
     }
 
-    @Override
-    public void build() {
-        // Set filler items
-        for (int i : new int[]{46, 47, 48, 49, 50, 51, 52, 53})
-            gui.get(1).setItem(i, GUIManager.getFILLER_ITEM());
+    // Navigation item
+    gui.get(1)
+        .setItem(45, GuiFile.getGuiItem("GUIS.SETUP.LADDER.SKYWARS-LOOT.ICONS.GO-BACK").get());
 
-        // Navigation item
-        gui.get(1).setItem(45, GUIFile.getGuiItem("GUIS.SETUP.LADDER.SKYWARS-LOOT.ICONS.GO-BACK").get());
+    update();
+  }
 
-        update();
+  @Override
+  public void update() {
+    if (ladder.getSkyWarsLoot() != null) {
+      List<ItemStack> content = new ArrayList<>(Arrays.asList(ladder.getSkyWarsLoot()));
+      for (int i = 0; i < 45; i++) {
+        gui.get(1).setItem(i, content.get(i));
+      }
     }
 
-    @Override
-    public void update() {
-        if (ladder.getSkyWarsLoot() != null) {
-            List<ItemStack> content = new ArrayList<>(Arrays.asList(ladder.getSkyWarsLoot()));
-            for (int i = 0; i < 45; i++)
-                gui.get(1).setItem(i, content.get(i));
+    updatePlayers();
+  }
+
+  @Override
+  public void handleClickEvent(InventoryClickEvent e) {
+    Player player = (Player) e.getWhoClicked();
+    Inventory inventory = e.getView().getTopInventory();
+
+    int slot = e.getRawSlot();
+
+    if (inventory.getSize() > slot) {
+      if (Objects.equals(e.getCurrentItem(), GuiManager.getFILLER_ITEM()) || slot == 45) {
+        e.setCancelled(true);
+        if (slot == 45) {
+          LadderSetupManager.getInstance()
+              .getLadderSetupGuis()
+              .get(ladder)
+              .get(GuiType.Ladder_Settings)
+              .open(player);
         }
-
-        updatePlayers();
-    }
-
-    @Override
-    public void handleClickEvent(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
-        Inventory inventory = e.getView().getTopInventory();
-
-        int slot = e.getRawSlot();
-
-        if (inventory.getSize() > slot) {
-            if (Objects.equals(e.getCurrentItem(), GUIManager.getFILLER_ITEM()) || slot == 45) {
-                e.setCancelled(true);
-                if (slot == 45)
-                    LadderSetupManager.getInstance().getLadderSetupGUIs().get(ladder).get(GUIType.Ladder_Settings).open(player);
-            } else {
-                if (ladder.isEnabled()) {
-                    e.setCancelled(true);
-                    Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
-                }
-            }
+      } else {
+        if (ladder.isEnabled()) {
+          e.setCancelled(true);
+          Common.sendMmMessage(
+              player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
         }
+      }
+    }
+  }
+
+  public void handleCloseEvent(InventoryCloseEvent e) {
+    if (LadderManager.getInstance().getLadders().contains(ladder) && !ladder.isEnabled()) {
+      this.save();
+    }
+  }
+
+  public void save() {
+    List<ItemStack> content = new ArrayList<>();
+
+    for (int i = 0; i < 45; i++) {
+      content.add(gui.get(1).getItem(i));
     }
 
-    public void handleCloseEvent(InventoryCloseEvent e) {
-        if (LadderManager.getInstance().getLadders().contains(ladder) && !ladder.isEnabled())
-            this.save();
-    }
-
-    public void save() {
-        List<ItemStack> content = new ArrayList<>();
-
-        for (int i = 0; i < 45; i++)
-            content.add(gui.get(1).getItem(i));
-
-        ladder.setSkyWarsLoot(content.toArray(new ItemStack[0]));
-    }
-
+    ladder.setSkyWarsLoot(content.toArray(new ItemStack[0]));
+  }
 }

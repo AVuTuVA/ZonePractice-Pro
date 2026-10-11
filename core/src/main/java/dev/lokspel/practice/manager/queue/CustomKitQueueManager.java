@@ -14,6 +14,11 @@ import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
 import dev.lokspel.practice.manager.queue.runnables.CustomKitSearchRunnable;
 import dev.lokspel.practice.util.Common;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,347 +26,360 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.*;
-
 public class CustomKitQueueManager implements Listener {
 
-    private static final String ACTION_BAR_ID = "queue";
+  private static final String ACTION_BAR_ID = "queue";
 
-    private static CustomKitQueueManager instance;
+  private static CustomKitQueueManager instance;
 
-    public static CustomKitQueueManager getInstance() {
-        if (instance == null) {
-            instance = new CustomKitQueueManager();
-        }
-        return instance;
+  public static CustomKitQueueManager getInstance() {
+    if (instance == null) {
+      instance = new CustomKitQueueManager();
+    }
+    return instance;
+  }
+
+  private CustomKitQueueManager() {
+    Bukkit.getPluginManager().registerEvents(this, AstralPractice.getInstance());
+  }
+
+  @Getter private final Map<UUID, HostedCustomKitQueue> hostedQueues = new LinkedHashMap<>();
+  @Getter private final Map<UUID, CustomKitSearchRunnable> joinSearches = new LinkedHashMap<>();
+
+  public boolean isCustomKitQueueEnabled() {
+    Object enabledValue = ConfigManager.get("QUEUE.UNRANKED.CUSTOM-KIT.ENABLED");
+    if (enabledValue == null) {
+      enabledValue = ConfigManager.get("QUEUE.UNRANKED.CUSTOM-KIT-QUEUE-ENABLED");
     }
 
-    private CustomKitQueueManager() {
-        Bukkit.getPluginManager().registerEvents(this, AstralPractice.getInstance());
+    // Keep feature enabled by default to avoid breaking old configs that don't have the new key
+    // yet.
+    if (enabledValue == null) {
+      return true;
     }
 
-    @Getter
-    private final Map<UUID, HostedCustomKitQueue> hostedQueues = new LinkedHashMap<>();
-    @Getter
-    private final Map<UUID, CustomKitSearchRunnable> joinSearches = new LinkedHashMap<>();
+    return Boolean.parseBoolean(String.valueOf(enabledValue));
+  }
 
-    public boolean isCustomKitQueueEnabled() {
-        Object enabledValue = ConfigManager.get("QUEUE.UNRANKED.CUSTOM-KIT.ENABLED");
-        if (enabledValue == null) {
-            enabledValue = ConfigManager.get("QUEUE.UNRANKED.CUSTOM-KIT-QUEUE-ENABLED");
-        }
-
-        // Keep feature enabled by default to avoid breaking old configs that don't have the new key yet.
-        if (enabledValue == null) {
-            return true;
-        }
-
-        return Boolean.parseBoolean(String.valueOf(enabledValue));
+  public List<CustomLadder> getHostableKits(Profile profile) {
+    List<CustomLadder> hostable = new ArrayList<>();
+    if (profile == null) {
+      return hostable;
     }
 
-    public List<CustomLadder> getHostableKits(Profile profile) {
-        List<CustomLadder> hostable = new ArrayList<>();
-        if (profile == null) {
-            return hostable;
-        }
-
-        for (CustomLadder customLadder : profile.getCustomLadders()) {
-            if (customLadder != null && customLadder.isEnabled()) {
-                hostable.add(customLadder);
-            }
-        }
-
-        return hostable;
+    for (CustomLadder customLadder : profile.getCustomLadders()) {
+      if (customLadder != null && customLadder.isEnabled()) {
+        hostable.add(customLadder);
+      }
     }
 
-    public HostedCustomKitQueue getHostedQueue(Player host) {
-        if (host == null) {
-            return null;
-        }
+    return hostable;
+  }
 
-        return hostedQueues.get(host.getUniqueId());
+  public HostedCustomKitQueue getHostedQueue(Player host) {
+    if (host == null) {
+      return null;
     }
 
-    public CustomKitSearchRunnable getJoinSearch(Player joiner) {
-        if (joiner == null) {
-            return null;
-        }
+    return hostedQueues.get(host.getUniqueId());
+  }
 
-        return joinSearches.get(joiner.getUniqueId());
+  public CustomKitSearchRunnable getJoinSearch(Player joiner) {
+    if (joiner == null) {
+      return null;
     }
 
-    public boolean hostQueue(Player host, CustomLadder customLadder) {
-        if (host == null || customLadder == null) {
-            return false;
-        }
+    return joinSearches.get(joiner.getUniqueId());
+  }
 
-        if (!isCustomKitQueueEnabled()) {
-            Common.sendMMMessage(host, LanguageManager.getString("CANT-USE-COMMAND"));
-            return false;
-        }
-
-        Profile profile = ProfileManager.getInstance().getProfile(host);
-        if (profile == null || profile.getStatus() != ProfileStatus.LOBBY) {
-            Common.sendMMMessage(host, LanguageManager.getString("CANT-USE-COMMAND"));
-            return false;
-        }
-
-        if (!customLadder.isEnabled()) {
-            Common.sendMMMessage(host, LanguageManager.getString("QUEUES.CUSTOM.KIT-NOT-READY"));
-            return false;
-        }
-
-        if (customLadder.getAvailableArenas().isEmpty()) {
-            Common.sendMMMessage(host, LanguageManager.getString("QUEUES.NO-AVAILABLE-ARENA"));
-            return false;
-        }
-
-        hostedQueues.put(host.getUniqueId(), new HostedCustomKitQueue(host.getUniqueId(), customLadder, System.currentTimeMillis()));
-
-        InventoryManager.getInstance().setMatchQueueInventory(host);
-
-        CustomKitSearchRunnable hostSearch = joinSearches.get(host.getUniqueId());
-        if (hostSearch != null) {
-            hostSearch.cancel();
-        }
-
-        hostSearch = new CustomKitSearchRunnable(host.getUniqueId(), CustomKitSearchRunnable.SearchMode.HOST, customLadder.getDisplayName());
-        joinSearches.put(host.getUniqueId(), hostSearch);
-        hostSearch.begin();
-
-        Common.sendMMMessage(host, LanguageManager.getString("QUEUES.CUSTOM.HOSTED").replace("%kit%", customLadder.getDisplayName()));
-
-        tryMatchHostedQueue(host);
-        return true;
+  public boolean hostQueue(Player host, CustomLadder customLadder) {
+    if (host == null || customLadder == null) {
+      return false;
     }
 
-    public boolean startJoinSearch(Player joiner) {
-        if (joiner == null) {
-            return false;
-        }
-
-        if (!isCustomKitQueueEnabled()) {
-            Common.sendMMMessage(joiner, LanguageManager.getString("CANT-USE-COMMAND"));
-            return false;
-        }
-
-        Profile profile = ProfileManager.getInstance().getProfile(joiner);
-        if (profile == null || profile.getStatus() != ProfileStatus.LOBBY) {
-            Common.sendMMMessage(joiner, LanguageManager.getString("CANT-USE-COMMAND"));
-            return false;
-        }
-
-        if (joinSearches.containsKey(joiner.getUniqueId())) {
-            return true;
-        }
-
-        InventoryManager.getInstance().setMatchQueueInventory(joiner);
-
-        CustomKitSearchRunnable search = new CustomKitSearchRunnable(joiner.getUniqueId(), CustomKitSearchRunnable.SearchMode.JOIN_OTHERS, null);
-        joinSearches.put(joiner.getUniqueId(), search);
-        search.begin();
-
-        Common.sendMMMessage(joiner, LanguageManager.getString("QUEUES.CUSTOM.WAITING-FOR-HOST"));
-        return true;
+    if (!isCustomKitQueueEnabled()) {
+      Common.sendMmMessage(host, LanguageManager.getString("CANT-USE-COMMAND"));
+      return false;
     }
 
-    public boolean cancelHostedQueue(Player host, boolean sendMessage, boolean setLobbyInventory) {
-        if (host == null) {
-            return false;
-        }
-
-        HostedCustomKitQueue removed = hostedQueues.remove(host.getUniqueId());
-        if (removed == null) {
-            return false;
-        }
-
-        if (host.isOnline()) {
-            cancelJoinSearch(host, false, false);
-
-            if (setLobbyInventory) {
-                InventoryManager.getInstance().setLobbyInventory(host, false);
-            }
-
-            clearQueueActionBar(host);
-
-            if (sendMessage) {
-                Common.sendMMMessage(host, LanguageManager.getString("QUEUES.CUSTOM.CANCELLED"));
-            }
-        }
-
-        return true;
+    Profile profile = ProfileManager.getInstance().getProfile(host);
+    if (profile == null || profile.getStatus() != ProfileStatus.LOBBY) {
+      Common.sendMmMessage(host, LanguageManager.getString("CANT-USE-COMMAND"));
+      return false;
     }
 
-    public boolean cancelJoinSearch(Player joiner, boolean sendMessage, boolean setLobbyInventory) {
-        if (joiner == null) {
-            return false;
-        }
-
-        CustomKitSearchRunnable search = joinSearches.remove(joiner.getUniqueId());
-        if (search == null) {
-            return false;
-        }
-
-        search.cancel();
-
-        if (joiner.isOnline()) {
-            if (setLobbyInventory) {
-                InventoryManager.getInstance().setLobbyInventory(joiner, false);
-            }
-
-            clearQueueActionBar(joiner);
-
-            if (sendMessage) {
-                Common.sendMMMessage(joiner, LanguageManager.getString("QUEUES.CUSTOM.SEARCH-CANCELLED"));
-            }
-        }
-
-        return true;
+    if (!customLadder.isEnabled()) {
+      Common.sendMmMessage(host, LanguageManager.getString("QUEUES.CUSTOM.KIT-NOT-READY"));
+      return false;
     }
 
-    public boolean tryMatchHostedQueue(Player host) {
-        HostedCustomKitQueue hostedQueue = hostedQueues.get(host.getUniqueId());
-        if (hostedQueue == null) {
-            return false;
-        }
-
-        for (CustomKitSearchRunnable search : new ArrayList<>(joinSearches.values())) {
-            if (search.getMode() != CustomKitSearchRunnable.SearchMode.JOIN_OTHERS) {
-                continue;
-            }
-
-            Player joiner = Bukkit.getPlayer(search.getPlayerUuid());
-            if (joiner == null || !joiner.isOnline()) {
-                continue;
-            }
-
-            Profile joinerProfile = ProfileManager.getInstance().getProfile(joiner);
-            if (joinerProfile == null || joinerProfile.getStatus() != ProfileStatus.QUEUE) {
-                cancelJoinSearch(joiner, false, false);
-                continue;
-            }
-
-            if (startHostedMatch(host, joiner, hostedQueue)) {
-                return true;
-            }
-        }
-
-        return false;
+    if (customLadder.getAvailableArenas().isEmpty()) {
+      Common.sendMmMessage(host, LanguageManager.getString("QUEUES.NO-AVAILABLE-ARENA"));
+      return false;
     }
 
-    public boolean tryJoinAnyHostedQueue(Player joiner) {
-        for (HostedCustomKitQueue hostedQueue : new ArrayList<>(hostedQueues.values())) {
-            Player host = Bukkit.getPlayer(hostedQueue.hostUuid());
-            if (!isJoinable(host, joiner, hostedQueue)) {
-                continue;
-            }
+    hostedQueues.put(
+        host.getUniqueId(),
+        new HostedCustomKitQueue(host.getUniqueId(), customLadder, System.currentTimeMillis()));
 
-            if (startHostedMatch(host, joiner, hostedQueue)) {
-                return true;
-            }
-        }
+    InventoryManager.getInstance().setMatchQueueInventory(host);
 
-        return false;
+    CustomKitSearchRunnable hostSearch = joinSearches.get(host.getUniqueId());
+    if (hostSearch != null) {
+      hostSearch.cancel();
     }
 
-    private boolean startHostedMatch(Player host, Player joiner, HostedCustomKitQueue selectedQueue) {
-        if (selectedQueue == null || host == null || joiner == null) {
-            return false;
-        }
+    hostSearch =
+        new CustomKitSearchRunnable(
+            host.getUniqueId(),
+            CustomKitSearchRunnable.SearchMode.HOST,
+            customLadder.getDisplayName());
+    joinSearches.put(host.getUniqueId(), hostSearch);
+    hostSearch.begin();
 
-        CustomLadder hostedKit = selectedQueue.customLadder();
-        Arena arena = LadderUtil.getAvailableArena(hostedKit);
-        if (arena == null) {
-            hostedQueues.remove(host.getUniqueId());
-            Common.sendMMMessage(host, LanguageManager.getString("QUEUES.NO-AVAILABLE-ARENA"));
-            InventoryManager.getInstance().setLobbyInventory(host, false);
-            return false;
-        }
+    Common.sendMmMessage(
+        host,
+        LanguageManager.getString("QUEUES.CUSTOM.HOSTED")
+            .replace("%kit%", customLadder.getDisplayName()));
 
-        hostedQueues.remove(host.getUniqueId());
-        cancelJoinSearch(host, false, false);
+    tryMatchHostedQueue(host);
+    return true;
+  }
+
+  public boolean startJoinSearch(Player joiner) {
+    if (joiner == null) {
+      return false;
+    }
+
+    if (!isCustomKitQueueEnabled()) {
+      Common.sendMmMessage(joiner, LanguageManager.getString("CANT-USE-COMMAND"));
+      return false;
+    }
+
+    Profile profile = ProfileManager.getInstance().getProfile(joiner);
+    if (profile == null || profile.getStatus() != ProfileStatus.LOBBY) {
+      Common.sendMmMessage(joiner, LanguageManager.getString("CANT-USE-COMMAND"));
+      return false;
+    }
+
+    if (joinSearches.containsKey(joiner.getUniqueId())) {
+      return true;
+    }
+
+    InventoryManager.getInstance().setMatchQueueInventory(joiner);
+
+    CustomKitSearchRunnable search =
+        new CustomKitSearchRunnable(
+            joiner.getUniqueId(), CustomKitSearchRunnable.SearchMode.JOIN_OTHERS, null);
+    joinSearches.put(joiner.getUniqueId(), search);
+    search.begin();
+
+    Common.sendMmMessage(joiner, LanguageManager.getString("QUEUES.CUSTOM.WAITING-FOR-HOST"));
+    return true;
+  }
+
+  public boolean cancelHostedQueue(Player host, boolean sendMessage, boolean setLobbyInventory) {
+    if (host == null) {
+      return false;
+    }
+
+    HostedCustomKitQueue removed = hostedQueues.remove(host.getUniqueId());
+    if (removed == null) {
+      return false;
+    }
+
+    if (host.isOnline()) {
+      cancelJoinSearch(host, false, false);
+
+      if (setLobbyInventory) {
+        InventoryManager.getInstance().setLobbyInventory(host, false);
+      }
+
+      clearQueueActionBar(host);
+
+      if (sendMessage) {
+        Common.sendMmMessage(host, LanguageManager.getString("QUEUES.CUSTOM.CANCELLED"));
+      }
+    }
+
+    return true;
+  }
+
+  public boolean cancelJoinSearch(Player joiner, boolean sendMessage, boolean setLobbyInventory) {
+    if (joiner == null) {
+      return false;
+    }
+
+    CustomKitSearchRunnable search = joinSearches.remove(joiner.getUniqueId());
+    if (search == null) {
+      return false;
+    }
+
+    search.cancel();
+
+    if (joiner.isOnline()) {
+      if (setLobbyInventory) {
+        InventoryManager.getInstance().setLobbyInventory(joiner, false);
+      }
+
+      clearQueueActionBar(joiner);
+
+      if (sendMessage) {
+        Common.sendMmMessage(joiner, LanguageManager.getString("QUEUES.CUSTOM.SEARCH-CANCELLED"));
+      }
+    }
+
+    return true;
+  }
+
+  public boolean tryMatchHostedQueue(Player host) {
+    HostedCustomKitQueue hostedQueue = hostedQueues.get(host.getUniqueId());
+    if (hostedQueue == null) {
+      return false;
+    }
+
+    for (CustomKitSearchRunnable search : new ArrayList<>(joinSearches.values())) {
+      if (search.getMode() != CustomKitSearchRunnable.SearchMode.JOIN_OTHERS) {
+        continue;
+      }
+
+      Player joiner = Bukkit.getPlayer(search.getPlayerUuid());
+      if (joiner == null || !joiner.isOnline()) {
+        continue;
+      }
+
+      Profile joinerProfile = ProfileManager.getInstance().getProfile(joiner);
+      if (joinerProfile == null || joinerProfile.getStatus() != ProfileStatus.QUEUE) {
         cancelJoinSearch(joiner, false, false);
+        continue;
+      }
 
-        clearQueueActionBar(host);
-        clearQueueActionBar(joiner);
-
-        host.closeInventory();
-        joiner.closeInventory();
-
-        Common.sendMMMessage(host, LanguageManager.getString("QUEUES.CUSTOM.MATCH-FOUND").replace("%player%", joiner.getName()));
-        Common.sendMMMessage(joiner, LanguageManager.getString("QUEUES.CUSTOM.JOINED").replace("%player%", host.getName()).replace("%kit%", hostedKit.getDisplayName()));
-
-        Duel duel = new Duel(hostedKit, arena, List.of(host, joiner), false, hostedKit.getRounds());
-        duel.startMatch();
+      if (startHostedMatch(host, joiner, hostedQueue)) {
         return true;
+      }
     }
 
-    private boolean isJoinable(Player host, Player joiner, HostedCustomKitQueue hostedQueue) {
-        if (host == null || !host.isOnline()) {
-            if (hostedQueue != null) {
-                hostedQueues.remove(hostedQueue.hostUuid());
-            }
-            return false;
-        }
+    return false;
+  }
 
-        if (host.equals(joiner)) {
-            return false;
-        }
+  public boolean tryJoinAnyHostedQueue(Player joiner) {
+    for (HostedCustomKitQueue hostedQueue : new ArrayList<>(hostedQueues.values())) {
+      Player host = Bukkit.getPlayer(hostedQueue.hostUuid());
+      if (!isJoinable(host, joiner, hostedQueue)) {
+        continue;
+      }
 
-        Profile hostProfile = ProfileManager.getInstance().getProfile(host);
-        if (hostProfile == null || hostProfile.getStatus() != ProfileStatus.QUEUE) {
-            hostedQueues.remove(hostedQueue.hostUuid());
-            return false;
-        }
-
-        if (hostedQueue.customLadder() == null || !hostedQueue.customLadder().isEnabled()) {
-            hostedQueues.remove(hostedQueue.hostUuid());
-            InventoryManager.getInstance().setLobbyInventory(host, false);
-            Common.sendMMMessage(host, LanguageManager.getString("QUEUES.CUSTOM.KIT-NOT-READY"));
-            return false;
-        }
-
+      if (startHostedMatch(host, joiner, hostedQueue)) {
         return true;
+      }
     }
 
-    private void clearQueueActionBar(Player player) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile != null) {
-            profile.getActionBar().removeMessage(ACTION_BAR_ID);
-        }
+    return false;
+  }
+
+  private boolean startHostedMatch(Player host, Player joiner, HostedCustomKitQueue selectedQueue) {
+    if (selectedQueue == null || host == null || joiner == null) {
+      return false;
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        cancelHostedQueue(e.getPlayer(), false, false);
-        cancelJoinSearch(e.getPlayer(), false, false);
+    CustomLadder hostedKit = selectedQueue.customLadder();
+    Arena arena = LadderUtil.getAvailableArena(hostedKit);
+    if (arena == null) {
+      hostedQueues.remove(host.getUniqueId());
+      Common.sendMmMessage(host, LanguageManager.getString("QUEUES.NO-AVAILABLE-ARENA"));
+      InventoryManager.getInstance().setLobbyInventory(host, false);
+      return false;
     }
 
-    @EventHandler
-    public void onProfileStatusChange(ProfileStatusChangeEvent e) {
-        if (e.getOldStatus() != ProfileStatus.QUEUE) {
-            return;
-        }
+    hostedQueues.remove(host.getUniqueId());
+    cancelJoinSearch(host, false, false);
+    cancelJoinSearch(joiner, false, false);
 
-        if (e.getNewStatus() == ProfileStatus.QUEUE) {
-            return;
-        }
+    clearQueueActionBar(host);
+    clearQueueActionBar(joiner);
 
-        Player player = e.getProfile().getPlayer().getPlayer();
-        if (player == null) {
-            return;
-        }
+    host.closeInventory();
+    joiner.closeInventory();
 
-        cancelHostedQueue(player, false, false);
-        cancelJoinSearch(player, false, false);
+    Common.sendMmMessage(
+        host,
+        LanguageManager.getString("QUEUES.CUSTOM.MATCH-FOUND")
+            .replace("%player%", joiner.getName()));
+    Common.sendMmMessage(
+        joiner,
+        LanguageManager.getString("QUEUES.CUSTOM.JOINED")
+            .replace("%player%", host.getName())
+            .replace("%kit%", hostedKit.getDisplayName()));
+
+    Duel duel = new Duel(hostedKit, arena, List.of(host, joiner), false, hostedKit.getRounds());
+    duel.startMatch();
+    return true;
+  }
+
+  private boolean isJoinable(Player host, Player joiner, HostedCustomKitQueue hostedQueue) {
+    if (host == null || !host.isOnline()) {
+      if (hostedQueue != null) {
+        hostedQueues.remove(hostedQueue.hostUuid());
+      }
+      return false;
     }
 
-    public record HostedCustomKitQueue(UUID hostUuid, CustomLadder customLadder, long startedAtMs) {
-
-
-        public long getElapsedSeconds() {
-            return (System.currentTimeMillis() - startedAtMs) / 1000L;
-        }
+    if (host.equals(joiner)) {
+      return false;
     }
+
+    Profile hostProfile = ProfileManager.getInstance().getProfile(host);
+    if (hostProfile == null || hostProfile.getStatus() != ProfileStatus.QUEUE) {
+      hostedQueues.remove(hostedQueue.hostUuid());
+      return false;
+    }
+
+    if (hostedQueue.customLadder() == null || !hostedQueue.customLadder().isEnabled()) {
+      hostedQueues.remove(hostedQueue.hostUuid());
+      InventoryManager.getInstance().setLobbyInventory(host, false);
+      Common.sendMmMessage(host, LanguageManager.getString("QUEUES.CUSTOM.KIT-NOT-READY"));
+      return false;
+    }
+
+    return true;
+  }
+
+  private void clearQueueActionBar(Player player) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile != null) {
+      profile.getActionBar().removeMessage(ACTION_BAR_ID);
+    }
+  }
+
+  @EventHandler
+  public void onPlayerQuit(PlayerQuitEvent e) {
+    cancelHostedQueue(e.getPlayer(), false, false);
+    cancelJoinSearch(e.getPlayer(), false, false);
+  }
+
+  @EventHandler
+  public void onProfileStatusChange(ProfileStatusChangeEvent e) {
+    if (e.getOldStatus() != ProfileStatus.QUEUE) {
+      return;
+    }
+
+    if (e.getNewStatus() == ProfileStatus.QUEUE) {
+      return;
+    }
+
+    Player player = e.getProfile().getPlayer().getPlayer();
+    if (player == null) {
+      return;
+    }
+
+    cancelHostedQueue(player, false, false);
+    cancelJoinSearch(player, false, false);
+  }
+
+  public record HostedCustomKitQueue(UUID hostUuid, CustomLadder customLadder, long startedAtMs) {
+
+    public long getElapsedSeconds() {
+      return (System.currentTimeMillis() - startedAtMs) / 1000L;
+    }
+  }
 }
-

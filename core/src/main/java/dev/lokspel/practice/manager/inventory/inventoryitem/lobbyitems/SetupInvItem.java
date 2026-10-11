@@ -5,13 +5,12 @@ import org.bukkit.entity.Player;
 
 public class SetupInvItem extends InvItem {
 
-    public SetupInvItem() {
-        super(getItemStack("LOBBY-BASIC.NORMAL.SETUP.ITEM"), getInt("LOBBY-BASIC.NORMAL.SETUP.SLOT"));
-    }
+  public SetupInvItem() {
+    super(getItemStack("LOBBY-BASIC.NORMAL.SETUP.ITEM"), getInt("LOBBY-BASIC.NORMAL.SETUP.SLOT"));
+  }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        player.performCommand("setup");
-    }
-
+  @Override
+  public void handleClickEvent(Player player) {
+    player.performCommand("setup");
+  }
 }

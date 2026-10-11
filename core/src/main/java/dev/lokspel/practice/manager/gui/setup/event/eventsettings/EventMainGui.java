@@ -1,15 +1,15 @@
 package dev.lokspel.practice.manager.gui.setup.event.eventsettings;
 
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.GUIFile;
+import dev.lokspel.practice.manager.backend.GuiFile;
 import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import dev.lokspel.practice.manager.fight.event.setup.EventWandSetupManager;
 import dev.lokspel.practice.manager.fight.event.util.EventUtil;
-import dev.lokspel.practice.manager.gui.GUI;
-import dev.lokspel.practice.manager.gui.GUIItem;
-import dev.lokspel.practice.manager.gui.GUIManager;
-import dev.lokspel.practice.manager.gui.GUIType;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiItem;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.event.EventSetupManager;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.InventoryUtil;
@@ -23,125 +23,147 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 @Getter
-public class EventMainGui extends GUI {
+public class EventMainGui extends Gui {
 
-    private final EventData eventData;
+  private final EventData eventData;
 
-    public EventMainGui(EventData eventData) {
-        super(GUIType.Event_Main);
-        this.gui.put(1, InventoryUtil.createInventory(GUIFile.getString("GUIS.SETUP.EVENT.EVENT-MAIN.TITLE").replace("%eventName%", eventData.getType().getName()), 4));
-        this.eventData = eventData;
+  public EventMainGui(EventData eventData) {
+    super(GuiType.Event_Main);
+    this.gui.put(
+        1,
+        InventoryUtil.createInventory(
+            GuiFile.getString("GUIS.SETUP.EVENT.EVENT-MAIN.TITLE")
+                .replace("%eventName%", eventData.getType().getName()),
+            4));
+    this.eventData = eventData;
 
-        build();
+    build();
+  }
+
+  @Override
+  public void build() {
+    Inventory inventory = gui.get(1);
+
+    inventory.setItem(27, GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.BACK-TO").get());
+
+    for (int i : new int[] {28, 29, 30, 31, 32, 33, 34, 35}) {
+      inventory.setItem(i, GuiManager.getFILLER_ITEM());
     }
 
-    @Override
-    public void build() {
-        Inventory inventory = gui.get(1);
+    inventory.setItem(15, GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.SETTINGS").get());
 
-        inventory.setItem(27, GUIFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.BACK-TO").get());
+    update();
+  }
 
-        for (int i : new int[]{28, 29, 30, 31, 32, 33, 34, 35})
-            inventory.setItem(i, GUIManager.getFILLER_ITEM());
+  @Override
+  public void update() {
+    Inventory inventory = gui.get(1);
 
-        inventory.setItem(15, GUIFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.SETTINGS").get());
+    inventory.setItem(
+        10,
+        GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.EVENT-NAME")
+            .replace("%eventName%", eventData.getType().getName())
+            .setBaseItem(eventData.getIcon().get())
+            .get());
 
-        update();
-    }
+    inventory.setItem(
+        11,
+        eventData.isEnabled()
+            ? GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.STATUS.ENABLED").get()
+            : GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.STATUS.DISABLED").get());
 
-    @Override
-    public void update() {
-        Inventory inventory = gui.get(1);
+    inventory.setItem(
+        16,
+        GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.LOCATION")
+            .replace("%eventName%", eventData.getType().getName())
+            .replace("%corner1%", ArenaUtil.convertLocation(eventData.getCuboidLoc1()))
+            .replace("%corner2%", ArenaUtil.convertLocation(eventData.getCuboidLoc2()))
+            .replace("%spawnPositions%", String.valueOf(eventData.getSpawns().size()))
+            .get());
 
-        inventory.setItem(10, GUIFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.EVENT-NAME")
-                .replace("%eventName%", eventData.getType().getName())
-                .setBaseItem(eventData.getIcon().get())
-                .get());
+    this.updatePlayers();
+  }
 
-        inventory.setItem(11, eventData.isEnabled() ?
-                GUIFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.STATUS.ENABLED").get()
-                : GUIFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.STATUS.DISABLED").get());
+  @Override
+  public void handleClickEvent(InventoryClickEvent e) {
+    Player player = (Player) e.getWhoClicked();
+    Inventory inventory = e.getView().getTopInventory();
+    ClickType click = e.getClick();
 
-        inventory.setItem(16, GUIFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.LOCATION")
-                .replace("%eventName%", eventData.getType().getName())
-                .replace("%corner1%", ArenaUtil.convertLocation(eventData.getCuboidLoc1()))
-                .replace("%corner2%", ArenaUtil.convertLocation(eventData.getCuboidLoc2()))
-                .replace("%spawnPositions%", String.valueOf(eventData.getSpawns().size()))
-                .get());
+    int slot = e.getRawSlot();
 
-        this.updatePlayers();
-    }
+    if (inventory.getSize() > slot && e.getCurrentItem() != null) {
+      e.setCancelled(true);
 
-    @Override
-    public void handleClickEvent(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
-        Inventory inventory = e.getView().getTopInventory();
-        ClickType click = e.getClick();
-
-        int slot = e.getRawSlot();
-
-        if (inventory.getSize() > slot && e.getCurrentItem() != null) {
-            e.setCancelled(true);
-
-            switch (slot) {
-                case 10:
-                    if (click.isLeftClick()) {
-                        if (eventData.isEnabled()) {
-                            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETUP.EVENT.CANT-EDIT-ENABLED"));
-                            return;
-                        }
-                        ItemStack cursorItem = player.getItemOnCursor();
-                        if (cursorItem == null || cursorItem.getType().equals(Material.AIR)) {
-                            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETUP.EVENT.NO-ITEM-ON-CURSOR"));
-                            return;
-                        }
-
-                        try {
-                            eventData.setIcon(new GUIItem(cursorItem));
-                        } catch (Exception ex) {
-                            Common.sendMMMessage(player, "<red>" + ex.getMessage());
-                            return;
-                        }
-
-                        update();
-                        GUIManager.getInstance().searchGUI(GUIType.Event_Summary).update();
-                        GUIManager.getInstance().searchGUI(GUIType.Event_Host).update();
-                    } else if (click.isRightClick()) {
-                        Location location = eventData.getAvailableLocation();
-                        if (location == null) {
-                            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETUP.EVENT.NO-LOCATION"));
-                            return;
-                        }
-
-                        player.teleport(location);
-                        player.setAllowFlight(true);
-                        player.setFlying(true);
-                    }
-                    break;
-                case 11:
-                    EventUtil.changeStatus(eventData, player);
-                    this.update();
-                    break;
-                case 15:
-                    EventSetupManager.getInstance().getEventSetupGUIs().get(eventData).get(GUIType.Event_Settings).open(player);
-                    break;
-                case 16:
-                    if (eventData.isEnabled()) {
-                        Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETUP.EVENT.CANT-EDIT-ENABLED"));
-                        return;
-                    }
-
-                    if (click.isLeftClick()) {
-                        // Start wand-based setup mode
-                        player.closeInventory();
-                        EventWandSetupManager.getInstance().startSetup(player, eventData);
-                    }
-                    break;
-                case 27:
-                    GUIManager.getInstance().searchGUI(GUIType.Event_Summary).open(player, 1);
-                    break;
+      switch (slot) {
+        case 10:
+          if (click.isLeftClick()) {
+            if (eventData.isEnabled()) {
+              Common.sendMmMessage(
+                  player, LanguageManager.getString("COMMAND.SETUP.EVENT.CANT-EDIT-ENABLED"));
+              return;
             }
-        }
-    }
+            ItemStack cursorItem = player.getItemOnCursor();
+            if (cursorItem == null || cursorItem.getType().equals(Material.AIR)) {
+              Common.sendMmMessage(
+                  player, LanguageManager.getString("COMMAND.SETUP.EVENT.NO-ITEM-ON-CURSOR"));
+              return;
+            }
 
+            try {
+              eventData.setIcon(new GuiItem(cursorItem));
+            } catch (Exception ex) {
+              Common.sendMmMessage(player, "<red>" + ex.getMessage());
+              return;
+            }
+
+            update();
+            GuiManager.getInstance().searchGui(GuiType.Event_Summary).update();
+            GuiManager.getInstance().searchGui(GuiType.Event_Host).update();
+          } else if (click.isRightClick()) {
+            Location location = eventData.getAvailableLocation();
+            if (location == null) {
+              Common.sendMmMessage(
+                  player, LanguageManager.getString("COMMAND.SETUP.EVENT.NO-LOCATION"));
+              return;
+            }
+
+            player.teleport(location);
+            player.setAllowFlight(true);
+            player.setFlying(true);
+          }
+          break;
+        case 11:
+          EventUtil.changeStatus(eventData, player);
+          this.update();
+          break;
+        case 15:
+          EventSetupManager.getInstance()
+              .getEventSetupGuis()
+              .get(eventData)
+              .get(GuiType.Event_Settings)
+              .open(player);
+          break;
+        case 16:
+          if (eventData.isEnabled()) {
+            Common.sendMmMessage(
+                player, LanguageManager.getString("COMMAND.SETUP.EVENT.CANT-EDIT-ENABLED"));
+            return;
+          }
+
+          if (click.isLeftClick()) {
+            // Start wand-based setup mode
+            player.closeInventory();
+            EventWandSetupManager.getInstance().startSetup(player, eventData);
+          }
+          break;
+        case 27:
+          GuiManager.getInstance().searchGui(GuiType.Event_Summary).open(player, 1);
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
 }

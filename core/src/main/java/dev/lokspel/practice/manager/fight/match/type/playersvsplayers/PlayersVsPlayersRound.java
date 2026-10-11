@@ -10,15 +10,14 @@ import lombok.Setter;
 @Getter
 public abstract class PlayersVsPlayersRound extends Round {
 
-    protected TeamEnum roundWinner;
+  protected TeamEnum roundWinner;
 
-    protected PlayersVsPlayersRound(Match match, int roundNumber) {
-        super(match, roundNumber);
-    }
+  protected PlayersVsPlayersRound(Match match, int roundNumber) {
+    super(match, roundNumber);
+  }
 
-    @Override
-    public PlayersVsPlayers getMatch() {
-        return (PlayersVsPlayers) this.match;
-    }
-
+  @Override
+  public PlayersVsPlayers getMatch() {
+    return (PlayersVsPlayers) this.match;
+  }
 }

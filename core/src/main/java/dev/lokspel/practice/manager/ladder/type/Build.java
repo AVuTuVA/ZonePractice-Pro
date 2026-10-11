@@ -8,13 +8,12 @@ import org.bukkit.event.Event;
 
 public class Build extends NormalLadder implements LadderHandle {
 
-    public Build(String name, LadderType type) {
-        super(name, type);
-    }
+  public Build(String name, LadderType type) {
+    super(name, type);
+  }
 
-    @Override
-    public boolean handleEvents(Event e, Match match) {
-        return false;
-    }
-
+  @Override
+  public boolean handleEvents(Event e, Match match) {
+    return false;
+  }
 }

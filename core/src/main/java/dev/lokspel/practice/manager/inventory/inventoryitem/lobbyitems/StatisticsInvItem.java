@@ -7,13 +7,14 @@ import org.bukkit.entity.Player;
 
 public class StatisticsInvItem extends InvItem {
 
-    public StatisticsInvItem() {
-        super(getItemStack("LOBBY-BASIC.NORMAL.STATISTICS.ITEM"), getInt("LOBBY-BASIC.NORMAL.STATISTICS.SLOT"));
-    }
+  public StatisticsInvItem() {
+    super(
+        getItemStack("LOBBY-BASIC.NORMAL.STATISTICS.ITEM"),
+        getInt("LOBBY-BASIC.NORMAL.STATISTICS.SLOT"));
+  }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        new LbSelectorGui(player, ProfileManager.getInstance().getProfile(player))
-                .open(player);
-    }
+  @Override
+  public void handleClickEvent(Player player) {
+    new LbSelectorGui(player, ProfileManager.getInstance().getProfile(player)).open(player);
+  }
 }

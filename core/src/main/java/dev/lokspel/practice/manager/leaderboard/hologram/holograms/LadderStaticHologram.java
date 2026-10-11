@@ -15,42 +15,44 @@ import org.bukkit.configuration.file.YamlConfiguration;
 @Setter
 public class LadderStaticHologram extends Hologram {
 
-    private NormalLadder ladder;
+  private NormalLadder ladder;
 
-    public LadderStaticHologram(String name, Location baseLocation) {
-        super(name, baseLocation, HologramType.LADDER_STATIC);
+  public LadderStaticHologram(String name, Location baseLocation) {
+    super(name, baseLocation, HologramType.LADDER_STATIC);
+  }
+
+  public LadderStaticHologram(String name) {
+    super(name, HologramType.LADDER_STATIC);
+  }
+
+  @Override
+  public void getAbstractData(YamlConfiguration config) {
+    if (config.isSet("holograms." + name + ".ladder")) {
+      NormalLadder ladder =
+          LadderManager.getInstance().getLadder(config.getString("holograms." + name + ".ladder"));
+      if (ladder != null && ladder.isEnabled()) {
+        this.ladder = ladder;
+      }
     }
+  }
 
-    public LadderStaticHologram(String name) {
-        super(name, HologramType.LADDER_STATIC);
+  @Override
+  public void setAbstractData(YamlConfiguration config) {
+    if (ladder != null) {
+      config.set("holograms." + name + ".ladder", ladder.getName());
+    } else {
+      config.set("holograms." + name + ".ladder", null);
     }
+  }
 
-    @Override
-    public void getAbstractData(YamlConfiguration config) {
-        if (config.isSet("holograms." + name + ".ladder")) {
-            NormalLadder ladder = LadderManager.getInstance().getLadder(config.getString("holograms." + name + ".ladder"));
-            if (ladder != null && ladder.isEnabled())
-                this.ladder = ladder;
-        }
-    }
+  @Override
+  public boolean isReadyToEnable() {
+    return ladder != null && leaderboardType != null;
+  }
 
-    @Override
-    public void setAbstractData(YamlConfiguration config) {
-        if (ladder != null) {
-            config.set("holograms." + name + ".ladder", ladder.getName());
-        } else {
-            config.set("holograms." + name + ".ladder", null);
-        }
-    }
-
-    @Override
-    public boolean isReadyToEnable() {
-        return ladder != null && leaderboardType != null;
-    }
-
-    @Override
-    public Leaderboard getNextLeaderboard() {
-        return LeaderboardManager.getInstance().searchLB(hologramType.getLbMainType(), leaderboardType, ladder);
-    }
-
+  @Override
+  public Leaderboard getNextLeaderboard() {
+    return LeaderboardManager.getInstance()
+        .searchLb(hologramType.getLbMainType(), leaderboardType, ladder);
+  }
 }

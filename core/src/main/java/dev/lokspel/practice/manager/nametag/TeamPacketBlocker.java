@@ -5,32 +5,30 @@ import org.bukkit.Bukkit;
 
 public class TeamPacketBlocker {
 
-    private static TeamPacketBlocker instance;
+  private static TeamPacketBlocker instance;
 
-    @Getter
-    private TabIntegration tabIntegration;
+  @Getter private TabIntegration tabIntegration;
 
-    private TeamPacketBlocker() {
+  private TeamPacketBlocker() {}
+
+  public static TeamPacketBlocker getInstance() {
+    if (instance == null) {
+      instance = new TeamPacketBlocker();
     }
+    return instance;
+  }
 
-    public static TeamPacketBlocker getInstance() {
-        if (instance == null) {
-            instance = new TeamPacketBlocker();
-        }
-        return instance;
-    }
-
-    public void register() {
-        if (Bukkit.getPluginManager().isPluginEnabled("TAB")) {
-            try {
-                tabIntegration = new TabIntegration();
-            } catch (Throwable ignored) {
-                tabIntegration = null;
-            }
-        }
-    }
-
-    public void unregister() {
+  public void register() {
+    if (Bukkit.getPluginManager().isPluginEnabled("TAB")) {
+      try {
+        tabIntegration = new TabIntegration();
+      } catch (Throwable ignored) {
         tabIntegration = null;
+      }
     }
+  }
+
+  public void unregister() {
+    tabIntegration = null;
+  }
 }

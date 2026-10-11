@@ -7,31 +7,33 @@ import dev.lokspel.practice.util.interfaces.Runnable;
 
 public class EndRunnable extends Runnable {
 
-    private final Event event;
+  private final Event event;
 
-    public EndRunnable(final Event event) {
-        super(0, 20, false);
+  public EndRunnable(final Event event) {
+    super(0, 20, false);
 
-        this.event = event;
-        this.seconds = 5;
+    this.event = event;
+    this.seconds = 5;
+  }
+
+  @Override
+  public void run() {
+    if (this.seconds == 0) {
+      this.end();
+    } else {
+      this.seconds--;
     }
+  }
 
-    @Override
-    public void run() {
-        if (this.seconds == 0) {
-            this.end();
-        } else {
-            this.seconds--;
-        }
-    }
+  public void end() {
+    this.cancel();
 
-    public void end() {
-        this.cancel();
+    this.event.removeAll();
+    this.event
+        .getFightChange()
+        .rollback(
+            PermanentConfig.EVENT_ROLLBACK_MAX_CHECKS, PermanentConfig.EVENT_ROLLBACK_MAX_CHANGES);
 
-        this.event.removeAll();
-        this.event.getFightChange().rollback(PermanentConfig.EVENT_ROLLBACK_MAX_CHECKS, PermanentConfig.EVENT_ROLLBACK_MAX_CHANGES);
-
-        EventManager.getInstance().getEvents().remove(event);
-    }
-
+    EventManager.getInstance().getEvents().remove(event);
+  }
 }

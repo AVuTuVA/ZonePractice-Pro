@@ -10,42 +10,43 @@ import org.bukkit.entity.Player;
 
 public class PracticeSidebar {
 
-    private final SidebarManager sidebarManager;
-    @Getter
-    private final Sidebar sidebar;
-    private final Player player;
+  private final SidebarManager sidebarManager;
+  @Getter private final Sidebar sidebar;
+  private final Player player;
 
-    public PracticeSidebar(SidebarManager sidebarManager, Sidebar sidebar, Player player) {
-        this.sidebarManager = sidebarManager;
-        this.sidebar = sidebar;
-        this.player = player;
+  public PracticeSidebar(SidebarManager sidebarManager, Sidebar sidebar, Player player) {
+    this.sidebarManager = sidebarManager;
+    this.sidebar = sidebar;
+    this.player = player;
 
-        sidebar.addPlayer(player);
+    sidebar.addPlayer(player);
+  }
+
+  public void update() {
+    // Check if player is still online and sidebar is not closed
+    if (!player.isOnline() || sidebar.closed()) {
+      return;
     }
 
-    public void update() {
-        // Check if player is still online and sidebar is not closed
-        if (!player.isOnline() || sidebar.closed()) return;
+    try {
+      SidebarAdapter sidebarAdapter = sidebarManager.getSidebarAdapter();
+      SidebarComponent.Builder lines = SidebarComponent.builder();
 
-        try {
-            SidebarAdapter sidebarAdapter = sidebarManager.getSidebarAdapter();
-            SidebarComponent.Builder lines = SidebarComponent.builder();
+      SidebarComponent title = SidebarComponent.staticLine(sidebarAdapter.getTitle(player));
 
-            SidebarComponent title = SidebarComponent.staticLine(sidebarAdapter.getTitle(player));
+      for (Component component : sidebarAdapter.getLines(player)) {
+        lines.addStaticLine(component);
+      }
 
-            for (Component component : sidebarAdapter.getLines(player)) {
-                lines.addStaticLine(component);
-            }
+      ComponentSidebarLayout componentSidebarLayout =
+          new ComponentSidebarLayout(title, lines.build());
 
-            ComponentSidebarLayout componentSidebarLayout = new ComponentSidebarLayout(title, lines.build());
-
-            // Double-check before applying in case sidebar was closed during processing
-            if (!sidebar.closed()) {
-                componentSidebarLayout.apply(sidebar);
-            }
-        } catch (IllegalStateException e) {
-            // Sidebar was closed during update, ignore
-        }
+      // Double-check before applying in case sidebar was closed during processing
+      if (!sidebar.closed()) {
+        componentSidebarLayout.apply(sidebar);
+      }
+    } catch (IllegalStateException e) {
+      // Sidebar was closed during update, ignore
     }
-
+  }
 }

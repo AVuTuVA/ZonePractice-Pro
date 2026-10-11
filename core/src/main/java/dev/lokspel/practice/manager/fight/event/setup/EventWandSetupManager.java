@@ -4,6 +4,11 @@ import dev.lokspel.practice.AstralPractice;
 import dev.lokspel.practice.manager.arena.util.ArenaWorldUtil;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import dev.lokspel.practice.util.Common;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -14,167 +19,177 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class EventWandSetupManager {
 
-    private static EventWandSetupManager instance;
+  private static EventWandSetupManager instance;
 
-    public static EventWandSetupManager getInstance() {
-        if (instance == null)
-            instance = new EventWandSetupManager();
-        return instance;
+  public static EventWandSetupManager getInstance() {
+    if (instance == null) {
+      instance = new EventWandSetupManager();
+    }
+    return instance;
+  }
+
+  private EventWandSetupManager() {
+    EventSetupListener eventSetupListener = new EventSetupListener(this);
+    Bukkit.getPluginManager().registerEvents(eventSetupListener, AstralPractice.getInstance());
+  }
+
+  @Getter
+  @Setter
+  public static class SetupSession {
+    private final EventData eventData;
+    private EventSetupMode currentMode;
+
+    public SetupSession(EventData eventData) {
+      this.eventData = eventData;
+      this.currentMode = EventSetupMode.CORNERS;
+    }
+  }
+
+  private final Map<Player, SetupSession> setupSessions = new HashMap<>();
+
+  public void startSetup(Player player, EventData eventData) {
+    if (eventData.isEnabled()) {
+      return;
     }
 
-    private EventWandSetupManager() {
-        EventSetupListener eventSetupListener = new EventSetupListener(this);
-        Bukkit.getPluginManager().registerEvents(eventSetupListener, AstralPractice.getInstance());
+    if (isSettingUp(player)) {
+      stopSetup(player);
     }
 
-    @Getter
-    @Setter
-    public static class SetupSession {
-        private final EventData eventData;
-        private EventSetupMode currentMode;
+    setupSessions.put(player, new SetupSession(eventData));
 
-        public SetupSession(EventData eventData) {
-            this.eventData = eventData;
-            this.currentMode = EventSetupMode.CORNERS;
-        }
+    if (eventData.getCuboid() != null && !eventData.getCuboid().contains(player.getLocation())) {
+      Location teleportLocation = eventData.getAvailableLocation();
+      if (teleportLocation != null) {
+        player.teleport(teleportLocation);
+        player.setAllowFlight(true);
+        player.setFlying(true);
+        player.setGameMode(GameMode.CREATIVE);
+      }
+    } else if (!player.getWorld().equals(ArenaWorldUtil.getArenasWorld())) {
+      player.setAllowFlight(true);
+      player.setFlying(true);
+      player.setGameMode(GameMode.CREATIVE);
+      player.teleport(ArenaWorldUtil.getArenasWorld().getSpawnLocation());
     }
 
-    private final Map<Player, SetupSession> setupSessions = new HashMap<>();
+    updateWand(player);
 
-    public void startSetup(Player player, EventData eventData) {
-        if (eventData.isEnabled()) {
-            return;
-        }
+    // Show spawn position markers
+    EventSpawnMarkerManager.getInstance().showMarkers(eventData);
 
-        if (isSettingUp(player)) {
-            stopSetup(player);
-        }
+    Common.sendMmMessage(
+        player,
+        "<green>Setup mode started for event: <yellow>"
+            + eventData.getType().getName()
+            + "<green>.");
+  }
 
-        setupSessions.put(player, new SetupSession(eventData));
+  public void stopSetup(Player player) {
+    EventData eventData = getSession(player).getEventData();
+    setupSessions.remove(player);
 
-        if (eventData.getCuboid() != null && !eventData.getCuboid().contains(player.getLocation())) {
-            Location teleportLocation = eventData.getAvailableLocation();
-            if (teleportLocation != null) {
-                player.teleport(teleportLocation);
-                player.setAllowFlight(true);
-                player.setFlying(true);
-                player.setGameMode(GameMode.CREATIVE);
-            }
-        } else if (!player.getWorld().equals(ArenaWorldUtil.getArenasWorld())) {
-            player.setAllowFlight(true);
-            player.setFlying(true);
-            player.setGameMode(GameMode.CREATIVE);
-            player.teleport(ArenaWorldUtil.getArenasWorld().getSpawnLocation());
-        }
+    ItemStack[] contents = player.getInventory().getContents();
+    for (int i = 0; i < contents.length; i++) {
+      ItemStack item = contents[i];
 
-        updateWand(player);
-
-        // Show spawn position markers
-        EventSpawnMarkerManager.getInstance().showMarkers(eventData);
-
-        Common.sendMMMessage(player, "<green>Setup mode started for event: <yellow>" + eventData.getType().getName() + "<green>.");
+      if (isSetupWand(item)) {
+        player.getInventory().clear(i);
+      }
     }
 
-    public void stopSetup(Player player) {
-        EventData eventData = getSession(player).getEventData();
-        setupSessions.remove(player);
-
-        ItemStack[] contents = player.getInventory().getContents();
-        for (int i = 0; i < contents.length; i++) {
-            ItemStack item = contents[i];
-
-            if (isSetupWand(item)) {
-                player.getInventory().clear(i);
-            }
-        }
-
-        // Clear markers if no one else is setting up this event
-        if (getPlayersSettingUpEvent(eventData).isEmpty()) {
-            EventSpawnMarkerManager.getInstance().clearMarkers(eventData);
-        }
-
-        Common.sendMMMessage(player, "<red>Setup mode ended for event: <red>" + eventData.getType().getName() + ".");
+    // Clear markers if no one else is setting up this event
+    if (getPlayersSettingUpEvent(eventData).isEmpty()) {
+      EventSpawnMarkerManager.getInstance().clearMarkers(eventData);
     }
 
-    public SetupSession getSession(Player player) {
-        return setupSessions.get(player);
+    Common.sendMmMessage(
+        player, "<red>Setup mode ended for event: <red>" + eventData.getType().getName() + ".");
+  }
+
+  public SetupSession getSession(Player player) {
+    return setupSessions.get(player);
+  }
+
+  public boolean isSettingUp(Player player) {
+    return setupSessions.containsKey(player);
+  }
+
+  public List<Player> getPlayersSettingUpEvent(EventData eventData) {
+    List<Player> players = new ArrayList<>();
+
+    for (Map.Entry<Player, SetupSession> entry : setupSessions.entrySet()) {
+      if (entry.getValue().getEventData().equals(eventData)) {
+        players.add(entry.getKey());
+      }
     }
 
-    public boolean isSettingUp(Player player) {
-        return setupSessions.containsKey(player);
+    return players;
+  }
+
+  public boolean isSetupWand(ItemStack item) {
+    return item != null
+        && item.getType() == Material.BLAZE_ROD
+        && item.hasItemMeta()
+        && Common.getItemDisplayName(item).contains("Event Wand");
+  }
+
+  public EventSetupMode getNextMode(EventSetupMode current) {
+    EventSetupMode[] modes = EventSetupMode.values();
+    int currentIndex = current.ordinal();
+    int nextIndex = (currentIndex + 1) % modes.length;
+    return modes[nextIndex];
+  }
+
+  public EventSetupMode getPreviousMode(EventSetupMode current) {
+    EventSetupMode[] modes = EventSetupMode.values();
+    int currentIndex = current.ordinal();
+    int prevIndex = (currentIndex - 1 + modes.length) % modes.length;
+    return modes[prevIndex];
+  }
+
+  public void updateWand(Player player) {
+    SetupSession session = getSession(player);
+    if (session == null) {
+      return;
     }
 
-    public List<Player> getPlayersSettingUpEvent(EventData eventData) {
-        List<Player> players = new ArrayList<>();
-
-        for (Map.Entry<Player, SetupSession> entry : setupSessions.entrySet()) {
-            if (entry.getValue().getEventData().equals(eventData)) {
-                players.add(entry.getKey());
-            }
-        }
-
-        return players;
+    EventData eventData = session.getEventData();
+    if (eventData == null) {
+      return;
     }
 
-    public boolean isSetupWand(ItemStack item) {
-        return item != null && item.getType() == Material.BLAZE_ROD && item.hasItemMeta() && Common.getItemDisplayName(item).contains("Event Wand");
+    ItemStack wand = new ItemStack(Material.BLAZE_ROD);
+    ItemMeta meta = wand.getItemMeta();
+    EventSetupMode mode = session.getCurrentMode();
+
+    meta.displayName(
+        Common.legacyToComponent(
+            Common.colorize(
+                "<gold>Event Wand <gray>(<yellow>" + mode.getDisplayName() + "<gray>)")));
+
+    List<String> lore = new ArrayList<>();
+    lore.add(Common.colorize("<gray>Editing: <green>" + eventData.getType().getName()));
+    lore.add("");
+    lore.add(Common.colorize("<yellow>Current Mode: <white>" + mode.getDisplayName()));
+    lore.add("");
+    lore.add(Common.colorize("<gray>Controls:"));
+
+    for (String line : mode.getDescription()) {
+      lore.add(Common.colorize(line));
     }
 
-    public EventSetupMode getNextMode(EventSetupMode current) {
-        EventSetupMode[] modes = EventSetupMode.values();
-        int currentIndex = current.ordinal();
-        int nextIndex = (currentIndex + 1) % modes.length;
-        return modes[nextIndex];
-    }
+    lore.add("");
+    lore.add(Common.colorize("<light_purple>Shift + Left: <gray>Next Mode"));
+    lore.add(Common.colorize("<light_purple>Shift + Right: <gray>Prev Mode"));
+    lore.add("");
+    lore.add(Common.colorize("<red>Drop (Q): <gray>Exit Setup"));
 
-    public EventSetupMode getPreviousMode(EventSetupMode current) {
-        EventSetupMode[] modes = EventSetupMode.values();
-        int currentIndex = current.ordinal();
-        int prevIndex = (currentIndex - 1 + modes.length) % modes.length;
-        return modes[prevIndex];
-    }
+    meta.lore(lore.stream().map(Common::legacyToComponent).collect(Collectors.toList()));
+    wand.setItemMeta(meta);
 
-    public void updateWand(Player player) {
-        SetupSession session = getSession(player);
-        if (session == null) return;
-
-        EventData eventData = session.getEventData();
-        if (eventData == null) return;
-
-        ItemStack wand = new ItemStack(Material.BLAZE_ROD);
-        ItemMeta meta = wand.getItemMeta();
-        EventSetupMode mode = session.getCurrentMode();
-
-        meta.displayName(Common.legacyToComponent(Common.colorize("<gold>Event Wand <gray>(<yellow>" + mode.getDisplayName() + "<gray>)")));
-
-        List<String> lore = new ArrayList<>();
-        lore.add(Common.colorize("<gray>Editing: <green>" + eventData.getType().getName()));
-        lore.add("");
-        lore.add(Common.colorize("<yellow>Current Mode: <white>" + mode.getDisplayName()));
-        lore.add("");
-        lore.add(Common.colorize("<gray>Controls:"));
-
-        for (String line : mode.getDescription()) {
-            lore.add(Common.colorize(line));
-        }
-
-        lore.add("");
-        lore.add(Common.colorize("<light_purple>Shift + Left: <gray>Next Mode"));
-        lore.add(Common.colorize("<light_purple>Shift + Right: <gray>Prev Mode"));
-        lore.add("");
-        lore.add(Common.colorize("<red>Drop (Q): <gray>Exit Setup"));
-
-        meta.lore(lore.stream().map(Common::legacyToComponent).collect(Collectors.toList()));
-        wand.setItemMeta(meta);
-
-        player.getInventory().setItemInMainHand(wand);
-    }
+    player.getInventory().setItemInMainHand(wand);
+  }
 }

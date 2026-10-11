@@ -6,13 +6,14 @@ import org.bukkit.entity.Player;
 
 public class RandomMatchInvItem extends InvItem {
 
-    public RandomMatchInvItem() {
-        super(getItemStack("STAFF-MODE.NORMAL.RANDOM-GAME-SPECTATE.ITEM"), getInt("STAFF-MODE.NORMAL.RANDOM-GAME-SPECTATE.SLOT"));
-    }
+  public RandomMatchInvItem() {
+    super(
+        getItemStack("STAFF-MODE.NORMAL.RANDOM-GAME-SPECTATE.ITEM"),
+        getInt("STAFF-MODE.NORMAL.RANDOM-GAME-SPECTATE.SLOT"));
+  }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        SpectatorManager.spectateRandomMatch(player);
-    }
-
+  @Override
+  public void handleClickEvent(Player player) {
+    SpectatorManager.spectateRandomMatch(player);
+  }
 }

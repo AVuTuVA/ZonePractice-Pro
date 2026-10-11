@@ -1,9 +1,9 @@
 package dev.lokspel.practice;
 
-import dev.lokspel.api.Enum.DivisionName;
-import dev.lokspel.api.Enum.WeightClass;
-import dev.lokspel.api.Utilities.PlayerNametag;
 import dev.lokspel.api.AstralPracticeApi;
+import dev.lokspel.api.enums.DivisionName;
+import dev.lokspel.api.enums.WeightClass;
+import dev.lokspel.api.utilities.PlayerNametag;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.inventory.InventoryUtil;
@@ -16,161 +16,205 @@ import org.bukkit.entity.Player;
 
 public class AstralPracticeApiImpl extends AstralPracticeApi {
 
-    public static void setup() {
-        AstralPracticeApi.instance = new AstralPracticeApiImpl();
+  public static void setup() {
+    AstralPracticeApi.instance = new AstralPracticeApiImpl();
+  }
+
+  @Override
+  public String getPlayerDivision(Player player, DivisionName divisionName) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return null;
+    }
+    if (profile.getStats().getDivision() == null) {
+      return null;
     }
 
-    @Override
-    public String getPlayerDivision(Player player, DivisionName divisionName) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return null;
-        if (profile.getStats().getDivision() == null) return null;
+    return switch (divisionName) {
+      case FULL -> profile.getStats().getDivision().getFullName();
+      case SHORT -> profile.getStats().getDivision().getShortName();
+    };
+  }
 
-        return switch (divisionName) {
-            case FULL -> profile.getStats().getDivision().getFullName();
-            case SHORT -> profile.getStats().getDivision().getShortName();
-        };
+  @Override
+  public int getPlayerUnRankedLeft(Player player) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return -1;
     }
 
-    @Override
-    public int getPlayerUnRankedLeft(Player player) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return -1;
+    return profile.getUnrankedLeft();
+  }
 
-        return profile.getUnrankedLeft();
+  @Override
+  public int getPlayerRankedLeft(Player player) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return -1;
     }
 
-    @Override
-    public int getPlayerRankedLeft(Player player) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return -1;
+    return profile.getRankedLeft();
+  }
 
-        return profile.getRankedLeft();
+  @Override
+  public void resetPlayerUnRanked(Player player) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return;
     }
 
-    @Override
-    public void resetPlayerUnRanked(Player player) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return;
-
-        Group group = profile.getGroup();
-        if (group == null) return;
-
-        profile.setUnrankedLeft(group.getUnrankedLimit());
+    Group group = profile.getGroup();
+    if (group == null) {
+      return;
     }
 
-    @Override
-    public void resetPlayerRanked(Player player) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return;
+    profile.setUnrankedLeft(group.getUnrankedLimit());
+  }
 
-        Group group = profile.getGroup();
-        if (group == null) return;
-
-        profile.setRankedLeft(group.getRankedLimit());
+  @Override
+  public void resetPlayerRanked(Player player) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return;
     }
 
-    @Override
-    public void addPlayerUnRanked(Player player, int i) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return;
-
-        profile.setUnrankedLeft(profile.getUnrankedLeft() + i);
+    Group group = profile.getGroup();
+    if (group == null) {
+      return;
     }
 
-    @Override
-    public void addPlayerRanked(Player player, int i) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return;
+    profile.setRankedLeft(group.getRankedLimit());
+  }
 
-        profile.setRankedLeft(profile.getRankedLeft() + i);
+  @Override
+  public void addPlayerUnRanked(Player player, int i) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return;
     }
 
-    @Override
-    public void endMatch(Player player, String s) {
-        Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
-        if (match == null) return;
+    profile.setUnrankedLeft(profile.getUnrankedLeft() + i);
+  }
 
-        if (s != null)
-            match.sendMessage(s, true);
-
-        match.endMatch();
+  @Override
+  public void addPlayerRanked(Player player, int i) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return;
     }
 
-    @Override
-    public int getElo(Player player, String s) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return -1;
+    profile.setRankedLeft(profile.getRankedLeft() + i);
+  }
 
-        NormalLadder ladder = LadderManager.getInstance().getLadder(s);
-        if (ladder == null) return -1;
-        if (ladder.isRanked()) return -1;
-
-        return profile.getStats().getLadderStat(ladder).getElo();
+  @Override
+  public void endMatch(Player player, String s) {
+    Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
+    if (match == null) {
+      return;
     }
 
-    @Override
-    public int getExperience(Player player) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return -1;
-
-        return profile.getStats().getExperience();
+    if (s != null) {
+      match.sendMessage(s, true);
     }
 
-    @Override
-    public int getLadderWins(Player player, String s, WeightClass weightClass) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return -1;
+    match.endMatch();
+  }
 
-        NormalLadder ladder = LadderManager.getInstance().getLadder(s);
-        if (ladder == null) return -1;
+  @Override
+  public int getElo(Player player, String s) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return -1;
+    }
 
-        switch (weightClass) {
-            case RANKED:
-                if (ladder.isRanked())
-                    return profile.getStats().getLadderStat(ladder).getRankedWins();
-            case UNRANKED:
-                return profile.getStats().getLadderStat(ladder).getUnRankedWins();
-            default:
-                return -1;
+    NormalLadder ladder = LadderManager.getInstance().getLadder(s);
+    if (ladder == null) {
+      return -1;
+    }
+    if (ladder.isRanked()) {
+      return -1;
+    }
+
+    return profile.getStats().getLadderStat(ladder).getElo();
+  }
+
+  @Override
+  public int getExperience(Player player) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return -1;
+    }
+
+    return profile.getStats().getExperience();
+  }
+
+  @Override
+  public int getLadderWins(Player player, String s, WeightClass weightClass) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return -1;
+    }
+
+    NormalLadder ladder = LadderManager.getInstance().getLadder(s);
+    if (ladder == null) {
+      return -1;
+    }
+
+    switch (weightClass) {
+      case RANKED:
+        if (ladder.isRanked()) {
+          return profile.getStats().getLadderStat(ladder).getRankedWins();
         }
+      // fall through
+      case UNRANKED:
+        return profile.getStats().getLadderStat(ladder).getUnRankedWins();
+      default:
+        return -1;
+    }
+  }
+
+  @Override
+  public int getLadderLosses(Player player, String s, WeightClass weightClass) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return -1;
     }
 
-    @Override
-    public int getLadderLosses(Player player, String s, WeightClass weightClass) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return -1;
+    NormalLadder ladder = LadderManager.getInstance().getLadder(s);
+    if (ladder == null) {
+      return -1;
+    }
 
-        NormalLadder ladder = LadderManager.getInstance().getLadder(s);
-        if (ladder == null) return -1;
-
-        switch (weightClass) {
-            case RANKED:
-                if (ladder.isRanked())
-                    return profile.getStats().getLadderStat(ladder).getRankedLosses();
-            case UNRANKED:
-                return profile.getStats().getLadderStat(ladder).getUnRankedLosses();
-            default:
-                return -1;
+    switch (weightClass) {
+      case RANKED:
+        if (ladder.isRanked()) {
+          return profile.getStats().getLadderStat(ladder).getRankedLosses();
         }
+      // fall through
+      case UNRANKED:
+        return profile.getStats().getLadderStat(ladder).getUnRankedLosses();
+      default:
+        return -1;
+    }
+  }
+
+  @Override
+  public int getGlobalWins(Player player) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return -1;
     }
 
-    @Override
-    public int getGlobalWins(Player player) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) return -1;
+    return profile.getStats().getGlobalWins();
+  }
 
-        return profile.getStats().getGlobalWins();
+  @Override
+  public PlayerNametag getPlayerNametag(Player player) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return null;
     }
 
-    @Override
-    public PlayerNametag getPlayerNametag(Player player) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (profile == null) {
-            return null;
-        }
-
-        return InventoryUtil.getLobbyNametag(profile);
-    }
-
+    return InventoryUtil.getLobbyNametag(profile);
+  }
 }

@@ -18,45 +18,45 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class PearlFight extends NormalLadder implements LadderHandle, TempBuild, TempBuildReturnDelay {
+public class PearlFight extends NormalLadder
+    implements LadderHandle, TempBuild, TempBuildReturnDelay {
 
-    // Saved by using interface and LadderFile.java
-    @Getter
-    @Setter
-    protected int tempBuildReturnDelaySeconds;
+  // Saved by using interface and LadderFile.java
+  @Getter @Setter protected int tempBuildReturnDelaySeconds;
 
-    public PearlFight(String name, LadderType type) {
-        super(name, type);
-        this.setMultiRoundStartCountdown(false);
-        this.hunger = false;
+  public PearlFight(String name, LadderType type) {
+    super(name, type);
+    this.setMultiRoundStartCountdown(false);
+    this.hunger = false;
+  }
+
+  @Override
+  public boolean handleEvents(Event e, Match match) {
+    if (e instanceof PlayerBucketEmptyEvent) {
+      TempBuild.onBucketEmpty((PlayerBucketEmptyEvent) e, match, tempBuildReturnDelaySeconds);
+      return true;
+    } else if (e instanceof BlockBreakEvent) {
+      TempBuild.onBlockBreak((BlockBreakEvent) e, match);
+      return true;
+    } else if (e instanceof BlockPlaceEvent) {
+      TempBuild.onBlockPlace((BlockPlaceEvent) e, match, tempBuildReturnDelaySeconds);
+      return true;
+    } else if (e instanceof EntityDamageEvent) {
+      onPlayerDamage((EntityDamageEvent) e, match);
+      return true;
+    }
+    return false;
+  }
+
+  private static void onPlayerDamage(
+      final @NotNull EntityDamageEvent e, final @NotNull Match match) {
+    if (!(e.getEntity() instanceof Player player)) {
+      return;
     }
 
-    @Override
-    public boolean handleEvents(Event e, Match match) {
-        if (e instanceof PlayerBucketEmptyEvent) {
-            TempBuild.onBucketEmpty((PlayerBucketEmptyEvent) e, match, tempBuildReturnDelaySeconds);
-            return true;
-        } else if (e instanceof BlockBreakEvent) {
-            TempBuild.onBlockBreak((BlockBreakEvent) e, match);
-            return true;
-        } else if (e instanceof BlockPlaceEvent) {
-            TempBuild.onBlockPlace((BlockPlaceEvent) e, match, tempBuildReturnDelaySeconds);
-            return true;
-        } else if (e instanceof EntityDamageEvent) {
-            onPlayerDamage((EntityDamageEvent) e, match);
-            return true;
-        }
-        return false;
+    if (match.getCurrentRound().getRoundStatus().equals(RoundStatus.LIVE)) {
+      e.setDamage(0);
+      PlayerUtil.healToMaxHealth(player);
     }
-
-    private static void onPlayerDamage(final @NotNull EntityDamageEvent e, final @NotNull Match match) {
-        if (!(e.getEntity() instanceof Player player)) return;
-
-        if (match.getCurrentRound().getRoundStatus().equals(RoundStatus.LIVE)) {
-            e.setDamage(0);
-            PlayerUtil.healToMaxHealth(player);
-        }
-    }
-
-
+  }
 }

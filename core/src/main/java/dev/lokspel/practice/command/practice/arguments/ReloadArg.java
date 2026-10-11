@@ -7,45 +7,62 @@ import org.bukkit.entity.Player;
 
 public final class ReloadArg {
 
-    private ReloadArg() {}
+  private ReloadArg() {}
 
-    private static String message(String path, String fallback) {
-        String value = LanguageManager.getString(path);
-        return value != null ? value : fallback;
+  private static String message(String path, String fallback) {
+    String value = LanguageManager.getString(path);
+    return value != null ? value : fallback;
+  }
+
+  public static void run(Player player, String label, String[] args) {
+    if (!player.hasPermission("ap.practice.reload")) {
+      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+      return;
     }
 
-    public static void run(Player player, String label, String[] args) {
-        if (!player.hasPermission("ap.practice.reload")) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
-            return;
-        }
-
-        if (args.length != 1) {
-            Common.sendMMMessage(player, message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.COMMAND-HELP", "<red>/%label% reload").replace("%label%", label));
-            return;
-        }
-
-        if (ServerManager.getInstance().reloadFiles()) {
-            Common.sendMMMessage(player, message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.RELOADED", "<green>Practice config files have been reloaded."));
-            return;
-        }
-
-        Common.sendMMMessage(player, message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.FAILED", "<red>Reload failed. Check console for details."));
+    if (args.length != 1) {
+      Common.sendMmMessage(
+          player,
+          message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.COMMAND-HELP", "<red>/%label% reload")
+              .replace("%label%", label));
+      return;
     }
 
-    public static void run(String label, String[] args) {
-        if (args.length != 1) {
-            Common.sendConsoleMMMessage(message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.COMMAND-HELP", "<red>/%label% reload").replace("%label%", label));
-            return;
-        }
-
-        if (ServerManager.getInstance().reloadFiles()) {
-            Common.sendConsoleMMMessage(message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.RELOADED", "<green>Practice config files have been reloaded."));
-            return;
-        }
-
-        Common.sendConsoleMMMessage(message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.FAILED", "<red>Reload failed. Check console for details."));
+    if (ServerManager.getInstance().reloadFiles()) {
+      Common.sendMmMessage(
+          player,
+          message(
+              "COMMAND.PRACTICE.ARGUMENTS.RELOAD.RELOADED",
+              "<green>Practice config files have been reloaded."));
+      return;
     }
+
+    Common.sendMmMessage(
+        player,
+        message(
+            "COMMAND.PRACTICE.ARGUMENTS.RELOAD.FAILED",
+            "<red>Reload failed. Check console for details."));
+  }
+
+  public static void run(String label, String[] args) {
+    if (args.length != 1) {
+      Common.sendConsoleMmMessage(
+          message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.COMMAND-HELP", "<red>/%label% reload")
+              .replace("%label%", label));
+      return;
+    }
+
+    if (ServerManager.getInstance().reloadFiles()) {
+      Common.sendConsoleMmMessage(
+          message(
+              "COMMAND.PRACTICE.ARGUMENTS.RELOAD.RELOADED",
+              "<green>Practice config files have been reloaded."));
+      return;
+    }
+
+    Common.sendConsoleMmMessage(
+        message(
+            "COMMAND.PRACTICE.ARGUMENTS.RELOAD.FAILED",
+            "<red>Reload failed. Check console for details."));
+  }
 }
-
-

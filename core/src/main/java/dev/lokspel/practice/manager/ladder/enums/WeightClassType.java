@@ -4,15 +4,13 @@ import lombok.Getter;
 
 @Getter
 public enum WeightClassType {
+  UNRANKED("Unranked"),
+  RANKED("Ranked"),
+  UNRANKED_AND_RANKED("Unranked & Ranked");
 
-    UNRANKED("Unranked"),
-    RANKED("Ranked"),
-    UNRANKED_AND_RANKED("Unranked & Ranked");
+  private final String name;
 
-    private final String name;
-
-    WeightClassType(final String name) {
-        this.name = name;
-    }
-
+  WeightClassType(final String name) {
+    this.name = name;
+  }
 }

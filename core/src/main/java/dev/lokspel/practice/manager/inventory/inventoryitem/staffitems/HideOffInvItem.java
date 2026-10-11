@@ -9,16 +9,18 @@ import org.bukkit.entity.Player;
 
 public class HideOffInvItem extends InvItem {
 
-    public HideOffInvItem() {
-        super(getItemStack("STAFF-MODE.NORMAL.HIDE-FROM-PLAYERS-OFF.ITEM"), getInt("STAFF-MODE.NORMAL.HIDE-FROM-PLAYERS-OFF.SLOT"));
-    }
+  public HideOffInvItem() {
+    super(
+        getItemStack("STAFF-MODE.NORMAL.HIDE-FROM-PLAYERS-OFF.ITEM"),
+        getInt("STAFF-MODE.NORMAL.HIDE-FROM-PLAYERS-OFF.SLOT"));
+  }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        profile.setHideFromPlayers(!profile.isHideFromPlayers());
+  @Override
+  public void handleClickEvent(Player player) {
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    profile.setHideFromPlayers(!profile.isHideFromPlayers());
 
-        PlayerHider.getInstance().toggleStaffVisibility(player);
-        InventoryManager.getInstance().setStaffModeInventory(player);
-    }
+    PlayerHider.getInstance().toggleStaffVisibility(player);
+    InventoryManager.getInstance().setStaffModeInventory(player);
+  }
 }

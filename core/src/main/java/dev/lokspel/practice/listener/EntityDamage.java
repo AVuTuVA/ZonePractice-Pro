@@ -10,19 +10,23 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 public class EntityDamage implements Listener {
 
-    @EventHandler
-    public void onEntityDamage(EntityDamageEvent e) {
-        if (!(e.getEntity() instanceof Player player)) return;
-
-        if (!e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) return;
-
-        WorldEnum worldEnum = ServerManager.getInstance().getInWorld().get(player);
-        if (worldEnum == WorldEnum.LOBBY) {
-            Location lobbyLocation = ServerManager.getLobby();
-            if (lobbyLocation != null)
-                player.teleport(lobbyLocation);
-            e.setCancelled(true);
-        }
+  @EventHandler
+  public void onEntityDamage(EntityDamageEvent e) {
+    if (!(e.getEntity() instanceof Player player)) {
+      return;
     }
 
+    if (!e.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
+      return;
+    }
+
+    WorldEnum worldEnum = ServerManager.getInstance().getInWorld().get(player);
+    if (worldEnum == WorldEnum.LOBBY) {
+      Location lobbyLocation = ServerManager.getLobby();
+      if (lobbyLocation != null) {
+        player.teleport(lobbyLocation);
+      }
+      e.setCancelled(true);
+    }
+  }
 }

@@ -1,10 +1,10 @@
 package dev.lokspel.practice.manager.playerkit;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.gui.GUI;
-import dev.lokspel.practice.manager.gui.GUIManager;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.ladder.abstraction.playercustom.CustomLadder;
-import dev.lokspel.practice.manager.playerkit.guis.ShulkerBoxEditorGUI;
+import dev.lokspel.practice.manager.playerkit.guis.ShulkerBoxEditorGui;
 import dev.lokspel.practice.manager.playerkit.items.KitItem;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,59 +15,60 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public class PlayerKitEditing {
 
-    private final CustomLadder customLadder;
-    @Setter
-    private KitItem kitItem;
+  private final CustomLadder customLadder;
+  @Setter private KitItem kitItem;
 
-    /** Non-null when the player is editing a slot INSIDE a shulker box. */
-    @Setter
-    private ShulkerBoxEditorGUI shulkerEditor = null;
+  /** Non-null when the player is editing a slot INSIDE a shulker box. */
+  @Setter private ShulkerBoxEditorGui shulkerEditor = null;
 
-    /** The shulker content slot index being modified (0-26), or -1 if not editing a shulker slot. */
-    @Setter
-    private int shulkerSlot = -1;
+  /** The shulker content slot index being modified (0-26), or -1 if not editing a shulker slot. */
+  @Setter private int shulkerSlot = -1;
 
-    public PlayerKitEditing(CustomLadder customLadder) {
-        this.customLadder = customLadder;
+  public PlayerKitEditing(CustomLadder customLadder) {
+    this.customLadder = customLadder;
+  }
+
+  /** True while editing a specific slot inside a shulker box. */
+  public boolean isEditingShulker() {
+    return shulkerEditor != null && shulkerSlot >= 0;
+  }
+
+  /** Returns to the editor, applying the selected item to the active shulker slot if needed. */
+  public void returnToEditor(Player player, ItemStack selectedItem) {
+    if (isEditingShulker()) {
+      // Keep the editor and slot before clearing the context.
+      ShulkerBoxEditorGui editor = this.shulkerEditor;
+      int slot = this.shulkerSlot;
+      clearShulkerContext();
+      editor.onItemSelected(slot, selectedItem != null ? selectedItem.clone() : null);
+      editor.update(true);
+      editor.open(player);
+    } else {
+      Gui mainGui = this.customLadder.getMainGui();
+      mainGui.update();
+      mainGui.open(player);
     }
+  }
 
-    /** True while editing a specific slot inside a shulker box. */
-    public boolean isEditingShulker() {
-        return shulkerEditor != null && shulkerSlot >= 0;
-    }
-
-    /** Returns to the editor, applying the selected item to the active shulker slot if needed. */
-    public void returnToEditor(Player player, ItemStack selectedItem) {
-        if (isEditingShulker()) {
-            // Keep the editor and slot before clearing the context.
-            ShulkerBoxEditorGUI editor = this.shulkerEditor;
-            int slot = this.shulkerSlot;
-            clearShulkerContext();
-            editor.onItemSelected(slot, selectedItem != null ? selectedItem.clone() : null);
-            editor.update(true);
-            editor.open(player);
-        } else {
-            GUI mainGUI = this.customLadder.getMainGUI();
-            mainGUI.update();
-            mainGUI.open(player);
-        }
-    }
-
-    /** Reopens the main editor after a menu closes unless another GUI has opened. */
-    public void scheduleReturnToMainEditor(Player player) {
-        GUI mainGUI = this.customLadder.getMainGUI();
-        Bukkit.getScheduler().runTaskLater(AstralPractice.getInstance(), () -> {
-            if (GUIManager.getInstance().getOpenGUI().containsKey(player)) {
+  /** Reopens the main editor after a menu closes unless another GUI has opened. */
+  public void scheduleReturnToMainEditor(Player player) {
+    Gui mainGui = this.customLadder.getMainGui();
+    Bukkit.getScheduler()
+        .runTaskLater(
+            AstralPractice.getInstance(),
+            () -> {
+              if (GuiManager.getInstance().getOpenGui().containsKey(player)) {
                 return;
-            }
+              }
 
-            mainGUI.open(player);
-        }, 5L);
-    }
+              mainGui.open(player);
+            },
+            5L);
+  }
 
-    /** Clear shulker editing context. */
-    public void clearShulkerContext() {
-        this.shulkerEditor = null;
-        this.shulkerSlot = -1;
-    }
+  /** Clear shulker editing context. */
+  public void clearShulkerContext() {
+    this.shulkerEditor = null;
+    this.shulkerSlot = -1;
+  }
 }

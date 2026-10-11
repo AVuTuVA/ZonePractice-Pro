@@ -6,25 +6,29 @@ import org.bukkit.entity.Player;
 
 public final class HelpArg {
 
-    private HelpArg() {}
+  private HelpArg() {}
 
-    public static void run(Player player, String label) {
-        if (player.hasPermission("ap.setup")) {
-            for (String line : LanguageManager.getList("COMMAND.ARENA.ARGUMENTS.HELP.ADMIN"))
-                Common.sendMMMessage(player, line.replace("%label%", label));
-        } else if (player.hasPermission("ap.arena.freeze") || player.hasPermission("ap.arena.stop")) {
-            for (String line : LanguageManager.getList("COMMAND.ARENA.ARGUMENTS.HELP.STAFF"))
-                Common.sendMMMessage(player, line.replace("%label%", label));
-        } else
-            Common.sendMMMessage(player, LanguageManager.getString("command.arena.no-permission"));
+  public static void run(Player player, String label) {
+    if (player.hasPermission("ap.setup")) {
+      for (String line : LanguageManager.getList("COMMAND.ARENA.ARGUMENTS.HELP.ADMIN")) {
+        Common.sendMmMessage(player, line.replace("%label%", label));
+      }
+    } else if (player.hasPermission("ap.arena.freeze") || player.hasPermission("ap.arena.stop")) {
+      for (String line : LanguageManager.getList("COMMAND.ARENA.ARGUMENTS.HELP.STAFF")) {
+        Common.sendMmMessage(player, line.replace("%label%", label));
+      }
+    } else {
+      Common.sendMmMessage(player, LanguageManager.getString("command.arena.no-permission"));
     }
+  }
 
-    public static void run_setCommand(Player player, String label) {
-        if (player.hasPermission("ap.setup")) {
-            for (String line : LanguageManager.getList("COMMAND.ARENA.ARGUMENTS.HELP.SET-COMMAND"))
-                Common.sendMMMessage(player, line.replace("%label%", label));
-        } else
-            Common.sendMMMessage(player, LanguageManager.getString("command.arena.no-permission"));
+  public static void runSetCommand(Player player, String label) {
+    if (player.hasPermission("ap.setup")) {
+      for (String line : LanguageManager.getList("COMMAND.ARENA.ARGUMENTS.HELP.SET-COMMAND")) {
+        Common.sendMmMessage(player, line.replace("%label%", label));
+      }
+    } else {
+      Common.sendMmMessage(player, LanguageManager.getString("command.arena.no-permission"));
     }
-
+  }
 }

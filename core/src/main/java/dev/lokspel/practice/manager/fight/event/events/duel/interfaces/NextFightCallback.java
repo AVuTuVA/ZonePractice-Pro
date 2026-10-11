@@ -4,6 +4,5 @@ import org.bukkit.entity.Player;
 
 public interface NextFightCallback {
 
-    void onNextFight(Player leftPlayer);
-
+  void onNextFight(Player leftPlayer);
 }

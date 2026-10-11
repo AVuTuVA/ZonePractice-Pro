@@ -4,8 +4,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public interface CustomConfig {
 
-    void setCustomConfig(YamlConfiguration config);
+  void setCustomConfig(YamlConfiguration config);
 
-    void getCustomConfig(YamlConfiguration config);
-
+  void getCustomConfig(YamlConfiguration config);
 }
