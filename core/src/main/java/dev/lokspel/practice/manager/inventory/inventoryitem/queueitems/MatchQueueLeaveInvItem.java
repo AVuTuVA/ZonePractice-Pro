@@ -1,5 +1,6 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.queueitems;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
 import dev.lokspel.practice.manager.queue.CustomKitQueueManager;
 import dev.lokspel.practice.manager.queue.Queue;
@@ -8,23 +9,22 @@ import org.bukkit.entity.Player;
 
 public class MatchQueueLeaveInvItem extends InvItem {
 
-    public MatchQueueLeaveInvItem() {
-        super(getItemStack("QUEUE.MATCH.NORMAL.LEAVE-MATCH-QUEUE.ITEM"), getInt("QUEUE.MATCH.NORMAL.LEAVE-MATCH-QUEUE.SLOT"));
+  public MatchQueueLeaveInvItem() {
+    super(PracticeConfig.inventories().getQueue().getMatch().getNormal().get("LEAVE-MATCH-QUEUE"));
+  }
+
+  @Override
+  public void handleClickEvent(Player player) {
+    Queue queue = QueueManager.getInstance().getQueue(player);
+    if (queue != null) {
+      QueueManager.getInstance().endAllQueuesForPlayer(player, false, null);
+      return;
     }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        Queue queue = QueueManager.getInstance().getQueue(player);
-        if (queue != null) {
-            QueueManager.getInstance().endAllQueuesForPlayer(player, false, null);
-            return;
-        }
-
-        if (CustomKitQueueManager.getInstance().cancelJoinSearch(player, true, true)) {
-            return;
-        }
-
-        CustomKitQueueManager.getInstance().cancelHostedQueue(player, true, true);
+    if (CustomKitQueueManager.getInstance().cancelJoinSearch(player, true, true)) {
+      return;
     }
 
+    CustomKitQueueManager.getInstance().cancelHostedQueue(player, true, true);
+  }
 }

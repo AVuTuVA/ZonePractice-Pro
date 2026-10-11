@@ -1,31 +1,34 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem;
 
-import dev.lokspel.practice.manager.inventory.InventoryManager;
+import dev.lokspel.practice.config.inventory.InventoryLayout;
 import org.bukkit.entity.Player;
 
 public class ExtraInvItem extends InvItem {
 
-    private final String path;
+  private final String command;
 
-    public ExtraInvItem(String path) {
-        super(getItemStack(path + ".ITEM"), getInt(path + ".SLOT"));
+  public ExtraInvItem(InventoryLayout.ExtraItem config) {
+    super(config);
 
-        this.path = path;
+    this.command = config != null ? config.getCommand() : null;
+  }
+
+  @Override
+  public void handleClickEvent(Player player) {
+    String command = this.command;
+    if (command == null) {
+      return;
     }
 
-    @Override
-    public void handleClickEvent(Player player) {
-        String command = InventoryManager.getInstance().getString(path + ".COMMAND");
-        if (command == null) return;
-
-        command = command.trim();
-        if (command.isEmpty()) return;
-
-        if (command.startsWith("/")) {
-            command = command.substring(1);
-        }
-
-        player.performCommand(command.replace("%player%", player.getName()));
+    command = command.trim();
+    if (command.isEmpty()) {
+      return;
     }
 
+    if (command.startsWith("/")) {
+      command = command.substring(1);
+    }
+
+    player.performCommand(command.replace("%player%", player.getName()));
+  }
 }

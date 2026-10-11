@@ -1,78 +1,82 @@
 package dev.lokspel.practice.manager.duel;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import lombok.Getter;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
+import dev.lokspel.practice.config.PracticeConfig;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
 public class DuelManager {
 
-    private static DuelManager instance;
+  private static DuelManager instance;
 
-    public static DuelManager getInstance() {
-        if (instance == null)
-            instance = new DuelManager();
-        return instance;
+  public static DuelManager getInstance() {
+    if (instance == null) {
+      instance = new DuelManager();
+    }
+    return instance;
+  }
+
+  private DuelManager() {}
+
+  private final Map<Player, Player> pendingRequestTarget = new HashMap<>();
+  private final Map<Player, List<DuelRequest>> requests = new HashMap<>();
+
+  public boolean isRequested(Player sender, Player target) {
+    if (requests.containsKey(target)) {
+      for (DuelRequest request : requests.get(target)) {
+        if (request.getSender().equals(sender)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public void sendRequest(DuelRequest request) {
+    List<DuelRequest> requests;
+    final Player sender = request.getSender();
+    Player target = request.getTarget();
+
+    if (getRequests().containsKey(target)) {
+      requests = new ArrayList<>(getRequests().get(target));
+    } else {
+      requests = new ArrayList<>();
     }
 
-    private DuelManager() {
-    }
+    requests.removeIf(oldRequest -> oldRequest.getSender().equals(request.getSender()));
 
-    private final Map<Player, Player> pendingRequestTarget = new HashMap<>();
-    private final Map<Player, List<DuelRequest>> requests = new HashMap<>();
+    requests.add(request);
+    getRequests().put(target, requests);
 
-    public boolean isRequested(Player sender, Player target) {
-        if (requests.containsKey(target))
-            for (DuelRequest request : requests.get(target))
-                if (request.getSender().equals(sender))
-                    return true;
-        return false;
-    }
+    sender.closeInventory();
 
-    public void sendRequest(DuelRequest request) {
-        List<DuelRequest> requests;
-        Player sender = request.getSender();
-        Player target = request.getTarget();
+    request.sendRequest();
 
-        if (getRequests().containsKey(target))
-            requests = new ArrayList<>(getRequests().get(target));
-        else
-            requests = new ArrayList<>();
+    new BukkitRunnable() {
+      @Override
+      public void run() {
+        List<DuelRequest> targetRequests = getRequests().get(target);
+        if (targetRequests == null) {
+          return;
+        }
 
-        requests.removeIf(oldRequest -> oldRequest.getSender().equals(request.getSender()));
+        boolean removed = targetRequests.remove(request);
+        if (targetRequests.isEmpty()) {
+          getRequests().remove(target);
+        }
 
-        requests.add(request);
-        getRequests().put(target, requests);
-
-        sender.closeInventory();
-
-        request.sendRequest();
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                List<DuelRequest> targetRequests = getRequests().get(target);
-                if (targetRequests == null) {
-                    return;
-                }
-
-                boolean removed = targetRequests.remove(request);
-                if (targetRequests.isEmpty()) {
-                    getRequests().remove(target);
-                }
-
-                if (removed) {
-                    request.handleExpiry();
-                }
-            }
-        }.runTaskLater(AstralPractice.getInstance(), 20L * ConfigManager.getInt("MATCH-SETTINGS.DUEL.INVITATION-EXPIRY"));
-    }
-
+        if (removed) {
+          request.handleExpiry();
+        }
+      }
+    }.runTaskLater(
+        AstralPractice.getInstance(),
+        20L * PracticeConfig.settings().getMatchSettings().getDuel().getInvitationExpiry());
+  }
 }

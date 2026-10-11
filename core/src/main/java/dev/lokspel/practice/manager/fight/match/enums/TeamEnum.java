@@ -1,69 +1,119 @@
 package dev.lokspel.practice.manager.fight.match.enums;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.StringUtil;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public enum TeamEnum {
+  TEAM1(
+      AstralPractice.getMiniMessage()
+          .deserialize(
+              StringUtil.legacyToMiniMessage(
+                  PracticeConfig.settings().getMatchSettings().getTeams().getTeam1().getName())),
+      PracticeConfig.settings().getMatchSettings().getTeams().getTeam1().getColor(),
+      AstralPractice.getMiniMessage()
+          .deserialize(
+              StringUtil.legacyToMiniMessage(
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getTeams()
+                      .getTeam1()
+                      .getNametag()
+                      .getPrefix())),
+      NamedTextColor.NAMES.valueOr(
+          PracticeConfig.settings()
+              .getMatchSettings()
+              .getTeams()
+              .getTeam1()
+              .getNametag()
+              .getNameColor()
+              .toLowerCase(),
+          NamedTextColor.WHITE),
+      AstralPractice.getMiniMessage()
+          .deserialize(
+              StringUtil.legacyToMiniMessage(
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getTeams()
+                      .getTeam1()
+                      .getNametag()
+                      .getSuffix()))),
+  TEAM2(
+      AstralPractice.getMiniMessage()
+          .deserialize(
+              StringUtil.legacyToMiniMessage(
+                  PracticeConfig.settings().getMatchSettings().getTeams().getTeam2().getName())),
+      PracticeConfig.settings().getMatchSettings().getTeams().getTeam2().getColor(),
+      AstralPractice.getMiniMessage()
+          .deserialize(
+              StringUtil.legacyToMiniMessage(
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getTeams()
+                      .getTeam2()
+                      .getNametag()
+                      .getPrefix())),
+      NamedTextColor.NAMES.valueOr(
+          PracticeConfig.settings()
+              .getMatchSettings()
+              .getTeams()
+              .getTeam2()
+              .getNametag()
+              .getNameColor()
+              .toLowerCase(),
+          NamedTextColor.WHITE),
+      AstralPractice.getMiniMessage()
+          .deserialize(
+              StringUtil.legacyToMiniMessage(
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getTeams()
+                      .getTeam2()
+                      .getNametag()
+                      .getSuffix()))),
+  FFA(
+      Component.empty(),
+      PracticeConfig.settings().getMatchSettings().getTeams().getFfa().getColor(),
+      Component.empty(),
+      NamedTextColor.WHITE,
+      Component.empty());
 
-    TEAM1(
-            AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(ConfigManager.getConfig().getString("MATCH-SETTINGS.TEAMS.TEAM1.NAME"))),
-            ConfigManager.getConfig().getString("MATCH-SETTINGS.TEAMS.TEAM1.COLOR"),
-            AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM1.NAMETAG.PREFIX"))),
-            NamedTextColor.NAMES.valueOr(ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM1.NAMETAG.NAME-COLOR").toLowerCase(), NamedTextColor.WHITE),
-            AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM1.NAMETAG.SUFFIX")))
-    ),
-    TEAM2(
-            AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(ConfigManager.getConfig().getString("MATCH-SETTINGS.TEAMS.TEAM2.NAME"))),
-            ConfigManager.getConfig().getString("MATCH-SETTINGS.TEAMS.TEAM2.COLOR"),
-            AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM2.NAMETAG.PREFIX"))),
-            NamedTextColor.NAMES.valueOr(ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM2.NAMETAG.NAME-COLOR").toLowerCase(), NamedTextColor.WHITE),
-            AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM2.NAMETAG.SUFFIX")))
-    ),
-    FFA(
-            Component.empty(),
-            ConfigManager.getString("MATCH-SETTINGS.TEAMS.FFA.COLOR"),
-            Component.empty(),
-            NamedTextColor.WHITE,
-            Component.empty()
-    );
+  private final Component name;
+  private final String color;
 
-    private final Component name;
-    private final String color;
+  @Getter private final Component prefix;
+  @Getter private final NamedTextColor nameColor;
+  @Getter private final Component suffix;
 
-    @Getter
-    private final Component prefix;
-    @Getter
-    private final NamedTextColor nameColor;
-    @Getter
-    private final Component suffix;
+  TeamEnum(
+      Component name, String color, Component prefix, NamedTextColor nameColor, Component suffix) {
+    this.name =
+        AstralPractice.getMiniMessage()
+            .deserialize(StringUtil.legacyToMiniMessage(color))
+            .append(name);
+    this.color = color;
 
-    TeamEnum(Component name, String color, Component prefix, NamedTextColor nameColor, Component suffix) {
-        this.name = AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(color)).append(name);
-        this.color = color;
+    this.prefix = prefix;
+    this.nameColor = nameColor;
+    this.suffix = suffix;
+  }
 
-        this.prefix = prefix;
-        this.nameColor = nameColor;
-        this.suffix = suffix;
-    }
+  public Component getNameComponent() {
+    return name;
+  }
 
-    public Component getNameComponent() {
-        return name;
-    }
+  public Component getColor() {
+    return AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(color));
+  }
 
-    public Component getColor() {
-        return AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(color));
-    }
+  public String getNameMm() {
+    return AstralPractice.getMiniMessage().serialize(name);
+  }
 
-    public String getNameMM() {
-        return AstralPractice.getMiniMessage().serialize(name);
-    }
-
-    public String getColorMM() {
-        return color;
-    }
-
+  public String getColorMm() {
+    return color;
+  }
 }

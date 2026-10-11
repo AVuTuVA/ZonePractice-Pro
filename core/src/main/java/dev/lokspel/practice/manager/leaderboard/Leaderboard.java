@@ -3,34 +3,34 @@ package dev.lokspel.practice.manager.leaderboard;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.leaderboard.types.LbMainType;
 import dev.lokspel.practice.manager.leaderboard.types.LbSecondaryType;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.OfflinePlayer;
 
-import java.util.Map;
-
 @Getter
 public class Leaderboard {
 
-    private final LbMainType mainType;
-    private final LbSecondaryType secondaryType;
+  private final LbMainType mainType;
+  private final LbSecondaryType secondaryType;
 
-    private final NormalLadder ladder;
-    @Setter
-    private Map<OfflinePlayer, Integer> list;
-    @Setter
-    private boolean isUpdating;
+  private final NormalLadder ladder;
+  @Setter private Map<OfflinePlayer, Integer> list;
+  @Setter private boolean isUpdating;
 
-    public Leaderboard(LbMainType mainType, LbSecondaryType secondaryType, NormalLadder ladder, Map<OfflinePlayer, Integer> list) {
-        this.mainType = mainType;
-        this.secondaryType = secondaryType;
+  public Leaderboard(
+      LbMainType mainType,
+      LbSecondaryType secondaryType,
+      NormalLadder ladder,
+      Map<OfflinePlayer, Integer> list) {
+    this.mainType = mainType;
+    this.secondaryType = secondaryType;
 
-        this.ladder = ladder;
-        this.list = list;
-    }
+    this.ladder = ladder;
+    this.list = list;
+  }
 
-    public boolean isEmpty() {
-        return list.isEmpty();
-    }
-
+  public boolean isEmpty() {
+    return list.isEmpty();
+  }
 }

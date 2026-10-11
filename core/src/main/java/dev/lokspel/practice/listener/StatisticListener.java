@@ -1,19 +1,21 @@
 package dev.lokspel.practice.listener;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.fight.ffa.FFAManager;
-import dev.lokspel.practice.manager.fight.ffa.game.FFA;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.fight.ffa.FfaManager;
+import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.enums.RoundStatus;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
-import dev.lokspel.practice.manager.fight.util.Stats.Statistic;
+import dev.lokspel.practice.manager.fight.util.stats.Statistic;
 import dev.lokspel.practice.manager.ladder.type.Boxing;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
 import dev.lokspel.practice.manager.sidebar.SidebarManager;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -32,231 +34,269 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class StatisticListener implements Listener {
 
-    private boolean CUSTOM_COOLDOWN_ENABLED;
-    private boolean ONLY_SWORD;
-    private double CUSTOM_COOLDOWN_VALUE;
+  private boolean customCooldownEnabled;
+  private boolean onlySword;
+  private double customCooldownValue;
 
-    @Getter
-    protected final AstralPractice practice = AstralPractice.getInstance();
-    @Getter
-    protected static final Map<Player, Integer> CURRENT_CPS = new ConcurrentHashMap<>();
-    @Getter
-    protected static final Map<Player, Integer> CPS = new ConcurrentHashMap<>();
-    @Getter
-    protected static final Map<Player, Integer> CURRENT_COMBO = new ConcurrentHashMap<>();
+  @Getter protected final AstralPractice practice = AstralPractice.getInstance();
+  @Getter protected static final Map<Player, Integer> CURRENT_CPS = new ConcurrentHashMap<>();
+  @Getter protected static final Map<Player, Integer> CPS = new ConcurrentHashMap<>();
+  @Getter protected static final Map<Player, Integer> CURRENT_COMBO = new ConcurrentHashMap<>();
 
-    public StatisticListener() {
-        Bukkit.getScheduler().runTaskLater(AstralPractice.getInstance(), () -> {
-            CUSTOM_COOLDOWN_ENABLED = ConfigManager.getBoolean("MATCH-SETTINGS.BOXING.CUSTOM-ATTACK-COOLDOWN.ENABLED");
-            ONLY_SWORD = ConfigManager.getBoolean("MATCH-SETTINGS.BOXING.CUSTOM-ATTACK-COOLDOWN.ONLY-SWORD");
-            double value = ConfigManager.getDouble("MATCH-SETTINGS.BOXING.CUSTOM-ATTACK-COOLDOWN.COUNT-FROM");
-            if (value < 0.0 || value > 1.0) {
+  public StatisticListener() {
+    Bukkit.getScheduler()
+        .runTaskLater(
+            AstralPractice.getInstance(),
+            () -> {
+              customCooldownEnabled =
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getBoxing()
+                      .getCustomAttackCooldown()
+                      .isEnabled();
+              onlySword =
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getBoxing()
+                      .getCustomAttackCooldown()
+                      .isOnlySword();
+              double value =
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getBoxing()
+                      .getCustomAttackCooldown()
+                      .getCountFrom();
+              if (value < 0.0 || value > 1.0) {
                 value = 0.0;
+              }
+              customCooldownValue = value;
+            },
+            20L);
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onClick(PlayerInteractEvent e) {
+    Player player = e.getPlayer();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+
+    if (PlayerUtil.getItemInUse(player, Material.FISHING_ROD) != null) {
+      return;
+    }
+
+    Statistic statistic = null;
+    switch (profile.getStatus()) {
+      case MATCH:
+        Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
+        if (match != null && match.getCurrentRound().getRoundStatus().equals(RoundStatus.LIVE)) {
+          statistic = match.getCurrentStat(player);
+        }
+        break;
+      case FFA:
+        Ffa ffa = FfaManager.getInstance().getFfaByPlayer(player);
+        if (ffa != null) {
+          statistic = ffa.getStatistics().get(player);
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    if (!e.getAction().equals(Action.LEFT_CLICK_AIR)
+        && !e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+      return;
+    }
+
+    if (statistic == null || statistic.isSet()) {
+      return;
+    }
+
+    CURRENT_CPS.putIfAbsent(player, 1);
+    CURRENT_CPS.computeIfPresent(player, (key, val) -> val + 1);
+
+    BukkitRunnable task = cpsRunnable(statistic, player);
+    task.runTaskLaterAsynchronously(AstralPractice.getInstance(), 20L);
+  }
+
+  protected static @NotNull BukkitRunnable cpsRunnable(final Statistic statistic, Player player) {
+    return new BukkitRunnable() {
+      @Override
+      public void run() {
+        // Remove atomically — avoids the TOCTOU race between containsKey and get
+        // that can return null and cause an NPE when unboxing to int.
+        Integer current = CURRENT_CPS.remove(player);
+        if (current != null && current > 2) {
+          statistic.getCps().put(System.currentTimeMillis(), current);
+          CPS.put(player, current);
+        }
+      }
+    };
+  }
+
+  protected static @NotNull BukkitRunnable hitRunnable(
+      final Player attacker,
+      final Statistic attackerStats,
+      final Player defender,
+      final Statistic defenderStats) {
+    return new BukkitRunnable() {
+      @Override
+      public void run() {
+        if (attackerStats != null) {
+          attackerStats.setHit(attackerStats.getHit() + 1);
+
+          CURRENT_COMBO.putIfAbsent(attacker, 1);
+          CURRENT_COMBO.computeIfPresent(attacker, (key, val) -> val + 1);
+        }
+
+        if (defenderStats != null) {
+          defenderStats.setGetHit(defenderStats.getGetHit() + 1);
+
+          if (CURRENT_COMBO.containsKey(defender)
+              && defenderStats.getLongestCombo() < CURRENT_COMBO.get(defender)) {
+            defenderStats.setLongestCombo(CURRENT_COMBO.get(defender));
+          }
+          CURRENT_COMBO.put(defender, 0);
+        }
+
+        // Immediately update scoreboards for real-time hit counter display
+        // Schedule on main thread since scoreboard updates must be on main thread
+        if (attacker != null && defender != null) {
+          AstralPractice.getInstance()
+              .getServer()
+              .getScheduler()
+              .runTask(
+                  AstralPractice.getInstance(),
+                  () -> SidebarManager.getInstance().updatePlayersSidebar(attacker, defender));
+        }
+      }
+    };
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onPlayerHit(EntityDamageByEntityEvent e) {
+    if (e.isCancelled()) {
+      return;
+    }
+
+    if (!(e.getDamager() instanceof Player attacker)) {
+      return;
+    }
+    Profile attackerProfile = ProfileManager.getInstance().getProfile(attacker);
+
+    if (!(e.getEntity() instanceof Player defender)) {
+      return;
+    }
+    Profile defenderProfile = ProfileManager.getInstance().getProfile(defender);
+
+    Statistic attackerStats = null;
+    Statistic defenderStats = null;
+    switch (attackerProfile.getStatus()) {
+      case MATCH:
+        if (!defenderProfile.getStatus().equals(ProfileStatus.MATCH)) {
+          return;
+        }
+
+        Match match = MatchManager.getInstance().getLiveMatchByPlayer(attacker);
+        if (match == null) {
+          return;
+        }
+        if (!match.getCurrentRound().getRoundStatus().equals(RoundStatus.LIVE)) {
+          return;
+        }
+
+        attackerStats = match.getCurrentStat(attacker);
+        defenderStats = match.getCurrentStat(defender);
+
+        if (match.getLadder() instanceof Boxing) {
+          if (customCooldownEnabled) {
+            if (attacker.getAttackCooldown() < customCooldownValue) {
+              return;
             }
-            CUSTOM_COOLDOWN_VALUE = value;
-        }, 20L);
-    }
-
-    @EventHandler ( priority = EventPriority.LOWEST )
-    public void onClick(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-
-        if (PlayerUtil.getItemInUse(player, Material.FISHING_ROD) != null) {
-            return;
-        }
-
-        Statistic statistic = null;
-        switch (profile.getStatus()) {
-            case MATCH:
-                Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
-                if (match != null && match.getCurrentRound().getRoundStatus().equals(RoundStatus.LIVE)) {
-                    statistic = match.getCurrentStat(player);
-                }
-                break;
-            case FFA:
-                FFA ffa = FFAManager.getInstance().getFFAByPlayer(player);
-                if (ffa != null) {
-                    statistic = ffa.getStatistics().get(player);
-                }
-                break;
-        }
-
-        if (!e.getAction().equals(Action.LEFT_CLICK_AIR) && !e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-            return;
-        }
-
-        if (statistic == null || statistic.isSet()) {
-            return;
-        }
-
-        CURRENT_CPS.putIfAbsent(player, 1);
-        CURRENT_CPS.computeIfPresent(player, (key, val) -> val + 1);
-
-        BukkitRunnable task = cpsRunnable(statistic, player);
-        task.runTaskLaterAsynchronously(AstralPractice.getInstance(), 20L);
-    }
-
-    protected static @NotNull BukkitRunnable cpsRunnable(final Statistic statistic, Player player) {
-        return new BukkitRunnable() {
-            @Override
-            public void run() {
-                // Remove atomically — avoids the TOCTOU race between containsKey and get
-                // that can return null and cause an NPE when unboxing to int.
-                Integer current = CURRENT_CPS.remove(player);
-                if (current != null && current > 2) {
-                    statistic.getCps().put(System.currentTimeMillis(), current);
-                    CPS.put(player, current);
-                }
+            if (onlySword) {
+              ItemStack itemInHand = attacker.getInventory().getItemInMainHand();
+              if (!itemInHand.getType().name().toUpperCase().contains("SWORD")) {
+                return;
+              }
             }
-        };
+          }
+        }
+        break;
+      case FFA:
+        Ffa ffa = FfaManager.getInstance().getFfaByPlayer(attacker);
+        if (ffa == null) {
+          return;
+        }
+
+        attackerStats = ffa.getStatistics().get(attacker);
+        defenderStats = ffa.getStatistics().get(defender);
+        break;
+
+      default:
+        break;
     }
 
-    protected static @NotNull BukkitRunnable hitRunnable(final Player attacker, final Statistic attackerStats, final Player defender, final Statistic defenderStats) {
-        return new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (attackerStats != null) {
-                    attackerStats.setHit(attackerStats.getHit() + 1);
-
-                    CURRENT_COMBO.putIfAbsent(attacker, 1);
-                    CURRENT_COMBO.computeIfPresent(attacker, (key, val) -> val + 1);
-                }
-
-                if (defenderStats != null) {
-                    defenderStats.setGetHit(defenderStats.getGetHit() + 1);
-
-                    if (CURRENT_COMBO.containsKey(defender) && defenderStats.getLongestCombo() < CURRENT_COMBO.get(defender)) {
-                        defenderStats.setLongestCombo(CURRENT_COMBO.get(defender));
-                    }
-                    CURRENT_COMBO.put(defender, 0);
-                }
-
-                // Immediately update scoreboards for real-time hit counter display
-                // Schedule on main thread since scoreboard updates must be on main thread
-                if (attacker != null && defender != null) {
-                    AstralPractice.getInstance().getServer().getScheduler().runTask(
-                            AstralPractice.getInstance(),
-                            () -> SidebarManager.getInstance().updatePlayersSidebar(attacker, defender)
-                    );
-                }
-            }
-        };
+    if (attackerStats == null || attackerStats.isSet()) {
+      return;
     }
 
-    @EventHandler ( priority = EventPriority.LOWEST )
-    public void onPlayerHit(EntityDamageByEntityEvent e) {
-        if (e.isCancelled()) return;
+    BukkitRunnable task = hitRunnable(attacker, attackerStats, defender, defenderStats);
+    task.runTaskAsynchronously(AstralPractice.getInstance());
+  }
 
-        if (!(e.getDamager() instanceof Player attacker)) return;
-        Profile attackerProfile = ProfileManager.getInstance().getProfile(attacker);
-
-        if (!(e.getEntity() instanceof Player defender)) return;
-        Profile defenderProfile = ProfileManager.getInstance().getProfile(defender);
-
-        Statistic attackerStats = null;
-        Statistic defenderStats = null;
-        switch (attackerProfile.getStatus()) {
-            case MATCH:
-                if (!defenderProfile.getStatus().equals(ProfileStatus.MATCH))
-                    return;
-
-                Match match = MatchManager.getInstance().getLiveMatchByPlayer(attacker);
-                if (match == null)
-                    return;
-                if (!match.getCurrentRound().getRoundStatus().equals(RoundStatus.LIVE))
-                    return;
-
-                attackerStats = match.getCurrentStat(attacker);
-                defenderStats = match.getCurrentStat(defender);
-
-                if (match.getLadder() instanceof Boxing) {
-                    if (CUSTOM_COOLDOWN_ENABLED) {
-                        if (attacker.getAttackCooldown() < CUSTOM_COOLDOWN_VALUE) {
-                            return;
-                        }
-                        if (ONLY_SWORD) {
-                            ItemStack itemInHand = attacker.getInventory().getItemInMainHand();
-                            if (!itemInHand.getType().name().toUpperCase().contains("SWORD")) {
-                                return;
-                            }
-                        }
-                    }
-                }
-                break;
-            case FFA:
-                FFA ffa = FFAManager.getInstance().getFFAByPlayer(attacker);
-                if (ffa == null)
-                    return;
-
-                attackerStats = ffa.getStatistics().get(attacker);
-                defenderStats = ffa.getStatistics().get(defender);
-                break;
-        }
-
-        if (attackerStats == null || attackerStats.isSet()) {
-            return;
-        }
-
-        BukkitRunnable task = hitRunnable(attacker, attackerStats, defender, defenderStats);
-        task.runTaskAsynchronously(AstralPractice.getInstance());
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onPotionSplash(PotionSplashEvent e) {
+    ThrownPotion potion = e.getPotion();
+    if (!(potion.getShooter() instanceof Player player)) {
+      return;
     }
 
-    @EventHandler ( priority = EventPriority.LOWEST )
-    public void onPotionSplash(PotionSplashEvent e) {
-        ThrownPotion potion = e.getPotion();
-        if (!(potion.getShooter() instanceof Player player)) {
-            return;
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+
+    Statistic statistic = null;
+    switch (profile.getStatus()) {
+      case MATCH:
+        Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
+        if (match == null) {
+          return;
         }
 
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-
-        Statistic statistic = null;
-        switch (profile.getStatus()) {
-            case MATCH:
-                Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
-                if (match == null) {
-                    return;
-                }
-
-                statistic = match.getCurrentStat(player);
-                break;
-            case FFA:
-                FFA ffa = FFAManager.getInstance().getFFAByPlayer(player);
-                if (ffa == null) {
-                    return;
-                }
-
-                statistic = ffa.getStatistics().get(player);
-                break;
+        statistic = match.getCurrentStat(player);
+        break;
+      case FFA:
+        Ffa ffa = FfaManager.getInstance().getFfaByPlayer(player);
+        if (ffa == null) {
+          return;
         }
 
-        if (statistic == null || statistic.isSet()) {
-            return;
-        }
+        statistic = ffa.getStatistics().get(player);
+        break;
 
-        // Check if the potion is a health potion
-        if (isHealthPotion(potion)) {
-            statistic.setPotionThrown(statistic.getPotionThrown() + 1);
-
-            if (!e.getAffectedEntities().contains(player)) {
-                statistic.setPotionMissed(statistic.getPotionMissed() + 1);
-            }
-        }
+      default:
+        break;
     }
 
-    private static boolean isHealthPotion(ThrownPotion potion) {
-        for (PotionEffect potionEffect : potion.getEffects()) {
-            if (potionEffect.getType().equals(PotionEffectType.INSTANT_HEALTH)) {
-                return true;
-            }
-        }
-        return false;
+    if (statistic == null || statistic.isSet()) {
+      return;
     }
 
+    // Check if the potion is a health potion
+    if (isHealthPotion(potion)) {
+      statistic.setPotionThrown(statistic.getPotionThrown() + 1);
+
+      if (!e.getAffectedEntities().contains(player)) {
+        statistic.setPotionMissed(statistic.getPotionMissed() + 1);
+      }
+    }
+  }
+
+  private static boolean isHealthPotion(ThrownPotion potion) {
+    for (PotionEffect potionEffect : potion.getEffects()) {
+      if (potionEffect.getType().equals(PotionEffectType.INSTANT_HEALTH)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

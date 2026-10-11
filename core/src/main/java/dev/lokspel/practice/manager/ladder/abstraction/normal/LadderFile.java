@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.ladder.abstraction.normal;
 
-import dev.lokspel.practice.manager.backend.ConfigFile;
+import dev.lokspel.practice.data.DataFiles;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.BlockReturnDelay;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.CustomConfig;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.RespawnableLadder;
@@ -11,354 +11,407 @@ import dev.lokspel.practice.manager.ladder.util.LadderFileUtil;
 import dev.lokspel.practice.util.BasicItem;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.ItemSerializationUtil;
-import org.bukkit.Material;
-
+import dev.lokspel.practice.util.KitData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
-public class LadderFile extends ConfigFile {
+/**
+ * Reads and writes the file {@code ladders/<name>.yml} of a ladder. The model read from the file is
+ * kept and updated on every save, so keys the ladder does not write itself stay in the file.
+ */
+public class LadderFile {
 
-    private final NormalLadder ladder;
+  private final NormalLadder ladder;
+  private final String file;
+  private final LadderData data;
 
-    public LadderFile(NormalLadder ladder) {
-        super("/ladders/", ladder.getName().toLowerCase());
-        this.ladder = ladder;
+  public LadderFile(NormalLadder ladder) {
+    this.ladder = ladder;
+    this.file = "ladders/" + ladder.getName().toLowerCase() + ".yml";
+    this.data = DataFiles.readOrCreate(file, LadderData.class, LadderData::new);
+    if (data.getSettings() == null) {
+      data.setSettings(new LadderData.Settings());
+    }
+  }
 
-        saveFile();
-        reloadFile();
+  /** Writes the ladder to its file. */
+  public void setData() {
+    data.setName(ladder.getName());
+    data.setEnabled(ladder.isEnabled());
+    data.setType(ladder.getType().toString());
+
+    LadderData.Settings settings = data.getSettings();
+    settings.setRegen(ladder.isRegen());
+    settings.setHunger(ladder.isHunger());
+    settings.setWeightClass(ladder.getWeightClass().toString());
+    settings.setEditable(ladder.isEditable());
+    settings.setDropInventory(ladder.isDropInventory());
+    settings.setMultiRoundStartCountdown(ladder.isMultiRoundStartCountdown());
+    settings.setHitDelay(ladder.getAttackCooldownModifier());
+    settings.setRounds(ladder.getRounds());
+    settings.setHearts(ladder.getHearts());
+    settings.setMaxDuration(ladder.getMaxDuration());
+    settings.setEnderPearlCooldown(ladder.getEnderPearlCooldown());
+    settings.setGoldenAppleCooldown(ladder.getGoldenAppleCooldown());
+    settings.setFireworkCooldown(ladder.getFireworkRocketCooldown());
+    settings.setWindChargeCooldown(ladder.getWindChargeCooldown());
+    settings.setStartCountdown(ladder.getStartCountdown());
+    settings.setStartMove(ladder.isStartMove());
+    settings.setMatchTypes(LadderFileUtil.getMatchTypeNames(ladder.getMatchTypes()));
+    settings.setKnockback(ladder.getLadderKnockback().get());
+    settings.setTntFuseTime(ladder.getTntFuseTime());
+    settings.setTntAutoIgnite(ladder.isTntAutoIgnite());
+    settings.setPullPlayersWithRod(ladder.isPullPlayersWithRod());
+    settings.setHealthBelowName(ladder.isHealthBelowName());
+    settings.setResetBuildAfterRound(ladder.isResetBuildAfterRound());
+    settings.setBreakAllBlocks(ladder.isBreakAllBlocks());
+    settings.setRoundEndDelay(ladder.getRoundEndDelay());
+    settings.setRoundStatusTitles(ladder.isRoundStatusTitles());
+    settings.setCountdownTitles(ladder.isCountdownTitles());
+
+    if (ladder instanceof RespawnableLadder respawnableLadder) {
+      settings.setRespawnTime(respawnableLadder.getRespawnTime());
     }
 
-    @Override
-    public void setData() {
-        config.set("name", ladder.getName());
-        config.set("enabled", ladder.isEnabled());
-        config.set("type", ladder.getType().toString());
-
-        config.set("settings.regen", ladder.isRegen());
-        config.set("settings.hunger", ladder.isHunger());
-        config.set("settings.weightClass", ladder.getWeightClass().toString());
-        config.set("settings.editable", ladder.isEditable());
-        config.set("settings.drop-inventory", ladder.isDropInventory());
-        config.set("settings.multiRoundStartCountdown", ladder.isMultiRoundStartCountdown());
-        config.set("settings.hitdelay", ladder.getAttackCooldownModifier());
-        config.set("settings.rounds", ladder.getRounds());
-        config.set("settings.hearts", ladder.getHearts());
-        config.set("settings.maxduration", ladder.getMaxDuration());
-        config.set("settings.epcooldown", ladder.getEnderPearlCooldown());
-        config.set("settings.gacooldown", ladder.getGoldenAppleCooldown());
-        config.set("settings.fireworkcooldown", ladder.getFireworkRocketCooldown());
-        config.set("settings.windchargecooldown", ladder.getWindChargeCooldown());
-        config.set("settings.startcountdown", ladder.getStartCountdown());
-        config.set("settings.startmove", ladder.isStartMove());
-        config.set("settings.matchtypes", LadderFileUtil.getMatchTypeNames(ladder.getMatchTypes()));
-        config.set("settings.knockback", ladder.getLadderKnockback().get());
-        config.set("settings.tntfusetime", ladder.getTntFuseTime());
-        config.set("settings.tntautoignite", ladder.isTntAutoIgnite());
-        config.set("settings.pullplayerswithrod", ladder.isPullPlayersWithRod());
-        config.set("settings.healthbelowname", ladder.isHealthBelowName());
-        config.set("settings.resetbuildafterround", ladder.isResetBuildAfterRound());
-        config.set("settings.breakallblocks", ladder.isBreakAllBlocks());
-        config.set("settings.roundenddelay", ladder.getRoundEndDelay());
-        config.set("settings.roundstatustitles", ladder.isRoundStatusTitles());
-        config.set("settings.countdowntitles", ladder.isCountdownTitles());
-
-        if (ladder instanceof RespawnableLadder respawnableLadder) {
-            config.set("settings.respawntime", respawnableLadder.getRespawnTime());
-        }
-
-        if (ladder instanceof BlockReturnDelay blockReturnDelay) {
-            config.set("settings.block-return-delay", blockReturnDelay.getBlockReturnDelaySeconds());
-        }
-
-        if (ladder instanceof TempBuildReturnDelay tempBuildReturnDelay) {
-            config.set("settings.temp-build-return-delay", tempBuildReturnDelay.getTempBuildReturnDelaySeconds());
-        }
-
-        if (ladder instanceof Creeper creeper) {
-            config.set("settings.creeper-explosion-delay", creeper.getCreeperExplosionDelay());
-        }
-
-        if (ladder.getIcon() != null)
-            config.set("icon", ladder.getIcon());
-        else
-            config.set("icon", null);
-
-        if (ladder.getKitData() != null)
-            ladder.getKitData().saveData(config, null);
-
-        if (ladder.isBuild()) {
-            List<String> destroyableBlocks = new ArrayList<>();
-            for (BasicItem destroyableBlock : ladder.getDestroyableBlocks()) {
-                if (destroyableBlock.damage() == 0)
-                    destroyableBlocks.add(destroyableBlock.material().name());
-                else
-                    destroyableBlocks.add(destroyableBlock.material().name() + "::" + destroyableBlock.damage());
-            }
-
-            if (destroyableBlocks.isEmpty())
-                config.set("destroyable-blocks", null);
-            else
-                config.set("destroyable-blocks", destroyableBlocks);
-        }
-
-        if (ladder.getCustomKitExtraItems().get(false) != null)
-            config.set("custom-kit-extra-items.unranked", ItemSerializationUtil.itemStackArrayToBase64(ladder.getCustomKitExtraItems().get(false)));
-        else
-            config.set("custom-kit-extra-items.unranked", null);
-
-        if (ladder.getCustomKitExtraItems().get(true) != null)
-            config.set("custom-kit-extra-items.ranked", ItemSerializationUtil.itemStackArrayToBase64(ladder.getCustomKitExtraItems().get(true)));
-        else
-            config.set("custom-kit-extra-items.ranked", null);
-
-        if (ladder instanceof CustomConfig)
-            ((CustomConfig) ladder).setCustomConfig(config);
-
-        saveFile();
+    if (ladder instanceof BlockReturnDelay blockReturnDelay) {
+      settings.setBlockReturnDelay(blockReturnDelay.getBlockReturnDelaySeconds());
     }
 
-    @Override
-    public void getData() {
-        if (config.isBoolean("enabled")) {
-            ladder.setEnabled(config.getBoolean("enabled"));
-        }
+    if (ladder instanceof TempBuildReturnDelay tempBuildReturnDelay) {
+      settings.setTempBuildReturnDelay(tempBuildReturnDelay.getTempBuildReturnDelaySeconds());
+    }
 
-        if (config.isBoolean("settings.regen")) {
-            ladder.setRegen(config.getBoolean("settings.regen"));
-        }
+    if (ladder instanceof Creeper creeper) {
+      settings.setCreeperExplosionDelay(creeper.getCreeperExplosionDelay());
+    }
 
-        if (config.isBoolean("settings.hunger")) {
-            ladder.setHunger(config.getBoolean("settings.hunger"));
-        }
+    data.setIcon(ladder.getIcon());
 
-        if (config.isBoolean("settings.ranked")) {
-            ladder.setWeightClass(config.getBoolean("settings.ranked") ? WeightClassType.UNRANKED_AND_RANKED : WeightClassType.UNRANKED);
-        }
+    if (ladder.getKitData() != null) {
+      writeKit(ladder.getKitData());
+    }
 
-        if (config.isString("settings.weightClass")) {
-            ladder.setWeightClass(WeightClassType.valueOf(config.getString("settings.weightClass")));
-        }
-
-        if (config.isBoolean("settings.editable")) {
-            ladder.setEditable(config.getBoolean("settings.editable"));
-        }
-
-        if (config.isBoolean("settings.drop-inventory")) {
-            ladder.setDropInventory(config.getBoolean("settings.drop-inventory"));
-        }
-
-        if (config.isBoolean("settings.multiRoundStartCountdown")) {
-            ladder.setMultiRoundStartCountdown(config.getBoolean("settings.multiRoundStartCountdown"));
-        }
-
-        if (config.isBoolean("settings.startmove")) {
-            ladder.setStartMove(config.getBoolean("settings.startmove"));
-        }
-
-        if (config.isBoolean("settings.healthbelowname")) {
-            ladder.setHealthBelowName(config.getBoolean("settings.healthbelowname"));
-        }
-
-        if (config.isBoolean("settings.resetbuildafterround")) {
-            ladder.setResetBuildAfterRound(config.getBoolean("settings.resetbuildafterround"));
-        }
-
-        if (config.isBoolean("settings.breakallblocks")) {
-            ladder.setBreakAllBlocks(config.getBoolean("settings.breakallblocks"));
-        }
-
-        if (config.isInt("settings.roundenddelay")) {
-            int roundEndDelay = config.getInt("settings.roundenddelay");
-            if (roundEndDelay < 0 || roundEndDelay > 30) roundEndDelay = 3;
-            ladder.setRoundEndDelay(roundEndDelay);
-        } else
-            ladder.setRoundEndDelay(3);
-
-        if (config.isBoolean("settings.roundstatustitles")) {
-            ladder.setRoundStatusTitles(config.getBoolean("settings.roundstatustitles"));
-        } else
-            ladder.setRoundStatusTitles(true);
-
-        if (config.isBoolean("settings.countdowntitles")) {
-            ladder.setCountdownTitles(config.getBoolean("settings.countdowntitles"));
-        } else
-            ladder.setCountdownTitles(true);
-
-        if (config.isInt("settings.hitdelay")) {
-            int hitDelay = config.getInt("settings.hitdelay");
-            // Convert old int-based hitdelay (ticks) to multiplier: divide by 20 (default ticks)
-            double multiplier = Math.clamp(hitDelay / 20.0, 0, 3.0);
-            ladder.setAttackCooldownModifier(multiplier);
-        } else if (config.isDouble("settings.hitdelay")) {
-            double hitDelay = config.getDouble("settings.hitdelay");
-            if (hitDelay < 0 || hitDelay > 3.0) hitDelay = 1.0;
-            ladder.setAttackCooldownModifier(hitDelay);
-        } else
-            ladder.setAttackCooldownModifier(1.0);
-
-        if (config.isInt("settings.rounds")) {
-            int rounds = config.getInt("settings.rounds");
-            if (rounds < 1 || rounds > 5) rounds = 1;
-            ladder.setRounds(rounds);
-        } else
-            ladder.setRounds(1);
-
-        if (config.isInt("settings.hearts")) {
-            ladder.setHearts(config.getInt("settings.hearts"));
+    if (ladder.isBuild()) {
+      List<String> destroyableBlocks = new ArrayList<>();
+      for (BasicItem destroyableBlock : ladder.getDestroyableBlocks()) {
+        if (destroyableBlock.damage() == 0) {
+          destroyableBlocks.add(destroyableBlock.material().name());
         } else {
-            ladder.setHearts(10);
+          destroyableBlocks.add(
+              destroyableBlock.material().name() + "::" + destroyableBlock.damage());
         }
+      }
 
-        if (config.isInt("settings.maxduration")) {
-            ladder.setMaxDuration(config.getInt("settings.maxduration"));
-        } else
-            ladder.setMaxDuration(600);
-
-        Number epCooldown = getNumeric("settings.epcooldown");
-        if (epCooldown != null) {
-ladder.setEnderPearlCooldown(Math.clamp(epCooldown.doubleValue(), 0.0, 60.0));
+      data.setDestroyableBlocks(destroyableBlocks.isEmpty() ? null : destroyableBlocks);
     }
 
-        Number gaCooldown = getNumeric("settings.gacooldown");
-        if (gaCooldown != null) {
-            ladder.setGoldenAppleCooldown(Math.clamp(gaCooldown.doubleValue(), 0.0, 30.0));
-        }
-
-        if (config.isInt("settings.fireworkcooldown")) {
-            int fireworkCooldown = config.getInt("settings.fireworkcooldown");
-            if (fireworkCooldown < 0 || fireworkCooldown > 30) fireworkCooldown = 1;
-            ladder.setFireworkRocketCooldown(fireworkCooldown);
-        }
-
-        Number windChargeCooldown = getNumeric("settings.windchargecooldown");
-        if (windChargeCooldown != null) {
-            ladder.setWindChargeCooldown(Math.clamp(windChargeCooldown.doubleValue(), 0.0, 30.0));
-        } else {
-            ladder.setWindChargeCooldown(0);
-        }
-
-        if (config.isInt("settings.startcountdown")) {
-            int startCountdown = config.getInt("settings.startcountdown");
-            if (startCountdown < 2 || startCountdown > 5) startCountdown = 3;
-            ladder.setStartCountdown(startCountdown);
-        } else
-            ladder.setStartCountdown(3);
-
-        if (config.isInt("settings.tntfusetime")) {
-            int tntFuseTime = config.getInt("settings.tntfusetime");
-            if (tntFuseTime < 1 || tntFuseTime > 10) tntFuseTime = 4;
-            ladder.setTntFuseTime(tntFuseTime);
-        } else
-            ladder.setTntFuseTime(4);
-
-        if (config.isBoolean("settings.tntautoignite"))
-            ladder.setTntAutoIgnite(config.getBoolean("settings.tntautoignite"));
-        else
-            ladder.setTntAutoIgnite(false);
-
-        if (config.isBoolean("settings.pullplayerswithrod"))
-            ladder.setPullPlayersWithRod(config.getBoolean("settings.pullplayerswithrod"));
-        else
-            ladder.setPullPlayersWithRod(true);
-
-        if (ladder instanceof RespawnableLadder respawnableLadder) {
-            if (config.isInt("settings.respawntime")) {
-                int respawnTime = config.getInt("settings.respawntime");
-                if (respawnTime < 0 || respawnTime > 10) respawnTime = 3;
-                respawnableLadder.setRespawnTime(respawnTime);
-            } else
-                respawnableLadder.setRespawnTime(3);
-        }
-
-        if (ladder instanceof BlockReturnDelay blockReturnDelay) {
-            int buildDelay = 6;
-
-            if (config.isInt("settings.block-return-delay")) {
-                buildDelay = config.getInt("settings.block-return-delay");
-            } else if (config.isInt("settings.tempbuild-delay")) {
-                // Backward compatibility for older ladder templates.
-                buildDelay = config.getInt("settings.tempbuild-delay");
-            } else if (config.isInt("tempbuild-delay")) {
-                // Backward compatibility for older root-level templates.
-                buildDelay = config.getInt("tempbuild-delay");
-            } else if (config.isInt("block-return-delay-seconds")) {
-                // Backward compatibility for previous naming.
-                buildDelay = config.getInt("block-return-delay-seconds");
-            }
-
-            if (buildDelay < -1 || buildDelay > 30) buildDelay = 6;
-            blockReturnDelay.setBlockReturnDelaySeconds(buildDelay);
-        }
-
-        if (ladder instanceof TempBuildReturnDelay tempBuildReturnDelay) {
-            int buildDelay = 6;
-
-            if (config.isInt("settings.temp-build-return-delay")) {
-                buildDelay = config.getInt("settings.temp-build-return-delay");
-            } else if (config.isInt("settings.tempbuild-delay")) {
-                buildDelay = config.getInt("settings.tempbuild-delay");
-            } else if (config.isInt("tempbuild-delay")) {
-                buildDelay = config.getInt("tempbuild-delay");
-            } else if (config.isInt("settings.block-return-delay")) {
-                buildDelay = config.getInt("settings.block-return-delay");
-            } else if (config.isInt("block-return-delay-seconds")) {
-                buildDelay = config.getInt("block-return-delay-seconds");
-            }
-
-            if (buildDelay < -1 || buildDelay > 30) buildDelay = 6;
-            tempBuildReturnDelay.setTempBuildReturnDelaySeconds(buildDelay);
-        }
-
-        if (ladder instanceof Creeper creeper) {
-            Number creeperExplosionDelay = getNumeric("settings.creeper-explosion-delay");
-
-            if (creeperExplosionDelay == null)
-                creeper.setCreeperExplosionDelay(1.0);
-            else
-                creeper.setCreeperExplosionDelay(Math.clamp(creeperExplosionDelay.doubleValue(), 0.5, 10.0));
-        }
-
-        if (config.isString("settings.knockback"))
-            ladder.getLadderKnockback().get(config.getString("settings.knockback"));
-
-        if (config.isList("settings.matchtypes"))
-            LadderFileUtil.getLadderMatchTypes(ladder.getMatchTypes(), config.getStringList("settings.matchtypes"));
-
-        ladder.getKitData().getData(config, null);
-
-        if (ladder.isBuild() && config.isList("destroyable-blocks")) {
-            List<String> dbList = config.getStringList("destroyable-blocks");
-            for (String destroyableBlock : dbList) {
-                try {
-                    if (destroyableBlock.contains("::")) {
-                        String[] s2 = destroyableBlock.split("::");
-                        ladder.getDestroyableBlocks().add(new BasicItem(Material.valueOf(s2[0]), Short.parseShort(s2[1])));
-                    } else {
-                        ladder.getDestroyableBlocks().add(new BasicItem(Material.valueOf(destroyableBlock), (short) 0));
-                    }
-                } catch (IllegalArgumentException e) {
-                    Common.sendConsoleMMMessage("<red>Incorrectly formatted destroyable block: " + destroyableBlock);
-                }
-            }
-        }
-
-        if (config.isItemStack("icon"))
-            ladder.setIcon(config.getItemStack("icon"));
-        if (config.isString("custom-kit-extra-items.unranked"))
-            ladder.getCustomKitExtraItems().put(false, ItemSerializationUtil.itemStackArrayFromBase64(config.getString("custom-kit-extra-items.unranked")));
-        if (config.isString("custom-kit-extra-items.ranked"))
-            ladder.getCustomKitExtraItems().put(true, ItemSerializationUtil.itemStackArrayFromBase64(config.getString("custom-kit-extra-items.ranked")));
-
-        if (ladder instanceof CustomConfig)
-            ((CustomConfig) ladder).getCustomConfig(config);
-
-        if (ladder.isEnabled() && !ladder.isReadyToEnable())
-            ladder.setEnabled(false);
+    String unranked =
+        ItemSerializationUtil.itemStackArrayToBase64(ladder.getCustomKitExtraItems().get(false));
+    String ranked =
+        ItemSerializationUtil.itemStackArrayToBase64(ladder.getCustomKitExtraItems().get(true));
+    if (unranked == null && ranked == null) {
+      data.setCustomKitExtraItems(null);
+    } else {
+      LadderData.CustomKitExtraItems extraItems = new LadderData.CustomKitExtraItems();
+      extraItems.setUnranked(unranked);
+      extraItems.setRanked(ranked);
+      data.setCustomKitExtraItems(extraItems);
     }
 
-    private Number getNumeric(String path) {
-        Object value = config.get(path);
-        return value instanceof Number ? (Number) value : null;
+    if (ladder instanceof CustomConfig customConfig) {
+      customConfig.writeCustomConfig(data);
     }
 
+    DataFiles.write(file, data);
+  }
+
+  /** Applies the file's settings to the ladder, using defaults for absent or invalid values. */
+  public void getData() {
+    LadderData.Settings settings = data.getSettings();
+
+    if (data.getEnabled() != null) {
+      ladder.setEnabled(data.getEnabled());
+    }
+
+    if (settings.getRegen() != null) {
+      ladder.setRegen(settings.getRegen());
+    }
+
+    if (settings.getHunger() != null) {
+      ladder.setHunger(settings.getHunger());
+    }
+
+    if (settings.getLegacyRanked() != null) {
+      ladder.setWeightClass(
+          settings.getLegacyRanked()
+              ? WeightClassType.UNRANKED_AND_RANKED
+              : WeightClassType.UNRANKED);
+    }
+
+    if (settings.getWeightClass() != null) {
+      ladder.setWeightClass(WeightClassType.valueOf(settings.getWeightClass()));
+    }
+
+    if (settings.getEditable() != null) {
+      ladder.setEditable(settings.getEditable());
+    }
+
+    if (settings.getDropInventory() != null) {
+      ladder.setDropInventory(settings.getDropInventory());
+    }
+
+    if (settings.getMultiRoundStartCountdown() != null) {
+      ladder.setMultiRoundStartCountdown(settings.getMultiRoundStartCountdown());
+    }
+
+    if (settings.getStartMove() != null) {
+      ladder.setStartMove(settings.getStartMove());
+    }
+
+    if (settings.getHealthBelowName() != null) {
+      ladder.setHealthBelowName(settings.getHealthBelowName());
+    }
+
+    if (settings.getResetBuildAfterRound() != null) {
+      ladder.setResetBuildAfterRound(settings.getResetBuildAfterRound());
+    }
+
+    if (settings.getBreakAllBlocks() != null) {
+      ladder.setBreakAllBlocks(settings.getBreakAllBlocks());
+    }
+
+    if (settings.getRoundEndDelay() instanceof Integer roundEndDelay) {
+      ladder.setRoundEndDelay(roundEndDelay < 0 || roundEndDelay > 30 ? 3 : roundEndDelay);
+    } else {
+      ladder.setRoundEndDelay(3);
+    }
+
+    ladder.setRoundStatusTitles(!Boolean.FALSE.equals(settings.getRoundStatusTitles()));
+    ladder.setCountdownTitles(!Boolean.FALSE.equals(settings.getCountdownTitles()));
+
+    if (settings.getHitDelay() instanceof Integer hitDelay) {
+      // Convert old int-based hitdelay (ticks) to multiplier: divide by 20 (default ticks)
+      ladder.setAttackCooldownModifier(Math.clamp(hitDelay / 20.0, 0, 3.0));
+    } else if (settings.getHitDelay() instanceof Double hitDelay) {
+      ladder.setAttackCooldownModifier(hitDelay < 0 || hitDelay > 3.0 ? 1.0 : hitDelay);
+    } else {
+      ladder.setAttackCooldownModifier(1.0);
+    }
+
+    if (settings.getRounds() instanceof Integer rounds) {
+      ladder.setRounds(rounds < 1 || rounds > 5 ? 1 : rounds);
+    } else {
+      ladder.setRounds(1);
+    }
+
+    ladder.setHearts(settings.getHearts() instanceof Integer hearts ? hearts : 10);
+    ladder.setMaxDuration(settings.getMaxDuration() instanceof Integer duration ? duration : 600);
+
+    if (settings.getEnderPearlCooldown() != null) {
+      ladder.setEnderPearlCooldown(
+          Math.clamp(settings.getEnderPearlCooldown().doubleValue(), 0.0, 60.0));
+    }
+
+    if (settings.getGoldenAppleCooldown() != null) {
+      ladder.setGoldenAppleCooldown(
+          Math.clamp(settings.getGoldenAppleCooldown().doubleValue(), 0.0, 30.0));
+    }
+
+    if (settings.getFireworkCooldown() instanceof Integer fireworkCooldown) {
+      ladder.setFireworkRocketCooldown(
+          fireworkCooldown < 0 || fireworkCooldown > 30 ? 1 : fireworkCooldown);
+    }
+
+    if (settings.getWindChargeCooldown() != null) {
+      ladder.setWindChargeCooldown(
+          Math.clamp(settings.getWindChargeCooldown().doubleValue(), 0.0, 30.0));
+    } else {
+      ladder.setWindChargeCooldown(0);
+    }
+
+    if (settings.getStartCountdown() instanceof Integer startCountdown) {
+      ladder.setStartCountdown(startCountdown < 2 || startCountdown > 5 ? 3 : startCountdown);
+    } else {
+      ladder.setStartCountdown(3);
+    }
+
+    if (settings.getTntFuseTime() instanceof Integer tntFuseTime) {
+      ladder.setTntFuseTime(tntFuseTime < 1 || tntFuseTime > 10 ? 4 : tntFuseTime);
+    } else {
+      ladder.setTntFuseTime(4);
+    }
+
+    ladder.setTntAutoIgnite(Boolean.TRUE.equals(settings.getTntAutoIgnite()));
+    ladder.setPullPlayersWithRod(!Boolean.FALSE.equals(settings.getPullPlayersWithRod()));
+
+    if (ladder instanceof RespawnableLadder respawnableLadder) {
+      if (settings.getRespawnTime() instanceof Integer respawnTime) {
+        respawnableLadder.setRespawnTime(respawnTime < 0 || respawnTime > 10 ? 3 : respawnTime);
+      } else {
+        respawnableLadder.setRespawnTime(3);
+      }
+    }
+
+    if (ladder instanceof BlockReturnDelay blockReturnDelay) {
+      // Earlier names of the setting, newest first.
+      Integer buildDelay =
+          firstInteger(
+              settings.getBlockReturnDelay(),
+              settings.getLegacyTempBuildDelay(),
+              data.getLegacyTempBuildDelay(),
+              data.getLegacyBlockReturnDelaySeconds());
+      blockReturnDelay.setBlockReturnDelaySeconds(buildDelay(buildDelay));
+    }
+
+    if (ladder instanceof TempBuildReturnDelay tempBuildReturnDelay) {
+      Integer buildDelay =
+          firstInteger(
+              settings.getTempBuildReturnDelay(),
+              settings.getLegacyTempBuildDelay(),
+              data.getLegacyTempBuildDelay(),
+              settings.getBlockReturnDelay(),
+              data.getLegacyBlockReturnDelaySeconds());
+      tempBuildReturnDelay.setTempBuildReturnDelaySeconds(buildDelay(buildDelay));
+    }
+
+    if (ladder instanceof Creeper creeper) {
+      Number creeperExplosionDelay = settings.getCreeperExplosionDelay();
+
+      if (creeperExplosionDelay == null) {
+        creeper.setCreeperExplosionDelay(1.0);
+      } else {
+        creeper.setCreeperExplosionDelay(
+            Math.clamp(creeperExplosionDelay.doubleValue(), 0.5, 10.0));
+      }
+    }
+
+    if (settings.getKnockback() != null) {
+      ladder.getLadderKnockback().get(settings.getKnockback());
+    }
+
+    if (settings.getMatchTypes() != null) {
+      LadderFileUtil.getLadderMatchTypes(
+          ladder.getMatchTypes(),
+          settings.getMatchTypes().stream().filter(Objects::nonNull).toList());
+    }
+
+    readKit(ladder.getKitData());
+
+    if (ladder.isBuild() && data.getDestroyableBlocks() != null) {
+      for (String destroyableBlock : data.getDestroyableBlocks()) {
+        if (destroyableBlock == null) {
+          continue;
+        }
+
+        try {
+          if (destroyableBlock.contains("::")) {
+            String[] s2 = destroyableBlock.split("::");
+            ladder
+                .getDestroyableBlocks()
+                .add(new BasicItem(Material.valueOf(s2[0]), Short.parseShort(s2[1])));
+          } else {
+            ladder
+                .getDestroyableBlocks()
+                .add(new BasicItem(Material.valueOf(destroyableBlock), (short) 0));
+          }
+        } catch (IllegalArgumentException e) {
+          Common.sendConsoleMmMessage(
+              "<red>Incorrectly formatted destroyable block: " + destroyableBlock);
+        }
+      }
+    }
+
+    if (data.getIcon() != null) {
+      ladder.setIcon(data.getIcon());
+    }
+
+    LadderData.CustomKitExtraItems extraItems = data.getCustomKitExtraItems();
+    if (extraItems != null && extraItems.getUnranked() != null) {
+      ladder
+          .getCustomKitExtraItems()
+          .put(false, ItemSerializationUtil.itemStackArrayFromBase64(extraItems.getUnranked()));
+    }
+    if (extraItems != null && extraItems.getRanked() != null) {
+      ladder
+          .getCustomKitExtraItems()
+          .put(true, ItemSerializationUtil.itemStackArrayFromBase64(extraItems.getRanked()));
+    }
+
+    if (ladder instanceof CustomConfig customConfig) {
+      customConfig.readCustomConfig(data);
+    }
+
+    if (ladder.isEnabled() && !ladder.isReadyToEnable()) {
+      ladder.setEnabled(false);
+    }
+  }
+
+  /** Deletes the ladder's file. */
+  public void delete() {
+    DataFiles.delete(file);
+  }
+
+  private void writeKit(KitData kitData) {
+    // Like before, a part of the kit that is not set leaves the file's value as it is.
+    if (kitData.getStorage() != null) {
+      data.setInventory(ItemSerializationUtil.itemStackArrayToBase64(kitData.getStorage()));
+    }
+    if (kitData.getArmor() != null) {
+      data.setArmor(ItemSerializationUtil.itemStackArrayToBase64(kitData.getArmor()));
+    }
+    if (kitData.getExtra() != null) {
+      data.setExtra(ItemSerializationUtil.itemStackArrayToBase64(kitData.getExtra()));
+    }
+    if (!kitData.getEffects().isEmpty()) {
+      data.setEffects(new ArrayList<>(kitData.getEffects()));
+    }
+  }
+
+  private void readKit(KitData kitData) {
+    ItemStack[] storage = decode(data.getInventory());
+    if (storage != null) {
+      kitData.setStorage(storage);
+    }
+    ItemStack[] armor = decode(data.getArmor());
+    if (armor != null) {
+      kitData.setArmor(armor);
+    }
+    ItemStack[] extra = decode(data.getExtra());
+    if (extra != null) {
+      kitData.setExtra(extra);
+    }
+    if (data.getEffects() != null) {
+      List<PotionEffect> effects = new ArrayList<>();
+      for (PotionEffect effect : data.getEffects()) {
+        if (effect != null) {
+          effects.add(effect);
+        }
+      }
+      kitData.setEffects(effects);
+    }
+  }
+
+  private static ItemStack[] decode(String base64) {
+    return base64 == null ? null : ItemSerializationUtil.itemStackArrayFromBase64(base64);
+  }
+
+  private static Integer firstInteger(Number... values) {
+    for (Number value : values) {
+      if (value instanceof Integer integer) {
+        return integer;
+      }
+    }
+    return null;
+  }
+
+  private static int buildDelay(Integer buildDelay) {
+    if (buildDelay == null || buildDelay < -1 || buildDelay > 30) {
+      return 6;
+    }
+    return buildDelay;
+  }
 }

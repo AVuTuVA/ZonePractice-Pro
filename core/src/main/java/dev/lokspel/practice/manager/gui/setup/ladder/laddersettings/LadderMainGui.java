@@ -1,11 +1,11 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings;
 
-import dev.lokspel.practice.manager.backend.GUIFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
-import dev.lokspel.practice.manager.gui.GUI;
-import dev.lokspel.practice.manager.gui.GUIItem;
-import dev.lokspel.practice.manager.gui.GUIManager;
-import dev.lokspel.practice.manager.gui.GUIType;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiItem;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.confirmgui.ConfirmGuiType;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSummaryGui;
@@ -21,156 +21,311 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 @Getter
-public class LadderMainGui extends GUI {
+public class LadderMainGui extends Gui {
 
-    private static final ItemStack BACK_TO_ITEM = GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.BACK-TO").get();
-    private static final ItemStack DELETE_ITEM = GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.DELETE").get();
-    private static final ItemStack DESTROYABLE_BLOCK_ITEM = GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.DESTROYABLE-BLOCKS").get();
-    private static final ItemStack INVENTORY_ITEM = GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.INVENTORY").get();
-    private static final ItemStack SETTINGS_ITEM = GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.SETTINGS").get();
-    private static final ItemStack MATCH_TYPE_ITEM = GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.MATCH-TYPE").get();
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getBackTo())
+        .get();
+  }
 
-    private final NormalLadder ladder;
+  private static ItemStack deleteItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getDelete())
+        .get();
+  }
 
-    public LadderMainGui(NormalLadder ladder) {
-        super(GUIType.Ladder_Main);
-        this.gui.put(1, InventoryUtil.createInventory(GUIFile.getString("GUIS.SETUP.LADDER.LADDER-MAIN.TITLE").replace("%ladder%", ladder.getName()), 4));
+  private static ItemStack destroyableBlockItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getDestroyableBlocks())
+        .get();
+  }
 
-        this.ladder = ladder;
+  private static ItemStack inventoryItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getInventory())
+        .get();
+  }
 
-        build();
+  private static ItemStack settingsItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getSettings())
+        .get();
+  }
+
+  private static ItemStack matchTypeItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getIcons()
+                .getMatchType())
+        .get();
+  }
+
+  private final NormalLadder ladder;
+
+  public LadderMainGui(NormalLadder ladder) {
+    super(GuiType.Ladder_Main);
+    this.gui.put(
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getLadderMain()
+                .getTitle()
+                .replace("%ladder%", ladder.getName()),
+            4));
+
+    this.ladder = ladder;
+
+    build();
+  }
+
+  @Override
+  public void build() {
+    Inventory inventory = gui.get(1);
+
+    // Navigation
+    inventory.setItem(27, backToItem());
+    inventory.setItem(35, deleteItem());
+
+    for (int i : new int[] {28, 29, 30, 31, 32, 33}) {
+      inventory.setItem(i, GuiManager.fillerItem());
     }
 
-    @Override
-    public void build() {
-        Inventory inventory = gui.get(1);
+    if (ladder.isBuild()) {
+      inventory.setItem(13, destroyableBlockItem());
+    }
+    inventory.setItem(14, inventoryItem());
+    inventory.setItem(15, settingsItem());
+    inventory.setItem(16, matchTypeItem());
 
-        // Navigation
-        inventory.setItem(27, BACK_TO_ITEM);
-        inventory.setItem(35, DELETE_ITEM);
+    update();
+  }
 
-        for (int i : new int[]{28, 29, 30, 31, 32, 33})
-            inventory.setItem(i, GUIManager.getFILLER_ITEM());
+  @Override
+  public void update() {
+    Inventory inventory = gui.get(1);
 
-        if (ladder.isBuild())
-            inventory.setItem(13, DESTROYABLE_BLOCK_ITEM);
-        inventory.setItem(14, INVENTORY_ITEM);
-        inventory.setItem(15, SETTINGS_ITEM);
-        inventory.setItem(16, MATCH_TYPE_ITEM);
+    inventory.setItem(10, getNameItem(ladder));
+    inventory.setItem(11, getStatusItem(ladder));
+    inventory.setItem(34, getFreezeItem(ladder.isFrozen()));
 
-        update();
+    updatePlayers();
+  }
+
+  @Override
+  public void handleClickEvent(InventoryClickEvent e) {
+    final Player player = (Player) e.getWhoClicked();
+    Inventory inventory = e.getView().getTopInventory();
+
+    int slot = e.getRawSlot();
+
+    e.setCancelled(true);
+
+    if (inventory.getSize() <= slot) {
+      return;
+    }
+    if (e.getCurrentItem() == null) {
+      return;
     }
 
-    @Override
-    public void update() {
-        Inventory inventory = gui.get(1);
-
-        inventory.setItem(10, getNameItem(ladder));
-        inventory.setItem(11, getStatusItem(ladder));
-        inventory.setItem(34, getFreezeItem(ladder.isFrozen()));
-
-        updatePlayers();
-    }
-
-    @Override
-    public void handleClickEvent(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
-        Inventory inventory = e.getView().getTopInventory();
-
-        int slot = e.getRawSlot();
-
-        e.setCancelled(true);
-
-        if (inventory.getSize() <= slot) return;
-        if (e.getCurrentItem() == null) return;
-
-        switch (slot) {
-            case 27:
-                GUI summaryGui = GUIManager.getInstance().searchGUI(GUIType.Ladder_Summary);
-                if (summaryGui instanceof LadderSummaryGui ladderSummaryGui) {
-                    ladderSummaryGui.open(player, ladderSummaryGui.getBackToPage().getOrDefault(player, 1));
-                    ladderSummaryGui.getBackToPage().remove(player);
-                } else {
-                    summaryGui.open(player);
-                }
-                break;
-            case 11:
-                if (ladder.isEnabled()) {
-                    openConfirmGUI(player, ConfirmGuiType.LADDER_DISABLE, this, this);
-                } else {
-                    LadderUtil.changeStatus(player, ladder);
-                }
-                break;
-            case 13:
-                if (ladder.isBuild())
-                    LadderSetupManager.getInstance().getLadderSetupGUIs().get(ladder).get(GUIType.Ladder_DestroyableBlock).open(player);
-                break;
-            case 14:
-                LadderSetupManager.getInstance().getLadderSetupGUIs().get(ladder).get(GUIType.Ladder_Inventory).open(player);
-                break;
-            case 15:
-                LadderSetupManager.getInstance().getLadderSetupGUIs().get(ladder).get(GUIType.Ladder_Settings).open(player);
-                break;
-            case 16:
-                LadderSetupManager.getInstance().getLadderSetupGUIs().get(ladder).get(GUIType.Ladder_MatchType).open(player);
-                break;
-            case 34:
-                player.performCommand("ladder freeze " + ladder.getName());
-                break;
-            case 35:
-                if (ladder.isEnabled()) {
-                    Common.sendMMMessage(player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-DELETE-ENABLED"));
-                    return;
-                }
-
-                openConfirmGUI(player, ConfirmGuiType.LADDER_DELETE, GUIManager.getInstance().searchGUI(GUIType.Ladder_Summary), this);
-                break;
+    switch (slot) {
+      case 27:
+        Gui summaryGui = GuiManager.getInstance().searchGui(GuiType.Ladder_Summary);
+        if (summaryGui instanceof LadderSummaryGui ladderSummaryGui) {
+          ladderSummaryGui.open(player, ladderSummaryGui.getBackToPage().getOrDefault(player, 1));
+          ladderSummaryGui.getBackToPage().remove(player);
+        } else {
+          summaryGui.open(player);
         }
-    }
-
-    private static ItemStack getNameItem(Ladder ladder) {
-        GUIItem guiItem = GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.LADDER-NAME")
-                .replace("%ladder%", ladder.getName())
-                .replace("%type%", ladder.getType().getName());
-
-        if (ladder.getIcon() != null) {
-            guiItem.setBaseItem(ladder.getIcon());
+        break;
+      case 11:
+        if (ladder.isEnabled()) {
+          openConfirmGui(player, ConfirmGuiType.LADDER_DISABLE, this, this);
+        } else {
+          LadderUtil.changeStatus(player, ladder);
+        }
+        break;
+      case 13:
+        if (ladder.isBuild()) {
+          LadderSetupManager.getInstance()
+              .getLadderSetupGuis()
+              .get(ladder)
+              .get(GuiType.Ladder_DestroyableBlock)
+              .open(player);
+        }
+        break;
+      case 14:
+        LadderSetupManager.getInstance()
+            .getLadderSetupGuis()
+            .get(ladder)
+            .get(GuiType.Ladder_Inventory)
+            .open(player);
+        break;
+      case 15:
+        LadderSetupManager.getInstance()
+            .getLadderSetupGuis()
+            .get(ladder)
+            .get(GuiType.Ladder_Settings)
+            .open(player);
+        break;
+      case 16:
+        LadderSetupManager.getInstance()
+            .getLadderSetupGuis()
+            .get(ladder)
+            .get(GuiType.Ladder_MatchType)
+            .open(player);
+        break;
+      case 34:
+        player.performCommand("ladder freeze " + ladder.getName());
+        break;
+      case 35:
+        if (ladder.isEnabled()) {
+          Common.sendMmMessage(
+              player,
+              PracticeConfig.language().getCommand().getSetup().getLadder().getCantDeleteEnabled());
+          return;
         }
 
-        return guiItem.get();
+        openConfirmGui(
+            player,
+            ConfirmGuiType.LADDER_DELETE,
+            GuiManager.getInstance().searchGui(GuiType.Ladder_Summary),
+            this);
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  private static ItemStack getNameItem(Ladder ladder) {
+    GuiItem guiItem =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getLadder()
+                    .getLadderMain()
+                    .getIcons()
+                    .getLadderName())
+            .replace("%ladder%", ladder.getName())
+            .replace("%type%", ladder.getType().getName());
+
+    if (ladder.getIcon() != null) {
+      guiItem.setBaseItem(ladder.getIcon());
     }
 
-    private static ItemStack getStatusItem(Ladder ladder) {
-        if (ladder.isEnabled())
-            return GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.STATUS.ENABLED").get();
-        else
-            return GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.STATUS.DISABLED").get();
-    }
+    return guiItem.get();
+  }
 
-    private static ItemStack getFreezeItem(boolean isFrozen) {
-        if (isFrozen)
-            return GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.FREEZE.FROZEN").get();
-        else
-            return GUIFile.getGuiItem("GUIS.SETUP.LADDER.LADDER-MAIN.ICONS.FREEZE.NOT-FROZEN").get();
+  private static ItemStack getStatusItem(Ladder ladder) {
+    if (ladder.isEnabled()) {
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getStatus()
+                  .getEnabled())
+          .get();
+    } else {
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getStatus()
+                  .getDisabled())
+          .get();
     }
+  }
 
-    @Override
-    public void handleConfirm(Player player, ConfirmGuiType confirmGuiType) {
-        switch (confirmGuiType) {
-            case LADDER_DISABLE:
-                LadderUtil.changeStatus(player, ladder);
-                break;
-            case LADDER_DELETE:
-                player.performCommand("ladder delete " + ladder.getName());
-                GUI summaryGui = GUIManager.getInstance().searchGUI(GUIType.Ladder_Summary);
-                if (summaryGui instanceof LadderSummaryGui ladderSummaryGui) {
-                    ladderSummaryGui.open(player, ladderSummaryGui.getBackToPage().getOrDefault(player, 1));
-                    ladderSummaryGui.getBackToPage().remove(player);
-                } else {
-                    summaryGui.open(player);
-                }
-                break;
+  private static ItemStack getFreezeItem(boolean isFrozen) {
+    if (isFrozen) {
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getFreeze()
+                  .getFrozen())
+          .get();
+    } else {
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getLadderMain()
+                  .getIcons()
+                  .getFreeze()
+                  .getNotFrozen())
+          .get();
+    }
+  }
+
+  @Override
+  public void handleConfirm(Player player, ConfirmGuiType confirmGuiType) {
+    switch (confirmGuiType) {
+      case LADDER_DISABLE:
+        LadderUtil.changeStatus(player, ladder);
+        break;
+      case LADDER_DELETE:
+        player.performCommand("ladder delete " + ladder.getName());
+        Gui summaryGui = GuiManager.getInstance().searchGui(GuiType.Ladder_Summary);
+        if (summaryGui instanceof LadderSummaryGui ladderSummaryGui) {
+          ladderSummaryGui.open(player, ladderSummaryGui.getBackToPage().getOrDefault(player, 1));
+          ladderSummaryGui.getBackToPage().remove(player);
+        } else {
+          summaryGui.open(player);
         }
-    }
+        break;
 
+      default:
+        break;
+    }
+  }
 }

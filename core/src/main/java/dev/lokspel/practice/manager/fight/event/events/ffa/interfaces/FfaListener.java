@@ -1,0 +1,21 @@
+package dev.lokspel.practice.manager.fight.event.events.ffa.interfaces;
+
+import dev.lokspel.practice.manager.fight.event.interfaces.Event;
+import dev.lokspel.practice.manager.fight.event.interfaces.EventListenerInterface;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+public abstract class FfaListener extends EventListenerInterface {
+
+  @Override
+  public void onPlayerQuit(Event event, PlayerQuitEvent e) {
+    if (event instanceof FfaEvent ffaEvent) {
+      ffaEvent.removePlayer(e.getPlayer(), true);
+    }
+  }
+
+  @Override
+  public void onInventoryClick(Event event, InventoryClickEvent e) {
+    // Default: no action needed
+  }
+}

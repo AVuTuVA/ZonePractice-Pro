@@ -25,61 +25,59 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BedFight extends NormalLadder implements RespawnableLadder {
 
-    @Setter
-    @Getter
-    protected int respawnTime;
+  @Setter @Getter protected int respawnTime;
 
-    protected BedFight(String name, LadderType type) {
-        super(name, type);
-        this.startMove = false;
+  protected BedFight(String name, LadderType type) {
+    super(name, type);
+    this.startMove = false;
+  }
+
+  @Override
+  public DeathResult handlePlayerDeath(Player player, Match match, Round round) {
+    // Check if the player's bed is still intact
+    if (match instanceof Team teamMatch) {
+      TeamEnum playerTeam = teamMatch.getTeam(player);
+      boolean bedIntact = round.getBedStatus().getOrDefault(playerTeam, false);
+      if (bedIntact) {
+        return DeathResult.TEMPORARY_DEATH;
+      }
     }
+    // Bed destroyed - player is eliminated
+    return DeathResult.ELIMINATED;
+  }
 
-    @Override
-    public DeathResult handlePlayerDeath(Player player, Match match, Round round) {
-        // Check if the player's bed is still intact
-        if (match instanceof Team teamMatch) {
-            TeamEnum playerTeam = teamMatch.getTeam(player);
-            boolean bedIntact = round.getBedStatus().getOrDefault(playerTeam, false);
-            if (bedIntact) {
-                return DeathResult.TEMPORARY_DEATH;
-            }
-        }
-        // Bed destroyed - player is eliminated
-        return DeathResult.ELIMINATED;
+  protected static void onItemDrop(final @NotNull PlayerDropItemEvent e) {
+    e.setCancelled(true);
+  }
+
+  protected static void onPlayerMove(final @NotNull PlayerMoveEvent e, final @NotNull Match match) {
+    RoundStatus roundStatus = match.getCurrentRound().getRoundStatus();
+
+    if (roundStatus.equals(RoundStatus.LIVE)) {
+      Player player = e.getPlayer();
+      BasicArena arena = match.getArena();
+      Cuboid cuboid = arena.getCuboid();
+
+      TempKillPlayer tempKillPlayer = match.getCurrentRound().getTempKill(player);
+      if (tempKillPlayer != null && !cuboid.contains(e.getTo())) {
+        player.teleport(cuboid.getCenter());
+        return;
+      }
+
+      int deadZone = cuboid.getLowerY();
+      if (arena.isDeadZone()) {
+        deadZone = arena.getDeadZoneValue();
+      }
+
+      if (e.getTo().getBlockY() <= deadZone && tempKillPlayer == null) {
+        match.killPlayer(player, null, DeathCause.VOID.getMessage());
+      }
     }
+  }
 
-    protected static void onItemDrop(final @NotNull PlayerDropItemEvent e) {
-        e.setCancelled(true);
+  protected static void onBedDestroy(final @NotNull BlockBreakEvent e, final @NotNull Match match) {
+    if (BedUtil.onBedBreak(e, match)) {
+      SoundManager.getInstance().getSound(SoundType.BED_BREAK).play(match.getPlayers());
     }
-
-    protected static void onPlayerMove(final @NotNull PlayerMoveEvent e, final @NotNull Match match) {
-        RoundStatus roundStatus = match.getCurrentRound().getRoundStatus();
-
-        if (roundStatus.equals(RoundStatus.LIVE)) {
-            Player player = e.getPlayer();
-            BasicArena arena = match.getArena();
-            Cuboid cuboid = arena.getCuboid();
-
-            TempKillPlayer tempKillPlayer = match.getCurrentRound().getTempKill(player);
-            if (tempKillPlayer != null && !cuboid.contains(e.getTo())) {
-                player.teleport(cuboid.getCenter());
-                return;
-            }
-
-            int deadZone = cuboid.getLowerY();
-            if (arena.isDeadZone())
-                deadZone = arena.getDeadZoneValue();
-
-            if (e.getTo().getBlockY() <= deadZone && tempKillPlayer == null) {
-                match.killPlayer(player, null, DeathCause.VOID.getMessage());
-            }
-        }
-    }
-
-    protected static void onBedDestroy(final @NotNull BlockBreakEvent e, final @NotNull Match match) {
-        if (BedUtil.onBedBreak(e, match)) {
-            SoundManager.getInstance().getSound(SoundType.BED_BREAK).play(match.getPlayers());
-        }
-    }
-
+  }
 }

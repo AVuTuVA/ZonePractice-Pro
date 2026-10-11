@@ -47,7 +47,7 @@ The full list is in [`plugin.yml`](../core/src/main/resources/plugin.yml). Below
 
 | Permission        | Usage                                          |
 |-------------------|------------------------------------------------|
-| `ap.group.<name>` | Player group — see [`groups.yml`](../core/src/main/resources/groups.yml) |
+| `ap.group.<name>` | Player group — see `groups.yml` ([defaults](../core/src/main/java/dev/lokspel/practice/config/group/GroupConfig.java)) |
 
 ## Staff mode
 

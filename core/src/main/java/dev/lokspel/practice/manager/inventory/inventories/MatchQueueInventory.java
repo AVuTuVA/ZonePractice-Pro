@@ -11,29 +11,30 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class MatchQueueInventory extends Inventory {
 
-    public MatchQueueInventory() {
-        super(InventoryType.MATCH_QUEUE);
+  public MatchQueueInventory() {
+    super(InventoryType.MATCH_QUEUE);
 
-        this.invItems.add(new MatchQueueLeaveInvItem());
-    }
+    this.invItems.add(new MatchQueueLeaveInvItem());
+  }
 
-    @Override
-    protected void set(Player player) {
-        PlayerInventory playerInventory = player.getInventory();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
+  @Override
+  protected void set(Player player) {
+    PlayerInventory playerInventory = player.getInventory();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
 
-        for (InvItem invItem : invItems) {
-            int slot = invItem.getSlot();
-            if (slot == -1)
-                continue;
+    for (InvItem invItem : invItems) {
+      int slot = invItem.getSlot();
+      if (slot == -1) {
+        continue;
+      }
 
-            if (invItem instanceof MatchQueueLeaveInvItem) {
-                if (!profile.getStatus().equals(ProfileStatus.QUEUE))
-                    continue;
-
-                playerInventory.setItem(slot, invItem.getItem());
-            }
+      if (invItem instanceof MatchQueueLeaveInvItem) {
+        if (!profile.getStatus().equals(ProfileStatus.QUEUE)) {
+          continue;
         }
-    }
 
+        playerInventory.setItem(slot, invItem.getItem());
+      }
+    }
+  }
 }

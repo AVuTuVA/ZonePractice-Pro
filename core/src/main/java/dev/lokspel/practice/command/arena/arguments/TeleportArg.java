@@ -1,51 +1,69 @@
 package dev.lokspel.practice.command.arena.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.util.Common;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public final class TeleportArg {
 
-    private TeleportArg() {}
+  private TeleportArg() {}
 
-    public static void run(Player player, String label, String[] args) {
-        if (!player.hasPermission("ap.setup")) {
-            Common.sendMMMessage(player, LanguageManager.getString("command.arena.no-permission"));
-            return;
-        }
-
-        if (args.length != 2) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.TELEPORT.COMMAND-HELP").replace("%label%", label));
-            return;
-        }
-
-        DisplayArena arena = ArenaManager.getInstance().getArena(args[1]);
-        if (arena == null) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.TELEPORT.ARENA-NOT-EXISTS").replace("%arena%", args[1]));
-            return;
-        }
-
-        arena.teleport(player);
+  public static void run(Player player, String label, String[] args) {
+    if (!player.hasPermission("ap.setup")) {
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
+      return;
     }
 
-    public static List<String> tabComplete(Player player, String[] args) {
-        List<String> arguments = new ArrayList<>();
-        if (!player.hasPermission("ap.setup")) return arguments;
-
-        if (args.length == 2) {
-            for (DisplayArena arena : ArenaManager.getInstance().getArenaList())
-                arguments.add(arena.getName());
-
-            return StringUtil.copyPartialMatches(args[1], arguments, new ArrayList<>());
-        }
-
-        return arguments;
+    if (args.length != 2) {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getTeleport()
+              .getCommandHelp()
+              .replace("%label%", label));
+      return;
     }
 
+    DisplayArena arena = ArenaManager.getInstance().getArena(args[1]);
+    if (arena == null) {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getTeleport()
+              .getArenaNotExists()
+              .replace("%arena%", args[1]));
+      return;
+    }
+
+    arena.teleport(player);
+  }
+
+  public static List<String> tabComplete(Player player, String[] args) {
+    List<String> arguments = new ArrayList<>();
+    if (!player.hasPermission("ap.setup")) {
+      return arguments;
+    }
+
+    if (args.length == 2) {
+      for (DisplayArena arena : ArenaManager.getInstance().getArenaList()) {
+        arguments.add(arena.getName());
+      }
+
+      return StringUtil.copyPartialMatches(args[1], arguments, new ArrayList<>());
+    }
+
+    return arguments;
+  }
 }

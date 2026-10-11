@@ -1,39 +1,49 @@
 package dev.lokspel.practice.manager.leaderboard.types;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import lombok.Getter;
-
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.settings.HologramFormat;
+import dev.lokspel.practice.config.settings.SettingsConfig.Leaderboard.Hologram.Format;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import lombok.Getter;
 
 @Getter
 public enum LbSecondaryType {
+  ELO(true, Format::getElo),
+  WIN(false, Format::getWin),
+  KILLS(false, Format::getKills),
+  DEATHS(false, Format::getDeaths),
+  WIN_STREAK(false, Format::getWinStreak),
+  BEST_WIN_STREAK(false, Format::getBestWinStreak),
+  LOSE_STREAK(false, Format::getLoseStreak),
+  BEST_LOSE_STREAK(false, Format::getBestLoseStreak);
 
-    ELO(true),
-    WIN(false),
-    KILLS(false),
-    DEATHS(false),
-    WIN_STREAK(false),
-    BEST_WIN_STREAK(false),
-    LOSE_STREAK(false),
-    BEST_LOSE_STREAK(false);
+  private final boolean rankedRelated;
 
-    private final boolean rankedRelated;
+  private final double titleLineSpacing;
+  private final double lineSpacing;
 
-    private final double titleLineSpacing;
-    private final double lineSpacing;
+  private final String format;
+  private final List<String> globalLines;
+  private final List<String> ladderLines;
 
-    private final String format;
-    private final List<String> globalLines;
-    private final List<String> ladderLines;
+  LbSecondaryType(
+      final boolean rankedRelated, final Function<Format, HologramFormat> formatSection) {
+    this.rankedRelated = rankedRelated;
 
-    LbSecondaryType(final boolean rankedRelated) {
-        this.rankedRelated = rankedRelated;
+    HologramFormat config =
+        formatSection.apply(PracticeConfig.settings().getLeaderboard().getHologram().getFormat());
+    this.titleLineSpacing =
+        config != null ? Objects.requireNonNullElse(config.getTitleLineSpacing(), 0.0D) : 0.0D;
+    this.lineSpacing =
+        config != null ? Objects.requireNonNullElse(config.getLineSpacing(), 0.0D) : 0.0D;
+    this.format = config != null ? Objects.requireNonNullElse(config.getFormat(), "") : "";
 
-        this.titleLineSpacing = ConfigManager.getConfig().getDouble("LEADERBOARD.HOLOGRAM.FORMAT." + this.name().toUpperCase() + ".TITLE-LINE-SPACING");
-        this.lineSpacing = ConfigManager.getConfig().getDouble("LEADERBOARD.HOLOGRAM.FORMAT." + this.name().toUpperCase() + ".LINE-SPACING");
-        this.format = ConfigManager.getString("LEADERBOARD.HOLOGRAM.FORMAT." + this.name().toUpperCase() + ".FORMAT");
-        this.globalLines = ConfigManager.getConfig().getStringList("LEADERBOARD.HOLOGRAM.FORMAT." + this.name().toUpperCase() + ".LINES.GLOBAL");
-        this.ladderLines = ConfigManager.getConfig().getStringList("LEADERBOARD.HOLOGRAM.FORMAT." + this.name().toUpperCase() + ".LINES.LADDER");
-    }
-
+    HologramFormat.Lines lines = config != null ? config.getLines() : null;
+    this.globalLines =
+        lines != null ? Objects.requireNonNullElse(lines.getGlobal(), List.of()) : List.of();
+    this.ladderLines =
+        lines != null ? Objects.requireNonNullElse(lines.getLadder(), List.of()) : List.of();
+  }
 }

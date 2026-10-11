@@ -18,137 +18,134 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class CreeperListener implements Listener {
 
-    private static final long SCAN_DELAY_TICKS = 20L;
-    private static final long SCAN_PERIOD_TICKS = 1L;
-    private static final double TRIGGER_DISTANCE = 16.0;
+  private static final long SCAN_DELAY_TICKS = 20L;
+  private static final long SCAN_PERIOD_TICKS = 1L;
+  private static final double TRIGGER_DISTANCE = 16.0;
 
-    public CreeperListener() {
-        startCreeperScanner();
+  public CreeperListener() {
+    startCreeperScanner();
+  }
+
+  private void startCreeperScanner() {
+    new BukkitRunnable() {
+      @Override
+      public void run() {
+        scanMatches();
+      }
+    }.runTaskTimer(AstralPractice.getInstance(), SCAN_DELAY_TICKS, SCAN_PERIOD_TICKS);
+  }
+
+  private static void scanMatches() {
+    for (Match match : MatchManager.getInstance().getLiveMatches()) {
+      if (isCreeperLiveMatch(match)) {
+        igniteCreepers(match);
+      }
     }
+  }
 
-    private void startCreeperScanner() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                scanMatches();
-            }
-        }.runTaskTimer(AstralPractice.getInstance(), SCAN_DELAY_TICKS, SCAN_PERIOD_TICKS);
-    }
+  private static boolean isCreeperLiveMatch(Match match) {
+    return match != null
+        && match.getLadder().getType() == LadderType.CREEPER
+        && match.getCurrentRound().getRoundStatus() == RoundStatus.LIVE;
+  }
 
-    private static void scanMatches() {
-        for (Match match : MatchManager.getInstance().getLiveMatches()) {
-            if (isCreeperLiveMatch(match)) {
-                igniteCreepers(match);
-            }
+  private static void igniteCreepers(Match match) {
+    int fuseTicks = getFuseTicks(match);
+
+    for (Player player : match.getPlayers()) {
+      if (!isAlive(player)) {
+        continue;
+      }
+
+      for (Entity entity :
+          player.getNearbyEntities(TRIGGER_DISTANCE, TRIGGER_DISTANCE, TRIGGER_DISTANCE)) {
+        if (entity instanceof Creeper creeper) {
+          ignite(creeper, fuseTicks);
         }
+      }
+    }
+  }
+
+  private static int getFuseTicks(Match match) {
+    dev.lokspel.practice.manager.ladder.type.Creeper ladder =
+        (dev.lokspel.practice.manager.ladder.type.Creeper) match.getLadder();
+
+    return ladder.getCreeperExplosionDelayTicks();
+  }
+
+  private static boolean isAlive(Player player) {
+    return player.isValid() && !player.isDead();
+  }
+
+  private static void ignite(Creeper creeper, int fuseTicks) {
+    if (!isValid(creeper) || creeper.isIgnited()) {
+      return;
     }
 
-    private static boolean isCreeperLiveMatch(Match match) {
-        return match != null
-                && match.getLadder().getType() == LadderType.CREEPER
-                && match.getCurrentRound().getRoundStatus() == RoundStatus.LIVE;
+    creeper.setMaxFuseTicks(fuseTicks);
+    creeper.ignite();
+  }
+
+  private static boolean isValid(Creeper creeper) {
+    return creeper.isValid() && !creeper.isDead();
+  }
+
+  @EventHandler
+  public void onCreeperDamage(EntityDamageByEntityEvent event) {
+    if (!(event.getEntity() instanceof Creeper victim)
+        || !(event.getDamager() instanceof Creeper)) {
+      return;
     }
 
-    private static void igniteCreepers(Match match) {
-        int fuseTicks = getFuseTicks(match);
-
-        for (Player player : match.getPlayers()) {
-            if (!isAlive(player)) {
-                continue;
-            }
-
-            for (Entity entity : player.getNearbyEntities(
-                    TRIGGER_DISTANCE,
-                    TRIGGER_DISTANCE,
-                    TRIGGER_DISTANCE
-            )) {
-                if (entity instanceof Creeper creeper) {
-                    ignite(creeper, fuseTicks);
-                }
-            }
-        }
+    Match match = getCreeperMatch(victim.getLocation());
+    if (!isCreeperLiveMatch(match)) {
+      return;
     }
 
-    private static int getFuseTicks(Match match) {
-        dev.lokspel.practice.manager.ladder.type.Creeper ladder =
-                (dev.lokspel.practice.manager.ladder.type.Creeper) match.getLadder();
+    event.setCancelled(true);
+  }
 
-        return ladder.getCreeperExplosionDelayTicks();
+  @EventHandler
+  public void onCreeperIgnite(CreeperIgniteEvent event) {
+    Creeper creeper = event.getEntity();
+
+    Match match = getCreeperMatch(creeper.getLocation());
+    if (!isCreeperLiveMatch(match)) {
+      return;
     }
 
-    private static boolean isAlive(Player player) {
-        return player.isValid() && !player.isDead();
+    int fuseTicks = getFuseTicks(match);
+
+    creeper.setMaxFuseTicks(fuseTicks);
+  }
+
+  @EventHandler
+  public void onCreatureSpawn(CreatureSpawnEvent event) {
+    if (!(event.getEntity() instanceof Creeper creeper)) {
+      return;
     }
 
-    private static void ignite(Creeper creeper, int fuseTicks) {
-        if (!isValid(creeper) || creeper.isIgnited()) {
-            return;
-        }
-
-        creeper.setMaxFuseTicks(fuseTicks);
-        creeper.ignite();
+    Match match = getCreeperMatch(creeper.getLocation());
+    if (match == null || isCreeperLiveMatch(match)) {
+      return;
     }
 
-    private static boolean isValid(Creeper creeper) {
-        return creeper.isValid() && !creeper.isDead();
+    event.setCancelled(true);
+  }
+
+  private static Match getCreeperMatch(Location location) {
+    for (Match match : MatchManager.getInstance().getLiveMatches()) {
+      if (match.getLadder().getType() != LadderType.CREEPER) {
+        continue;
+      }
+
+      if (match.getCuboid() == null || !match.getCuboid().contains(location)) {
+        continue;
+      }
+
+      return match;
     }
 
-    @EventHandler
-    public void onCreeperDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getEntity() instanceof Creeper victim)
-                || !(event.getDamager() instanceof Creeper)) {
-            return;
-        }
-
-        Match match = getCreeperMatch(victim.getLocation());
-        if (!isCreeperLiveMatch(match)) {
-            return;
-        }
-
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onCreeperIgnite(CreeperIgniteEvent event) {
-        Creeper creeper = event.getEntity();
-
-        Match match = getCreeperMatch(creeper.getLocation());
-        if (!isCreeperLiveMatch(match)) {
-            return;
-        }
-
-        int fuseTicks = getFuseTicks(match);
-
-        creeper.setMaxFuseTicks(fuseTicks);
-    }
-
-    @EventHandler
-    public void onCreatureSpawn(CreatureSpawnEvent event) {
-        if (!(event.getEntity() instanceof Creeper creeper)) {
-            return;
-        }
-
-        Match match = getCreeperMatch(creeper.getLocation());
-        if (match == null || isCreeperLiveMatch(match)) {
-            return;
-        }
-
-        event.setCancelled(true);
-    }
-
-    private static Match getCreeperMatch(Location location) {
-        for (Match match : MatchManager.getInstance().getLiveMatches()) {
-            if (match.getLadder().getType() != LadderType.CREEPER) {
-                continue;
-            }
-
-            if (match.getCuboid() == null || !match.getCuboid().contains(location)) {
-                continue;
-            }
-
-            return match;
-        }
-
-        return null;
-    }
+    return null;
+  }
 }

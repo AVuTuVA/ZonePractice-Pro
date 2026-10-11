@@ -1,10 +1,9 @@
 package dev.lokspel.practice.listener;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
-import dev.lokspel.practice.manager.fight.ffa.FFAManager;
-import dev.lokspel.practice.manager.fight.ffa.game.FFA;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.fight.ffa.FfaManager;
+import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.party.Party;
@@ -13,10 +12,12 @@ import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.util.ChatFormatUtil;
 import dev.lokspel.practice.util.Common;
-import dev.lokspel.practice.util.PAPIUtil;
+import dev.lokspel.practice.util.PapiUtil;
 import dev.lokspel.practice.util.SoftDependUtil;
 import dev.lokspel.practice.util.StringUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import java.util.Collection;
+import java.util.Set;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
@@ -27,232 +28,162 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import java.util.Collection;
-import java.util.Set;
-
 public class PlayerChatListener implements Listener {
 
-    private static final String MESSAGE_PLACEHOLDER = "<ap-message>";
+  private static final String MESSAGE_PLACEHOLDER = "<ap-message>";
 
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerChat(AsyncChatEvent e) {
-        Player player = e.getPlayer();
+  @EventHandler(priority = EventPriority.NORMAL)
+  public void onPlayerChat(AsyncChatEvent e) {
+    Player player = e.getPlayer();
 
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        Party party = PartyManager.getInstance().getParty(player);
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    Party party = PartyManager.getInstance().getParty(player);
 
-        String rawMessage = PlainTextComponentSerializer.plainText()
-                .serialize(e.message());
+    String rawMessage = PlainTextComponentSerializer.plainText().serialize(e.message());
 
+    // Party chat
+    String partyChatShortcut = PracticeConfig.settings().getChat().getPartyChat().getShortcut();
 
-        // Party chat
-        String partyChatShortcut = ConfigManager.getPartyChatShortcut();
+    boolean partyChatShortcutUsed =
+        !partyChatShortcut.isEmpty() && rawMessage.startsWith(partyChatShortcut);
 
-        boolean partyChatShortcutUsed = !partyChatShortcut.isEmpty() && rawMessage.startsWith(partyChatShortcut);
+    if (PracticeConfig.settings().getChat().getPartyChat().isEnabled()
+        && profile.isParty()
+        && party != null
+        && (partyChatShortcutUsed || profile.isPartyChat())) {
 
-        if (ConfigManager.isPartyChatEnabled()
-                && profile.isParty()
-                && party != null
-                && (partyChatShortcutUsed || profile.isPartyChat())) {
+      String partyChatMessage =
+          partyChatShortcutUsed ? rawMessage.substring(partyChatShortcut.length()) : rawMessage;
 
-            String partyChatMessage = partyChatShortcutUsed
-                    ? rawMessage.substring(partyChatShortcut.length())
-                    : rawMessage;
+      if (party.canUsePartyChat(player)) {
 
-            if (party.canUsePartyChat(player)) {
-
-                setViewers(e, party.getMembers());
-
-                applyRenderer(
-                        e,
-                        Component.text(partyChatMessage),
-                        ChatFormatUtil.buildPartyChatMessage(player)
-                );
-
-            } else {
-                e.setCancelled(true);
-
-                String disabled = LanguageManager.getString(
-                        "PARTY.PARTY-CHAT-DISABLED-BY-LEADER"
-                );
-
-                Bukkit.getScheduler().runTask(
-                        AstralPractice.getInstance(),
-                        () -> Common.sendMMMessage(player, disabled)
-                );
-            }
-
-            return;
-        }
-
-
-        // Staff chat toggle
-        if (profile.isStaffChat()) {
-
-            applyStaffChat(e, player, rawMessage);
-
-            return;
-        }
-
-
-        // Staff shortcut
-        if (player.hasPermission("ap.staff")
-                && ConfigManager.getBoolean("CHAT.STAFF-CHAT.SHORTCUT")
-                && rawMessage.startsWith("#")) {
-
-            applyStaffChat(
-                    e,
-                    player,
-                    rawMessage.substring(1)
-            );
-
-            return;
-        }
-
-
-        // Server chat
-        if (ConfigManager.getBoolean("CHAT.SERVER-CHAT-ENABLED")) {
-
-            applyMatchChatIsolation(e, player);
-
-            applyRenderer(
-                    e,
-                    Component.text(rawMessage),
-                    ChatFormatUtil.buildServerChatMessage(
-                            profile,
-                            player
-                    )
-            );
-        }
-    }
-
-
-    private void applyStaffChat(
-            AsyncChatEvent e,
-            Player player,
-            String message
-    ) {
-
-        setViewers(
-                e,
-                ChatFormatUtil.getStaffRecipients()
-        );
+        setViewers(e, party.getMembers());
 
         applyRenderer(
-                e,
-                Component.text(message),
-                ChatFormatUtil.buildStaffChatMessage(
-                        player
-                )
-        );
+            e, Component.text(partyChatMessage), ChatFormatUtil.buildPartyChatMessage(player));
+
+      } else {
+        e.setCancelled(true);
+
+        String disabled = PracticeConfig.language().getParty().getPartyChatDisabledByLeader();
+
+        Bukkit.getScheduler()
+            .runTask(AstralPractice.getInstance(), () -> Common.sendMmMessage(player, disabled));
+      }
+
+      return;
     }
 
+    // Staff chat toggle
+    if (profile.isStaffChat()) {
 
-    private void applyRenderer(
-            AsyncChatEvent e,
-            Component message,
-            String formatString
-    ) {
+      applyStaffChat(e, player, rawMessage);
 
-        e.renderer((_, _, _, viewer) -> {
+      return;
+    }
 
-            String format = formatString.replace(
-                    "%%message%%",
-                    MESSAGE_PLACEHOLDER
-            );
+    // Staff shortcut
+    if (player.hasPermission("ap.staff")
+        && PracticeConfig.settings().getChat().getStaffChat().isShortcut()
+        && rawMessage.startsWith("#")) {
 
+      applyStaffChat(e, player, rawMessage.substring(1));
 
-            Component component;
+      return;
+    }
 
-            if (SoftDependUtil.isPAPI_ENABLED
-                    && viewer instanceof Player viewerPlayer) {
+    // Server chat
+    if (PracticeConfig.settings().getChat().isServerChatEnabled()) {
 
-                component = PAPIUtil.runThroughFormat(
-                        viewerPlayer,
-                        format
-                );
+      applyMatchChatIsolation(e, player);
 
-            } else {
+      applyRenderer(
+          e, Component.text(rawMessage), ChatFormatUtil.buildServerChatMessage(profile, player));
+    }
+  }
 
-                component = AstralPractice.getMiniMessage()
-                        .deserialize(
-                                StringUtil.legacyToMiniMessage(format)
-                        );
-            }
+  private void applyStaffChat(AsyncChatEvent e, Player player, String message) {
 
+    setViewers(e, ChatFormatUtil.getStaffRecipients());
 
-            return component.replaceText(
-                    TextReplacementConfig.builder()
-                            .matchLiteral(MESSAGE_PLACEHOLDER)
-                            .replacement(message)
-                            .build()
-            );
+    applyRenderer(e, Component.text(message), ChatFormatUtil.buildStaffChatMessage(player));
+  }
+
+  private void applyRenderer(AsyncChatEvent e, Component message, String formatString) {
+
+    e.renderer(
+        (_, _, _, viewer) -> {
+          String format = formatString.replace("%%message%%", MESSAGE_PLACEHOLDER);
+
+          Component component;
+
+          if (SoftDependUtil.isPAPI_ENABLED && viewer instanceof Player viewerPlayer) {
+
+            component = PapiUtil.runThroughFormat(viewerPlayer, format);
+
+          } else {
+
+            component =
+                AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(format));
+          }
+
+          return component.replaceText(
+              TextReplacementConfig.builder()
+                  .matchLiteral(MESSAGE_PLACEHOLDER)
+                  .replacement(message)
+                  .build());
         });
+  }
+
+  private void applyMatchChatIsolation(AsyncChatEvent e, Player sender) {
+
+    if (!PracticeConfig.settings().getChat().isIsolateMatchChat()) {
+      return;
     }
 
+    MatchManager matchManager = MatchManager.getInstance();
+    FfaManager ffaManager = FfaManager.getInstance();
 
-    private void applyMatchChatIsolation(
-            AsyncChatEvent e,
-            Player sender
-    ) {
+    Set<Audience> viewers = e.viewers();
 
-        if (!ConfigManager.isMatchChatIsolated()) {
-            return;
-        }
+    viewers.add(Bukkit.getConsoleSender());
 
-        MatchManager matchManager = MatchManager.getInstance();
-        FFAManager ffaManager = FFAManager.getInstance();
+    Match match = matchManager.getLiveMatchByPlayer(sender);
 
-        Set<Audience> viewers = e.viewers();
-
-        viewers.add(Bukkit.getConsoleSender());
-
-
-        Match match = matchManager.getLiveMatchByPlayer(sender);
-
-        if (match != null) {
-            viewers.clear();
-            viewers.addAll(match.getPlayers());
-            if (ConfigManager.isShowMatchChatToSpectators()) {
-                viewers.addAll(match.getSpectators());
-            }
-            return;
-        }
-
-
-        FFA ffa = ffaManager.getFFAByPlayer(sender);
-
-        if (ffa != null) {
-            viewers.clear();
-            viewers.addAll(ffa.getPlayers().keySet());
-            if (ConfigManager.isShowMatchChatToSpectators()) {
-                viewers.addAll(ffa.getSpectators());
-            }
-            return;
-        }
-
-
-        viewers.removeIf(viewer ->
-                viewer instanceof Player recipient
-                        && (
-                        matchManager.getLiveMatchByPlayer(recipient) != null
-                                ||
-                                ffaManager.getFFAByPlayer(recipient) != null
-                )
-        );
+    if (match != null) {
+      viewers.clear();
+      viewers.addAll(match.getPlayers());
+      if (PracticeConfig.settings().getChat().isShowMatchChatToSpectators()) {
+        viewers.addAll(match.getSpectators());
+      }
+      return;
     }
 
+    Ffa ffa = ffaManager.getFfaByPlayer(sender);
 
-    private void setViewers(
-            AsyncChatEvent e,
-            Collection<? extends Audience> targets
-    ) {
-
-        Set<Audience> viewers = e.viewers();
-
-        viewers.clear();
-
-        viewers.add(Bukkit.getConsoleSender());
-        viewers.addAll(targets);
+    if (ffa != null) {
+      viewers.clear();
+      viewers.addAll(ffa.getPlayers().keySet());
+      if (PracticeConfig.settings().getChat().isShowMatchChatToSpectators()) {
+        viewers.addAll(ffa.getSpectators());
+      }
+      return;
     }
+
+    viewers.removeIf(
+        viewer ->
+            viewer instanceof Player recipient
+                && (matchManager.getLiveMatchByPlayer(recipient) != null
+                    || ffaManager.getFfaByPlayer(recipient) != null));
+  }
+
+  private void setViewers(AsyncChatEvent e, Collection<? extends Audience> targets) {
+
+    Set<Audience> viewers = e.viewers();
+
+    viewers.clear();
+
+    viewers.add(Bukkit.getConsoleSender());
+    viewers.addAll(targets);
+  }
 }

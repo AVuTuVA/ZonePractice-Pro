@@ -1,0 +1,142 @@
+package dev.lokspel.practice.manager.playerkit.guis;
+
+import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
+import dev.lokspel.practice.manager.playerkit.StaticItems;
+import dev.lokspel.practice.manager.playerkit.items.KitItem;
+import dev.lokspel.practice.util.InventoryUtil;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
+public class AmountChangeGui extends Gui {
+
+  private final KitItem kitItem;
+  private final int maxStackSize;
+  private final Gui backTo;
+
+  private static final Map<Integer, Integer> AMOUNTS = Map.of(19, 1, 20, 8, 21, 16, 22, 32, 23, 64);
+
+  public AmountChangeGui(KitItem kitItem, Gui backTo) {
+    super(GuiType.PlayerCustom_ChangeAmount);
+    this.kitItem = kitItem;
+    this.maxStackSize = kitItem.getMaterial().getMaxStackSize();
+    this.backTo = backTo;
+    this.gui.put(1, InventoryUtil.createInventory(StaticItems.changeAmountTitle(), 6));
+    this.build();
+  }
+
+  @Override
+  public void build() {
+    Inventory inventory = gui.get(1);
+    Material material = kitItem.get().getType();
+
+    inventory.setItem(45, StaticItems.changeAmountBackIcon());
+    inventory.setItem(18, StaticItems.changeCustomAmountIcon());
+
+    for (Map.Entry<Integer, Integer> entry : AMOUNTS.entrySet()) {
+      if (material.getMaxStackSize() >= entry.getValue()) {
+        inventory.setItem(entry.getKey(), new ItemStack(material, entry.getValue()));
+      }
+    }
+
+    update();
+  }
+
+  @Override
+  public void update() {
+    updatePlayers();
+  }
+
+  @Override
+  public void handleClickEvent(InventoryClickEvent e) {
+    e.setCancelled(true);
+
+    Player player = (Player) e.getWhoClicked();
+    int slot = e.getRawSlot();
+
+    switch (slot) {
+      case 45:
+        backTo.open(player);
+        break;
+      case 18:
+        new AnvilGUI.Builder()
+            .plugin(AstralPractice.getInstance())
+            .onClose(
+                stateSnapshot ->
+                    Bukkit.getScheduler()
+                        .runTaskLater(AstralPractice.getInstance(), () -> backTo.open(player), 2L))
+            .onClick(
+                (anvilSlot, stateSnapshot) -> {
+                  if (anvilSlot != AnvilGUI.Slot.OUTPUT) {
+                    return Collections.emptyList();
+                  }
+
+                  try {
+                    String text = stateSnapshot.getText();
+                    if (text.startsWith("#")) {
+                      text = text.replaceFirst("#", "");
+                    }
+
+                    int number = Integer.parseInt(text);
+                    if (number < 1) {
+                      return List.of(AnvilGUI.ResponseAction.replaceInputText("Invalid number"));
+                    } else {
+                      kitItem.setAmount(Math.min(number, maxStackSize));
+                      backTo.update();
+                    }
+
+                    return List.of(AnvilGUI.ResponseAction.close());
+                  } catch (Exception exception) {
+                    return List.of(AnvilGUI.ResponseAction.replaceInputText("Invalid number"));
+                  }
+                })
+            .text("#")
+            .title(
+                StaticItems.changeCustomAmountTitle()
+                    .replace("%max%", String.valueOf(maxStackSize)))
+            .open(player);
+        break;
+      default:
+        if (AMOUNTS.containsKey(slot)) {
+          if (maxStackSize >= AMOUNTS.get(slot)) {
+            kitItem.setAmount(AMOUNTS.get(slot));
+            backTo.update();
+            backTo.open(player);
+          }
+        }
+        break;
+    }
+  }
+
+  @Override
+  public void handleCloseEvent(InventoryCloseEvent e) {
+    Player player = (Player) e.getPlayer();
+
+    Bukkit.getScheduler()
+        .runTaskLater(
+            AstralPractice.getInstance(),
+            () -> {
+              if (player.getOpenInventory() != null
+                  && player.getOpenInventory().getType().equals(InventoryType.ANVIL)) {
+                return;
+              } else if (GuiManager.getInstance().getOpenGui().containsKey(player)) {
+                return;
+              }
+
+              backTo.open(player);
+            },
+            5L);
+  }
+}

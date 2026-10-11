@@ -1,11 +1,11 @@
 package dev.lokspel.practice.manager.gui.guis.party;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GUIFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
-import dev.lokspel.practice.manager.gui.GUI;
-import dev.lokspel.practice.manager.gui.GUIType;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.guis.selectors.LadderSelectorGui;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
@@ -14,6 +14,10 @@ import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.InventoryUtil;
 import dev.lokspel.practice.util.ItemCreateUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,126 +26,171 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Getter
-public class OtherPartiesGui extends GUI {
+public class OtherPartiesGui extends Gui {
 
-    private static final ItemStack FILLER_ITEM = GUIFile.getGuiItem("GUIS.PARTY.OTHER-PARTIES.ICONS.FILLER-ITEM").get();
-    private final Map<Integer, Party> partySlots = new HashMap<>();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getParty().getOtherParties().getIcons().getFillerItem())
+        .get();
+  }
 
-    public OtherPartiesGui() {
-        super(GUIType.Party_OtherParties);
-        this.gui.put(1, InventoryUtil.createInventory(GUIFile.getString("GUIS.PARTY.OTHER-PARTIES.TITLE"), 6));
+  private final Map<Integer, Party> partySlots = new HashMap<>();
 
-        build();
-    }
+  public OtherPartiesGui() {
+    super(GuiType.Party_OtherParties);
+    this.gui.put(
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getParty().getOtherParties().getTitle(), 6));
 
-    @Override
-    public void build() {
-        update();
-    }
+    build();
+  }
 
-    @Override
-    public void update() {
-        Bukkit.getScheduler().runTaskAsynchronously(AstralPractice.getInstance(), () ->
-        {
-            Inventory inventory = gui.get(1);
-            inventory.clear();
-            partySlots.clear();
+  @Override
+  public void build() {
+    update();
+  }
 
-            if (PartyManager.getInstance() == null) return;
+  @Override
+  public void update() {
+    Bukkit.getScheduler()
+        .runTaskAsynchronously(
+            AstralPractice.getInstance(),
+            () -> {
+              Inventory inventory = gui.get(1);
+              inventory.clear();
+              partySlots.clear();
 
-            for (Party party : PartyManager.getInstance().getParties()) {
+              if (PartyManager.getInstance() == null) {
+                return;
+              }
+
+              for (Party party : PartyManager.getInstance().getParties()) {
                 int slot = inventory.firstEmpty();
 
                 if (slot < inventory.getSize()) {
-                    inventory.setItem(slot, getPartyItem(party));
-                    partySlots.put(slot, party);
+                  inventory.setItem(slot, getPartyItem(party));
+                  partySlots.put(slot, party);
                 }
-            }
+              }
 
-            for (int i = 0; i < inventory.getSize(); i++) {
+              for (int i = 0; i < inventory.getSize(); i++) {
                 if (inventory.getItem(i) == null) {
-                    inventory.setItem(i, FILLER_ITEM);
+                  inventory.setItem(i, fillerItem());
                 }
-            }
+              }
 
-            updatePlayers();
-        });
+              updatePlayers();
+            });
+  }
+
+  @Override
+  public void handleClickEvent(InventoryClickEvent e) {
+    Player player = (Player) e.getWhoClicked();
+    final Profile profile = ProfileManager.getInstance().getProfile(player);
+    Party party = PartyManager.getInstance().getParty(player);
+
+    if (party == null) {
+      return;
     }
 
-    @Override
-    public void handleClickEvent(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        Party party = PartyManager.getInstance().getParty(player);
+    ItemStack currentItem = e.getCurrentItem();
+    int slot = e.getRawSlot();
+    e.setCancelled(true);
 
-        if (party == null) return;
-
-        ItemStack currentItem = e.getCurrentItem();
-        int slot = e.getRawSlot();
-        e.setCancelled(true);
-
-        if (currentItem == null) return;
-        if (!partySlots.containsKey(slot)) return;
-
-        Party targetParty = partySlots.get(slot);
-
-        if (party == targetParty) {
-            Common.sendMMMessage(player, LanguageManager.getString("PARTY.CANT-DUEL-OWN-PARTY"));
-            return;
-        }
-
-        if (!targetParty.isDuelRequests()) {
-            Common.sendMMMessage(player, LanguageManager.getString("PARTY.CANT-DUEL-PARTY"));
-            return;
-        }
-
-        if (!PartyManager.getInstance().getRequestManager().isRequested(party, targetParty) || party.getLeader().hasPermission("ap.party.infiniteinvite")) {
-            PartyManager.getInstance().getRequestManager().getPendingRequestTarget().put(party, targetParty);
-            new LadderSelectorGui(profile, MatchType.PARTY_VS_PARTY).open(player);
-        } else
-            Common.sendMMMessage(player, LanguageManager.getString("PARTY.MATCH-REQUEST-MESSAGE.ALREADY-REQUESTED"));
+    if (currentItem == null) {
+      return;
+    }
+    if (!partySlots.containsKey(slot)) {
+      return;
     }
 
-    public ItemStack getPartyItem(Party party) {
-        ItemStack itemStack = ItemCreateUtil.getPlayerHead(party.getLeader());
-        ItemMeta itemMeta = itemStack.getItemMeta();
+    Party targetParty = partySlots.get(slot);
 
-        List<String> lore = new ArrayList<>();
-        List<String> memberStrings = new ArrayList<>();
-        int count = 0;
-        for (Player player : party.getMembers()) {
-            if (count < 6) {
-                if (!party.getLeader().equals(player)) {
-                    memberStrings.add(GUIFile.getString("GUIS.PARTY.OTHER-PARTIES.ICONS.PARTY-ITEM.LORE.MEMBER-FORMAT")
-                            .replace("%player%", player.getName())
-                    );
-                    count++;
-                }
-            } else break;
+    if (party == targetParty) {
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getCantDuelOwnParty());
+      return;
+    }
+
+    if (!targetParty.isDuelRequests()) {
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getCantDuelParty());
+      return;
+    }
+
+    if (!PartyManager.getInstance().getRequestManager().isRequested(party, targetParty)
+        || party.getLeader().hasPermission("ap.party.infiniteinvite")) {
+      PartyManager.getInstance()
+          .getRequestManager()
+          .getPendingRequestTarget()
+          .put(party, targetParty);
+      new LadderSelectorGui(profile, MatchType.PARTY_VS_PARTY).open(player);
+    } else {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language().getParty().getMatchRequestMessage().getAlreadyRequested());
+    }
+  }
+
+  public ItemStack getPartyItem(Party party) {
+    ItemStack itemStack = ItemCreateUtil.getPlayerHead(party.getLeader());
+    ItemMeta itemMeta = itemStack.getItemMeta();
+
+    List<String> lore = new ArrayList<>();
+    List<String> memberStrings = new ArrayList<>();
+    int count = 0;
+    for (Player player : party.getMembers()) {
+      if (count < 6) {
+        if (!party.getLeader().equals(player)) {
+          memberStrings.add(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getParty()
+                  .getOtherParties()
+                  .getIcons()
+                  .getPartyItem()
+                  .getLore()
+                  .getMemberFormat()
+                  .replace("%player%", player.getName()));
+          count++;
         }
+      } else {
+        break;
+      }
+    }
 
-        for (String line : GUIFile.getStringList("GUIS.PARTY.OTHER-PARTIES.ICONS.PARTY-ITEM.LORE.LORE")) {
-            if (line.contains("%members%"))
-                lore.addAll(memberStrings);
-            else
-                lore.add(line);
-        }
+    for (String line :
+        PracticeConfig.guis()
+            .getGuis()
+            .getParty()
+            .getOtherParties()
+            .getIcons()
+            .getPartyItem()
+            .getLore()
+            .getLore()) {
+      if (line.contains("%members%")) {
+        lore.addAll(memberStrings);
+      } else {
+        lore.add(line);
+      }
+    }
 
-        itemMeta.displayName(Common.legacyToComponent(GUIFile.getString("GUIS.PARTY.OTHER-PARTIES.ICONS.PARTY-ITEM.NAME")
+    itemMeta.displayName(
+        Common.legacyToComponent(
+            PracticeConfig.guis()
+                .getGuis()
+                .getParty()
+                .getOtherParties()
+                .getIcons()
+                .getPartyItem()
+                .getName()
                 .replace("%leader%", party.getLeader().getName())
                 .replace("%partySize%", String.valueOf(party.getMembers().size()))));
-        itemMeta.lore(lore.stream().map(Common::legacyToComponent).toList());
+    itemMeta.lore(lore.stream().map(Common::legacyToComponent).toList());
 
-        ItemCreateUtil.hideItemFlags(itemMeta);
-        itemStack.setItemMeta(itemMeta);
+    ItemCreateUtil.hideItemFlags(itemMeta);
+    itemStack.setItemMeta(itemMeta);
 
-        return itemStack;
-    }
-
+    return itemStack;
+  }
 }

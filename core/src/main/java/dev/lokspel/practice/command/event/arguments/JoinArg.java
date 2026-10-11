@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.event.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
@@ -12,37 +12,62 @@ import org.bukkit.entity.Player;
 
 public final class JoinArg {
 
-    private JoinArg() {}
+  private JoinArg() {}
 
-    public static void run(Player player, String label, String[] args) {
-        if (args.length != 1) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JOIN.COMMAND-HELP").replace("%label%", label));
-            return;
-        }
-
-        if (!player.hasPermission("ap.event.join")) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JOIN.NO-PERMISSION"));
-            return;
-        }
-
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-        if (!profile.getStatus().equals(ProfileStatus.LOBBY) || profile.isParty()) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JOIN.CANT-JOIN"));
-            return;
-        }
-
-        if (EventManager.getInstance().getEventByPlayer(player) != null) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JOIN.ALREADY-IN-EVENT"));
-            return;
-        }
-
-        for (Event event : EventManager.getInstance().getEvents()) {
-            if (event.getStatus().equals(EventStatus.COLLECTING)) {
-                event.addPlayer(player);
-                return;
-            }
-        }
-        Common.sendMMMessage(player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JOIN.NO-EVENT"));
+  public static void run(Player player, String label, String[] args) {
+    if (args.length != 1) {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJoin()
+              .getCommandHelp()
+              .replace("%label%", label));
+      return;
     }
 
+    if (!player.hasPermission("ap.event.join")) {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJoin()
+              .getNoPermission());
+      return;
+    }
+
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (!profile.getStatus().equals(ProfileStatus.LOBBY) || profile.isParty()) {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language().getCommand().getEvent().getArguments().getJoin().getCantJoin());
+      return;
+    }
+
+    if (EventManager.getInstance().getEventByPlayer(player) != null) {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJoin()
+              .getAlreadyInEvent());
+      return;
+    }
+
+    for (Event event : EventManager.getInstance().getEvents()) {
+      if (event.getStatus().equals(EventStatus.COLLECTING)) {
+        event.addPlayer(player);
+        return;
+      }
+    }
+    Common.sendMmMessage(
+        player,
+        PracticeConfig.language().getCommand().getEvent().getArguments().getJoin().getNoEvent());
+  }
 }

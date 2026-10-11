@@ -1,5 +1,7 @@
 package dev.lokspel.practice.manager.ladder.type;
 
+import dev.lokspel.practice.config.language.LadderSpecificMessages;
+import dev.lokspel.practice.config.language.MatchTypeMessages;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.Round;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.DeathResult;
@@ -25,70 +27,70 @@ import org.jetbrains.annotations.NotNull;
 
 public class Bridges extends PortalFight implements LadderHandle, RespawnableLadder {
 
-    @Getter
-    @Setter
-    private int respawnTime;
+  @Getter @Setter private int respawnTime;
 
-    public Bridges(String name, LadderType type) {
-        super(name, type);
+  public Bridges(String name, LadderType type) {
+    super(name, type);
+  }
+
+  @Override
+  public DeathResult handlePlayerDeath(Player player, Match match, Round round) {
+    // Bridges always respawns players - they only get eliminated by portal score
+    return DeathResult.TEMPORARY_DEATH;
+  }
+
+  @Override
+  public LadderSpecificMessages getRespawnMessages(
+      MatchTypeMessages.LadderSpecific ladderSpecific) {
+    return ladderSpecific.getBridges();
+  }
+
+  @Override
+  public boolean handleEvents(Event e, Match match) {
+    if (e instanceof BlockBreakEvent) {
+      onBlockBreak((BlockBreakEvent) e, match);
+      return true;
+    } else if (e instanceof BlockPlaceEvent) {
+      onBlockPlace((BlockPlaceEvent) e, match);
+      return true;
+    } else if (e instanceof PlayerBucketEmptyEvent) {
+      onBucketEmpty((PlayerBucketEmptyEvent) e, match);
+      return true;
+    } else if (e instanceof BlockFromToEvent) {
+      onLiquidFlow((BlockFromToEvent) e);
+      return true;
+    } else if (e instanceof PlayerMoveEvent) {
+      onPlayerMove((PlayerMoveEvent) e, match);
+      return true;
+    } else if (e instanceof PlayerItemConsumeEvent) {
+      onConsume((PlayerItemConsumeEvent) e);
+      return true;
+    } else if (e instanceof EntityDamageEvent) {
+      onDamage((EntityDamageEvent) e);
+      return true;
+    } else if (e instanceof ProjectileHitEvent hitEvent) {
+      hitEvent.getEntity().remove();
+      return true;
+    }
+    return false;
+  }
+
+  private static void onDamage(final @NotNull EntityDamageEvent e) {
+    if (!(e.getEntity() instanceof Player)) {
+      return;
     }
 
-    @Override
-    public DeathResult handlePlayerDeath(Player player, Match match, Round round) {
-        // Bridges always respawns players - they only get eliminated by portal score
-        return DeathResult.TEMPORARY_DEATH;
+    if (e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
+      e.setCancelled(true);
     }
+  }
 
-    @Override
-    public String getRespawnLanguagePath() {
-        return "BRIDGES";
+  private static void onConsume(final @NotNull PlayerItemConsumeEvent e) {
+    Player player = e.getPlayer();
+    ItemStack item = e.getItem();
+
+    if (item != null && item.getType().equals(Material.GOLDEN_APPLE)) {
+      player.setHealth(player.getHealthScale());
     }
-
-    @Override
-    public boolean handleEvents(Event e, Match match) {
-        if (e instanceof BlockBreakEvent) {
-            onBlockBreak((BlockBreakEvent) e, match);
-            return true;
-        } else if (e instanceof BlockPlaceEvent) {
-            onBlockPlace((BlockPlaceEvent) e, match);
-            return true;
-        } else if (e instanceof PlayerBucketEmptyEvent) {
-            onBucketEmpty((PlayerBucketEmptyEvent) e, match);
-            return true;
-        } else if (e instanceof BlockFromToEvent) {
-            onLiquidFlow((BlockFromToEvent) e);
-            return true;
-        } else if (e instanceof PlayerMoveEvent) {
-            onPlayerMove((PlayerMoveEvent) e, match);
-            return true;
-        } else if (e instanceof PlayerItemConsumeEvent) {
-            onConsume((PlayerItemConsumeEvent) e);
-            return true;
-        } else if (e instanceof EntityDamageEvent) {
-            onDamage((EntityDamageEvent) e);
-            return true;
-        } else if (e instanceof ProjectileHitEvent hitEvent) {
-            hitEvent.getEntity().remove();
-            return true;
-        }
-        return false;
-    }
-
-    private static void onDamage(final @NotNull EntityDamageEvent e) {
-        if (!(e.getEntity() instanceof Player)) return;
-
-        if (e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
-            e.setCancelled(true);
-        }
-    }
-
-    private static void onConsume(final @NotNull PlayerItemConsumeEvent e) {
-        Player player = e.getPlayer();
-        ItemStack item = e.getItem();
-
-        if (item != null && item.getType().equals(Material.GOLDEN_APPLE)) {
-            player.setHealth(player.getHealthScale());
-        }
-    }
-
+  }
 }

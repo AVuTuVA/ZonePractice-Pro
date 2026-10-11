@@ -9,25 +9,25 @@ import org.bukkit.event.HandlerList;
 @Getter
 public class ProfileStatusChangeEvent extends Event {
 
-    private static final HandlerList handlers = new HandlerList();
+  private static final HandlerList handlers = new HandlerList();
 
-    private final Profile profile;
-    private final ProfileStatus oldStatus;
-    private final ProfileStatus newStatus;
+  private final Profile profile;
+  private final ProfileStatus oldStatus;
+  private final ProfileStatus newStatus;
 
-    public ProfileStatusChangeEvent(Profile profile, ProfileStatus oldStatus, ProfileStatus newStatus) {
-        this.profile = profile;
-        this.oldStatus = oldStatus;
-        this.newStatus = newStatus;
-    }
+  public ProfileStatusChangeEvent(
+      Profile profile, ProfileStatus oldStatus, ProfileStatus newStatus) {
+    this.profile = profile;
+    this.oldStatus = oldStatus;
+    this.newStatus = newStatus;
+  }
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+  @Override
+  public HandlerList getHandlers() {
+    return handlers;
+  }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
 }

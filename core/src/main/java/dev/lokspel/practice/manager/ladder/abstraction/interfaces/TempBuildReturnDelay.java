@@ -2,9 +2,7 @@ package dev.lokspel.practice.manager.ladder.abstraction.interfaces;
 
 public interface TempBuildReturnDelay {
 
-    int getTempBuildReturnDelaySeconds();
+  int getTempBuildReturnDelaySeconds();
 
-    void setTempBuildReturnDelaySeconds(int delaySeconds);
-
+  void setTempBuildReturnDelaySeconds(int delaySeconds);
 }
-

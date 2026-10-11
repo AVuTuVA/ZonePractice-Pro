@@ -1,8 +1,8 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
-import dev.lokspel.practice.manager.gui.GUIManager;
-import dev.lokspel.practice.manager.gui.GUIType;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
@@ -14,24 +14,25 @@ import org.bukkit.entity.Player;
 
 public class EditorCommand implements CommandExecutor {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player player)) return false;
-
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-
-        if (!profile.getStatus().equals(ProfileStatus.LOBBY) || profile.isStaffMode()) {
-            Common.sendMMMessage(player, LanguageManager.getString("CANT-USE-COMMAND"));
-            return false;
-        }
-
-        if (profile.getGroup() == null || profile.getGroup().getCustomKitLimit() <= 0) {
-            GUIManager.getInstance().searchGUI(GUIType.CustomLadder_Selector).open(player);
-        } else {
-            GUIManager.getInstance().searchGUI(GUIType.CustomLadder_EditorMenu).open(player);
-        }
-
-        return true;
+  @Override
+  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    if (!(sender instanceof Player player)) {
+      return false;
     }
 
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+
+    if (!profile.getStatus().equals(ProfileStatus.LOBBY) || profile.isStaffMode()) {
+      Common.sendMmMessage(player, PracticeConfig.language().getCantUseCommand());
+      return false;
+    }
+
+    if (profile.getGroup() == null || profile.getGroup().getCustomKitLimit() <= 0) {
+      GuiManager.getInstance().searchGui(GuiType.CustomLadder_Selector).open(player);
+    } else {
+      GuiManager.getInstance().searchGui(GuiType.CustomLadder_EditorMenu).open(player);
+    }
+
+    return true;
+  }
 }

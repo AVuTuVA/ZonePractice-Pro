@@ -1,172 +1,160 @@
 package dev.lokspel.practice.manager.arena.arenas.interfaces;
 
+import dev.lokspel.practice.manager.arena.ArenaLayoutData;
+import dev.lokspel.practice.manager.arena.ArenaLayoutData.Pair;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
 import dev.lokspel.practice.manager.arena.util.BedLocation;
 import dev.lokspel.practice.manager.arena.util.PortalLocation;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 public abstract class NormalArena extends BasicArena implements DisplayName {
 
-    protected boolean portalProtection = false;
-    protected int portalProtectionValue;
+  protected boolean portalProtection = false;
+  protected int portalProtectionValue;
 
-    // In bed related arenas
-    protected BedLocation bedLoc1;
-    protected BedLocation bedLoc2;
+  // In bed related arenas
+  protected BedLocation bedLoc1;
+  protected BedLocation bedLoc2;
 
-    // Portal related arenas
-    protected PortalLocation portalLoc1;
-    protected PortalLocation portalLoc2;
+  // Portal related arenas
+  protected PortalLocation portalLoc1;
+  protected PortalLocation portalLoc2;
 
-    // Optional shared spawn point used by Party FFA style modes.
-    protected Location partyFfaCenter;
+  // Optional shared spawn point used by Party FFA style modes.
+  protected Location partyFfaCenter;
 
-    protected NormalArena(String name) {
-        super(name);
+  protected NormalArena(String name) {
+    super(name);
+  }
+
+  @Override
+  public Location getAvailableLocation() {
+    if (position1 != null) {
+      return position1;
+    }
+    if (position2 != null) {
+      return position2;
+    }
+    if (bedLoc1 != null) {
+      return bedLoc1.getLocation();
+    }
+    if (bedLoc2 != null) {
+      return bedLoc2.getLocation();
+    }
+    if (portalLoc1 != null) {
+      return portalLoc1.getCenter();
+    }
+    if (portalLoc2 != null) {
+      return portalLoc2.getCenter();
+    }
+    if (corner1 != null) {
+      return corner1;
+    }
+    if (corner2 != null) {
+      return corner2;
+    }
+    if (!ffaPositions.isEmpty()) {
+      return ffaPositions.stream().findAny().get();
+    }
+    return null;
+  }
+
+  /** Writes the places and limits of this arena into its file's model. */
+  public void setBasicData(ArenaLayoutData data) {
+    data.setCorner(Pair.of(corner1, corner2));
+    data.setPosition(Pair.of(position1, position2));
+    data.setFfaPositions(ffaPositions.isEmpty() ? null : new ArrayList<>(ffaPositions));
+    data.setBuildMax(isBuildMax() ? buildMaxValue : null);
+    data.setDeadZone(isDeadZone() ? deadZoneValue : null);
+    data.setPortalProtection(isPortalProtection() ? portalProtectionValue : null);
+    data.setBedLocation(
+        Pair.of(
+            bedLoc1 != null ? ArenaUtil.toBedData(bedLoc1) : null,
+            bedLoc2 != null ? ArenaUtil.toBedData(bedLoc2) : null));
+    data.setPortalLocation(
+        Pair.of(
+            portalLoc1 != null ? portalLoc1.getCenter() : null,
+            portalLoc2 != null ? portalLoc2.getCenter() : null));
+    data.setPartyFfaCenter(partyFfaCenter);
+  }
+
+  /** Reads the places and limits of this arena from its file's model. */
+  public void getBasicData(ArenaLayoutData data) {
+    Pair<Location> corner = data.getCorner();
+    if (corner != null && corner.getFirst() != null) {
+      corner1 = corner.getFirst();
+    }
+    if (corner != null && corner.getSecond() != null) {
+      corner2 = corner.getSecond();
+    }
+    createCuboid();
+
+    Pair<Location> position = data.getPosition();
+    if (position != null && position.getFirst() != null) {
+      position1 = position.getFirst();
+    }
+    if (position != null && position.getSecond() != null) {
+      position2 = position.getSecond();
     }
 
-    @Override
-    public Location getAvailableLocation() {
-        if (position1 != null) return position1;
-        if (position2 != null) return position2;
-        if (bedLoc1 != null) return bedLoc1.getLocation();
-        if (bedLoc2 != null) return bedLoc2.getLocation();
-        if (portalLoc1 != null) return portalLoc1.getCenter();
-        if (portalLoc2 != null) return portalLoc2.getCenter();
-        if (corner1 != null) return corner1;
-        if (corner2 != null) return corner2;
-        if (!ffaPositions.isEmpty()) return ffaPositions.stream().findAny().get();
-        return null;
+    if (data.getFfaPositions() != null) {
+      ffaPositions = new ArrayList<>(data.getFfaPositions());
     }
 
-    public void setBasicData(YamlConfiguration config, String path) {
-        if (corner1 != null)
-            config.set(path + "corner.1", corner1);
-        else
-            config.set(path + "corner.1", null);
-
-        if (corner2 != null)
-            config.set(path + "corner.2", corner2);
-        else
-            config.set(path + "corner.2", null);
-
-        if (position1 != null)
-            config.set(path + "position.1", position1);
-        else
-            config.set(path + "position.1", null);
-
-        if (position2 != null)
-            config.set(path + "position.2", position2);
-        else
-            config.set(path + "position.2", null);
-
-        if (!ffaPositions.isEmpty())
-            config.set(path + "ffa-positions", ffaPositions);
-        else
-            config.set(path + "ffa-positions", null);
-
-        if (isBuildMax())
-            config.set(path + "buildmax", buildMaxValue);
-        else
-            config.set(path + "buildmax", null);
-
-        if (isDeadZone())
-            config.set(path + "deadzone", deadZoneValue);
-        else
-            config.set(path + "deadzone", null);
-
-        if (isPortalProtection())
-            config.set(path + "portalprot", portalProtectionValue);
-        else
-            config.set(path + "portalprot", null);
-
-        if (bedLoc1 != null)
-            ArenaUtil.saveBedData(config, path + "bedlocation.1", bedLoc1);
-        else
-            config.set(path + "bedlocation.1", null);
-
-        if (bedLoc2 != null)
-            ArenaUtil.saveBedData(config, path + "bedlocation.2", bedLoc2);
-        else
-            config.set(path + "bedlocation.2", null);
-
-        if (portalLoc1 != null)
-            config.set(path + "portallocation.1", portalLoc1.getCenter());
-        else
-            config.set(path + "portallocation.1", null);
-
-        if (portalLoc2 != null)
-            config.set(path + "portallocation.2", portalLoc2.getCenter());
-        else
-            config.set(path + "portallocation.2", null);
-
-        if (partyFfaCenter != null)
-            config.set(path + "party-ffa-center", partyFfaCenter);
-        else
-            config.set(path + "party-ffa-center", null);
+    if (data.getBuildMax() != null) {
+      setBuildMax(true);
+      setBuildMaxValue(data.getBuildMax());
     }
 
-    public void getBasicData(YamlConfiguration config, String path) {
-        if (config.get(path + "corner.1") != null) corner1 = (Location) config.get(path + "corner.1");
-        if (config.get(path + "corner.2") != null) corner2 = (Location) config.get(path + "corner.2");
-        createCuboid();
-
-        if (config.get(path + "position.1") != null) position1 = (Location) config.get(path + "position.1");
-        if (config.get(path + "position.2") != null) position2 = (Location) config.get(path + "position.2");
-
-        if (config.get(path + "ffa-positions") != null)
-            ffaPositions = (List<Location>) config.getList(path + "ffa-positions");
-
-        if (config.isInt(path + "buildmax")) {
-            setBuildMax(true);
-            setBuildMaxValue(config.getInt(path + "buildmax"));
-        }
-
-        if (config.isInt(path + "deadzone")) {
-            setDeadZone(true);
-            setDeadZoneValue(config.getInt(path + "deadzone"));
-        }
-
-        if (config.isInt(path + "portalprot")) {
-            setPortalProtection(true);
-            setPortalProtectionValue(config.getInt(path + "portalprot"));
-        }
-
-        if (config.get(path + "bedlocation.1") != null)
-            setBedLoc1(ArenaUtil.getBedData(config, path + "bedlocation.1"));
-        if (config.get(path + "bedlocation.2") != null)
-            setBedLoc2(ArenaUtil.getBedData(config, path + "bedlocation.2"));
-
-        if (config.get(path + "portallocation.1") != null)
-            portalLoc1 = new PortalLocation((Location) config.get(path + "portallocation.1"));
-        if (config.get(path + "portallocation.2") != null)
-            portalLoc2 = new PortalLocation((Location) config.get(path + "portallocation.2"));
-
-        if (config.get(path + "party-ffa-center") != null)
-            partyFfaCenter = (Location) config.get(path + "party-ffa-center");
+    if (data.getDeadZone() != null) {
+      setDeadZone(true);
+      setDeadZoneValue(data.getDeadZone());
     }
 
-    public List<PortalLocation> getPortalLocations() {
-        final List<PortalLocation> portalLocations = new ArrayList<>();
-        portalLocations.add(portalLoc1);
-        portalLocations.add(portalLoc2);
-        return portalLocations;
+    if (data.getPortalProtection() != null) {
+      setPortalProtection(true);
+      setPortalProtectionValue(data.getPortalProtection());
     }
 
-    public boolean isBedSet() {
-        return bedLoc1 != null && bedLoc2 != null;
+    Pair<ArenaLayoutData.Bed> bedLocation = data.getBedLocation();
+    if (bedLocation != null && bedLocation.getFirst() != null) {
+      setBedLoc1(ArenaUtil.getBedData(bedLocation.getFirst()));
+    }
+    if (bedLocation != null && bedLocation.getSecond() != null) {
+      setBedLoc2(ArenaUtil.getBedData(bedLocation.getSecond()));
     }
 
-    public boolean isPortalSet() {
-        return portalLoc1 != null && portalLoc2 != null;
+    Pair<Location> portalLocation = data.getPortalLocation();
+    if (portalLocation != null && portalLocation.getFirst() != null) {
+      portalLoc1 = new PortalLocation(portalLocation.getFirst());
+    }
+    if (portalLocation != null && portalLocation.getSecond() != null) {
+      portalLoc2 = new PortalLocation(portalLocation.getSecond());
     }
 
+    if (data.getPartyFfaCenter() != null) {
+      partyFfaCenter = data.getPartyFfaCenter();
+    }
+  }
+
+  public List<PortalLocation> getPortalLocations() {
+    final List<PortalLocation> portalLocations = new ArrayList<>();
+    portalLocations.add(portalLoc1);
+    portalLocations.add(portalLoc2);
+    return portalLocations;
+  }
+
+  public boolean isBedSet() {
+    return bedLoc1 != null && bedLoc2 != null;
+  }
+
+  public boolean isPortalSet() {
+    return portalLoc1 != null && portalLoc2 != null;
+  }
 }

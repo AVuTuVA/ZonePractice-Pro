@@ -1,0 +1,6 @@
+VERSION: 52
+COMMAND:
+  PARTY:
+    ARGUMENTS:
+      DISBAND:
+        NO-PARTY: "<red>Custom no party"

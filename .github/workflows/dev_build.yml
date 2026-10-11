@@ -1,14 +1,22 @@
 name: Dev Build
+run-name: "Dev build of ${{ github.ref_name }} (${{ github.sha }})"
 
 on:
   push:
     branches: ["dev"]
   workflow_dispatch:
 
+concurrency:
+  group: dev-build-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: read
+
 jobs:
   call_build:
-    permissions:
-      contents: write
+    name: Build and publish
     uses: ./.github/workflows/reusable_build.yml
     with:
       is-release-build: false

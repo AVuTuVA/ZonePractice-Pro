@@ -1,0 +1,23 @@
+name: Pull request · Checks
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+concurrency:
+  group: pull-request-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Checks
+    if: ${{ !github.event.pull_request.draft }}
+    uses: ./.github/workflows/reusable_build.yml
+    with:
+      is-release-build: false
+      release-version-type: beta
+      publish-artifacts: false
+    secrets: inherit

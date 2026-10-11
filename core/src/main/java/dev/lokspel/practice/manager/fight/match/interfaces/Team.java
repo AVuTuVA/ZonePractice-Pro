@@ -5,6 +5,5 @@ import org.bukkit.entity.Player;
 
 public interface Team {
 
-    TeamEnum getTeam(Player player);
-
+  TeamEnum getTeam(Player player);
 }

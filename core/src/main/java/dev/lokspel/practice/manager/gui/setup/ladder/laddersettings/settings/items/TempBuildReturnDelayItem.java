@@ -1,0 +1,53 @@
+package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.items;
+
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingItem;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingType;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingsGui;
+import dev.lokspel.practice.manager.ladder.abstraction.interfaces.TempBuildReturnDelay;
+import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
+import org.bukkit.event.inventory.InventoryClickEvent;
+
+public class TempBuildReturnDelayItem extends SettingItem {
+
+  private static final int MIN_DELAY_SECONDS = -1;
+  private static final int MAX_DELAY_SECONDS = 30;
+
+  private final TempBuildReturnDelay tempBuildReturnDelay;
+
+  public TempBuildReturnDelayItem(SettingsGui settingsGui, NormalLadder ladder) {
+    super(settingsGui, SettingType.TEMP_BUILD_RETURN_DELAY, ladder);
+    this.tempBuildReturnDelay = (TempBuildReturnDelay) ladder;
+  }
+
+  @Override
+  public void updateItemStack() {
+    int delay = tempBuildReturnDelay.getTempBuildReturnDelaySeconds();
+    String delayText = delay < 0 ? "Disabled" : delay + "";
+
+    this.guiItem =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getLadder()
+                    .getSettings()
+                    .getIcons()
+                    .getTempBuildReturnDelay())
+            .replace("%tempBuildReturnDelay%", delayText);
+  }
+
+  @Override
+  public void clickEvent(InventoryClickEvent e) {
+    int delay = tempBuildReturnDelay.getTempBuildReturnDelaySeconds();
+
+    if (e.getClick().isLeftClick() && delay > MIN_DELAY_SECONDS) {
+      tempBuildReturnDelay.setTempBuildReturnDelaySeconds(delay - 1);
+    } else if (e.getClick().isRightClick() && delay < MAX_DELAY_SECONDS) {
+      tempBuildReturnDelay.setTempBuildReturnDelaySeconds(delay + 1);
+    }
+
+    build(true);
+  }
+}

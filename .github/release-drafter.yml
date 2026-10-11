@@ -1,0 +1,48 @@
+name-template: "$RESOLVED_VERSION"
+tag-template: "$RESOLVED_VERSION"
+change-template: "* $TITLE by @$AUTHOR in [#$NUMBER]($URL)"
+change-title-escapes: "\\<*_&"
+category-template: "## $TITLE"
+no-changes-template: "* No changes"
+template: |
+  # Update $RESOLVED_VERSION
+
+  $CHANGES
+
+categories:
+  - title: "What’s new"
+    exclusive: true
+    labels:
+      - "feature"
+
+  - title: "Enhancements"
+    exclusive: true
+    labels:
+      - "change"
+
+  - title: "Fixes"
+    exclusive: true
+    labels:
+      - "bug"
+
+  - title: "Dependencies"
+    exclusive: true
+    labels:
+      - "dependencies"
+
+exclude-labels:
+  - "skip-changelog"
+
+version-resolver:
+  major:
+    labels:
+      - "major"
+  minor:
+    labels:
+      - "feature"
+  patch:
+    labels:
+      - "change"
+      - "bug"
+      - "dependencies"
+  default: patch

@@ -9,14 +9,13 @@ import lombok.Setter;
 @Getter
 public class Creeper extends NormalLadder {
 
-    private double creeperExplosionDelay;
+  private double creeperExplosionDelay;
 
-    public Creeper(String name, LadderType type) {
-        super(name, type);
-    }
+  public Creeper(String name, LadderType type) {
+    super(name, type);
+  }
 
-    public int getCreeperExplosionDelayTicks() {
-        return (int) Math.round(creeperExplosionDelay * 20);
-    }
-
+  public int getCreeperExplosionDelayTicks() {
+    return (int) Math.round(creeperExplosionDelay * 20);
+  }
 }

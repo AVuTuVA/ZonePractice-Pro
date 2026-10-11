@@ -1,0 +1,105 @@
+package dev.lokspel.practice.manager.playerkit.guis;
+
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
+import dev.lokspel.practice.manager.playerkit.PlayerKitEditing;
+import dev.lokspel.practice.manager.playerkit.PlayerKitManager;
+import dev.lokspel.practice.manager.playerkit.StaticItems;
+import dev.lokspel.practice.manager.playerkit.items.KitItem;
+import dev.lokspel.practice.util.InventoryUtil;
+import java.util.List;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
+public class PotionsGui extends Gui {
+
+  private static final int SPACES = 9 * 5;
+
+  public PotionsGui() {
+    super(GuiType.PlayerCustom_Potions);
+
+    this.build();
+  }
+
+  @Override
+  public void build() {
+    Inventory drinkableInv = InventoryUtil.createInventory(StaticItems.potionsGuiTitle(), 6);
+    this.gui.put(1, drinkableInv);
+    setIcons(
+        drinkableInv,
+        StaticItems.potionsGuiSwitchSplashIcon(),
+        StaticItems.potionsGuiDrinkablePotions());
+
+    Inventory splashInv = InventoryUtil.createInventory(StaticItems.potionsGuiTitle(), 6);
+    this.gui.put(2, splashInv);
+    setIcons(
+        splashInv,
+        StaticItems.potionsGuiSwitchDrinkableIcon(),
+        StaticItems.potionsGuiSplashPotions());
+  }
+
+  private static void setIcons(
+      final Inventory inventory, final ItemStack switchItem, final List<ItemStack> potionItems) {
+    inventory.setItem(45, StaticItems.potionsGuiBackIcon());
+    inventory.setItem(49, switchItem);
+
+    for (ItemStack itemStack : potionItems) {
+      if (inventory.firstEmpty() >= SPACES) {
+        break;
+      }
+
+      inventory.addItem(itemStack);
+    }
+  }
+
+  @Override
+  public void update() {
+    updatePlayers();
+  }
+
+  @Override
+  public void handleClickEvent(InventoryClickEvent e) {
+    e.setCancelled(true);
+
+    Player player = (Player) e.getWhoClicked();
+    int slot = e.getRawSlot();
+    int page = inGuiPlayers.get(player);
+
+    if (e.getClickedInventory() == null) {
+      return;
+    }
+    if (e.getInventory().getSize() <= slot) {
+      return;
+    }
+
+    if (slot == 45) {
+      GuiManager.getInstance().searchGui(GuiType.PlayerCustom_Category).open(player);
+    } else if (slot == 49) {
+      open(player, page == 1 ? 2 : 1);
+    } else {
+      ItemStack item = gui.get(page).getItem(slot);
+      if (item == null || item.getType() == Material.AIR) {
+        return;
+      }
+
+      PlayerKitEditing playerKitEditing = PlayerKitManager.getInstance().getEditing().get(player);
+      KitItem editing = playerKitEditing.getKitItem();
+      editing.reset();
+      editing.setItemStack(item.clone());
+
+      playerKitEditing.returnToEditor(player, item);
+    }
+  }
+
+  @Override
+  public void handleCloseEvent(InventoryCloseEvent e) {
+    Player player = (Player) e.getPlayer();
+    PlayerKitEditing playerKitEditing = PlayerKitManager.getInstance().getEditing().get(player);
+    playerKitEditing.scheduleReturnToMainEditor(player);
+  }
+}

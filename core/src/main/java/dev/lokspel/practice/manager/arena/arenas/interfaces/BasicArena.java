@@ -1,12 +1,13 @@
 package dev.lokspel.practice.manager.arena.arenas.interfaces;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.Cuboid;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -14,91 +15,95 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 public abstract class BasicArena {
 
-    protected final String name;
+  protected final String name;
 
-    @Setter
-    protected Location corner1;
-    @Setter
-    protected Location corner2;
-    @Setter
-    protected Cuboid cuboid;
+  @Setter protected Location corner1;
+  @Setter protected Location corner2;
+  @Setter protected Cuboid cuboid;
 
-    @Setter
-    protected Location position1;
-    @Setter
-    protected Location position2;
-    @Setter
-    protected List<Location> ffaPositions = new ArrayList<>();
+  @Setter protected Location position1;
+  @Setter protected Location position2;
+  @Setter protected List<Location> ffaPositions = new ArrayList<>();
 
-    @Setter
-    protected boolean buildMax = false;
-    @Setter
-    protected int buildMaxValue = ConfigManager.getInt("MATCH-SETTINGS.BUILD-LIMIT-DEFAULT");
+  @Setter protected boolean buildMax = false;
 
-    @Setter
-    protected boolean deadZone = false;
-    @Setter
-    protected int deadZoneValue = 0;
+  @Setter
+  protected int buildMaxValue = PracticeConfig.settings().getMatchSettings().getBuildLimitDefault();
 
-    @Setter
-    protected boolean available = true;
+  @Setter protected boolean deadZone = false;
+  @Setter protected int deadZoneValue = 0;
 
-    protected BasicArena(String name) {
-        this.name = name;
+  @Setter protected boolean available = true;
+
+  protected BasicArena(String name) {
+    this.name = name;
+  }
+
+  public void createCuboid() {
+    if (corner1 != null && corner2 != null) {
+      cuboid = new Cuboid(corner1, corner2);
+      ArenaManager.getInstance().getArenaCuboids().put(cuboid, this);
+    }
+  }
+
+  public Location getAvailableLocation() {
+    if (position1 != null) {
+      return position1;
+    }
+    if (position2 != null) {
+      return position2;
+    }
+    if (!ffaPositions.isEmpty()) {
+      return ffaPositions.stream().findAny().get();
+    }
+    if (corner1 != null) {
+      return corner1;
+    }
+    if (corner2 != null) {
+      return corner2;
+    }
+    return null;
+  }
+
+  public List<Location> getStandingLocations() {
+    List<Location> locations = new ArrayList<>();
+    if (position1 != null) {
+      locations.add(position1);
+    }
+    if (position2 != null) {
+      locations.add(position2);
+    }
+    locations.addAll(ffaPositions);
+    return locations;
+  }
+
+  public boolean teleport(Player player) {
+    Location location = getAvailableLocation();
+    if (location == null) {
+      Common.sendMmMessage(player, PracticeConfig.language().getArena().getNoAvailableLocation());
+      return false;
     }
 
-    public void createCuboid() {
-        if (corner1 != null && corner2 != null) {
-            cuboid = new Cuboid(corner1, corner2);
-            ArenaManager.getInstance().getArenaCuboids().put(cuboid, this);
-        }
-    }
+    player.setGameMode(GameMode.CREATIVE);
+    player.setAllowFlight(true);
+    player.setFlying(true);
+    player.teleport(location);
+    player.closeInventory();
 
-    public Location getAvailableLocation() {
-        if (position1 != null) return position1;
-        if (position2 != null) return position2;
-        if (!ffaPositions.isEmpty()) return ffaPositions.stream().findAny().get();
-        if (corner1 != null) return corner1;
-        if (corner2 != null) return corner2;
-        return null;
-    }
+    return true;
+  }
 
-    public List<Location> getStandingLocations() {
-        List<Location> locations = new ArrayList<>();
-        if (position1 != null) locations.add(position1);
-        if (position2 != null) locations.add(position2);
-        locations.addAll(ffaPositions);
-        return locations;
-    }
-
-    public boolean teleport(Player player) {
-        Location location = getAvailableLocation();
-        if (location == null) {
-            Common.sendMMMessage(player, LanguageManager.getString("ARENA.NO-AVAILABLE-LOCATION"));
-            return false;
-        }
-
-        player.setGameMode(GameMode.CREATIVE);
-        player.setAllowFlight(true);
-        player.setFlying(true);
-        player.teleport(location);
-        player.closeInventory();
-
-        return true;
-    }
-
-    public void loadChunks() {
-        if (this.cuboid != null) {
-            Bukkit.getScheduler().runTask(AstralPractice.getInstance(), () -> {
+  public void loadChunks() {
+    if (this.cuboid != null) {
+      Bukkit.getScheduler()
+          .runTask(
+              AstralPractice.getInstance(),
+              () -> {
                 ArenaUtil.loadArenaChunks(this);
-            });
-        }
+              });
     }
-
+  }
 }

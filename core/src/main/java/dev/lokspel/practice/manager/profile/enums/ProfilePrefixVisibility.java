@@ -1,44 +1,44 @@
 package dev.lokspel.practice.manager.profile.enums;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
-import lombok.Getter;
-
+import dev.lokspel.practice.config.PracticeConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
 
 public enum ProfilePrefixVisibility {
+  NONE(PracticeConfig.language().getProfile().getPrefixVisibilityNames().getNone(), false, false),
+  PREFIX(
+      PracticeConfig.language().getProfile().getPrefixVisibilityNames().getPrefix(), true, false),
+  SUFFIX(
+      PracticeConfig.language().getProfile().getPrefixVisibilityNames().getSuffix(), false, true),
+  PREFIX_AND_SUFFIX(
+      PracticeConfig.language().getProfile().getPrefixVisibilityNames().getPrefixAndSuffix(),
+      true,
+      true);
 
-    NONE(LanguageManager.getString("PROFILE.PREFIX-VISIBILITY-NAMES.NONE"), false, false),
-    PREFIX(LanguageManager.getString("PROFILE.PREFIX-VISIBILITY-NAMES.PREFIX"), true, false),
-    SUFFIX(LanguageManager.getString("PROFILE.PREFIX-VISIBILITY-NAMES.SUFFIX"), false, true),
-    PREFIX_AND_SUFFIX(LanguageManager.getString("PROFILE.PREFIX-VISIBILITY-NAMES.PREFIX-AND-SUFFIX"), true, true);
+  @Getter private final String name;
+  @Getter private final boolean showPrefix;
+  @Getter private final boolean showSuffix;
 
-    @Getter
-    private final String name;
-    @Getter
-    private final boolean showPrefix;
-    @Getter
-    private final boolean showSuffix;
+  ProfilePrefixVisibility(String name, boolean showPrefix, boolean showSuffix) {
+    this.name = name;
+    this.showPrefix = showPrefix;
+    this.showSuffix = showSuffix;
+  }
 
-    ProfilePrefixVisibility(String name, boolean showPrefix, boolean showSuffix) {
-        this.name = name;
-        this.showPrefix = showPrefix;
-        this.showSuffix = showSuffix;
-    }
+  public static ProfilePrefixVisibility getNext(ProfilePrefixVisibility current) {
+    List<ProfilePrefixVisibility> list =
+        new ArrayList<>(Arrays.asList(ProfilePrefixVisibility.values()));
 
-    public static ProfilePrefixVisibility getNext(ProfilePrefixVisibility current) {
-        List<ProfilePrefixVisibility> list = new ArrayList<>(Arrays.asList(ProfilePrefixVisibility.values()));
-
-        if (current != null) {
-            int index = list.indexOf(current);
-            if (index == list.size() - 1) {
-                return list.getFirst();
-            }
-            return list.get(index + 1);
-        }
-
+    if (current != null) {
+      int index = list.indexOf(current);
+      if (index == list.size() - 1) {
         return list.getFirst();
+      }
+      return list.get(index + 1);
     }
-}
 
+    return list.getFirst();
+  }
+}

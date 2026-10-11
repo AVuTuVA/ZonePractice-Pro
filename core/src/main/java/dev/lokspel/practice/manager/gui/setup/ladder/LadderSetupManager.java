@@ -1,76 +1,89 @@
 package dev.lokspel.practice.manager.gui.setup.ladder;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.gui.GUI;
-import dev.lokspel.practice.manager.gui.GUIManager;
-import dev.lokspel.practice.manager.gui.GUIType;
-import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.*;
-import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.Settings.SettingsGui;
+import dev.lokspel.practice.manager.gui.Gui;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.CustomKitGui;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.DestroyableBlocksGui;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.InventoryGui;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.LadderMainGui;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.MatchTypeGui;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.SkyWarsLootGui;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingsGui;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.ladder.type.SkyWars;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-
 @Getter
 public class LadderSetupManager implements Listener {
 
-    private static LadderSetupManager instance;
+  private static LadderSetupManager instance;
 
-    public static LadderSetupManager getInstance() {
-        if (instance == null)
-            instance = new LadderSetupManager();
-        return instance;
+  public static LadderSetupManager getInstance() {
+    if (instance == null) {
+      instance = new LadderSetupManager();
+    }
+    return instance;
+  }
+
+  private final Map<Ladder, Map<GuiType, Gui>> ladderSetupGuis = new HashMap<>();
+
+  public LadderSetupManager() {
+    Bukkit.getPluginManager().registerEvents(this, AstralPractice.getInstance());
+  }
+
+  public void buildLadderSetupGuis(NormalLadder ladder) {
+    Map<GuiType, Gui> guis = new EnumMap<>(GuiType.class);
+
+    guis.put(GuiType.Ladder_Main, new LadderMainGui(ladder));
+    guis.put(GuiType.Ladder_Inventory, new InventoryGui(ladder));
+    guis.put(GuiType.Ladder_CustomKitExtra_unRanked, new CustomKitGui(ladder, false));
+    guis.put(GuiType.Ladder_CustomKitExtra_Ranked, new CustomKitGui(ladder, true));
+    guis.put(GuiType.Ladder_Settings, new SettingsGui(ladder));
+    guis.put(GuiType.Ladder_MatchType, new MatchTypeGui(ladder));
+
+    if (ladder.isBuild()) {
+      guis.put(GuiType.Ladder_DestroyableBlock, new DestroyableBlocksGui(ladder));
     }
 
-    private final Map<Ladder, Map<GUIType, GUI>> ladderSetupGUIs = new HashMap<>();
-
-    public LadderSetupManager() {
-        Bukkit.getPluginManager().registerEvents(this, AstralPractice.getInstance());
+    if (ladder instanceof SkyWars) {
+      guis.put(GuiType.Ladder_SkyWarsLoot, new SkyWarsLootGui((SkyWars) ladder));
     }
 
-    public void buildLadderSetupGUIs(NormalLadder ladder) {
-        Map<GUIType, GUI> guis = new EnumMap<>(GUIType.class);
+    ladderSetupGuis.put(ladder, guis);
+  }
 
-        guis.put(GUIType.Ladder_Main, new LadderMainGui(ladder));
-        guis.put(GUIType.Ladder_Inventory, new InventoryGui(ladder));
-        guis.put(GUIType.Ladder_CustomKitExtra_unRanked, new CustomKitGui(ladder, false));
-        guis.put(GUIType.Ladder_CustomKitExtra_Ranked, new CustomKitGui(ladder, true));
-        guis.put(GUIType.Ladder_Settings, new SettingsGui(ladder));
-        guis.put(GUIType.Ladder_MatchType, new MatchTypeGui(ladder));
+  public void loadGuis() {
+    GuiManager.getInstance().addGui(new LadderSummaryGui());
 
-        if (ladder.isBuild())
-            guis.put(GUIType.Ladder_DestroyableBlock, new DestroyableBlocksGui(ladder));
+    for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {
+      buildLadderSetupGuis(ladder);
+    }
+  }
 
-        if (ladder instanceof SkyWars)
-            guis.put(GUIType.Ladder_SkyWarsLoot, new SkyWarsLootGui((SkyWars) ladder));
+  /** Re-creates the summary and every ladder's setup GUIs from the reloaded configuration. */
+  public void reloadGuis() {
+    ladderSetupGuis.clear();
+    loadGuis();
+  }
 
-        ladderSetupGUIs.put(ladder, guis);
+  public void removeLadderGuis(Ladder ladder) {
+    for (Gui gui : ladderSetupGuis.get(ladder).values()) {
+      for (Player player : gui.getInGuiPlayers().keySet()) {
+        GuiManager.getInstance().searchGui(GuiType.Setup_Hub).open(player);
+      }
     }
 
-    public void loadGUIs() {
-        GUIManager.getInstance().addGUI(new LadderSummaryGui());
-
-        for (NormalLadder ladder : LadderManager.getInstance().getLadders())
-            buildLadderSetupGUIs(ladder);
-    }
-
-    public void removeLadderGUIs(Ladder ladder) {
-        for (GUI gui : ladderSetupGUIs.get(ladder).values()) {
-            for (Player player : gui.getInGuiPlayers().keySet()) {
-                GUIManager.getInstance().searchGUI(GUIType.Setup_Hub).open(player);
-            }
-        }
-
-        ladderSetupGUIs.remove(ladder);
-        GUIManager.getInstance().searchGUI(GUIType.Ladder_Summary).update();
-    }
-
+    ladderSetupGuis.remove(ladder);
+    GuiManager.getInstance().searchGui(GuiType.Ladder_Summary).update();
+  }
 }

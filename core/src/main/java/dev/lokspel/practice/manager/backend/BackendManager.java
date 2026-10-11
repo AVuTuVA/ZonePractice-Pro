@@ -1,139 +1,146 @@
 package dev.lokspel.practice.manager.backend;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.data.DataFiles;
 import dev.lokspel.practice.util.Common;
-import dev.lokspel.practice.util.StringUtil;
-import lombok.Getter;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
+/** Owns {@code backend.yml}, bound to {@link BackendData}. */
 public enum BackendManager {
-    ;
+  ;
 
-    private static final String PRACTICE_STATS_SERVER_HASH_PATH = "TELEMETRY.PRACTICE_STATS.SERVER_HASH";
-    private static final String PRACTICE_STATS_SERVER_HASH_PREFIX = "APV1_";
+  private static final String FILE = "backend.yml";
+  private static final String PRACTICE_STATS_SERVER_HASH_PREFIX = "APV1_";
 
-    private static File file;
-    @Getter
-    private static YamlConfiguration config;
+  private static volatile BackendData data = new BackendData();
 
-    public static void createFile(AstralPractice practice) {
-        file = new File(practice.getDataFolder(), "backend.yml");
-        config = new YamlConfiguration();
+  /** Saving is refused until the file has been read, so an early save cannot empty it. */
+  private static volatile boolean loaded;
 
-        // Only try to load if file exists, and catch errors if worlds aren't loaded yet
-        if (file.exists()) {
-            try {
-                config.load(file);
-            } catch (IOException | InvalidConfigurationException e) {
-                // Ignore errors during initial load - this is expected if worlds aren't loaded yet
-                // The file will be reloaded later when loadLobby() is called
-                Common.sendConsoleMMMessage("<yellow>Backend file exists but couldn't be fully loaded yet (worlds may not be ready). Will retry during initialization.");
-            }
-        } else {
-            // Create new file if it doesn't exist
-            save();
-        }
+  /**
+   * Returns the loaded contents of {@code backend.yml}. The instance is replaced by {@link
+   * #reload()}, so callers should not keep it.
+   *
+   * @return the current model, empty if the file couldn't be read yet
+   */
+  public static BackendData data() {
+    return data;
+  }
+
+  public static void createFile(AstralPractice practice) {
+    // Only try to load if file exists; locations in worlds that aren't loaded yet fail to read
+    if (DataFiles.exists(FILE)) {
+      BackendData read = DataFiles.readIfReady(FILE, BackendData.class);
+      if (read != null) {
+        data = read;
+        loaded = true;
+      } else {
+        // Expected if worlds aren't loaded yet; the file is reloaded when loadLobby() is called
+        Common.sendConsoleMmMessage(
+            "<yellow>Backend file exists but couldn't be fully loaded yet (worlds may not be"
+                + " ready). Will retry during initialization.");
+      }
+    } else {
+      // Create new file if it doesn't exist
+      loaded = true;
+      save();
+    }
+  }
+
+  public static void save() {
+    if (!loaded) {
+      Common.sendConsoleMmMessage("<yellow>Not saving backend.yml before it has been read.");
+      return;
     }
 
-    public static void save() {
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            Common.sendConsoleMMMessage("<red>Error saving backend.yml: " + e.getMessage());
-        } catch (Exception e) {
-            // Catches NullPointerException thrown by SnakeYAML when a ConfigurationSerializable
-            // (e.g. Location with a null world WeakReference) produces a null entry in its
-            // serialize() map. Log clearly instead of letting the async task swallow the trace.
-            Common.sendConsoleMMMessage("<red>Error serializing backend.yml (possible null world in lobby location): " + e.getMessage());
-        }
+    try {
+      DataFiles.write(FILE, data);
+    } catch (RuntimeException e) {
+      // Location#serialize can throw for a location whose world reference was cleared. Log
+      // clearly instead of letting the async task swallow the trace.
+      Common.sendConsoleMmMessage(
+          "<red>Error serializing backend.yml (possible null world in lobby location): "
+              + e.getMessage());
+    }
+  }
+
+  public static void reload() {
+    if (!DataFiles.exists(FILE)) {
+      loaded = true;
+      return;
     }
 
-    public static void reload() {
-        try {
-            config.load(file);
-        } catch (IOException | InvalidConfigurationException e) {
-            Common.sendConsoleMMMessage("<red>Error reloading backend: " + e.getMessage());
-        }
+    BackendData read = DataFiles.read(FILE, BackendData.class);
+    if (read == null) {
+      Common.sendConsoleMmMessage("<red>Error reloading backend: couldn't read " + FILE);
+      return;
     }
 
-    public static String getString(String loc) {
-        return getConfig().getString(StringUtil.CC(loc));
+    data = read;
+    loaded = true;
+  }
+
+  public static String getPracticeStatsServerHash() {
+    BackendData.Telemetry telemetry = data.getTelemetry();
+    if (telemetry == null || telemetry.getPracticeStats() == null) {
+      return null;
     }
 
-    public static boolean getBoolean(String loc) {
-        return getConfig().getBoolean(loc);
+    String configuredHash = telemetry.getPracticeStats().getServerHash();
+    if (configuredHash == null) {
+      return null;
     }
 
-    public static int getInt(String loc) {
-        return getConfig().getInt(loc);
+    String normalized = normalizePracticeStatsServerHash(configuredHash);
+    if (normalized == null) {
+      return null;
     }
 
-    public static double getDouble(String loc) {
-        return getConfig().getDouble(loc);
+    // Migrate legacy values so next restart keeps the same prefixed format.
+    if (!normalized.equals(configuredHash)) {
+      telemetry.getPracticeStats().setServerHash(normalized);
+      save();
     }
 
-    public static List<String> getList(String loc) {
-        return getConfig().getStringList(loc);
+    return normalized;
+  }
+
+  public static String getOrCreatePracticeStatsServerHash(String generatedHash) {
+    String existing = getPracticeStatsServerHash();
+    if (existing != null) {
+      return existing;
     }
 
-    public static String getPracticeStatsServerHash() {
-        if (config == null) {
-            return null;
-        }
-
-        String configuredHash = config.getString(PRACTICE_STATS_SERVER_HASH_PATH);
-        if (configuredHash == null) {
-            return null;
-        }
-
-        String normalized = normalizePracticeStatsServerHash(configuredHash);
-        if (normalized == null) {
-            return null;
-        }
-
-        // Migrate legacy values so next restart keeps the same prefixed format.
-        if (!normalized.equals(configuredHash)) {
-            config.set(PRACTICE_STATS_SERVER_HASH_PATH, normalized);
-            save();
-        }
-
-        return normalized;
+    String normalizedGenerated = normalizePracticeStatsServerHash(generatedHash);
+    if (normalizedGenerated == null) {
+      return null;
     }
 
-    public static String getOrCreatePracticeStatsServerHash(String generatedHash) {
-        String existing = getPracticeStatsServerHash();
-        if (existing != null) {
-            return existing;
-        }
-
-        String normalizedGenerated = normalizePracticeStatsServerHash(generatedHash);
-        if (normalizedGenerated == null) {
-            return null;
-        }
-
-        config.set(PRACTICE_STATS_SERVER_HASH_PATH, normalizedGenerated);
-        save();
-        return normalizedGenerated;
+    BackendData.Telemetry telemetry = data.getTelemetry();
+    if (telemetry == null) {
+      telemetry = new BackendData.Telemetry();
+      data.setTelemetry(telemetry);
+    }
+    if (telemetry.getPracticeStats() == null) {
+      telemetry.setPracticeStats(new BackendData.PracticeStats());
     }
 
-    private static String normalizePracticeStatsServerHash(String hash) {
-        if (hash == null) {
-            return null;
-        }
+    telemetry.getPracticeStats().setServerHash(normalizedGenerated);
+    save();
+    return normalizedGenerated;
+  }
 
-        String trimmed = hash.trim();
-        if (trimmed.isEmpty()) {
-            return null;
-        }
-
-        return trimmed.startsWith(PRACTICE_STATS_SERVER_HASH_PREFIX)
-                ? trimmed
-                : PRACTICE_STATS_SERVER_HASH_PREFIX + trimmed;
+  private static String normalizePracticeStatsServerHash(String hash) {
+    if (hash == null) {
+      return null;
     }
 
+    String trimmed = hash.trim();
+    if (trimmed.isEmpty()) {
+      return null;
+    }
+
+    return trimmed.startsWith(PRACTICE_STATS_SERVER_HASH_PREFIX)
+        ? trimmed
+        : PRACTICE_STATS_SERVER_HASH_PREFIX + trimmed;
+  }
 }

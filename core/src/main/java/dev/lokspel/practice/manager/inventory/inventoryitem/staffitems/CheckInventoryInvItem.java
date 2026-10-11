@@ -1,22 +1,22 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.staffitems;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.guis.PlayerInvGui;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
 import org.bukkit.entity.Player;
 
 public class CheckInventoryInvItem extends InvItem {
 
-    public CheckInventoryInvItem() {
-        super(getItemStack("STAFF-MODE.NORMAL.PLAYER-INVENTORY.ITEM"), getInt("STAFF-MODE.NORMAL.PLAYER-INVENTORY.SLOT"));
-    }
+  public CheckInventoryInvItem() {
+    super(PracticeConfig.inventories().getStaffMode().getNormal().get("PLAYER-INVENTORY"));
+  }
 
-    public void handleClickEvent(Player player, Player target) {
-        if (target != null)
-            new PlayerInvGui(target).open(player);
+  public void handleClickEvent(Player player, Player target) {
+    if (target != null) {
+      new PlayerInvGui(target).open(player);
     }
+  }
 
-    @Override
-    public void handleClickEvent(Player player) {
-    }
-
+  @Override
+  public void handleClickEvent(Player player) {}
 }

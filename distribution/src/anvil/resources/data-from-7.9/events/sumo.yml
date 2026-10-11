@@ -1,0 +1,19 @@
+enabled: false
+icon:
+  ==: org.bukkit.inventory.ItemStack
+  DataVersion: 4790
+  id: minecraft:stick
+  count: 1
+  components:
+    minecraft:tooltip_display: '{hidden_components:["minecraft:enchantments","minecraft:attribute_modifiers","minecraft:can_break","minecraft:unbreakable","minecraft:can_place_on","minecraft:block_entity_data","minecraft:fireworks","minecraft:pot_decorations","minecraft:instrument","minecraft:written_book_content","minecraft:map_id","minecraft:tropical_fish/pattern","minecraft:potion_contents","minecraft:painting/variant","minecraft:firework_explosion","minecraft:bundle_contents","minecraft:bees","minecraft:block_state","minecraft:jukebox_playable","minecraft:charged_projectiles","minecraft:banner_patterns","minecraft:container","minecraft:container_loot"]}'
+    minecraft:custom_name: '{color:"gold",italic:0b,text:"Sumo"}'
+    minecraft:damage: '0'
+  schema_version: 1
+settings:
+  broadcastInterval: 15
+  waitBeforeStart: 45
+  maxQueueTime: 600
+  duration: 180
+  startTime: 3
+  minPlayer: 20
+  maxPlayer: 100

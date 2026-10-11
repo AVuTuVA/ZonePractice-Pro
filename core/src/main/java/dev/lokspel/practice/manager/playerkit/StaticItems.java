@@ -1,172 +1,776 @@
 package dev.lokspel.practice.manager.playerkit;
 
-import dev.lokspel.practice.manager.gui.GUIItem;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.playerkit.Gui;
+import dev.lokspel.practice.config.playerkit.Items;
+import dev.lokspel.practice.manager.backend.BackendUtil;
+import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.ladder.util.LadderUtil;
 import dev.lokspel.practice.manager.playerkit.items.EditorIcon;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.Pair;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 
 public enum StaticItems {
-    ;
+  ;
 
-    // Main GUI
-    public static final String MAIN_GUI_TITLE = PlayerKitManager.getInstance().getString("GUI.MAIN.TITLE");
-    public static final ItemStack MAIN_GUI_BACK = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.BACK-TO").get();
-    public static final ItemStack MAIN_GUI_SETTINGS_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.CUSTOM-SETTINGS").get();
-    public static final ItemStack MAIN_GUI_GUIDE_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.GUIDE").get();
-    public static final ItemStack MAIN_GUI_RESET_KIT_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.RESET-KIT").get();
-    public static final ItemStack MAIN_GUI_CHANGE_NAME = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.CHANGE-NAME").get();
-    public static final ItemStack MAIN_GUI_SHARE_KIT = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.SHARE-KIT").get();
+  // Main GUI
+  public static String mainGuiTitle() {
+    return PracticeConfig.playerKit().getGui().getMain().getTitle();
+  }
 
-    // Main GUI placeholders
-    public static final ItemStack MAIN_GUI_HEAD_PLACEHOLDER_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.KIT-SLOT-PLACEHOLDERS.HEAD").get();
-    public static final ItemStack MAIN_GUI_CHEST_PLACEHOLDER_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.KIT-SLOT-PLACEHOLDERS.CHEST").get();
-    public static final ItemStack MAIN_GUI_LEGS_PLACEHOLDER_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.KIT-SLOT-PLACEHOLDERS.LEGS").get();
-    public static final ItemStack MAIN_GUI_BOOTS_PLACEHOLDER_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.KIT-SLOT-PLACEHOLDERS.BOOTS").get();
-    public static final ItemStack MAIN_GUI_OFF_HAND_PLACEHOLDER_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.KIT-SLOT-PLACEHOLDERS.OFFHAND").get();
-    public static final ItemStack MAIN_GUI_HOTBAR_PLACEHOLDER_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.KIT-SLOT-PLACEHOLDERS.HOTBAR").get();
-    public static final ItemStack MAIN_GUI_INVENTORY_PLACEHOLDER_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.MAIN.ICONS.KIT-SLOT-PLACEHOLDERS.OTHER-INVENTORY").get();
+  public static ItemStack mainGuiBack() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit().getGui().getMain().getIcons().getBackTo())
+        .get();
+  }
 
-    // Category GUI
-    public static final String CATEGORY_GUI_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.CATEGORY-GUI.TITLE");
-    public static final int CATEGORY_GUI_SIZE = PlayerKitManager.getInstance().getInt("GUI.ITEMS.CATEGORY-GUI.SIZE");
-    public static final EditorIcon CATEGORY_GUI_BACK_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.CATEGORY-GUI.ICONS.BACK-TO");
-    public static final EditorIcon CATEGORY_GUI_NONE_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.CATEGORY-GUI.ICONS.NONE");
-    public static final EditorIcon CATEGORY_GUI_ARMOR_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.CATEGORY-GUI.ICONS.ARMOR");
-    public static final EditorIcon CATEGORY_GUI_WEAPON_TOOLS_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.CATEGORY-GUI.ICONS.WEAPONS-TOOLS");
-    public static final EditorIcon CATEGORY_GUI_BOWS_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.CATEGORY-GUI.ICONS.BOWS-ARROWS");
-    public static final EditorIcon CATEGORY_GUI_POTIONS_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.CATEGORY-GUI.ICONS.POTIONS");
-    public static final EditorIcon CATEGORY_GUI_FOOD_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.CATEGORY-GUI.ICONS.FOOD");
-    public static final EditorIcon CATEGORY_GUI_BLOCKS_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.CATEGORY-GUI.ICONS.BLOCKS");
-    public static final EditorIcon CATEGORY_GUI_SHULKER_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.CATEGORY-GUI.ICONS.SHULKER-BOXES");
+  public static ItemStack mainGuiSettingsIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit().getGui().getMain().getIcons().getCustomSettings())
+        .get();
+  }
 
-    // Categories with page
-    public static final EditorIcon CATEGORY_GUI_PAGE_BACK_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.ITEMS-GUI.OFFICIAL-ICONS.BACK-TO");
-    public static final EditorIcon CATEGORY_GUI_PAGE_NEXT_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.ITEMS-GUI.OFFICIAL-ICONS.NEXT-PAGE");
-    public static final EditorIcon CATEGORY_GUI_PAGE_PREVIOUS_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.ITEMS.ITEMS-GUI.OFFICIAL-ICONS.PREVIOUS-PAGE");
-    public static final int CATEGORY_GUI_PAGE_SIZE = PlayerKitManager.getInstance().getInt("GUI.ITEMS.ITEMS-GUI.SIZE");
+  public static ItemStack mainGuiGuideIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit().getGui().getMain().getIcons().getGuide())
+        .get();
+  }
 
-    public static final String CATEGORY_ARMOR_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.ITEMS-GUI.CATEGORIES.ARMOR.TITLE");
-    public static final List<String> CATEGORY_ARMOR_ITEMS = PlayerKitManager.getInstance().getList("GUI.ITEMS.ITEMS-GUI.CATEGORIES.ARMOR.ITEMS");
-    public static final String CATEGORY_WEAPONS_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.ITEMS-GUI.CATEGORIES.WEAPONS-TOOLS.TITLE");
-    public static final List<String> CATEGORY_WEAPONS_ITEMS = PlayerKitManager.getInstance().getList("GUI.ITEMS.ITEMS-GUI.CATEGORIES.WEAPONS-TOOLS.ITEMS");
-    public static final String CATEGORY_BOWS_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.ITEMS-GUI.CATEGORIES.BOWS-ARROWS.TITLE");
-    public static final List<String> CATEGORY_BOWS_ITEMS = PlayerKitManager.getInstance().getList("GUI.ITEMS.ITEMS-GUI.CATEGORIES.BOWS-ARROWS.ITEMS");
-    public static final String CATEGORY_FOOD_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.ITEMS-GUI.CATEGORIES.FOOD.TITLE");
-    public static final List<String> CATEGORY_FOOD_ITEMS = PlayerKitManager.getInstance().getList("GUI.ITEMS.ITEMS-GUI.CATEGORIES.FOOD.ITEMS");
-    public static final String CATEGORY_BLOCKS_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.ITEMS-GUI.CATEGORIES.BLOCKS.TITLE");
-    public static final List<String> CATEGORY_BLOCKS_ITEMS = PlayerKitManager.getInstance().getList("GUI.ITEMS.ITEMS-GUI.CATEGORIES.BLOCKS.ITEMS");
-    public static final String CATEGORY_SHULKER_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.ITEMS-GUI.CATEGORIES.SHULKER-BOXES.TITLE");
+  public static ItemStack mainGuiResetKitIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit().getGui().getMain().getIcons().getResetKit())
+        .get();
+  }
 
-    // Potions GUI
-    public static final String POTIONS_GUI_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.ITEMS-GUI.CATEGORIES.POTION.TITLE");
-    public static final ItemStack POTIONS_GUI_BACK_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ITEMS-GUI.CATEGORIES.POTION.OFFICIAL-ICONS.BACK-TO").get();
-    public static final ItemStack POTIONS_GUI_SWITCH_SPLASH_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ITEMS-GUI.CATEGORIES.POTION.OFFICIAL-ICONS.SWITCH-TO-SPLASH").get();
-    public static final ItemStack POTIONS_GUI_SWITCH_DRINKABLE_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ITEMS-GUI.CATEGORIES.POTION.OFFICIAL-ICONS.SWITCH-TO-DRINKABLE").get();
-    public static final List<ItemStack> POTIONS_GUI_SPLASH_POTIONS = new ArrayList<>();
-    public static final List<ItemStack> POTIONS_GUI_DRINKABLE_POTIONS = new ArrayList<>();
+  public static ItemStack mainGuiChangeName() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit().getGui().getMain().getIcons().getChangeName())
+        .get();
+  }
 
-    static {
-        for (String string : PlayerKitManager.getInstance().getList("GUI.ITEMS.ITEMS-GUI.CATEGORIES.POTION.SPLASH-POTIONS.ITEMS")) {
-            ItemStack itemStack = LadderUtil.getPotionItem(string);
-            if (itemStack != null) {
-                POTIONS_GUI_SPLASH_POTIONS.add(itemStack);
-            }
-        }
+  public static ItemStack mainGuiShareKit() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit().getGui().getMain().getIcons().getShareKit())
+        .get();
+  }
 
-        for (String string : PlayerKitManager.getInstance().getList("GUI.ITEMS.ITEMS-GUI.CATEGORIES.POTION.DRINKABLE-POTIONS.ITEMS")) {
-            ItemStack itemStack = LadderUtil.getPotionItem(string);
-            if (itemStack != null) {
-                POTIONS_GUI_DRINKABLE_POTIONS.add(itemStack);
-            }
-        }
+  // Main GUI placeholders
+  public static ItemStack mainGuiHeadPlaceholderIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getMain()
+                .getIcons()
+                .getKitSlotPlaceholders()
+                .getHead())
+        .get();
+  }
+
+  public static ItemStack mainGuiChestPlaceholderIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getMain()
+                .getIcons()
+                .getKitSlotPlaceholders()
+                .getChest())
+        .get();
+  }
+
+  public static ItemStack mainGuiLegsPlaceholderIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getMain()
+                .getIcons()
+                .getKitSlotPlaceholders()
+                .getLegs())
+        .get();
+  }
+
+  public static ItemStack mainGuiBootsPlaceholderIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getMain()
+                .getIcons()
+                .getKitSlotPlaceholders()
+                .getBoots())
+        .get();
+  }
+
+  public static ItemStack mainGuiOffHandPlaceholderIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getMain()
+                .getIcons()
+                .getKitSlotPlaceholders()
+                .getOffhand())
+        .get();
+  }
+
+  public static ItemStack mainGuiHotbarPlaceholderIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getMain()
+                .getIcons()
+                .getKitSlotPlaceholders()
+                .getHotbar())
+        .get();
+  }
+
+  public static ItemStack mainGuiInventoryPlaceholderIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getMain()
+                .getIcons()
+                .getKitSlotPlaceholders()
+                .getOtherInventory())
+        .get();
+  }
+
+  // Category GUI
+  public static String categoryGuiTitle() {
+    return PracticeConfig.playerKit().getGui().getItems().getCategoryGui().getTitle();
+  }
+
+  public static int categoryGuiSize() {
+    return PracticeConfig.playerKit().getGui().getItems().getCategoryGui().getSize();
+  }
+
+  public static EditorIcon categoryGuiBackIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(categoryIcon("BACK-TO"));
+  }
+
+  public static EditorIcon categoryGuiNoneIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(categoryIcon("NONE"));
+  }
+
+  public static EditorIcon categoryGuiArmorIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(categoryIcon("ARMOR"));
+  }
+
+  public static EditorIcon categoryGuiWeaponToolsIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(categoryIcon("WEAPONS-TOOLS"));
+  }
+
+  public static EditorIcon categoryGuiBowsIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(categoryIcon("BOWS-ARROWS"));
+  }
+
+  public static EditorIcon categoryGuiPotionsIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(categoryIcon("POTIONS"));
+  }
+
+  public static EditorIcon categoryGuiFoodIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(categoryIcon("FOOD"));
+  }
+
+  public static EditorIcon categoryGuiBlocksIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(categoryIcon("BLOCKS"));
+  }
+
+  public static EditorIcon categoryGuiShulkerIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(categoryIcon("SHULKER-BOXES"));
+  }
+
+  // Categories with page
+  public static EditorIcon categoryGuiPageBackIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(itemsGuiIcons().getBackTo());
+  }
+
+  public static EditorIcon categoryGuiPageNextIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(itemsGuiIcons().getNextPage());
+  }
+
+  public static EditorIcon categoryGuiPagePreviousIcon() {
+    return PlayerKitManager.getInstance().getEditorItem(itemsGuiIcons().getPreviousPage());
+  }
+
+  public static int categoryGuiPageSize() {
+    return PracticeConfig.playerKit().getGui().getItems().getItemsGui().getSize();
+  }
+
+  public static String categoryArmorTitle() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("ARMOR")
+        .getTitle();
+  }
+
+  public static List<String> categoryArmorItems() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("ARMOR")
+        .getItems();
+  }
+
+  public static String categoryWeaponsTitle() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("WEAPONS-TOOLS")
+        .getTitle();
+  }
+
+  public static List<String> categoryWeaponsItems() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("WEAPONS-TOOLS")
+        .getItems();
+  }
+
+  public static String categoryBowsTitle() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("BOWS-ARROWS")
+        .getTitle();
+  }
+
+  public static List<String> categoryBowsItems() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("BOWS-ARROWS")
+        .getItems();
+  }
+
+  public static String categoryFoodTitle() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("FOOD")
+        .getTitle();
+  }
+
+  public static List<String> categoryFoodItems() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("FOOD")
+        .getItems();
+  }
+
+  public static String categoryBlocksTitle() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("BLOCKS")
+        .getTitle();
+  }
+
+  public static List<String> categoryBlocksItems() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("BLOCKS")
+        .getItems();
+  }
+
+  public static String categoryShulkerTitle() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("SHULKER-BOXES")
+        .getTitle();
+  }
+
+  // Potions GUI
+  public static String potionsGuiTitle() {
+    return PracticeConfig.playerKit()
+        .getGui()
+        .getItems()
+        .getItemsGui()
+        .getCategories()
+        .get("POTION")
+        .getTitle();
+  }
+
+  public static ItemStack potionsGuiBackIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getItems()
+                .getItemsGui()
+                .getCategories()
+                .get("POTION")
+                .getOfficialIcons()
+                .getBackTo())
+        .get();
+  }
+
+  public static ItemStack potionsGuiSwitchSplashIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getItems()
+                .getItemsGui()
+                .getCategories()
+                .get("POTION")
+                .getOfficialIcons()
+                .getSwitchToSplash())
+        .get();
+  }
+
+  public static ItemStack potionsGuiSwitchDrinkableIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getItems()
+                .getItemsGui()
+                .getCategories()
+                .get("POTION")
+                .getOfficialIcons()
+                .getSwitchToDrinkable())
+        .get();
+  }
+
+  public static List<ItemStack> potionsGuiSplashPotions() {
+    return potionItems(
+        PracticeConfig.playerKit()
+            .getGui()
+            .getItems()
+            .getItemsGui()
+            .getCategories()
+            .get("POTION")
+            .getSplashPotions()
+            .getItems());
+  }
+
+  public static List<ItemStack> potionsGuiDrinkablePotions() {
+    return potionItems(
+        PracticeConfig.playerKit()
+            .getGui()
+            .getItems()
+            .getItemsGui()
+            .getCategories()
+            .get("POTION")
+            .getDrinkablePotions()
+            .getItems());
+  }
+
+  private static List<ItemStack> potionItems(List<String> potions) {
+    List<ItemStack> items = new ArrayList<>();
+    for (String string : potions) {
+      ItemStack itemStack = LadderUtil.getPotionItem(string);
+      if (itemStack != null) {
+        items.add(itemStack);
+      }
     }
 
-    // Main Armor GUI
-    public static final String MAIN_ARMOR_GUI_TITLE = PlayerKitManager.getInstance().getString("GUI.MAIN-ARMOR.TITLE");
-    public static final int MAIN_ARMOR_GUI_SIZE = PlayerKitManager.getInstance().getInt("GUI.MAIN-ARMOR.SIZE");
-    public static final EditorIcon MAIN_ARMOR_BACK_TO_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.MAIN-ARMOR.ICONS.OFFICIAL.BACK-TO");
-    public static final EditorIcon MAIN_ARMOR_NONE_ICON = PlayerKitManager.getInstance().getEditorItem("GUI.MAIN-ARMOR.ICONS.OFFICIAL.NONE");
-    public static final List<EditorIcon> MAIN_ARMOR_HELMET_ICONS = new ArrayList<>();
-    public static final List<EditorIcon> MAIN_ARMOR_CHEST_ICONS = new ArrayList<>();
-    public static final List<EditorIcon> MAIN_ARMOR_LEG_ICONS = new ArrayList<>();
-    public static final List<EditorIcon> MAIN_ARMOR_BOOT_ICONS = new ArrayList<>();
+    return items;
+  }
 
-    static {
-        for (String path : PlayerKitManager.getInstance().getConfigSectionKeys("GUI.MAIN-ARMOR.ICONS.HELMETS")) {
-            MAIN_ARMOR_HELMET_ICONS.add(PlayerKitManager.getInstance().getEditorItem("GUI.MAIN-ARMOR.ICONS.HELMETS." + path));
-        }
-        for (String path : PlayerKitManager.getInstance().getConfigSectionKeys("GUI.MAIN-ARMOR.ICONS.CHESTPLATES")) {
-            MAIN_ARMOR_CHEST_ICONS.add(PlayerKitManager.getInstance().getEditorItem("GUI.MAIN-ARMOR.ICONS.CHESTPLATES." + path));
-        }
-        for (String path : PlayerKitManager.getInstance().getConfigSectionKeys("GUI.MAIN-ARMOR.ICONS.LEGGINGS")) {
-            MAIN_ARMOR_LEG_ICONS.add(PlayerKitManager.getInstance().getEditorItem("GUI.MAIN-ARMOR.ICONS.LEGGINGS." + path));
-        }
-        for (String path : PlayerKitManager.getInstance().getConfigSectionKeys("GUI.MAIN-ARMOR.ICONS.BOOTS")) {
-            MAIN_ARMOR_BOOT_ICONS.add(PlayerKitManager.getInstance().getEditorItem("GUI.MAIN-ARMOR.ICONS.BOOTS." + path));
-        }
+  // Main Armor GUI
+  public static String mainArmorGuiTitle() {
+    return PracticeConfig.playerKit().getGui().getMainArmor().getTitle();
+  }
+
+  public static int mainArmorGuiSize() {
+    return PracticeConfig.playerKit().getGui().getMainArmor().getSize();
+  }
+
+  public static EditorIcon mainArmorBackToIcon() {
+    return PlayerKitManager.getInstance()
+        .getEditorItem(mainArmorOfficial().getBackTo(), mainArmorOfficial().getBackTo().getSlot());
+  }
+
+  public static EditorIcon mainArmorNoneIcon() {
+    return PlayerKitManager.getInstance()
+        .getEditorItem(mainArmorOfficial().getNone(), mainArmorOfficial().getNone().getSlot());
+  }
+
+  public static List<EditorIcon> mainArmorHelmetIcons() {
+    List<EditorIcon> icons = new ArrayList<>();
+    addArmorIcons(
+        icons, PracticeConfig.playerKit().getGui().getMainArmor().getIcons().getHelmets());
+
+    return icons;
+  }
+
+  public static List<EditorIcon> mainArmorChestIcons() {
+    List<EditorIcon> icons = new ArrayList<>();
+    addArmorIcons(
+        icons, PracticeConfig.playerKit().getGui().getMainArmor().getIcons().getChestplates());
+
+    return icons;
+  }
+
+  public static List<EditorIcon> mainArmorLegIcons() {
+    List<EditorIcon> icons = new ArrayList<>();
+    addArmorIcons(
+        icons, PracticeConfig.playerKit().getGui().getMainArmor().getIcons().getLeggings());
+
+    return icons;
+  }
+
+  public static List<EditorIcon> mainArmorBootIcons() {
+    List<EditorIcon> icons = new ArrayList<>();
+    addArmorIcons(icons, PracticeConfig.playerKit().getGui().getMainArmor().getIcons().getBoots());
+
+    return icons;
+  }
+
+  // Change amount
+  public static String changeAmountTitle() {
+    return PracticeConfig.playerKit().getGui().getItems().getChangeCountGui().getTitle();
+  }
+
+  public static ItemStack changeAmountBackIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getItems()
+                .getChangeCountGui()
+                .getIcons()
+                .getBackTo())
+        .get();
+  }
+
+  public static ItemStack changeCustomAmountIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getItems()
+                .getChangeCountGui()
+                .getIcons()
+                .getCustomCount())
+        .get();
+  }
+
+  public static String changeCustomAmountTitle() {
+    return PracticeConfig.playerKit().getGui().getItems().getCustomCountGui().getTitle();
+  }
+
+  // Enchant GUI
+  public static String enchantGuiTitle() {
+    return PracticeConfig.playerKit().getGui().getItems().getEnchantGui().getTitle();
+  }
+
+  public static ItemStack enchantGuiBackIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit().getGui().getItems().getEnchantGui().getIcons().getBackTo())
+        .get();
+  }
+
+  public static ItemStack enchantGuiUnbreakableIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getItems()
+                .getEnchantGui()
+                .getIcons()
+                .getMakeUnbreakable())
+        .get();
+  }
+
+  public static ItemStack enchantGuiBreakableIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getItems()
+                .getEnchantGui()
+                .getIcons()
+                .getMakeBreakable())
+        .get();
+  }
+
+  public static ItemStack enchantGuiClearEnchantsIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getItems()
+                .getEnchantGui()
+                .getIcons()
+                .getClearEnchants())
+        .get();
+  }
+
+  public static ItemStack enchantGuiChangeDurabilityIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getItems()
+                .getEnchantGui()
+                .getIcons()
+                .getChangeDurability())
+        .get();
+  }
+
+  public static GuiItem enchantGuiEnchantIcon() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.playerKit()
+            .getGui()
+            .getItems()
+            .getEnchantGui()
+            .getIcons()
+            .getEnchantmentIcon());
+  }
+
+  public static ItemStack enchantGuiSetLevelPlaceholderIcon() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit()
+                .getGui()
+                .getItems()
+                .getEnchantGui()
+                .getIcons()
+                .getSetEnchantmentLevelPlaceholder())
+        .get();
+  }
+
+  public static Map<Integer, GuiItem> enchantmentLevelMap() {
+    Map<Integer, GuiItem> levels = new HashMap<>();
+    for (int i = 1; i <= 5; i++) {
+      levels.put(
+          i,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.playerKit()
+                      .getGui()
+                      .getItems()
+                      .getEnchantGui()
+                      .getIcons()
+                      .getSetEnchantmentLevel())
+              .replace("%level%", String.valueOf(i)));
     }
 
-    // Change amount
-    public static final String CHANGE_AMOUNT_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.CHANGE-COUNT-GUI.TITLE");
-    public static final ItemStack CHANGE_AMOUNT_BACK_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.CHANGE-COUNT-GUI.ICONS.BACK-TO").get();
-    public static final ItemStack CHANGE_CUSTOM_AMOUNT_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.CHANGE-COUNT-GUI.ICONS.CUSTOM-COUNT").get();
-    public static final String CHANGE_CUSTOM_AMOUNT_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.CUSTOM-COUNT-GUI.TITLE");
+    return levels;
+  }
 
-    // Enchant GUI
-    public static final String ENCHANT_GUI_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.ENCHANT-GUI.TITLE");
-    public static final ItemStack ENCHANT_GUI_BACK_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ENCHANT-GUI.ICONS.BACK-TO").get();
-    public static final ItemStack ENCHANT_GUI_UNBREAKABLE_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ENCHANT-GUI.ICONS.MAKE-UNBREAKABLE").get();
-    public static final ItemStack ENCHANT_GUI_BREAKABLE_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ENCHANT-GUI.ICONS.MAKE-BREAKABLE").get();
-    public static final ItemStack ENCHANT_GUI_CLEAR_ENCHANTS_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ENCHANT-GUI.ICONS.CLEAR-ENCHANTS").get();
-    public static final ItemStack ENCHANT_GUI_CHANGE_DURABILITY_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ENCHANT-GUI.ICONS.CHANGE-DURABILITY").get();
-    public static final GUIItem ENCHANT_GUI_ENCHANT_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ENCHANT-GUI.ICONS.ENCHANTMENT-ICON");
-    public static final ItemStack ENCHANT_GUI_SET_LEVEL_PLACEHOLDER_ICON = PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ENCHANT-GUI.ICONS.SET-ENCHANTMENT-LEVEL-PLACEHOLDER").get();
-    public static final Map<Integer, GUIItem> ENCHANTMENT_LEVEL_MAP = new HashMap<>();
-    public static final Map<String, List<Enchantment>> DISABLED_ENCHANTMENTS = new HashMap<>();
-
-    static {
-        for (int i = 1; i <= 5; i++) {
-            ENCHANTMENT_LEVEL_MAP.put(i, PlayerKitManager.getInstance().getGuiItem("GUI.ITEMS.ENCHANT-GUI.ICONS.SET-ENCHANTMENT-LEVEL")
-                    .replace("%level%", String.valueOf(i)));
+  public static Map<String, List<Enchantment>> disabledEnchantments() {
+    Map<String, List<Enchantment>> disabled = new HashMap<>();
+    for (Map.Entry<String, List<String>> entry :
+        PracticeConfig.playerKit().getDisabledEnchants().entrySet()) {
+      List<Enchantment> enchantments = new ArrayList<>();
+      for (String enchantment : entry.getValue() != null ? entry.getValue() : List.<String>of()) {
+        try {
+          Enchantment parsed = Common.resolveEnchantment(enchantment);
+          if (parsed != null) {
+            enchantments.add(parsed);
+          }
+        } catch (Exception e) {
+          Common.sendConsoleMmMessage("<red>Invalid enchantment name: " + enchantment);
         }
-
-        for (String path : PlayerKitManager.getInstance().getConfigSectionKeys("DISABLED-ENCHANTS")) {
-            List<Enchantment> enchantments = new ArrayList<>();
-            for (String enchantment : PlayerKitManager.getInstance().getList("DISABLED-ENCHANTS." + path)) {
-                try {
-                    Enchantment parsed = Common.resolveEnchantment(enchantment);
-                    if (parsed != null) {
-                        enchantments.add(parsed);
-                    }
-                } catch (Exception e) {
-                    Common.sendConsoleMMMessage("<red>Invalid enchantment name: " + enchantment);
-                }
-            }
-            DISABLED_ENCHANTMENTS.put(path, enchantments);
-        }
+      }
+      disabled.put(entry.getKey(), enchantments);
     }
 
-    public static final String CUSTOM_DURABILITY_GUI_TITLE = PlayerKitManager.getInstance().getString("GUI.ITEMS.CUSTOM-DURABILITY-GUI.TITLE");
+    return disabled;
+  }
 
-    // Custom settings GUI
-    public static final ItemStack BACK_TO_ITEM = PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NAV.GO-BACK").get();
-    public static final Pair<ItemStack, ItemStack> REGEN_ITEM = new Pair<>(PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.REGENERATION.ENABLED").get(), PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.REGENERATION.DISABLED").get());
-    public static final Pair<ItemStack, ItemStack> HUNGER_ITEM = new Pair<>(PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.HUNGER.ENABLED").get(), PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.HUNGER.DISABLED").get());
-    public static final Pair<ItemStack, ItemStack> BUILD_ITEM = new Pair<>(PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.BUILD.ENABLED").get(), PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.BUILD.DISABLED").get());
-    public static final GUIItem ROUNDS_ITEM = PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.ROUNDS");
-    public static final GUIItem KNOCKBACK_ITEM = PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.KNOCKBACK");
-    public static final GUIItem HITDELAY_ITEM = PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.HITDELAY");
-    public static final GUIItem ENDERPEARL_ITEM = PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.ENDERPEARL-COOLDOWN");
-    public static final GUIItem GAPPLE_ITEM = PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.GOLDENAPPLE-COOLDOWN");
-    public static final GUIItem WIND_CHARGE_ITEM = PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.WIND-CHARGE-COOLDOWN");
-    public static final Pair<ItemStack, ItemStack> HEALTH_BELOW_NAME_ITEM = new Pair<>(PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.HEALTH-BELOW-NAME.ENABLED").get(), PlayerKitManager.getInstance().getGuiItem("GUI.CUSTOM-SETTINGS.ICONS.NORMAL-SETTINGS.HEALTH-BELOW-NAME.DISABLED").get());
+  public static String customDurabilityGuiTitle() {
+    return PracticeConfig.playerKit().getGui().getItems().getCustomDurabilityGui().getTitle();
+  }
 
+  // Custom settings GUI
+  public static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.playerKit().getGui().getCustomSettings().getIcons().getNav().getGoBack())
+        .get();
+  }
+
+  public static Pair<ItemStack, ItemStack> regenItem() {
+    return new Pair<>(
+        BackendUtil.getGuiItem(
+                PracticeConfig.playerKit()
+                    .getGui()
+                    .getCustomSettings()
+                    .getIcons()
+                    .getNormalSettings()
+                    .getRegeneration()
+                    .getEnabled())
+            .get(),
+        BackendUtil.getGuiItem(
+                PracticeConfig.playerKit()
+                    .getGui()
+                    .getCustomSettings()
+                    .getIcons()
+                    .getNormalSettings()
+                    .getRegeneration()
+                    .getDisabled())
+            .get());
+  }
+
+  public static Pair<ItemStack, ItemStack> hungerItem() {
+    return new Pair<>(
+        BackendUtil.getGuiItem(
+                PracticeConfig.playerKit()
+                    .getGui()
+                    .getCustomSettings()
+                    .getIcons()
+                    .getNormalSettings()
+                    .getHunger()
+                    .getEnabled())
+            .get(),
+        BackendUtil.getGuiItem(
+                PracticeConfig.playerKit()
+                    .getGui()
+                    .getCustomSettings()
+                    .getIcons()
+                    .getNormalSettings()
+                    .getHunger()
+                    .getDisabled())
+            .get());
+  }
+
+  public static Pair<ItemStack, ItemStack> buildItem() {
+    return new Pair<>(
+        BackendUtil.getGuiItem(
+                PracticeConfig.playerKit()
+                    .getGui()
+                    .getCustomSettings()
+                    .getIcons()
+                    .getNormalSettings()
+                    .getBuild()
+                    .getEnabled())
+            .get(),
+        BackendUtil.getGuiItem(
+                PracticeConfig.playerKit()
+                    .getGui()
+                    .getCustomSettings()
+                    .getIcons()
+                    .getNormalSettings()
+                    .getBuild()
+                    .getDisabled())
+            .get());
+  }
+
+  public static GuiItem roundsItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.playerKit()
+            .getGui()
+            .getCustomSettings()
+            .getIcons()
+            .getNormalSettings()
+            .getRounds());
+  }
+
+  public static GuiItem knockbackItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.playerKit()
+            .getGui()
+            .getCustomSettings()
+            .getIcons()
+            .getNormalSettings()
+            .getKnockback());
+  }
+
+  public static GuiItem hitdelayItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.playerKit()
+            .getGui()
+            .getCustomSettings()
+            .getIcons()
+            .getNormalSettings()
+            .getHitdelay());
+  }
+
+  public static GuiItem enderpearlItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.playerKit()
+            .getGui()
+            .getCustomSettings()
+            .getIcons()
+            .getNormalSettings()
+            .getEnderpearlCooldown());
+  }
+
+  public static GuiItem gappleItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.playerKit()
+            .getGui()
+            .getCustomSettings()
+            .getIcons()
+            .getNormalSettings()
+            .getGoldenappleCooldown());
+  }
+
+  public static GuiItem windChargeItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.playerKit()
+            .getGui()
+            .getCustomSettings()
+            .getIcons()
+            .getNormalSettings()
+            .getWindChargeCooldown());
+  }
+
+  public static Pair<ItemStack, ItemStack> healthBelowNameItem() {
+    return new Pair<>(
+        BackendUtil.getGuiItem(
+                PracticeConfig.playerKit()
+                    .getGui()
+                    .getCustomSettings()
+                    .getIcons()
+                    .getNormalSettings()
+                    .getHealthBelowName()
+                    .getEnabled())
+            .get(),
+        BackendUtil.getGuiItem(
+                PracticeConfig.playerKit()
+                    .getGui()
+                    .getCustomSettings()
+                    .getIcons()
+                    .getNormalSettings()
+                    .getHealthBelowName()
+                    .getDisabled())
+            .get());
+  }
+
+  private static Items.CategoryGui.CategoryIcon categoryIcon(String key) {
+    return PracticeConfig.playerKit().getGui().getItems().getCategoryGui().getIcons().get(key);
+  }
+
+  private static Items.ItemsGui.OfficialIcons itemsGuiIcons() {
+    return PracticeConfig.playerKit().getGui().getItems().getItemsGui().getOfficialIcons();
+  }
+
+  private static Gui.MainArmor.Icons.Official mainArmorOfficial() {
+    return PracticeConfig.playerKit().getGui().getMainArmor().getIcons().getOfficial();
+  }
+
+  private static void addArmorIcons(
+      List<EditorIcon> target, Map<String, Gui.MainArmor.Icons.ArmorIcon> icons) {
+    if (icons == null) {
+      return;
+    }
+    for (Gui.MainArmor.Icons.ArmorIcon icon : icons.values()) {
+      target.add(
+          PlayerKitManager.getInstance().getEditorItem(icon, icon != null ? icon.getSlot() : null));
+    }
+  }
 }

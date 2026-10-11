@@ -1,10 +1,8 @@
 package dev.lokspel.practice.manager.fight.event.enums;
 
 public enum EventStatus {
-
-    COLLECTING, // Collecting the players, broadcasting the event.
-    START,
-    LIVE,
-    END
-
+  COLLECTING, // Collecting the players, broadcasting the event.
+  START,
+  LIVE,
+  END
 }

@@ -10,49 +10,51 @@ import org.bukkit.scheduler.BukkitRunnable;
 @Getter
 public abstract class Runnable extends BukkitRunnable {
 
-    protected boolean hasRun = false;
-    protected boolean running = false;
+  protected boolean hasRun = false;
+  protected boolean running = false;
 
-    protected final long delay;
-    protected final long period;
-    protected final boolean async;
+  protected final long delay;
+  protected final long period;
+  protected final boolean async;
 
-    @Setter
-    protected int seconds = 0;
+  @Setter protected int seconds = 0;
 
-    public Runnable(long delay, long period, boolean async) {
-        this.delay = delay;
-        this.period = period;
-        this.async = async;
+  public Runnable(long delay, long period, boolean async) {
+    this.delay = delay;
+    this.period = period;
+    this.async = async;
+  }
+
+  public boolean begin() {
+    if (this.hasRun) {
+      return false;
     }
 
-    public boolean begin() {
-        if (this.hasRun)
-            return false;
+    this.running = true;
+    this.hasRun = true;
 
-        this.running = true;
-        this.hasRun = true;
-
-        if (async)
-            this.runTaskTimerAsynchronously(AstralPractice.getInstance(), delay, period);
-        else
-            this.runTaskTimer(AstralPractice.getInstance(), delay, period);
-
-        return true;
+    if (async) {
+      this.runTaskTimerAsynchronously(AstralPractice.getInstance(), delay, period);
+    } else {
+      this.runTaskTimer(AstralPractice.getInstance(), delay, period);
     }
 
-    @Override
-    public void cancel() {
-        if (!running) return;
+    return true;
+  }
 
-        running = false;
-        Bukkit.getScheduler().cancelTask(this.getTaskId());
+  @Override
+  public void cancel() {
+    if (!running) {
+      return;
     }
 
-    public abstract void run();
+    running = false;
+    Bukkit.getScheduler().cancelTask(this.getTaskId());
+  }
 
-    public String getFormattedTime() {
-        return TimeUtil.formatDuration(seconds * 1000L);
-    }
+  public abstract void run();
 
+  public String getFormattedTime() {
+    return TimeUtil.formatDuration(seconds * 1000L);
+  }
 }

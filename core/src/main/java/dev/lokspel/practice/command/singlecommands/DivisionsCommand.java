@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.guis.DivisionGui;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -12,33 +12,37 @@ import org.bukkit.entity.Player;
 
 public class DivisionsCommand implements CommandExecutor {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            Common.sendConsoleMMMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
-            return false;
-        }
-
-        Profile profile = ProfileManager.getInstance().getProfile(player);
-
-        if (!player.hasPermission("ap.divisions.view")) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.DIVISIONS.NO-PERMISSION"));
-            return false;
-        }
-
-        if (!player.hasPermission("ap.admin")) {
-            switch (profile.getStatus()) {
-                case MATCH:
-                case FFA:
-                case EVENT:
-                    Common.sendMMMessage(player, LanguageManager.getString("COMMAND.DIVISIONS.CANT-USE"));
-                    return false;
-            }
-        }
-
-        new DivisionGui(profile, null).open(player);
-
-        return true;
+  @Override
+  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    if (!(sender instanceof Player player)) {
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
+      return false;
     }
 
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+
+    if (!player.hasPermission("ap.divisions.view")) {
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getDivisions().getNoPermission());
+      return false;
+    }
+
+    if (!player.hasPermission("ap.admin")) {
+      switch (profile.getStatus()) {
+        case MATCH:
+        case FFA:
+        case EVENT:
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getCommand().getDivisions().getCantUse());
+          return false;
+
+        default:
+          break;
+      }
+    }
+
+    new DivisionGui(profile, null).open(player);
+
+    return true;
+  }
 }

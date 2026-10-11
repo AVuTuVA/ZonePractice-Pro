@@ -1,0 +1,102 @@
+package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.items;
+
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
+import dev.lokspel.practice.manager.fight.match.enums.MatchType;
+import dev.lokspel.practice.manager.gui.GuiItem;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
+import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingItem;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingType;
+import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingsGui;
+import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
+import dev.lokspel.practice.manager.ladder.enums.WeightClassType;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.bukkit.event.inventory.InventoryClickEvent;
+
+public class RankedItem extends SettingItem {
+
+  public RankedItem(SettingsGui settingsGui, NormalLadder ladder) {
+    super(settingsGui, SettingType.WEIGHT_CLASS, ladder);
+  }
+
+  @Override
+  public void updateItemStack() {
+    List<String> extension = new ArrayList<>();
+    for (WeightClassType weightClassType : WeightClassType.values()) {
+      String ktName = StringUtils.capitalize(weightClassType.getName());
+
+      if (ladder.getWeightClass().equals(weightClassType)) {
+        extension.add(" <green>» " + ktName);
+      } else {
+        extension.add(" <gray>» " + ktName);
+      }
+    }
+
+    GuiItem guiItem =
+        BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getSettings()
+                .getIcons()
+                .getWeightClass());
+
+    List<String> lore = new ArrayList<>();
+    for (String line : guiItem.getLore()) {
+      if (line.contains("%weightClassTypes%")) {
+        lore.addAll(extension);
+      } else {
+        lore.add(line);
+      }
+    }
+
+    guiItem.setLore(lore);
+    this.guiItem = guiItem;
+  }
+
+  @Override
+  public void clickEvent(InventoryClickEvent e) {
+    switch (ladder.getWeightClass()) {
+      case UNRANKED:
+        ladder.setWeightClass(WeightClassType.RANKED);
+
+        ladder.getMatchTypes().clear();
+        ladder.getMatchTypes().add(MatchType.DUEL);
+
+        LadderSetupManager.getInstance()
+            .getLadderSetupGuis()
+            .get(ladder)
+            .get(GuiType.Ladder_MatchType)
+            .update();
+        break;
+      case RANKED:
+        ladder.setWeightClass(WeightClassType.UNRANKED_AND_RANKED);
+        break;
+      case UNRANKED_AND_RANKED:
+        ladder.setWeightClass(WeightClassType.UNRANKED);
+        break;
+
+      default:
+        break;
+    }
+
+    GuiManager.getInstance().searchGui(GuiType.Ladder_Summary).update();
+    LadderSetupManager.getInstance()
+        .getLadderSetupGuis()
+        .get(ladder)
+        .get(GuiType.Ladder_CustomKitExtra_unRanked)
+        .update();
+    LadderSetupManager.getInstance()
+        .getLadderSetupGuis()
+        .get(ladder)
+        .get(GuiType.Ladder_CustomKitExtra_Ranked)
+        .update();
+
+    build(true);
+  }
+}

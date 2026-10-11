@@ -4,8 +4,7 @@ import org.bukkit.entity.Player;
 
 public interface PlayerWinner {
 
-    void setRoundWinner(Player roundWinner);
+  void setRoundWinner(Player roundWinner);
 
-    Player getRoundWinner();
-
+  Player getRoundWinner();
 }

@@ -1,50 +1,64 @@
 package dev.lokspel.practice.manager.fight.match.listener;
 
-import dev.lokspel.api.Event.Match.MatchRoundStartEvent;
-import dev.lokspel.api.Event.Match.MatchStartEvent;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.api.event.match.MatchRoundStartEvent;
+import dev.lokspel.api.event.match.MatchStartEvent;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.settings.MatchSettings;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.server.ServerManager;
+import java.util.List;
+import java.util.Map;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.List;
-
 public class StartListener implements Listener {
 
-    @EventHandler
-    public void onMatchStart(MatchStartEvent e) {
-        Match match = (Match) e.getMatch();
+  @EventHandler
+  public void onMatchStart(MatchStartEvent e) {
+    Match match = (Match) e.getMatch();
 
-        if (!(match.getLadder() instanceof NormalLadder ladder)) {
-            return;
-        }
-
-        String path = "MATCH-SETTINGS.START-COMMAND." + ladder.getName().toUpperCase() + ".MATCH";
-        if (ConfigManager.getConfig().isList(path)) {
-            List<String> commands = ConfigManager.getConfig().getStringList(path);
-            for (String command : commands) {
-                e.getMatch().getPlayers().forEach(player -> ServerManager.runConsoleCommand(command.replace("%player%", player.getName())));
-            }
-        }
+    if (!(match.getLadder() instanceof NormalLadder ladder)) {
+      return;
     }
 
-    @EventHandler
-    public void onMatchRoundStart(MatchRoundStartEvent e) {
-        Match match = (Match) e.getMatch();
+    MatchSettings.StartCommand startCommand = getStartCommand(ladder);
+    List<String> commands = startCommand != null ? startCommand.getMatch() : null;
+    if (commands != null) {
+      for (String command : commands) {
+        e.getMatch()
+            .getPlayers()
+            .forEach(
+                player ->
+                    ServerManager.runConsoleCommand(command.replace("%player%", player.getName())));
+      }
+    }
+  }
 
-        if (!(match.getLadder() instanceof NormalLadder ladder)) {
-            return;
-        }
+  @EventHandler
+  public void onMatchRoundStart(MatchRoundStartEvent e) {
+    Match match = (Match) e.getMatch();
 
-        String path = "MATCH-SETTINGS.START-COMMAND." + ladder.getName().toUpperCase() + ".ROUND";
-        if (ConfigManager.getConfig().isList(path)) {
-            List<String> commands = ConfigManager.getConfig().getStringList(path);
-            for (String command : commands) {
-                e.getMatch().getPlayers().forEach(player -> ServerManager.runConsoleCommand(command.replace("%player%", player.getName())));
-            }
-        }
+    if (!(match.getLadder() instanceof NormalLadder ladder)) {
+      return;
     }
 
+    MatchSettings.StartCommand startCommand = getStartCommand(ladder);
+    List<String> commands = startCommand != null ? startCommand.getRound() : null;
+    if (commands != null) {
+      for (String command : commands) {
+        e.getMatch()
+            .getPlayers()
+            .forEach(
+                player ->
+                    ServerManager.runConsoleCommand(command.replace("%player%", player.getName())));
+      }
+    }
+  }
+
+  private static MatchSettings.StartCommand getStartCommand(NormalLadder ladder) {
+    Map<String, MatchSettings.StartCommand> startCommands =
+        PracticeConfig.settings().getMatchSettings().getStartCommand();
+    return startCommands != null ? startCommands.get(ladder.getName().toUpperCase()) : null;
+  }
 }

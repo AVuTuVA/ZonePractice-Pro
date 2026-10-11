@@ -5,6 +5,5 @@ import org.bukkit.event.Event;
 
 public interface LadderHandle {
 
-    boolean handleEvents(Event e, Match match);
-
+  boolean handleEvents(Event e, Match match);
 }

@@ -1,72 +1,98 @@
 package dev.lokspel.practice.manager.profile;
 
 import dev.lokspel.practice.AstralPractice;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 @Getter
 @Setter
 public class RankedBan {
 
-    private Profile banner;
-    private boolean banned;
-    private String reason;
-    private long time;
+  private Profile banner;
+  private boolean banned;
+  private String reason;
+  private long time;
 
-    public boolean ban(Profile banner, String reason) {
-        if (banned) return false;
-
-        this.banned = true;
-        this.banner = banner;
-        this.reason = reason;
-        this.time = System.currentTimeMillis();
-        return true;
+  public boolean ban(Profile banner, String reason) {
+    if (banned) {
+      return false;
     }
 
-    public boolean unban() {
-        if (!banned) return false;
+    this.banned = true;
+    this.banner = banner;
+    this.reason = reason;
+    this.time = System.currentTimeMillis();
+    return true;
+  }
 
-        this.banned = false;
-        this.reason = null;
-        return true;
+  public boolean unban() {
+    if (!banned) {
+      return false;
     }
 
-    public void saveToConfig(final @NotNull YamlConfiguration config, final String path) {
-        if (!isBanned()) {
-            config.set(path, null);
-            return;
-        }
+    this.banned = false;
+    this.reason = null;
+    return true;
+  }
 
-        if (banner != null)
-            config.set(path + ".banner", banner.getUuid().toString());
-
-        config.set(path + ".banned", true);
-        config.set(path + ".reason", reason);
-        config.set(path + ".bannedAt", time);
+  /**
+   * Writes the ban into its section of the profile file.
+   *
+   * @param data the section the file holds, or {@code null}
+   * @return the updated section, or {@code null} to remove it when the player is not banned
+   */
+  public ProfileData.RankedBan setData(final ProfileData.RankedBan data) {
+    if (!isBanned()) {
+      return null;
     }
 
-    public void loadFromConfig(final @NotNull YamlConfiguration config, final String path) {
-        if (!config.isBoolean(path + ".banned")) return;
-
-        banned = config.getBoolean(path + ".banned");
-
-        if (!isBanned()) return;
-
-        Bukkit.getScheduler().runTaskLater(AstralPractice.getInstance(), () -> {
-            if (config.isString(path + ".banner"))
-                banner = ProfileManager.getInstance().getProfile(UUID.fromString(config.getString(path + ".banner")));
-        }, 20L * 3);
-
-        if (config.isString(path + ".reason"))
-            reason = config.getString(path + ".reason");
-
-        if (config.isLong(path + ".bannedAt"))
-            time = config.getLong(path + ".bannedAt");
+    ProfileData.RankedBan section = data != null ? data : new ProfileData.RankedBan();
+    if (banner != null) {
+      section.setBanner(banner.getUuid().toString());
     }
 
+    section.setBanned(true);
+    section.setReason(reason);
+    section.setBannedAt(time);
+    return section;
+  }
+
+  /**
+   * Reads the ban from its section of the profile file. The banner's profile is looked up a few
+   * seconds later, once the profiles are loaded.
+   *
+   * @param data the section, or {@code null} if the file has none
+   */
+  public void getData(final ProfileData.RankedBan data) {
+    if (data == null || data.getBanned() == null) {
+      return;
+    }
+
+    banned = data.getBanned();
+
+    if (!isBanned()) {
+      return;
+    }
+
+    String bannerUuid = data.getBanner();
+    Bukkit.getScheduler()
+        .runTaskLater(
+            AstralPractice.getInstance(),
+            () -> {
+              if (bannerUuid != null) {
+                banner = ProfileManager.getInstance().getProfile(UUID.fromString(bannerUuid));
+              }
+            },
+            20L * 3);
+
+    if (data.getReason() != null) {
+      reason = data.getReason();
+    }
+
+    if (data.getBannedAt() != null) {
+      time = data.getBannedAt();
+    }
+  }
 }

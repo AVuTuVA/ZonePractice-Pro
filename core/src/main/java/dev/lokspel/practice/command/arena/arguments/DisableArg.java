@@ -1,61 +1,95 @@
 package dev.lokspel.practice.command.arena.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.util.Common;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public final class DisableArg {
 
-    private DisableArg() {}
+  private DisableArg() {}
 
-    public static void run(Player player, String label, String[] args) {
-        if (!player.hasPermission("ap.setup")) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
-            return;
-        }
-
-        if (args.length != 2) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.DISABLE.COMMAND-HELP").replace("%label%", label));
-            return;
-        }
-
-        DisplayArena arena = ArenaManager.getInstance().getArena(args[1]);
-        if (arena == null) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.DISABLE.NOT-EXISTS").replace("%arena%", args[1]));
-            return;
-        }
-
-        if (!arena.isEnabled()) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.DISABLE.ALREADY-DISABLED").replace("%arena%", arena.getName()));
-            return;
-        }
-
-        if (ArenaUtil.changeStatus(player, arena)) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.DISABLE.ARENA-DISABLED").replace("%arena%", arena.getName()));
-        }
+  public static void run(Player player, String label, String[] args) {
+    if (!player.hasPermission("ap.setup")) {
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
+      return;
     }
 
-    public static List<String> tabComplete(Player player, String[] args) {
-        List<String> arguments = new ArrayList<>();
-        if (!player.hasPermission("ap.setup")) return arguments;
-
-        if (args.length == 2) {
-            for (DisplayArena arena : ArenaManager.getInstance().getArenaList()) {
-                if (arena.isEnabled())
-                    arguments.add(arena.getName());
-            }
-
-            return StringUtil.copyPartialMatches(args[1], arguments, new ArrayList<>());
-        }
-
-        return arguments;
+    if (args.length != 2) {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDisable()
+              .getCommandHelp()
+              .replace("%label%", label));
+      return;
     }
 
+    DisplayArena arena = ArenaManager.getInstance().getArena(args[1]);
+    if (arena == null) {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDisable()
+              .getNotExists()
+              .replace("%arena%", args[1]));
+      return;
+    }
+
+    if (!arena.isEnabled()) {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDisable()
+              .getAlreadyDisabled()
+              .replace("%arena%", arena.getName()));
+      return;
+    }
+
+    if (ArenaUtil.changeStatus(player, arena)) {
+      Common.sendMmMessage(
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDisable()
+              .getArenaDisabled()
+              .replace("%arena%", arena.getName()));
+    }
+  }
+
+  public static List<String> tabComplete(Player player, String[] args) {
+    List<String> arguments = new ArrayList<>();
+    if (!player.hasPermission("ap.setup")) {
+      return arguments;
+    }
+
+    if (args.length == 2) {
+      for (DisplayArena arena : ArenaManager.getInstance().getArenaList()) {
+        if (arena.isEnabled()) {
+          arguments.add(arena.getName());
+        }
+      }
+
+      return StringUtil.copyPartialMatches(args[1], arguments, new ArrayList<>());
+    }
+
+    return arguments;
+  }
 }

@@ -1,51 +1,50 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.language.Command;
 import dev.lokspel.practice.manager.server.ServerManager;
 import dev.lokspel.practice.util.Common;
 import org.bukkit.entity.Player;
 
 public final class ReloadArg {
 
-    private ReloadArg() {}
+  private ReloadArg() {}
 
-    private static String message(String path, String fallback) {
-        String value = LanguageManager.getString(path);
-        return value != null ? value : fallback;
+  private static Command.Practice.Arguments.Reload messages() {
+    return PracticeConfig.language().getCommand().getPractice().getArguments().getReload();
+  }
+
+  public static void run(Player player, String label, String[] args) {
+    if (!player.hasPermission("ap.practice.reload")) {
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
+      return;
     }
 
-    public static void run(Player player, String label, String[] args) {
-        if (!player.hasPermission("ap.practice.reload")) {
-            Common.sendMMMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
-            return;
-        }
-
-        if (args.length != 1) {
-            Common.sendMMMessage(player, message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.COMMAND-HELP", "<red>/%label% reload").replace("%label%", label));
-            return;
-        }
-
-        if (ServerManager.getInstance().reloadFiles()) {
-            Common.sendMMMessage(player, message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.RELOADED", "<green>Practice config files have been reloaded."));
-            return;
-        }
-
-        Common.sendMMMessage(player, message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.FAILED", "<red>Reload failed. Check console for details."));
+    if (args.length != 1) {
+      Common.sendMmMessage(player, messages().getCommandHelp().replace("%label%", label));
+      return;
     }
 
-    public static void run(String label, String[] args) {
-        if (args.length != 1) {
-            Common.sendConsoleMMMessage(message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.COMMAND-HELP", "<red>/%label% reload").replace("%label%", label));
-            return;
-        }
-
-        if (ServerManager.getInstance().reloadFiles()) {
-            Common.sendConsoleMMMessage(message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.RELOADED", "<green>Practice config files have been reloaded."));
-            return;
-        }
-
-        Common.sendConsoleMMMessage(message("COMMAND.PRACTICE.ARGUMENTS.RELOAD.FAILED", "<red>Reload failed. Check console for details."));
+    if (ServerManager.getInstance().reloadFiles()) {
+      Common.sendMmMessage(player, messages().getReloaded());
+      return;
     }
+
+    Common.sendMmMessage(player, messages().getFailed());
+  }
+
+  public static void run(String label, String[] args) {
+    if (args.length != 1) {
+      Common.sendConsoleMmMessage(messages().getCommandHelp().replace("%label%", label));
+      return;
+    }
+
+    if (ServerManager.getInstance().reloadFiles()) {
+      Common.sendConsoleMmMessage(messages().getReloaded());
+      return;
+    }
+
+    Common.sendConsoleMmMessage(messages().getFailed());
+  }
 }
-
-

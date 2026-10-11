@@ -5,21 +5,20 @@ import dev.lokspel.practice.util.interfaces.Runnable;
 
 public class DurationRunnable extends Runnable {
 
-    private final Event event;
+  private final Event event;
 
-    public DurationRunnable(final Event event) {
-        super(0, 20, false);
-        this.event = event;
-        this.seconds = event.getEventData().getDuration();
-    }
+  public DurationRunnable(final Event event) {
+    super(0, 20, false);
+    this.event = event;
+    this.seconds = event.getEventData().getDuration();
+  }
 
-    @Override
-    public void run() {
-        event.handleDurationRunnable(this);
-    }
+  @Override
+  public void run() {
+    event.handleDurationRunnable(this);
+  }
 
-    public void decreaseTime() {
-        this.seconds--;
-    }
-
+  public void decreaseTime() {
+    this.seconds--;
+  }
 }
