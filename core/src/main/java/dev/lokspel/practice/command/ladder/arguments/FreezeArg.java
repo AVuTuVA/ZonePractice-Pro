@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.ladder.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
@@ -16,14 +16,20 @@ public final class FreezeArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.ladder.freeze")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.LADDER.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getLadder().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.FREEZE.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getFreeze()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -32,7 +38,12 @@ public final class FreezeArg {
     if (ladder == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.FREEZE.NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getFreeze()
+              .getNotExists()
               .replace("%ladder%", args[1]));
       return;
     }
@@ -40,7 +51,12 @@ public final class FreezeArg {
     if (!ladder.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.FREEZE.LADDER-DISABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getFreeze()
+              .getLadderDisabled()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
@@ -48,12 +64,22 @@ public final class FreezeArg {
     if (!ladder.isFrozen()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.FREEZE.FREEZE-SUCCESS")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getFreeze()
+              .getFreezeSuccess()
               .replace("%ladder%", ladder.getDisplayName()));
     } else {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.FREEZE.UNFREEZE-SUCCESS")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getFreeze()
+              .getUnfreezeSuccess()
               .replace("%ladder%", ladder.getDisplayName()));
     }
 

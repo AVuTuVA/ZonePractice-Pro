@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.leaderboard;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.division.Division;
 import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.division.DivisionUtil;
@@ -23,7 +24,14 @@ import org.bukkit.inventory.ItemStack;
 public class LbSelectorGui extends Gui {
 
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.STATISTICS.SELECTOR.ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getSelector()
+                  .getIcons()
+                  .getFillerItem())
+          .get();
 
   @Getter private static LbEloGui sharedLbEloGui;
   @Getter private static LbWinGui sharedLbWinGui;
@@ -37,7 +45,9 @@ public class LbSelectorGui extends Gui {
     super(GuiType.Leaderboard_Selector);
 
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString("GUIS.STATISTICS.SELECTOR.TITLE"), 4));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getStatistics().getSelector().getTitle(), 4));
     this.opener = opener;
     this.profile = profile;
 
@@ -74,11 +84,26 @@ public class LbSelectorGui extends Gui {
 
               inventory.setItem(13, LbGuiUtil.createProfileStatItem(profile, opener));
               inventory.setItem(
-                  20, GuiFile.getGuiItem("GUIS.STATISTICS.SELECTOR.ICONS.ELO-LEADERBOARD").get());
+                  20,
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getStatistics()
+                              .getSelector()
+                              .getIcons()
+                              .getEloLeaderboard())
+                      .get());
               inventory.setItem(22, getDivisionItem(profile));
               inventory.setItem(
                   24,
-                  GuiFile.getGuiItem("GUIS.STATISTICS.SELECTOR.ICONS.TOP-WIN-LEADERBOARD").get());
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getStatistics()
+                              .getSelector()
+                              .getIcons()
+                              .getTopWinLeaderboard())
+                      .get());
 
               updatePlayers();
             });
@@ -116,7 +141,15 @@ public class LbSelectorGui extends Gui {
 
     GuiItem guiItem;
     if (nextDivision != null) {
-      guiItem = GuiFile.getGuiItem("GUIS.STATISTICS.SELECTOR.ICONS.VIEW-DIVISIONS.HAS-NEXT");
+      guiItem =
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getSelector()
+                  .getIcons()
+                  .getViewDivisions()
+                  .getHasNext());
 
       guiItem
           .replace("%nextDivision_fullName%", Common.mmToNormal(nextDivision.getFullName()))
@@ -130,7 +163,15 @@ public class LbSelectorGui extends Gui {
               "%progress_percent%",
               String.valueOf(DivisionUtil.getDivisionProgress(profile, nextDivision)));
     } else {
-      guiItem = GuiFile.getGuiItem("GUIS.STATISTICS.SELECTOR.ICONS.VIEW-DIVISIONS.NO-NEXT");
+      guiItem =
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getStatistics()
+                  .getSelector()
+                  .getIcons()
+                  .getViewDivisions()
+                  .getNoNext());
     }
 
     guiItem

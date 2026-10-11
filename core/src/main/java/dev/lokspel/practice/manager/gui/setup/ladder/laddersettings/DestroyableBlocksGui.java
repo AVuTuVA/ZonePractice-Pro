@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
@@ -40,7 +40,12 @@ public class DestroyableBlocksGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.LADDER.DESTROYABLE-BLOCKS.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getDestroyableBlocks()
+                .getTitle()
                 .replace("%ladder%", ladder.getName()),
             6));
 
@@ -55,7 +60,15 @@ public class DestroyableBlocksGui extends Gui {
     gui.get(1)
         .setItem(
             BACK_SLOT,
-            GuiFile.getGuiItem("GUIS.SETUP.LADDER.DESTROYABLE-BLOCKS.ICONS.BACK-TO").get());
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getLadder()
+                        .getDestroyableBlocks()
+                        .getIcons()
+                        .getBackTo())
+                .get());
 
     update();
   }
@@ -121,7 +134,8 @@ public class DestroyableBlocksGui extends Gui {
         if (ladder.isEnabled()) {
           e.setCancelled(true);
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getLadder().getCantEditEnabled());
           return;
         }
         checkItem(e);
@@ -133,7 +147,8 @@ public class DestroyableBlocksGui extends Gui {
     if (ladder.isEnabled()) {
       e.setCancelled(true);
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
+          player,
+          PracticeConfig.language().getCommand().getSetup().getLadder().getCantEditEnabled());
       return;
     }
 
@@ -189,7 +204,8 @@ public class DestroyableBlocksGui extends Gui {
     if (item != null && !item.getType().equals(Material.AIR)) {
       if (!item.getType().isBlock()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.SETUP.LADDER.ONLY-PUT-BLOCKS"));
+            player,
+            PracticeConfig.language().getCommand().getSetup().getLadder().getOnlyPutBlocks());
         e.setCancelled(true);
       } else {
         Bukkit.getScheduler()

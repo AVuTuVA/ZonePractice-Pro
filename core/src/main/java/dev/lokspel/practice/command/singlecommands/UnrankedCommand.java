@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.ladder.LadderManager;
@@ -29,7 +29,7 @@ public class UnrankedCommand implements CommandExecutor {
         profile.getStatus().equals(ProfileStatus.LOBBY)
             || profile.getStatus().equals(ProfileStatus.QUEUE);
     if (!lobbyOrQueue || profile.isStaffMode() || profile.isParty()) {
-      Common.sendMmMessage(player, LanguageManager.getString("CANT-USE-COMMAND"));
+      Common.sendMmMessage(player, PracticeConfig.language().getCantUseCommand());
       return false;
     }
 
@@ -40,7 +40,8 @@ public class UnrankedCommand implements CommandExecutor {
 
     if (!player.hasPermission("ap.bypass.unranked.limit") && profile.getUnrankedLeft() <= 0) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.QUEUES.UNRANKED.NO-UNRANKED-LEFT"));
+          player,
+          PracticeConfig.language().getCommand().getQueues().getUnranked().getNoUnrankedLeft());
       return false;
     }
 
@@ -49,7 +50,11 @@ public class UnrankedCommand implements CommandExecutor {
       if (ladder == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.QUEUES.UNRANKED.LADDER-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getQueues()
+                .getUnranked()
+                .getLadderNotFound()
                 .replace("%ladder%", args[0]));
         return false;
       }

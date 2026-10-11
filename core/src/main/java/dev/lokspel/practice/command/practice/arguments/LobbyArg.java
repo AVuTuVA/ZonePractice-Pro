@@ -1,7 +1,7 @@
 package dev.lokspel.practice.command.practice.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.util.ArenaWorldUtil;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
 import dev.lokspel.practice.manager.server.ServerManager;
 import dev.lokspel.practice.util.Common;
@@ -17,7 +17,8 @@ public final class LobbyArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.practice.lobby")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
       return;
     }
 
@@ -28,7 +29,12 @@ public final class LobbyArg {
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.LOBBY.LOBBY-NOT-SET")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getLobby()
+                .getLobbyNotSet()
                 .replace("%label%", label));
       }
     } else if (args.length == 2 && args[1].equalsIgnoreCase("set")) {
@@ -39,15 +45,33 @@ public final class LobbyArg {
         ServerManager.getInstance().setLobby(player, lobbyLocation);
 
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.LOBBY.LOBBY-SET"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getLobby()
+                .getLobbySet());
       } else {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.LOBBY.NO-ARENAS-WORLD"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getLobby()
+                .getNoArenasWorld());
       }
     } else if (args.length == 2 && args[1].equalsIgnoreCase("load")) {
       InventoryManager.getInstance().setLobbyInventory(player, ServerManager.getLobby() != null);
     } else {
-      for (String line : LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.LOBBY.COMMAND-HELP")) {
+      for (String line :
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getLobby()
+              .getCommandHelp()) {
         Common.sendMmMessage(player, line.replace("%label%", label));
       }
     }

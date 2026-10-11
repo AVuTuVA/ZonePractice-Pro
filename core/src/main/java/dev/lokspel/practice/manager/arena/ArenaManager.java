@@ -2,12 +2,11 @@ package dev.lokspel.practice.manager.arena;
 
 import dev.lokspel.practice.AstralPractice;
 import dev.lokspel.practice.command.arena.arguments.CreateArg;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.BasicArena;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.arena.ArenaGuiSetupManager;
@@ -42,7 +41,7 @@ public class ArenaManager implements Listener {
     return instance;
   }
 
-  public static final boolean LOAD_CHUNKS = ConfigManager.getBoolean("ARENA.LOAD-CHUNKS");
+  public static final boolean LOAD_CHUNKS = PracticeConfig.settings().getArena().isLoadChunks();
   public static final Set<Long> LOADED_CHUNK_KEYS = ConcurrentHashMap.newKeySet();
 
   private final List<DisplayArena> arenaList = new CopyOnWriteArrayList<>();
@@ -189,7 +188,7 @@ public class ArenaManager implements Listener {
           if (ffaPlayer.getValue() == ladder) {
             ffa.removePlayer(ffaPlayer.getKey());
             Common.sendMmMessage(
-                ffaPlayer.getKey(), LanguageManager.getString("FFA.LADDER-DISABLED-REMOVED"));
+                ffaPlayer.getKey(), PracticeConfig.language().getFfa().getLadderDisabledRemoved());
           }
         }
       }

@@ -1,7 +1,7 @@
 package dev.lokspel.practice.util;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -17,7 +17,7 @@ public final class UpdateChecker {
   private static final String DOWNLOAD_URL = "https://github.com/sylveya/AstralPractice/releases";
 
   public static void checkAsync(AstralPractice plugin) {
-    if (!ConfigManager.getBoolean("UPDATE-CHECKER.ENABLED", true)) {
+    if (!PracticeConfig.settings().getUpdateChecker().isEnabled()) {
       return;
     }
 

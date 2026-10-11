@@ -3,9 +3,8 @@ package dev.lokspel.practice.manager.queue;
 import dev.lokspel.api.event.queue.QueueEndEvent;
 import dev.lokspel.api.event.queue.QueueStartEvent;
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.division.Division;
 import dev.lokspel.practice.manager.fight.match.enums.WeightClass;
 import dev.lokspel.practice.manager.fight.match.type.duel.Duel;
@@ -41,9 +40,9 @@ import org.bukkit.inventory.PlayerInventory;
 public class Queue extends Runnable implements dev.lokspel.api.interfaces.Queue {
 
   private static final int UNRANKED_MAX_QUEUE_TIME =
-      ConfigManager.getInt("QUEUE.UNRANKED.MAX-QUEUE-TIME");
+      PracticeConfig.settings().getQueue().getUnranked().getMaxQueueTime();
   private static final int RANKED_MAX_QUEUE_TIME =
-      ConfigManager.getInt("QUEUE.RANKED.MAX-QUEUE-TIME");
+      PracticeConfig.settings().getQueue().getRanked().getMaxQueueTime();
 
   private final QueueManager queueManager = QueueManager.getInstance();
 
@@ -139,7 +138,9 @@ public class Queue extends Runnable implements dev.lokspel.api.interfaces.Queue 
     // Send the player a message that they have started queueing
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("QUEUES.QUEUE-START")
+        PracticeConfig.language()
+            .getQueues()
+            .getQueueStart()
             .replace(
                 "%weightClass%",
                 (ranked ? WeightClass.RANKED.getMmName() : WeightClass.UNRANKED.getMmName()))
@@ -163,7 +164,8 @@ public class Queue extends Runnable implements dev.lokspel.api.interfaces.Queue 
   public void startUnrankedQueue() {
     Division division = profile.getStats().getDivision();
 
-    if (division == null || !ConfigManager.getBoolean("QUEUE.UNRANKED.DIVISION-SEARCH.ENABLED")) {
+    if (division == null
+        || !PracticeConfig.settings().getQueue().getUnranked().getDivisionSearch().getEnabled()) {
       List<NormalLadder> ladders = new ArrayList<>(this.queuedLadders);
       Collections.shuffle(ladders);
 
@@ -206,21 +208,23 @@ public class Queue extends Runnable implements dev.lokspel.api.interfaces.Queue 
 
     // Check if the ladder is frozen or disabled
     if (matchedLadder.getAvailableArenas().isEmpty()) {
-      queue.endQueue(false, LanguageManager.getString("QUEUES.NO-AVAILABLE-ARENA"));
-      this.endQueue(false, LanguageManager.getString("QUEUES.NO-AVAILABLE-ARENA"));
+      queue.endQueue(false, PracticeConfig.language().getQueues().getNoAvailableArena());
+      this.endQueue(false, PracticeConfig.language().getQueues().getNoAvailableArena());
       return;
     }
 
     // Get an available arena
     Arena arena = LadderUtil.getAvailableArena(matchedLadder);
     if (arena == null) {
-      queue.endQueue(false, LanguageManager.getString("QUEUES.NO-AVAILABLE-ARENA"));
-      this.endQueue(false, LanguageManager.getString("QUEUES.NO-AVAILABLE-ARENA"));
+      queue.endQueue(false, PracticeConfig.language().getQueues().getNoAvailableArena());
+      this.endQueue(false, PracticeConfig.language().getQueues().getNoAvailableArena());
       return;
     }
 
     String stopMessage =
-        LanguageManager.getString("QUEUES.QUEUE-STOPPED")
+        PracticeConfig.language()
+            .getQueues()
+            .getQueueStopped()
             .replace(
                 "%weightClass%",
                 (ranked ? WeightClass.RANKED.getMmName() : WeightClass.UNRANKED.getMmName()))
@@ -230,7 +234,7 @@ public class Queue extends Runnable implements dev.lokspel.api.interfaces.Queue 
     queueManager.endAllQueuesForPlayer(this.player, true, stopMessage);
 
     boolean matchFoundAnimation =
-        ConfigManager.getBoolean("MATCH-SETTINGS.MATCH-FOUND.ICON-ANIMATION");
+        PracticeConfig.settings().getMatchSettings().getMatchFound().isIconAnimation();
 
     if (matchFoundAnimation) {
       ItemStack icon = matchedLadder.getIcon();
@@ -269,7 +273,7 @@ public class Queue extends Runnable implements dev.lokspel.api.interfaces.Queue 
                   duel.startMatch();
                 }
               },
-              ConfigManager.getInt("MATCH-SETTINGS.MATCH-FOUND.ICON-ANIMATION-DELAY", 40));
+              PracticeConfig.settings().getMatchSettings().getMatchFound().getIconAnimationDelay());
     } else {
       duel.startMatch();
     }
@@ -328,7 +332,9 @@ public class Queue extends Runnable implements dev.lokspel.api.interfaces.Queue 
       this.removeLadder(normalLadder);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("QUEUES.LADDER-FROZEN")
+          PracticeConfig.language()
+              .getQueues()
+              .getLadderFrozen()
               .replace("%ladder%", normalLadder.getDisplayName()));
     }
 
@@ -347,7 +353,9 @@ public class Queue extends Runnable implements dev.lokspel.api.interfaces.Queue 
     if (seconds >= maxQueueTime) {
       this.endQueue(
           false,
-          LanguageManager.getString("QUEUES.NO-MATCH-IN-TIME")
+          PracticeConfig.language()
+              .getQueues()
+              .getNoMatchInTime()
               .replace("%maxTime%", String.valueOf(maxQueueTime / 60)));
       return;
     }

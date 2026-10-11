@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -31,7 +30,8 @@ public final class Exp {
       }
 
       if (!player.hasPermission("ap.practice.exp.reset")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -46,7 +46,12 @@ public final class Exp {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.TARGET-RESET")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getExperience()
+              .getTargetReset()
               .replace("%target%", target.getPlayer().getName()));
     } else if (args[1].equalsIgnoreCase("add")) {
       // /prac exp add <player> <number>
@@ -56,7 +61,8 @@ public final class Exp {
       }
 
       if (!player.hasPermission("ap.practice.exp.add")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -72,14 +78,24 @@ public final class Exp {
       } catch (NumberFormatException exception) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getInvalidNumber());
         return;
       }
 
       if (extraExp <= 0) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getInvalidNumber());
         return;
       }
 
@@ -88,7 +104,12 @@ public final class Exp {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.ADD-EXTRA-EXP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getExperience()
+              .getAddExtraExp()
               .replace("%extraExp%", String.valueOf(extraExp))
               .replace("%target%", target.getPlayer().getName())
               .replace("%newExp%", String.valueOf(target.getStats().getExperience())));
@@ -100,7 +121,8 @@ public final class Exp {
       }
 
       if (!player.hasPermission("ap.practice.exp.set")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -116,14 +138,24 @@ public final class Exp {
       } catch (NumberFormatException exception) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getInvalidNumber());
         return;
       }
 
       if (setExp <= 0) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getInvalidNumber());
         return;
       }
 
@@ -132,7 +164,12 @@ public final class Exp {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.SET-EXP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getExperience()
+              .getSetExp()
               .replace("%newExp%", String.valueOf(setExp))
               .replace("%target%", target.getPlayer().getName()));
     } else {
@@ -158,7 +195,12 @@ public final class Exp {
 
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.TARGET-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getTargetNotFound()
                 .replace("%target%", args[2]));
         return;
       }
@@ -167,7 +209,12 @@ public final class Exp {
       target.getStats().setDivision(DivisionManager.getInstance().getDivision(target));
 
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.TARGET-RESET")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getExperience()
+              .getTargetReset()
               .replace("%target%", target.getPlayer().getName()));
     } else if (args[1].equalsIgnoreCase("add")) {
       // /prac exp add <player> <number>
@@ -180,7 +227,12 @@ public final class Exp {
 
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.TARGET-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getTargetNotFound()
                 .replace("%target%", args[2]));
         return;
       }
@@ -190,13 +242,23 @@ public final class Exp {
         extraExp = Integer.parseInt(args[3]);
       } catch (NumberFormatException exception) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getInvalidNumber());
         return;
       }
 
       if (extraExp <= 0) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getInvalidNumber());
         return;
       }
 
@@ -204,7 +266,12 @@ public final class Exp {
       target.getStats().setDivision(DivisionManager.getInstance().getDivision(target));
 
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.ADD-EXTRA-EXP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getExperience()
+              .getAddExtraExp()
               .replace("%extraExp%", String.valueOf(extraExp))
               .replace("%target%", target.getPlayer().getName())
               .replace("%newExp%", String.valueOf(target.getStats().getExperience())));
@@ -219,7 +286,12 @@ public final class Exp {
 
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.TARGET-NOT-FOUND")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getTargetNotFound()
                 .replace("%target%", args[2]));
         return;
       }
@@ -229,13 +301,23 @@ public final class Exp {
         setExp = Integer.parseInt(args[3]);
       } catch (NumberFormatException exception) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getInvalidNumber());
         return;
       }
 
       if (setExp <= 0) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getExperience()
+                .getInvalidNumber());
         return;
       }
 
@@ -243,7 +325,12 @@ public final class Exp {
       target.getStats().setDivision(DivisionManager.getInstance().getDivision(target));
 
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.SET-EXP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getExperience()
+              .getSetExp()
               .replace("%newExp%", String.valueOf(setExp))
               .replace("%target%", target.getPlayer().getName()));
     } else {
@@ -255,7 +342,12 @@ public final class Exp {
     if (target == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.TARGET-NOT-FOUND")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getExperience()
+              .getTargetNotFound()
               .replace("%target%", args[2]));
       return true;
     }
@@ -263,10 +355,15 @@ public final class Exp {
     Profile profile = ProfileManager.getInstance().getProfile(player);
     if (profile != target
         && target.getPlayer().isOp()
-        && ConfigManager.getBoolean("ADMIN-SETTINGS.OP-BYPASS-EXP-CHANGE")) {
+        && PracticeConfig.settings().getAdminSettings().isOpBypassExpChange()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.TARGET-OP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getExperience()
+              .getTargetOp()
               .replace("%target%", args[2]));
       return true;
     }
@@ -278,7 +375,12 @@ public final class Exp {
         || player.hasPermission("ap.practice.exp.set")
         || player.hasPermission("ap.practice.exp.add")) {
       for (String line :
-          LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.COMMAND-HELP")) {
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getExperience()
+              .getCommandHelp()) {
         Common.sendMmMessage(player, line.replace("%label%", label));
       }
     }
@@ -286,7 +388,12 @@ public final class Exp {
 
   private static void sendHelp(String label) {
     for (String line :
-        LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.EXPERIENCE.COMMAND-HELP")) {
+        PracticeConfig.language()
+            .getCommand()
+            .getPractice()
+            .getArguments()
+            .getExperience()
+            .getCommandHelp()) {
       Common.sendConsoleMmMessage(line.replace("%label%", label));
     }
   }

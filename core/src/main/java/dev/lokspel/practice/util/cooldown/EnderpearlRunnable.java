@@ -1,7 +1,7 @@
 package dev.lokspel.practice.util.cooldown;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
@@ -58,7 +58,11 @@ public class EnderpearlRunnable extends BukkitRunnable {
         if (roundStatistic.isSet()) {
           cancel();
         } else {
-          if (ConfigManager.getBoolean("MATCH-SETTINGS.COOLDOWN.ENDER-PEARL.EXP-BAR")) {
+          if (PracticeConfig.settings()
+              .getMatchSettings()
+              .getCooldown()
+              .getEnderPearl()
+              .isExpBar()) {
             int level = (int) (PlayerCooldown.getLeft(player, CooldownObject.ENDER_PEARL) / 1000);
             player.setLevel(level);
 

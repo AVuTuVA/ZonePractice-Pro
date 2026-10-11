@@ -5,9 +5,8 @@ import static dev.lokspel.practice.util.PermanentConfig.FIGHT_ENTITY;
 
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.BasicArena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.events.duel.brackets.Brackets;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
@@ -114,13 +113,13 @@ public class LadderTypeListener implements Listener {
     // Since blocks occupy Y to Y+1, we check if the block's position (bottom) is >= limit
     if (match.getArena().isBuildMax()
         && block.getLocation().getY() >= ListenerUtil.getCalculatedBuildLimit(match.getArena())) {
-      Common.sendMmMessage(player, LanguageManager.getString("MATCH.CANT-BUILD-OVER-LIMIT"));
+      Common.sendMmMessage(player, PracticeConfig.language().getMatch().getCantBuildOverLimit());
       return false;
     }
 
     // Check side build limit
     if (match.getSideBuildLimit() != null && !match.getSideBuildLimit().contains(block)) {
-      Common.sendMmMessage(player, LanguageManager.getString("MATCH.CANT-BUILD-OVER-LIMIT"));
+      Common.sendMmMessage(player, PracticeConfig.language().getMatch().getCantBuildOverLimit());
       return false;
     }
 
@@ -211,7 +210,9 @@ public class LadderTypeListener implements Listener {
 
     Common.sendMmMessage(
         shooter,
-        LanguageManager.getString("MATCH.ARROW-HIT-PLAYER")
+        PracticeConfig.language()
+            .getMatch()
+            .getArrowHitPlayer()
             .replace("%player%", target.getName())
             .replace("%health%", String.valueOf(health)));
   }
@@ -237,7 +238,7 @@ public class LadderTypeListener implements Listener {
           if (match != null) {
             if (!match.getLadder().isBuild()) {
               Common.sendMmMessage(
-                  player, LanguageManager.getString("MATCH.ONLY-THROW-EXP-BOTTLES"));
+                  player, PracticeConfig.language().getMatch().getOnlyThrowExpBottles());
               e.setCancelled(true);
             }
           }
@@ -389,7 +390,7 @@ public class LadderTypeListener implements Listener {
 
     Block block = e.getBlockPlaced();
     if (!match.getArena().getCuboid().contains(block.getLocation())) {
-      Common.sendMmMessage(player, LanguageManager.getString("MATCH.CANT-BUILD-OUTSIDE-ARENA"));
+      Common.sendMmMessage(player, PracticeConfig.language().getMatch().getCantBuildOutsideArena());
       e.setCancelled(true);
       return;
     }
@@ -431,7 +432,7 @@ public class LadderTypeListener implements Listener {
     }
 
     if (!match.getArena().getCuboid().contains(block.getLocation())) {
-      Common.sendMmMessage(player, LanguageManager.getString("MATCH.CANT-BUILD-OUTSIDE-ARENA"));
+      Common.sendMmMessage(player, PracticeConfig.language().getMatch().getCantBuildOutsideArena());
       e.setCancelled(true);
       return;
     }
@@ -531,7 +532,7 @@ public class LadderTypeListener implements Listener {
             || match.getLadder().getType() == LadderType.SKYWARS;
     if (!canCraftInLadder || !match.getCurrentRound().getRoundStatus().equals(RoundStatus.LIVE)) {
       e.setCancelled(true);
-      Common.sendMmMessage(player, LanguageManager.getString("MATCH.CANT-CRAFT"));
+      Common.sendMmMessage(player, PracticeConfig.language().getMatch().getCantCraft());
       return;
     }
 
@@ -676,8 +677,12 @@ public class LadderTypeListener implements Listener {
     }
 
     if (match.getLadder() instanceof Bridges) {
-      if (ConfigManager.getBoolean(
-          "MATCH-SETTINGS.LADDER-SETTINGS.BRIDGE.REGENERATING-ARROW.ENABLED")) {
+      if (PracticeConfig.settings()
+          .getMatchSettings()
+          .getLadderSettings()
+          .getBridge()
+          .getRegeneratingArrow()
+          .isEnabled()) {
         if (!PlayerCooldown.isActive(player, CooldownObject.BRIDGE_ARROW)) {
           BridgeArrowRunnable bridgeArrowRunnable = new BridgeArrowRunnable(player, match);
           bridgeArrowRunnable.begin();
@@ -994,14 +999,14 @@ public class LadderTypeListener implements Listener {
       case MATCH -> {
         Match match = MatchManager.getInstance().getLiveMatchByPlayer(player);
         if (match != null && !match.getLadder().isBuild()) {
-          Common.sendMmMessage(player, LanguageManager.getString("MATCH.ONLY-CHARGE-WIND"));
+          Common.sendMmMessage(player, PracticeConfig.language().getMatch().getOnlyChargeWind());
           e.setCancelled(true);
         }
       }
       case EVENT -> {
         Event event = EventManager.getInstance().getEventByPlayer(player);
         if (event instanceof Brackets) {
-          Common.sendMmMessage(player, LanguageManager.getString("MATCH.ONLY-CHARGE-WIND"));
+          Common.sendMmMessage(player, PracticeConfig.language().getMatch().getOnlyChargeWind());
           e.setCancelled(true);
         }
       }

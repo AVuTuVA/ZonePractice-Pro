@@ -1,9 +1,9 @@
 package dev.lokspel.practice.command.arena.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.StringUtil;
 import java.util.ArrayList;
@@ -16,14 +16,20 @@ public final class InfoArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("command.arena.no-permission"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.info.command-help")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getInfo()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -32,13 +38,19 @@ public final class InfoArg {
     if (arena == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.info.not-exists")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getInfo()
+              .getNotExists()
               .replace("%arena%", args[1]));
       return;
     }
 
     List<String> ladderNames = ArenaUtil.getLadderNames(arena);
-    for (String line : LanguageManager.getList("command.arena.arguments.info.arena-info")) {
+    for (String line :
+        PracticeConfig.language().getCommand().getArena().getArguments().getInfo().getArenaInfo()) {
       Common.sendMmMessage(
           player,
           line.replace("%arena%", arena.getName())
@@ -46,9 +58,20 @@ public final class InfoArg {
               .replace(
                   "%icon%",
                   arena.getIcon() != null
-                      ? LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.INFO.STATUS-NAMES.SET")
-                      : LanguageManager.getString(
-                          "COMMAND.ARENA.ARGUMENTS.INFO.STATUS-NAMES.NOT-SET"))
+                      ? PracticeConfig.language()
+                          .getCommand()
+                          .getArena()
+                          .getArguments()
+                          .getInfo()
+                          .getStatusNames()
+                          .getSet()
+                      : PracticeConfig.language()
+                          .getCommand()
+                          .getArena()
+                          .getArguments()
+                          .getInfo()
+                          .getStatusNames()
+                          .getNotSet())
               .replace("%displayName%", arena.getDisplayName())
               .replace(
                   "%ladders%",
@@ -63,10 +86,20 @@ public final class InfoArg {
               .replace(
                   "%status%",
                   arena.isEnabled()
-                      ? LanguageManager.getString(
-                          "COMMAND.ARENA.ARGUMENTS.INFO.STATUS-NAMES.ENABLED")
-                      : LanguageManager.getString(
-                          "COMMAND.ARENA.ARGUMENTS.INFO.STATUS-NAMES.DISABLED")));
+                      ? PracticeConfig.language()
+                          .getCommand()
+                          .getArena()
+                          .getArguments()
+                          .getInfo()
+                          .getStatusNames()
+                          .getEnabled()
+                      : PracticeConfig.language()
+                          .getCommand()
+                          .getArena()
+                          .getArguments()
+                          .getInfo()
+                          .getStatusNames()
+                          .getDisabled()));
     }
   }
 

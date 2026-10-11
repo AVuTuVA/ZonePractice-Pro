@@ -1,5 +1,7 @@
 package dev.lokspel.practice.manager.inventory;
 
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.inventory.InventoryLayout;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.inventory.inventoryitem.ExtraInvItem;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvArmor;
@@ -8,31 +10,34 @@ import dev.lokspel.practice.manager.inventory.inventoryitem.lobbyitems.RematchIn
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.Supplier;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 @Getter
 public abstract class Inventory {
 
-  @Getter
   public enum InventoryType {
-    LOBBY("LOBBY-BASIC"),
-    MATCH_QUEUE("QUEUE.MATCH"),
-    EVENT_QUEUE("QUEUE.EVENT"),
-    PARTY("PARTY"),
-    SPEC_MODE_LOBBY("SPECTATOR.LOBBY"),
-    SPECTATE_MATCH("SPECTATOR.MATCH"),
-    SPECTATE_EVENT("SPECTATOR.EVENT"),
-    SPECTATE_FFA("SPECTATOR.FFA"),
-    STAFF_MODE("STAFF-MODE");
+    LOBBY(() -> PracticeConfig.inventories().getLobbyBasic()),
+    MATCH_QUEUE(() -> PracticeConfig.inventories().getQueue().getMatch()),
+    EVENT_QUEUE(() -> PracticeConfig.inventories().getQueue().getEvent()),
+    PARTY(() -> PracticeConfig.inventories().getParty()),
+    SPEC_MODE_LOBBY(() -> PracticeConfig.inventories().getSpectator().getLobby()),
+    SPECTATE_MATCH(() -> PracticeConfig.inventories().getSpectator().getMatch()),
+    SPECTATE_EVENT(() -> PracticeConfig.inventories().getSpectator().getEvent()),
+    SPECTATE_FFA(() -> PracticeConfig.inventories().getSpectator().getFfa()),
+    STAFF_MODE(() -> PracticeConfig.inventories().getStaffMode());
 
-    private final String path;
+    private final Supplier<InventoryLayout> layout;
 
-    InventoryType(final String path) {
-      this.path = path;
+    InventoryType(final Supplier<InventoryLayout> layout) {
+      this.layout = layout;
+    }
+
+    /** Returns this inventory's section of inventories.yml as currently loaded. */
+    public InventoryLayout layout() {
+      return layout.get();
     }
   }
 
@@ -95,16 +100,13 @@ public abstract class Inventory {
   }
 
   private void getExtraItems() {
-    YamlConfiguration config = InventoryManager.getInstance().getConfig();
+    InventoryLayout layout = type.layout();
+    if (layout == null || layout.getExtra() == null) {
+      return;
+    }
 
-    if (config.isConfigurationSection(type.getPath() + ".EXTRA")) {
-      for (String itemPath :
-          Objects.requireNonNull(config.getConfigurationSection(type.getPath() + ".EXTRA"))
-              .getKeys(false)) {
-        ExtraInvItem extraInvItem = new ExtraInvItem(type.getPath() + ".EXTRA." + itemPath);
-
-        invItems.add(extraInvItem);
-      }
+    for (InventoryLayout.ExtraItem extraItem : layout.getExtra().values()) {
+      invItems.add(new ExtraInvItem(extraItem));
     }
   }
 

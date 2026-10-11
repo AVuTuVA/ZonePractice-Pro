@@ -1,9 +1,9 @@
 package dev.lokspel.practice.command.arena.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
 import dev.lokspel.practice.manager.arena.setup.ArenaSetupManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +16,20 @@ public final class SetupArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETUP.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getSetup()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -32,14 +38,25 @@ public final class SetupArg {
     if (arena == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETUP.ARENA-NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getSetup()
+              .getArenaNotExists()
               .replace("%arena%", args[1]));
       return;
     }
 
     if (arena.isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETUP.CANT-EDIT"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getSetup()
+              .getCantEdit());
       return;
     }
 

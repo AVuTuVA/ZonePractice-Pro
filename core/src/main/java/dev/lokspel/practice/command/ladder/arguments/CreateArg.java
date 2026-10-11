@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.ladder.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.guis.ladder.LadderCreateGui;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.util.Common;
@@ -12,18 +11,24 @@ public final class CreateArg {
 
   private CreateArg() {}
 
-  private static final int MAX_LADDERS = ConfigManager.getInt("SETUP.MAX-LADDERS");
+  private static final int MAX_LADDERS = PracticeConfig.settings().getSetup().getMaxLadders();
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.LADDER.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getLadder().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.CREATE.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getCreate()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -31,7 +36,12 @@ public final class CreateArg {
     if (MAX_LADDERS > 0 && LadderManager.getInstance().getLadders().size() >= MAX_LADDERS) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.CREATE.REACHED-MAX")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getCreate()
+              .getReachedMax()
               .replace("%max%", String.valueOf(MAX_LADDERS)));
       return;
     }
@@ -48,17 +58,17 @@ public final class CreateArg {
 
   private static String checkName(String input) {
     if (input.isEmpty()) {
-      return LanguageManager.getString("LADDER.CREATE.NO-NAME");
+      return PracticeConfig.language().getLadder().getCreate().getNoName();
     } else if (input.contains(" ")) {
-      return LanguageManager.getString("LADDER.CREATE.ONLY-ALPHANUMERIC");
+      return PracticeConfig.language().getLadder().getCreate().getOnlyAlphanumeric();
     } else if (!Normalizer.isNormalized(input, Normalizer.Form.NFD)) {
-      return LanguageManager.getString("LADDER.CREATE.NO-ACCENTS");
+      return PracticeConfig.language().getLadder().getCreate().getNoAccents();
     } else if (input.length() < 2) {
-      return LanguageManager.getString("LADDER.CREATE.FEW-CHAR");
+      return PracticeConfig.language().getLadder().getCreate().getFewChar();
     } else if (input.length() > 20) {
-      return LanguageManager.getString("LADDER.CREATE.MANY-CHAR");
+      return PracticeConfig.language().getLadder().getCreate().getManyChar();
     } else if (LadderManager.getInstance().getLadder(input) != null) {
-      return LanguageManager.getString("LADDER.CREATE.NAME-TAKEN");
+      return PracticeConfig.language().getLadder().getCreate().getNameTaken();
     } else {
       return null;
     }

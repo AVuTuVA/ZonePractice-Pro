@@ -3,7 +3,7 @@ package dev.lokspel.practice.manager.fight.match.listener;
 import dev.lokspel.api.event.match.MatchEndEvent;
 import dev.lokspel.api.event.match.MatchStartEvent;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
@@ -84,7 +84,7 @@ public class MatchLifecycleListener implements Listener {
     // Set rematch request items
     if (AstralPractice.getInstance().isEnabled()
         && match.getType().equals(MatchType.DUEL)
-        && ConfigManager.getBoolean("MATCH-SETTINGS.REMATCH.ENABLED")) {
+        && PracticeConfig.settings().getMatchSettings().getRematch().isEnabled()) {
 
       boolean sendRematchRequest = true;
       for (Player matchPlayer : match.getPlayers()) {

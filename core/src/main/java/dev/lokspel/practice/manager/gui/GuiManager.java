@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.gui;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.guis.customladder.premadecustom.CustomLadderEditorGui;
 import dev.lokspel.practice.manager.gui.setup.SetupHubGui;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.CustomKitGui;
@@ -63,7 +64,8 @@ public class GuiManager implements Listener {
   @Getter private final Map<Player, Gui> openGui = new HashMap<>();
 
   @Getter
-  private static final ItemStack FILLER_ITEM = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
+  private static final ItemStack FILLER_ITEM =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
 
   @Getter
   private static final ItemStack DUMMY_ITEM =

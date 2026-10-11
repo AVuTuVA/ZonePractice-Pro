@@ -2,9 +2,8 @@ package dev.lokspel.practice.manager.division;
 
 import dev.lokspel.api.event.match.MatchEndEvent;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigFile;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.division.DivisionConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -12,6 +11,7 @@ import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 @Getter
-public class DivisionManager extends ConfigFile implements Listener {
+public class DivisionManager implements Listener {
 
   private final boolean countByWins;
   private final boolean countByElo;
@@ -33,19 +33,16 @@ public class DivisionManager extends ConfigFile implements Listener {
     return instance;
   }
 
-  private final boolean divisionsEnabled = ConfigManager.getBoolean("DIVISIONS.ENABLED");
+  private final boolean divisionsEnabled = PracticeConfig.settings().getDivisions().isEnabled();
   private final boolean newDivisionMessageEnabled =
-      ConfigManager.getBoolean("DIVISIONS.NEW-DIVISION-MESSAGE");
+      PracticeConfig.settings().getDivisions().isNewDivisionMessage();
   private Division minimumForRanked;
 
   private final List<Division> divisions = new ArrayList<>();
 
   private DivisionManager() {
-    super("", "divisions");
-    this.reloadFile();
-
-    boolean countByWins = this.getBoolean("REQUIRE.WINS");
-    boolean countByElo = this.getBoolean("REQUIRE.ELO");
+    boolean countByWins = PracticeConfig.divisions().getRequire().isWins();
+    boolean countByElo = PracticeConfig.divisions().getRequire().isElo();
     if (!countByWins && !countByElo) {
       countByWins = true;
     }
@@ -56,7 +53,6 @@ public class DivisionManager extends ConfigFile implements Listener {
   }
 
   public void reloadRanks() {
-    this.reloadFile();
     divisions.clear();
     this.getData();
 
@@ -205,13 +201,17 @@ public class DivisionManager extends ConfigFile implements Listener {
 
     Common.sendMmMessage(player, "");
     Common.sendMmMessage(
-        player, LanguageManager.getString("COMMAND.QUEUES.RANKED.PROGRESS-HEADER"));
+        player, PracticeConfig.language().getCommand().getQueues().getRanked().getProgressHeader());
 
     // Experience progress
     int expProgress = Math.min(100, (int) ((double) currentExp / requiredExp * 100));
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.QUEUES.RANKED.PROGRESS-EXP")
+        PracticeConfig.language()
+            .getCommand()
+            .getQueues()
+            .getRanked()
+            .getProgressExp()
             .replace("%current%", String.valueOf(currentExp))
             .replace("%required%", String.valueOf(requiredExp))
             .replace("%percent%", String.valueOf(expProgress)));
@@ -221,7 +221,11 @@ public class DivisionManager extends ConfigFile implements Listener {
       int winsProgress = Math.min(100, (int) ((double) currentWins / requiredWins * 100));
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.QUEUES.RANKED.PROGRESS-WINS")
+          PracticeConfig.language()
+              .getCommand()
+              .getQueues()
+              .getRanked()
+              .getProgressWins()
               .replace("%current%", String.valueOf(currentWins))
               .replace("%required%", String.valueOf(requiredWins))
               .replace("%percent%", String.valueOf(winsProgress)));
@@ -230,21 +234,16 @@ public class DivisionManager extends ConfigFile implements Listener {
     Common.sendMmMessage(player, "");
   }
 
-  @Override
-  public void setData() {}
-
-  @Override
+  /** Builds the divisions from {@link PracticeConfig#divisions()}. */
   public void getData() {
     int count = 0;
-    for (String divisionConfigName : config.getConfigurationSection("DIVISIONS").getKeys(false)) {
+    for (Map.Entry<String, DivisionConfig.Division> entry :
+        PracticeConfig.divisions().getDivisions().entrySet()) {
       if (count == 28) {
         break;
       }
 
-      Division division =
-          new Division(
-              divisionConfigName,
-              config.getConfigurationSection("DIVISIONS." + divisionConfigName));
+      Division division = new Division(entry.getKey(), entry.getValue());
       if (!division.isValid()) {
         continue;
       }
@@ -256,7 +255,7 @@ public class DivisionManager extends ConfigFile implements Listener {
 
     divisions.sort(new DivisionComparator());
     this.minimumForRanked =
-        getDivisionByConfigName(ConfigManager.getString("DIVISIONS.MIN-DIVISION-FOR-RANKED"));
+        getDivisionByConfigName(PracticeConfig.settings().getDivisions().getMinDivisionForRanked());
   }
 
   private Division getDivisionByConfigName(final String divisionConfigName) {
@@ -283,7 +282,9 @@ public class DivisionManager extends ConfigFile implements Listener {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("MATCH.EXP-RECEIVED")
+          PracticeConfig.language()
+              .getMatch()
+              .getExpReceived()
               .replace("%exp%", String.valueOf(expReceived)));
 
       Division oldDivision = profile.getStats().getDivision();
@@ -295,7 +296,9 @@ public class DivisionManager extends ConfigFile implements Listener {
         if (this.newDivisionMessageEnabled) {
           Common.sendMmMessage(
               player,
-              LanguageManager.getString("MATCH.REACHED-NEW-DIVISION")
+              PracticeConfig.language()
+                  .getMatch()
+                  .getReachedNewDivision()
                   .replace("%newDivision_fullName%", newDivision.getFullName())
                   .replace("%newDivision_shortName%", newDivision.getShortName())
                   .replace("%oldDivision_fullName%", oldDivision.getFullName())
@@ -304,7 +307,10 @@ public class DivisionManager extends ConfigFile implements Listener {
           if (newDivision == this.minimumForRanked) {
             Common.sendMmMessage(
                 player,
-                LanguageManager.getString("MATCH.DUEL.RANKED-REQUIREMENT-REACHED")
+                PracticeConfig.language()
+                    .getMatch()
+                    .getDuel()
+                    .getRankedRequirementReached()
                     .replace("%newDivision_fullName%", newDivision.getFullName())
                     .replace("%newDivision_shortName%", newDivision.getShortName()));
           }

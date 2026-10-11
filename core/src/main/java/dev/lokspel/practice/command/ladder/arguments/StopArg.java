@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.ladder.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.ladder.LadderManager;
@@ -17,14 +17,20 @@ public final class StopArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.ladder.stop")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.LADDER.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getLadder().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.STOP.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getStop()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -33,7 +39,12 @@ public final class StopArg {
     if (ladder == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.STOP.NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getStop()
+              .getNotExists()
               .replace("%ladder%", args[1]));
       return;
     }
@@ -41,7 +52,12 @@ public final class StopArg {
     if (!ladder.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.STOP.LADDER-DISABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getStop()
+              .getLadderDisabled()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
@@ -50,21 +66,36 @@ public final class StopArg {
     if (matches.isEmpty()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.STOP.NO-MATCHES")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getStop()
+              .getNoMatches()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
 
     for (Match match : matches) {
       match.sendMessage(
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.STOP.MATCH-END-MESSAGE")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getStop()
+              .getMatchEndMessage()
               .replace("%player%", player.getName()),
           true);
       match.endMatch();
     }
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.STOP.PLAYER-ENDED")
+        PracticeConfig.language()
+            .getCommand()
+            .getLadder()
+            .getArguments()
+            .getStop()
+            .getPlayerEnded()
             .replace("%ladder%", ladder.getDisplayName()));
   }
 

@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.leaderboard.hologram;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.leaderboard.hologram.holograms.LadderDynamicHologram;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -13,8 +13,6 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class HologramRunnable extends BukkitRunnable {
 
-  private static final String CONFIG_DYNAMIC_UPDATE = "LEADERBOARD.HOLOGRAM.DYNAMIC-UPDATE";
-  private static final String CONFIG_STATIC_UPDATE = "LEADERBOARD.HOLOGRAM.STATIC-UPDATE";
   private static final long INITIAL_DELAY_TICKS = 20L;
 
   private final Hologram hologram;
@@ -40,8 +38,8 @@ public class HologramRunnable extends BukkitRunnable {
   /** Gets the update interval based on hologram type. */
   private int getUpdateInterval() {
     return hologram.getHologramType() == HologramType.LADDER_DYNAMIC
-        ? ConfigManager.getInt(CONFIG_DYNAMIC_UPDATE)
-        : ConfigManager.getInt(CONFIG_STATIC_UPDATE);
+        ? PracticeConfig.settings().getLeaderboard().getHologram().getDynamicUpdate()
+        : PracticeConfig.settings().getLeaderboard().getHologram().getStaticUpdate();
   }
 
   /**

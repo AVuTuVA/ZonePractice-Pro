@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.partyitems;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
@@ -10,9 +10,7 @@ import org.bukkit.entity.Player;
 public class PartySettingsInvItem extends InvItem {
 
   public PartySettingsInvItem() {
-    super(
-        getItemStack("PARTY.NORMAL.PARTY-SETTINGS.ITEM"),
-        getInt("PARTY.NORMAL.PARTY-SETTINGS.SLOT"));
+    super(PracticeConfig.inventories().getParty().getNormal().get("PARTY-SETTINGS"));
   }
 
   @Override
@@ -23,7 +21,7 @@ public class PartySettingsInvItem extends InvItem {
     }
 
     if (!party.getLeader().equals(player)) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.NOT-LEADER"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getNotLeader());
       return;
     }
 

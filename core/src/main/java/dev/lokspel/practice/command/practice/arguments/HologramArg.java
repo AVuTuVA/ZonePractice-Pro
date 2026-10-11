@@ -1,7 +1,7 @@
 package dev.lokspel.practice.command.practice.arguments;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.hologram.HologramSetupManager;
@@ -29,7 +29,8 @@ public final class HologramArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
       return;
     }
 
@@ -39,7 +40,8 @@ public final class HologramArg {
       case FFA:
       case EVENT:
       case SPECTATE:
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.HOLOGRAM.CANT-USE"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getHologram().getCantUse());
         return;
 
       default:
@@ -47,13 +49,14 @@ public final class HologramArg {
     }
 
     if (ServerManager.getLobby() == null) {
-      Common.sendMmMessage(player, LanguageManager.getString("SET-SERVER-LOBBY"));
+      Common.sendMmMessage(player, PracticeConfig.language().getSetServerLobby());
       return;
     }
 
     if (!ServerManager.getInstance().getInWorld().containsKey(player)
         || !ServerManager.getInstance().getInWorld().get(player).equals(WorldEnum.LOBBY)) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.HOLOGRAM.ONLY-IN-LOBBY"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getHologram().getOnlyInLobby());
       return;
     }
 
@@ -61,7 +64,11 @@ public final class HologramArg {
       if (args.length != 3) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.HOLOGRAM.TELEPORT.COMMAND-HELP")
+            PracticeConfig.language()
+                .getCommand()
+                .getHologram()
+                .getTeleport()
+                .getCommandHelp()
                 .replace("%label%", label + " hologram"));
         return;
       }
@@ -70,7 +77,11 @@ public final class HologramArg {
       if (hologram == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.HOLOGRAM.TELEPORT.HOLOGRAM-NOT-EXISTS")
+            PracticeConfig.language()
+                .getCommand()
+                .getHologram()
+                .getTeleport()
+                .getHologramNotExists()
                 .replace("%hologram%", args[2]));
         return;
       }
@@ -89,13 +100,17 @@ public final class HologramArg {
       GuiManager.getInstance().searchGui(GuiType.Hologram_Summary).update();
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.HOLOGRAM.TELEPORT.TELEPORTED")
+          PracticeConfig.language()
+              .getCommand()
+              .getHologram()
+              .getTeleport()
+              .getTeleported()
               .replace("%hologram%", hologram.getName()));
       return;
     }
 
     if (args.length != 4 || !args[1].equalsIgnoreCase("create")) {
-      for (String line : LanguageManager.getList("COMMAND.HOLOGRAM.COMMAND-HELP")) {
+      for (String line : PracticeConfig.language().getCommand().getHologram().getCommandHelp()) {
         Common.sendMmMessage(player, line.replace("%label%", label + " hologram"));
       }
       return;
@@ -113,23 +128,27 @@ public final class HologramArg {
         hologramType = HologramType.LADDER_DYNAMIC;
         break;
       default:
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.HOLOGRAM.INVALID-TYPE"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getHologram().getInvalidType());
         return;
     }
 
     if (HologramManager.getInstance().getHolograms().size() >= 18) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.HOLOGRAM.REACHED-MAX"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getHologram().getReachedMax());
       return;
     }
 
     String name = args[2];
     if (HologramManager.getInstance().getHologram(name) != null) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.HOLOGRAM.HOLO-EXISTS"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getHologram().getHoloExists());
       return;
     }
 
     if (name.length() > 9) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.HOLOGRAM.CREATE-ERROR"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getHologram().getCreateError());
       return;
     }
 
@@ -155,7 +174,10 @@ public final class HologramArg {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.HOLOGRAM.CREATE-SUCCESS")
+        PracticeConfig.language()
+            .getCommand()
+            .getHologram()
+            .getCreateSuccess()
             .replace("%hologram%", hologram.getName()));
   }
 

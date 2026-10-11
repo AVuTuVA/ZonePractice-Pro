@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.match.type.playersvsplayers.partysplit;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.enums.TeamEnum;
 import dev.lokspel.practice.manager.fight.match.type.playersvsplayers.PlayersVsPlayersRound;
@@ -30,13 +30,14 @@ public class PartySplitRound extends PlayersVsPlayersRound {
           this.match.sendMessage(message, true);
         }
       } else {
-        for (String line : LanguageManager.getList("MATCH.PARTY-SPLIT.MATCH-END-DRAW")) {
+        for (String line : PracticeConfig.language().getMatch().getPartySplit().getMatchEndDraw()) {
           this.match.sendMessage(line, true);
         }
       }
     } else {
       if (roundWinner != null) {
-        for (String line : LanguageManager.getList("MATCH.PARTY-SPLIT.MATCH-END-ROUND")) {
+        for (String line :
+            PracticeConfig.language().getMatch().getPartySplit().getMatchEndRound()) {
           this.match.sendMessage(
               line.replace("%team%", roundWinner.getNameMm())
                   .replace(
@@ -46,7 +47,8 @@ public class PartySplitRound extends PlayersVsPlayersRound {
               true);
         }
       } else {
-        for (String line : LanguageManager.getList("MATCH.PARTY-SPLIT.MATCH-END-ROUND-DRAW")) {
+        for (String line :
+            PracticeConfig.language().getMatch().getPartySplit().getMatchEndRoundDraw()) {
           this.match.sendMessage(line, true);
         }
       }

@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.setup.arena.arenasettings.normal;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -56,7 +56,12 @@ public class LadderSingleGui extends Gui {
     for (int page = 1; PageUtil.isPageValid(ladders.size(), page, spaces) || page == 1; page++) {
       Inventory inventory = existingInventories.get(page);
       String title =
-          GuiFile.getString("GUIS.SETUP.ARENA.ARENA-LADDERS-SINGLE.TITLE")
+          PracticeConfig.guis()
+              .getGuis()
+              .getSetup()
+              .getArena()
+              .getArenaLaddersSingle()
+              .getTitle()
               .replace("%arenaName%", arena.getName())
               .replace("%page%", String.valueOf(page));
       if (inventory == null || inventory.getSize() != 6 * 9) {
@@ -103,15 +108,37 @@ public class LadderSingleGui extends Gui {
 
       ItemStack left =
           page == 1
-              ? GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-LADDERS-SINGLE.ICONS.BACK-TO").get()
-              : GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-LADDERS-SINGLE.ICONS.PAGE-LEFT")
+              ? BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getArena()
+                          .getArenaLaddersSingle()
+                          .getIcons()
+                          .getBackTo())
+                  .get()
+              : BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getArena()
+                          .getArenaLaddersSingle()
+                          .getIcons()
+                          .getPageLeft())
                   .replace("%page%", String.valueOf(page - 1))
                   .get();
       inventory.setItem(45, left);
 
       ItemStack right =
           PageUtil.isPageValid(ladders.size(), page + 1, spaces)
-              ? GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-LADDERS-SINGLE.ICONS.PAGE-RIGHT")
+              ? BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSetup()
+                          .getArena()
+                          .getArenaLaddersSingle()
+                          .getIcons()
+                          .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
               : GuiManager.getFILLER_ITEM();
@@ -164,7 +191,8 @@ public class LadderSingleGui extends Gui {
             GuiManager.getInstance().searchGui(GuiType.Arena_Summary).update();
           } else {
             Common.sendMmMessage(
-                player, LanguageManager.getString("COMMAND.SETUP.ARENA.CANT-REMOVE-LADDER"));
+                player,
+                PracticeConfig.language().getCommand().getSetup().getArena().getCantRemoveLadder());
           }
         } else {
           if (arena.getAssignedLadderTypes().contains(ladder.getType()) && ladder.isEnabled()) {

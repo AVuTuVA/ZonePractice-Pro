@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.event.arguments.events;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.fight.event.events.ffa.lms.LmsData;
@@ -18,7 +18,8 @@ public final class LmsArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.EVENT.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getEvent().getNoPermission());
       return;
     }
 
@@ -27,7 +28,8 @@ public final class LmsArg {
     // Checking if the event is live, if it is, it will send a message to the player and return.
     if (EventManager.getInstance().isEventLive(EventType.LMS)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.LMS.EVENT-LIVE"));
+          player,
+          PracticeConfig.language().getCommand().getEvent().getArguments().getLms().getEventLive());
       return;
     }
 
@@ -37,7 +39,13 @@ public final class LmsArg {
         EventUtil.changeStatus(lmsData, player);
       } else {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.LMS.EVENT-ALREADY-ENABLED"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getLms()
+                .getEventAlreadyEnabled());
       }
 
       return;
@@ -47,7 +55,12 @@ public final class LmsArg {
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.LMS.EVENT-ALREADY-DISABLED"));
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getLms()
+                .getEventAlreadyDisabled());
       }
 
       return;
@@ -60,7 +73,8 @@ public final class LmsArg {
     // Checking if the arena is enabled, if it is, it will send a message to the player and return.
     if (lmsData.isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.LMS.CANT-EDIT"));
+          player,
+          PracticeConfig.language().getCommand().getEvent().getArguments().getLms().getCantEdit());
       return;
     }
 
@@ -70,14 +84,21 @@ public final class LmsArg {
       kitData.setKitData(player, true);
 
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.LMS.KIT-SET"));
+          player,
+          PracticeConfig.language().getCommand().getEvent().getArguments().getLms().getKitSet());
     } else {
       sendHelpMsg(player, label);
     }
   }
 
   private static void sendHelpMsg(Player player, String label) {
-    for (String line : LanguageManager.getList("COMMAND.EVENT.ARGUMENTS.LMS.COMMAND-HELP")) {
+    for (String line :
+        PracticeConfig.language()
+            .getCommand()
+            .getEvent()
+            .getArguments()
+            .getLms()
+            .getCommandHelp()) {
       Common.sendMmMessage(player, line.replace("%label%", label));
     }
   }

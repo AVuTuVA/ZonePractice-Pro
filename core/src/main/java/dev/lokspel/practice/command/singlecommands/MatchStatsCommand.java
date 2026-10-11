@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -18,7 +18,7 @@ public class MatchStatsCommand implements CommandExecutor {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
@@ -29,26 +29,29 @@ public class MatchStatsCommand implements CommandExecutor {
     }
 
     if (args.length != 3) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.MATCH-STAT.COMMAND-HELP"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getMatchStat().getCommandHelp());
       return false;
     }
 
     Match match = MatchManager.getInstance().getMatches().get(args[0]);
     if (match == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.MATCH-STAT.INVALID-MATCH-ID"));
+          player, PracticeConfig.language().getCommand().getMatchStat().getInvalidMatchId());
       return false;
     }
 
     UUID target = UUID.fromString(args[1]);
     if (!match.getMatchStatsGuis().containsKey(target)) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.MATCH-STAT.INVALID-PLAYER"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getMatchStat().getInvalidPlayer());
       return false;
     }
 
     int round = Integer.parseInt(args[2]);
     if (!match.getMatchStatsGuis().get(target).getGui().containsKey(round)) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.MATCH-STAT.INVALID-ROUND"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getMatchStat().getInvalidRound());
       return false;
     }
 

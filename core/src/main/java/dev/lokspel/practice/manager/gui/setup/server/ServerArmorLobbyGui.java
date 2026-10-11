@@ -2,7 +2,8 @@ package dev.lokspel.practice.manager.gui.setup.server;
 
 import static dev.lokspel.practice.manager.inventory.Inventory.InventoryType;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -26,13 +27,44 @@ public class ServerArmorLobbyGui extends Gui {
   private final Gui backTo;
 
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.SERVER.LOBBY-ARMORS.ICONS.BACK-TO").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getServer()
+                  .getLobbyArmors()
+                  .getIcons()
+                  .getBackTo())
+          .get();
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.SERVER.LOBBY-ARMORS.ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getServer()
+                  .getLobbyArmors()
+                  .getIcons()
+                  .getFillerItem())
+          .get();
   private static final ItemStack FILLER_ITEM2 =
-      GuiFile.getGuiItem("GUIS.SETUP.SERVER.LOBBY-ARMORS.ICONS.FILLER-ITEM2").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getServer()
+                  .getLobbyArmors()
+                  .getIcons()
+                  .getFillerItem2())
+          .get();
   private static final GuiItem NAME_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.SERVER.LOBBY-ARMORS.ICONS.NAME-ITEM");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis()
+              .getGuis()
+              .getSetup()
+              .getServer()
+              .getLobbyArmors()
+              .getIcons()
+              .getNameItem());
 
   private static final List<Integer> helmetSlots = Arrays.asList(9, 11, 13, 15, 17);
   private static final List<Integer> chestplateSlots = Arrays.asList(18, 20, 22, 24, 26);
@@ -44,7 +76,7 @@ public class ServerArmorLobbyGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.SERVER.LOBBY-ARMORS.TITLE"), 6));
+            PracticeConfig.guis().getGuis().getSetup().getServer().getLobbyArmors().getTitle(), 6));
     this.backTo = backTo;
 
     this.build();

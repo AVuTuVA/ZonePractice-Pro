@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.ladder.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
 import dev.lokspel.practice.manager.ladder.LadderManager;
@@ -17,14 +17,20 @@ public final class InventoryArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.LADDER.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getLadder().getNoPermission());
       return;
     }
 
     if (args.length != 3) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.INVENTORY.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getInventory()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -33,7 +39,12 @@ public final class InventoryArg {
     if (ladder == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.INVENTORY.NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getInventory()
+              .getNotExists()
               .replace("%ladder%", args[2]));
       return;
     }
@@ -41,7 +52,12 @@ public final class InventoryArg {
     if (ladder.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.INVENTORY.LADDER-ENABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getInventory()
+              .getLadderEnabled()
               .replace("%ladder%", ladder.getDisplayName()));
       return;
     }
@@ -56,7 +72,12 @@ public final class InventoryArg {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.INVENTORY.SAVED-INVENTORY")
+        PracticeConfig.language()
+            .getCommand()
+            .getLadder()
+            .getArguments()
+            .getInventory()
+            .getSavedInventory()
             .replace("%ladder%", ladder.getDisplayName()));
   }
 

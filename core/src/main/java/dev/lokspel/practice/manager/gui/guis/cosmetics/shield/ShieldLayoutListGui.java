@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics.shield;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -32,8 +33,11 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ShieldLayoutListGui extends Gui {
 
-  private static final ItemStack FILLER = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
-  private static final ItemStack BACK = GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BACK-TO").get();
+  private static final ItemStack FILLER =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  private static final ItemStack BACK =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+          .get();
 
   private static final int ROWS = 6;
   private static final int BACK_SLOT = 45;
@@ -53,8 +57,7 @@ public class ShieldLayoutListGui extends Gui {
     this.profile = profile;
     this.backToGui = backToGui;
     String title =
-        GuiFile.getConfig()
-            .getString("GUIS.COSMETICS.SHIELD.LAYOUTS.TITLE", "<dark_gray>Shield Layouts");
+        PracticeConfig.guis().getGuis().getCosmetics().getShield().getLayouts().getTitle();
     this.gui.put(1, InventoryUtil.createInventory(title, ROWS));
     build();
   }
@@ -87,10 +90,13 @@ public class ShieldLayoutListGui extends Gui {
     boolean canCreate = layouts.size() < maxLayouts;
     GuiItem newItem =
         new GuiItem(
-            GuiFile.getConfig()
-                .getString(
-                    "GUIS.COSMETICS.SHIELD.LAYOUTS.NEW-BUTTON.NAME",
-                    canCreate ? "<green>New Layout" : "<red>Layout limit reached"),
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getShield()
+                .getLayouts()
+                .getNewButton()
+                .getName(),
             canCreate ? Material.LIME_DYE : Material.RED_DYE);
     List<String> newLore = new ArrayList<>();
     newLore.add("<gray>Saved: <yellow>" + layouts.size() + "<gray>/<yellow>" + maxLayouts);
@@ -130,10 +136,7 @@ public class ShieldLayoutListGui extends Gui {
     if (!CosmeticsPermissionManager.hasShieldPermission(player)) {
       Common.sendMmMessage(
           player,
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.SHIELD.NO-PERMISSION-MESSAGE",
-                  "<red>You do not have permission to use shield cosmetics."));
+          PracticeConfig.guis().getGuis().getCosmetics().getShield().getNoPermissionMessage());
       return;
     }
 
@@ -167,10 +170,12 @@ public class ShieldLayoutListGui extends Gui {
     if (layouts.size() >= max) {
       Common.sendMmMessage(
           player,
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.SHIELD.LAYOUTS.LIMIT-REACHED",
-                  "<red>You've reached your layout limit!"));
+          PracticeConfig.guis()
+              .getGuis()
+              .getCosmetics()
+              .getShield()
+              .getLayouts()
+              .getLimitReached());
       return;
     }
 
@@ -202,8 +207,7 @@ public class ShieldLayoutListGui extends Gui {
             })
         .text("My Layout")
         .title(
-            GuiFile.getConfig()
-                .getString("GUIS.COSMETICS.SHIELD.LAYOUTS.NAME-TITLE", "Layout Name"))
+            PracticeConfig.guis().getGuis().getCosmetics().getShield().getLayouts().getNameTitle())
         .plugin(AstralPractice.getInstance())
         .open(player);
   }
@@ -225,8 +229,12 @@ public class ShieldLayoutListGui extends Gui {
     profile.save();
     Common.sendMmMessage(
         player,
-        GuiFile.getConfig()
-            .getString("GUIS.COSMETICS.SHIELD.LAYOUTS.DELETED-MESSAGE", "<green>Layout deleted."));
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getShield()
+            .getLayouts()
+            .getDeletedMessage());
     update(true);
   }
 
@@ -259,8 +267,12 @@ public class ShieldLayoutListGui extends Gui {
             })
         .text(currentName)
         .title(
-            GuiFile.getConfig()
-                .getString("GUIS.COSMETICS.SHIELD.LAYOUTS.RENAME-TITLE", "Rename Layout"))
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getShield()
+                .getLayouts()
+                .getRenameTitle())
         .plugin(AstralPractice.getInstance())
         .open(player);
   }

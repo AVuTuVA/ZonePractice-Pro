@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.gui.Gui;
@@ -35,7 +36,9 @@ public class BracketsKitSelectorGui extends Gui {
     this.hostProfile = ProfileManager.getInstance().getProfile(host);
 
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString("GUIS.BRACKETS-KIT-SELECTOR.TITLE"), 3));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getBracketsKitSelector().getTitle(), 3));
     this.build();
   }
 
@@ -55,7 +58,9 @@ public class BracketsKitSelectorGui extends Gui {
     }
 
     GuiItem defaultKitIcon =
-        GuiFile.getGuiItem("GUIS.BRACKETS-KIT-SELECTOR.ICONS.DEFAULT-KIT").cloneItem();
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getBracketsKitSelector().getIcons().getDefaultKit())
+            .cloneItem();
     inventory.setItem(4, defaultKitIcon.get());
     this.selectableKits.put(4, null);
 
@@ -68,7 +73,12 @@ public class BracketsKitSelectorGui extends Gui {
 
       int slot = CUSTOM_SLOTS[customIndex++];
       GuiItem customKitItem =
-          GuiFile.getGuiItem("GUIS.BRACKETS-KIT-SELECTOR.ICONS.CUSTOM-KIT")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getBracketsKitSelector()
+                      .getIcons()
+                      .getCustomKit())
               .cloneItem()
               .replace("%kitName%", customLadder.getDisplayName());
 
@@ -82,7 +92,14 @@ public class BracketsKitSelectorGui extends Gui {
 
     if (availableCustomKits.isEmpty()) {
       inventory.setItem(
-          13, GuiFile.getGuiItem("GUIS.BRACKETS-KIT-SELECTOR.ICONS.NO-CUSTOM-KIT").get());
+          13,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getBracketsKitSelector()
+                      .getIcons()
+                      .getNoCustomKit())
+              .get());
     }
   }
 

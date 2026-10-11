@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.match.util;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.Common;
 import lombok.Getter;
 
@@ -33,7 +33,7 @@ public enum EloMode {
    * what the admin set.
    */
   public static void validateConfig() {
-    String configured = ConfigManager.getString(CONFIG_PATH);
+    String configured = PracticeConfig.settings().getQueue().getRanked().getEloSystem().getMode();
 
     if (configured.isEmpty()) {
       activeMode = SKILL;

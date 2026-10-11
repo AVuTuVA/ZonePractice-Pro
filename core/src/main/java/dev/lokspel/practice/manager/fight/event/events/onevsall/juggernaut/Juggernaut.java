@@ -2,7 +2,7 @@ package dev.lokspel.practice.manager.fight.event.events.onevsall.juggernaut;
 
 import dev.lokspel.api.event.event.EventEndEvent;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.events.ffa.interfaces.FfaEvent;
 import dev.lokspel.practice.manager.server.ServerManager;
@@ -17,7 +17,10 @@ public class Juggernaut extends FfaEvent {
   private Player juggernaut;
 
   public Juggernaut(Object starter, JuggernautData eventData) {
-    super(starter, eventData, "COMMAND.EVENT.ARGUMENTS.JUGGERNAUT");
+    super(
+        starter,
+        eventData,
+        () -> PracticeConfig.language().getCommand().getEvent().getArguments().getJuggernaut());
   }
 
   @Override
@@ -25,7 +28,12 @@ public class Juggernaut extends FfaEvent {
     this.juggernaut = this.players.get(random.nextInt(this.players.size()));
     this.startPlayerCount = this.startPlayerCount - 1;
     this.sendMessage(
-        LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.JUGGERNAUT-ANNOUNCE")
+        PracticeConfig.language()
+            .getCommand()
+            .getEvent()
+            .getArguments()
+            .getJuggernaut()
+            .getJuggernautAnnounce()
             .replace("%player%", juggernaut.getName()),
         false);
   }
@@ -49,14 +57,24 @@ public class Juggernaut extends FfaEvent {
 
     if (this.juggernaut != player) {
       this.sendMessage(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.PLAYER-DIED")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJuggernaut()
+              .getPlayerDied()
               .replace("%player%", player.getName())
               .replace("%startPlayerCount%", String.valueOf(this.getStartPlayerCount()))
               .replace("%playerCount%", String.valueOf(this.players.size() - 2)),
           true);
     } else {
       this.sendMessage(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.JUGGERNAUT-DIED")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJuggernaut()
+              .getJuggernautDied()
               .replace("%player%", juggernaut.getName()),
           true);
     }
@@ -99,7 +117,12 @@ public class Juggernaut extends FfaEvent {
     if (this.winner != null) {
       if (this.winner == juggernaut) {
         this.sendMessage(
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.JUGGERNAUT-WON")
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getJuggernaut()
+                .getJuggernautWon()
                 .replace("%player%", winner.getName()),
             true);
 
@@ -108,7 +131,13 @@ public class Juggernaut extends FfaEvent {
         }
       } else {
         this.sendMessage(
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.ATTACKERS-WON"), true);
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getJuggernaut()
+                .getAttackersWon(),
+            true);
 
         for (Player player : players) {
           if (player != juggernaut) {
@@ -120,7 +149,13 @@ public class Juggernaut extends FfaEvent {
       }
     } else {
       this.sendMessage(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.NO-WINNER"), true);
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJuggernaut()
+              .getNoWinner(),
+          true);
     }
   }
 

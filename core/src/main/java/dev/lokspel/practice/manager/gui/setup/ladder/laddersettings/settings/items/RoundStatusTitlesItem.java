@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.items;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingItem;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingType;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingsGui;
@@ -17,10 +18,26 @@ public class RoundStatusTitlesItem extends SettingItem {
   public void updateItemStack() {
     if (this.ladder.isRoundStatusTitles()) {
       this.guiItem =
-          GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.ROUND-STATUS-TITLES.ENABLED");
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getSettings()
+                  .getIcons()
+                  .getRoundStatusTitles()
+                  .getEnabled());
     } else {
       this.guiItem =
-          GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.ROUND-STATUS-TITLES.DISABLED");
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getSettings()
+                  .getIcons()
+                  .getRoundStatusTitles()
+                  .getDisabled());
     }
   }
 

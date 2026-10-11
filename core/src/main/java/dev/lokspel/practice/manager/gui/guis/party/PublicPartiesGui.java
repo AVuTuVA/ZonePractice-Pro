@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.party;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.party.Party;
@@ -27,10 +27,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 @Getter
 public class PublicPartiesGui extends Gui {
 
-  private static final String GUI_PATH = "GUIS.PARTY.PUBLIC-PARTIES";
-
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem(GUI_PATH + ".ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getParty()
+                  .getPublicParties()
+                  .getIcons()
+                  .getFillerItem())
+          .get();
 
   private final int spaces = 45;
   private final Map<Integer, Map<Integer, Party>> partySlots = new HashMap<>();
@@ -66,7 +71,13 @@ public class PublicPartiesGui extends Gui {
 
     for (int page = 1; PageUtil.isPageValid(parties.size(), page, spaces) || page == 1; page++) {
       Inventory inventory = existingInventories.get(page);
-      String title = GuiFile.getString(GUI_PATH + ".TITLE").replace("%page%", String.valueOf(page));
+      String title =
+          PracticeConfig.guis()
+              .getGuis()
+              .getParty()
+              .getPublicParties()
+              .getTitle()
+              .replace("%page%", String.valueOf(page));
       if (inventory == null || inventory.getSize() != 6 * 9) {
         inventory = InventoryUtil.createInventory(title, 6);
       } else {
@@ -97,14 +108,26 @@ public class PublicPartiesGui extends Gui {
       ItemStack left =
           page == 1
               ? FILLER_ITEM
-              : GuiFile.getGuiItem(GUI_PATH + ".ICONS.PAGE-LEFT")
+              : BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getParty()
+                          .getPublicParties()
+                          .getIcons()
+                          .getPageLeft())
                   .replace("%page%", String.valueOf(page - 1))
                   .get();
       inventory.setItem(45, left);
 
       ItemStack right =
           PageUtil.isPageValid(parties.size(), page + 1, spaces)
-              ? GuiFile.getGuiItem(GUI_PATH + ".ICONS.PAGE-RIGHT")
+              ? BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getParty()
+                          .getPublicParties()
+                          .getIcons()
+                          .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
               : FILLER_ITEM;
@@ -151,25 +174,36 @@ public class PublicPartiesGui extends Gui {
     Profile profile = ProfileManager.getInstance().getProfile(player);
 
     if (!player.hasPermission("ap.party.joinpublic")) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoPermission());
       return false;
     }
 
     if (!profile.getStatus().equals(ProfileStatus.LOBBY)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.CANT-JOIN-NOW"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getAccept()
+              .getCantJoinNow());
       return false;
     }
 
     if (PartyManager.getInstance().getParty(player) != null) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.ALREADY-PARTY"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getAlreadyParty());
       return false;
     }
 
     if (!party.isPublicParty()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.NO-INVITE")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getAccept()
+              .getNoInvite()
               .replace("%leader%", party.getLeader().getName()));
       return false;
     }
@@ -177,7 +211,12 @@ public class PublicPartiesGui extends Gui {
     if (party.getMembers().size() >= party.getMaxPlayerLimit()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.PARTY-FULL")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getAccept()
+              .getPartyFull()
               .replace("%leader%", party.getLeader().getName()));
       return false;
     }
@@ -197,7 +236,14 @@ public class PublicPartiesGui extends Gui {
       if (count < 6) {
         if (!party.getLeader().equals(player)) {
           memberStrings.add(
-              GuiFile.getString(GUI_PATH + ".ICONS.PARTY-ITEM.LORE.MEMBER-FORMAT")
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getParty()
+                  .getPublicParties()
+                  .getIcons()
+                  .getPartyItem()
+                  .getLore()
+                  .getMemberFormat()
                   .replace("%player%", player.getName()));
           count++;
         }
@@ -207,7 +253,15 @@ public class PublicPartiesGui extends Gui {
     }
 
     List<String> lore = new ArrayList<>();
-    for (String line : GuiFile.getStringList(GUI_PATH + ".ICONS.PARTY-ITEM.LORE.LORE")) {
+    for (String line :
+        PracticeConfig.guis()
+            .getGuis()
+            .getParty()
+            .getPublicParties()
+            .getIcons()
+            .getPartyItem()
+            .getLore()
+            .getLore()) {
       if (line.contains("%members%")) {
         lore.addAll(memberStrings);
       } else {
@@ -219,7 +273,13 @@ public class PublicPartiesGui extends Gui {
 
     itemMeta.displayName(
         Common.legacyToComponent(
-            GuiFile.getString(GUI_PATH + ".ICONS.PARTY-ITEM.NAME")
+            PracticeConfig.guis()
+                .getGuis()
+                .getParty()
+                .getPublicParties()
+                .getIcons()
+                .getPartyItem()
+                .getName()
                 .replace("%leader%", party.getLeader().getName())
                 .replace("%partySize%", String.valueOf(party.getMembers().size()))
                 .replace("%maxPartySize%", String.valueOf(party.getMaxPlayerLimit()))));

@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -23,7 +23,7 @@ public class EditorCommand implements CommandExecutor {
     Profile profile = ProfileManager.getInstance().getProfile(player);
 
     if (!profile.getStatus().equals(ProfileStatus.LOBBY) || profile.isStaffMode()) {
-      Common.sendMmMessage(player, LanguageManager.getString("CANT-USE-COMMAND"));
+      Common.sendMmMessage(player, PracticeConfig.language().getCantUseCommand());
       return false;
     }
 

@@ -1,5 +1,6 @@
 package dev.lokspel.practice.manager.fight.event.events.ffa.splegg;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.events.ffa.interfaces.FfaEvent;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import java.util.HashMap;
@@ -14,7 +15,10 @@ public class Splegg extends FfaEvent {
   private final Map<Player, Integer> shotBlocks = new HashMap<>();
 
   public Splegg(Object starter, SpleggData eventData) {
-    super(starter, eventData, "COMMAND.EVENT.ARGUMENTS.SPLEGG");
+    super(
+        starter,
+        eventData,
+        () -> PracticeConfig.language().getCommand().getEvent().getArguments().getSplegg());
   }
 
   @Override

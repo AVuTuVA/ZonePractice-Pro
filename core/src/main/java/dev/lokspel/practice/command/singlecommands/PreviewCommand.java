@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
@@ -23,7 +23,7 @@ public class PreviewCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
@@ -34,7 +34,8 @@ public class PreviewCommand implements CommandExecutor, TabCompleter {
       case FFA:
       case EVENT:
       case SPECTATE:
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PREVIEW.CANT-USE"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPreview().getCantUse());
         return false;
 
       default:
@@ -44,7 +45,11 @@ public class PreviewCommand implements CommandExecutor, TabCompleter {
     if (args.length != 1) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PREVIEW.COMMAND-HELP").replace("%label%", label));
+          PracticeConfig.language()
+              .getCommand()
+              .getPreview()
+              .getCommandHelp()
+              .replace("%label%", label));
       return false;
     }
 
@@ -52,7 +57,10 @@ public class PreviewCommand implements CommandExecutor, TabCompleter {
     if (ladder == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PREVIEW.LADDER-NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getPreview()
+              .getLadderNotExists()
               .replace("%ladder%", args[0]));
       return false;
     }
@@ -60,7 +68,10 @@ public class PreviewCommand implements CommandExecutor, TabCompleter {
     if (!ladder.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PREVIEW.LADDER-DISABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getPreview()
+              .getLadderDisabled()
               .replace("%ladder%", ladder.getDisplayName()));
       return false;
     }

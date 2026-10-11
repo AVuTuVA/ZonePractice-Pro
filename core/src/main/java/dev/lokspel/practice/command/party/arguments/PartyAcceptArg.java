@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.party.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -18,7 +18,12 @@ public final class PartyAcceptArg {
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getAccept()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -26,13 +31,25 @@ public final class PartyAcceptArg {
     Profile profile = ProfileManager.getInstance().getProfile(player);
     if (!profile.getStatus().equals(ProfileStatus.LOBBY)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.CANT-JOIN-NOW"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getAccept()
+              .getCantJoinNow());
       return;
     }
 
     if (profile.isParty()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.ALREADY-MEMBER"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getAccept()
+              .getAlreadyMember());
       return;
     }
 
@@ -40,7 +57,12 @@ public final class PartyAcceptArg {
     if (target == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getAccept()
+              .getTargetOffline()
               .replace("%target%", args[1]));
       return;
     }
@@ -48,14 +70,25 @@ public final class PartyAcceptArg {
     Party party = PartyManager.getInstance().getParty(target);
     if (party == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.PARTY-NOT-EXISTS"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getAccept()
+              .getPartyNotExists());
       return;
     }
 
     if (party.getMembers().size() >= party.getMaxPlayerLimit()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.PARTY-FULL")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getAccept()
+              .getPartyFull()
               .replace("%leader%", party.getLeader().getName()));
       return;
     }
@@ -66,7 +99,12 @@ public final class PartyAcceptArg {
       if (!party.getInvites().containsKey(player)) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.NO-INVITE")
+            PracticeConfig.language()
+                .getCommand()
+                .getParty()
+                .getArguments()
+                .getAccept()
+                .getNoInvite()
                 .replace("%leader%", party.getLeader().getName()));
         return;
       }
@@ -78,7 +116,12 @@ public final class PartyAcceptArg {
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.ACCEPT.INVITE-EXPIRED")
+            PracticeConfig.language()
+                .getCommand()
+                .getParty()
+                .getArguments()
+                .getAccept()
+                .getInviteExpired()
                 .replace("%leader%", party.getLeader().getName()));
       }
 

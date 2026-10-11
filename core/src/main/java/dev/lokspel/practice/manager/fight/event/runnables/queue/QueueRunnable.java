@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.event.runnables.queue;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
@@ -17,15 +17,16 @@ import org.bukkit.entity.Player;
 
 public class QueueRunnable extends Runnable {
 
-  private static final boolean MESSAGE_ENABLED = ConfigManager.getBoolean("EVENT.BROADCAST.ENABLE");
+  private static final boolean MESSAGE_ENABLED =
+      PracticeConfig.settings().getEvent().getBroadcast().isEnable();
   private static final boolean MESSAGE_IN_PARTY =
-      ConfigManager.getBoolean("EVENT.BROADCAST.MESSAGE-TO.IN-PARTY");
+      PracticeConfig.settings().getEvent().getBroadcast().getMessageTo().isInParty();
   private static final boolean MESSAGE_IN_MATCH_UNRANKED =
-      ConfigManager.getBoolean("EVENT.BROADCAST.MESSAGE-TO.IN-UNRANKED-MATCH");
+      PracticeConfig.settings().getEvent().getBroadcast().getMessageTo().isInUnrankedMatch();
   private static final boolean MESSAGE_IN_MATCH_RANKED =
-      ConfigManager.getBoolean("EVENT.BROADCAST.MESSAGE-TO.IN-RANKED-MATCH");
+      PracticeConfig.settings().getEvent().getBroadcast().getMessageTo().isInRankedMatch();
   private static final boolean MESSAGE_IN_EVENT =
-      ConfigManager.getBoolean("EVENT.BROADCAST.MESSAGE-TO.IN-EVENT");
+      PracticeConfig.settings().getEvent().getBroadcast().getMessageTo().isInEvent();
 
   @Getter private final Event event;
   private int broadcastCounter = 0;

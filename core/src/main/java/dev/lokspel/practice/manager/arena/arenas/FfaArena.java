@@ -1,10 +1,10 @@
 package dev.lokspel.practice.manager.arena.arenas;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.ArenaType;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.ConfigManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -22,11 +22,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class FfaArena extends DisplayArena {
 
   private static final boolean DEFAULT_HEALTH_RESET_ON_KILL =
-      ConfigManager.getBoolean("FFA.HEALTH-RESET-ON-KILL");
+      PracticeConfig.settings().getFfa().isHealthResetOnKill();
   private static final boolean DEFAULT_HEALTH_BELOW_NAME =
-      ConfigManager.getBoolean("FFA.HEALTH-BELOW-NAME");
+      PracticeConfig.settings().getFfa().isHealthBelowName();
   private static final boolean DEFAULT_ALLOW_DROP_ITEMS =
-      ConfigManager.getBoolean("FFA.ALLOW-DROP-ITEMS");
+      PracticeConfig.settings().getFfa().isAllowDropItems();
 
   private final Ffa ffa;
   private boolean reKitAfterKill;

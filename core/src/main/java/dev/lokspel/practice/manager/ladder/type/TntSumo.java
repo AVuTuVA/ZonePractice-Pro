@@ -4,9 +4,9 @@ import static dev.lokspel.practice.util.PermanentConfig.FIGHT_ENTITY;
 import static dev.lokspel.practice.util.PermanentConfig.PLACED_IN_FIGHT;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.settings.MatchSettings;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.enums.RoundStatus;
@@ -53,7 +53,7 @@ public class TntSumo extends NormalLadder implements LadderHandle, TempBuild, Te
   private static final int TNT_LIMIT = 10;
   private static final String TNT_ATTACK_REWARD_ACTIONBAR_ID = "tnt_sumo_tnt_attack_reward";
   private static final String TNT_EARN_ACTIONBAR_MESSAGE =
-      LanguageManager.getString("MATCH.ACTIONBAR.TNT-SUMO-TNT-EARN");
+      PracticeConfig.language().getMatch().getActionbar().getTntSumoTntEarn();
 
   private static final Map<UUID, ItemStack> TNT_SUMO_PLAYER_TNT_CACHE = new HashMap<>();
 
@@ -63,37 +63,32 @@ public class TntSumo extends NormalLadder implements LadderHandle, TempBuild, Te
   private static final String TNT_SUMO_BLOCK_MATERIAL = "ASTRALPRACTICE_TNT_SUMO_BLOCK_MATERIAL";
   private static final String TNT_SUMO_BLOCK_ITEM = "ASTRALPRACTICE_TNT_SUMO_BLOCK_ITEM";
 
-  private static final String TNT_SUMO_CONFIG_PATH = "MATCH-SETTINGS.TNT-SUMO.EXPLOSION.";
-  private static final double TNT_SUMO_EXPLOSION_HORIZONTAL_RADIUS =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "EXPLOSION-HORIZONTAL-RADIUS", 4.0);
-  private static final double TNT_SUMO_EXPLOSION_VERTICAL_RADIUS =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "EXPLOSION-VERTICAL-RADIUS", 2.5);
+  // The old lookups read EXPLOSION.EXPLOSION-HORIZONTAL-RADIUS / EXPLOSION-VERTICAL-RADIUS, which
+  // never existed, so these two always used their defaults.
+  private static final double TNT_SUMO_EXPLOSION_HORIZONTAL_RADIUS = 4.0;
+  private static final double TNT_SUMO_EXPLOSION_VERTICAL_RADIUS = 2.5;
   private static final double TNT_SUMO_HORIZONTAL_MULTIPLIER =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "HORIZONTAL-MULTIPLIER", 1.6);
-  private static final double TNT_SUMO_VERTICAL_MULTIPLIER =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "VERTICAL-MULTIPLIER", 0.75);
-  private static final double TNT_SUMO_SWEET_SPOT_Y_BOOST =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "SWEET-SPOT-Y-BOOST", 0.85);
+      explosion().getHorizontalMultiplier();
+  private static final double TNT_SUMO_VERTICAL_MULTIPLIER = explosion().getVerticalMultiplier();
+  private static final double TNT_SUMO_SWEET_SPOT_Y_BOOST = explosion().getSweetSpotYboost();
   private static final double TNT_SUMO_GROUNDED_HORIZONTAL_MULTIPLIER =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "GROUNDED-HORIZONTAL-MULTIPLIER", 0.08);
+      explosion().getGroundedHorizontalMultiplier();
   private static final double TNT_SUMO_GROUNDED_VERTICAL_MULTIPLIER =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "GROUNDED-VERTICAL-MULTIPLIER", 0.08);
-  private static final double TNT_SUMO_GROUNDED_CHAIN_LIFT =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "GROUNDED-CHAIN-LIFT", 0.12);
+      explosion().getGroundedVerticalMultiplier();
+  private static final double TNT_SUMO_GROUNDED_CHAIN_LIFT = explosion().getGroundedChainLift();
   private static final double TNT_SUMO_NEAR_FULL_FORCE_DISTANCE =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "NEAR-FULL-FORCE-DISTANCE", 1.5);
+      explosion().getNearFullForceDistance();
   private static final double TNT_SUMO_SHARP_FALLOFF_START_DISTANCE =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "SHARP-FALLOFF-START-DISTANCE", 3.5);
+      explosion().getSharpFalloffStartDistance();
   private static final double TNT_SUMO_MID_FORCE_AT_FALLOFF_START =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "MID-FORCE-AT-FALLOFF-START", 0.35);
+      explosion().getMidForceAtFalloffStart();
   private static final double TNT_SUMO_AIRBORNE_JUGGLE_MULTIPLIER =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "AIRBORNE-JUGGLE-MULTIPLIER", 1.08);
+      explosion().getAirborneJuggleMultiplier();
   private static final long TNT_SUMO_AIRBORNE_STACK_WINDOW_MILLIS =
-      (long) getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "AIRBORNE-STACK-WINDOW-MILLIS", 55.0);
+      explosion().getAirborneStackWindowMillis();
   private static final double TNT_SUMO_AIRBORNE_OVERFLOW_PER_EXTRA_HIT =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "AIRBORNE-OVERFLOW-PER-EXTRA-HIT", 0.08);
-  private static final double TNT_SUMO_AIRBORNE_OVERFLOW_MAX =
-      getDoubleOrDefault(TNT_SUMO_CONFIG_PATH + "AIRBORNE-OVERFLOW-MAX", 0.24);
+      explosion().getAirborneOverflowPerExtraHit();
+  private static final double TNT_SUMO_AIRBORNE_OVERFLOW_MAX = explosion().getAirborneOverflowMax();
 
   private static final double TNT_SUMO_SWEET_SPOT_MAX_Y_DIFF = 1.25;
   private static final long TNT_SUMO_CHAIN_WINDOW_MILLIS = 850L;
@@ -673,11 +668,8 @@ public class TntSumo extends NormalLadder implements LadderHandle, TempBuild, Te
     return new Vector(x, y, z);
   }
 
-  private static double getDoubleOrDefault(String path, double defaultValue) {
-    if (ConfigManager.getConfig().isDouble(path) || ConfigManager.getConfig().isInt(path)) {
-      return ConfigManager.getDouble(path);
-    }
-    return defaultValue;
+  private static MatchSettings.TntSumo.Explosion explosion() {
+    return PracticeConfig.settings().getMatchSettings().getTntSumo().getExplosion();
   }
 
   private static boolean isTntOwner(@NotNull Player player, @NotNull TNTPrimed tnt) {

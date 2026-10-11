@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.items;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingItem;
@@ -19,10 +20,26 @@ public class HealthBelowNameItem extends SettingItem {
   public void updateItemStack() {
     if (this.ladder.isHealthBelowName()) {
       this.guiItem =
-          GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.HEALTH-BELOW-NAME.ENABLED");
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getSettings()
+                  .getIcons()
+                  .getHealthBelowName()
+                  .getEnabled());
     } else {
       this.guiItem =
-          GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.HEALTH-BELOW-NAME.DISABLED");
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getSettings()
+                  .getIcons()
+                  .getHealthBelowName()
+                  .getDisabled());
     }
   }
 

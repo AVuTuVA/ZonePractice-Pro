@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.staff.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -14,14 +14,20 @@ public final class EnableArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.staff")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.STAFF.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getStaff().getNoPermission());
       return;
     }
 
     if (args.length != 1) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.ENABLE.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getStaff()
+              .getArguments()
+              .getEnable()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -29,7 +35,13 @@ public final class EnableArg {
     Profile profile = ProfileManager.getInstance().getProfile(player);
     if (!profile.getStatus().equals(ProfileStatus.LOBBY)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.ENABLE.ONLY-IN-LOBBY"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getStaff()
+              .getArguments()
+              .getEnable()
+              .getOnlyInLobby());
       return;
     }
 

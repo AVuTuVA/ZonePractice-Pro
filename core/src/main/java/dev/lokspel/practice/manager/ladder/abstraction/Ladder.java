@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.ladder.abstraction;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
 import dev.lokspel.practice.manager.ladder.enums.LadderType;
 import dev.lokspel.practice.manager.ladder.util.LadderKnockback;
@@ -36,19 +36,19 @@ public abstract class Ladder {
   // Cooldowns
   @Setter
   protected double enderPearlCooldown =
-      ConfigManager.getDouble("MATCH-SETTINGS.COOLDOWN.ENDER-PEARL.SECONDS");
+      PracticeConfig.settings().getMatchSettings().getCooldown().getEnderPearl().getSeconds();
 
   @Setter
   protected double goldenAppleCooldown =
-      ConfigManager.getDouble("MATCH-SETTINGS.COOLDOWN.GOLDEN-APPLE.SECONDS");
+      PracticeConfig.settings().getMatchSettings().getCooldown().getGoldenApple().getSeconds();
 
   @Setter
   protected double fireworkRocketCooldown =
-      ConfigManager.getDouble("MATCH-SETTINGS.COOLDOWN.FIREWORK-ROCKET.SECONDS");
+      PracticeConfig.settings().getMatchSettings().getCooldown().getFireworkRocket().getSeconds();
 
   @Setter
   protected double windChargeCooldown =
-      ConfigManager.getDouble("MATCH-SETTINGS.COOLDOWN.WIND-CHARGE.SECONDS");
+      PracticeConfig.settings().getMatchSettings().getCooldown().getWindCharge().getSeconds();
 
   protected List<MatchType> matchTypes = new ArrayList<>();
 

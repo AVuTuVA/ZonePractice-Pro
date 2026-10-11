@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics.armortrim;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -24,16 +25,18 @@ import org.bukkit.inventory.meta.trim.TrimMaterial;
 
 public class MaterialSelectionGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
+  private static final ItemStack FILLER_ITEM =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BACK-TO").get();
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+          .get();
 
   private static final int INVENTORY_ROWS =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.MATERIAL-SELECTION.INVENTORY-ROWS", 5);
+      PracticeConfig.guis().getGuis().getCosmetics().getMaterialSelection().getInventoryRows();
   private static final int BACK_SLOT =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.MATERIAL-SELECTION.BACK-SLOT", 36);
+      PracticeConfig.guis().getGuis().getCosmetics().getMaterialSelection().getBackSlot();
   private static final int START_SLOT =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.MATERIAL-SELECTION.START-SLOT", 10);
+      PracticeConfig.guis().getGuis().getCosmetics().getMaterialSelection().getStartSlot();
 
   private final Profile profile;
   private final ArmorSlot armorSlot;
@@ -46,10 +49,11 @@ public class MaterialSelectionGui extends Gui {
     this.armorSlot = armorSlot;
     this.backToGui = backToGui;
     String title =
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.MATERIAL-SELECTION.INVENTORY-TITLE",
-                "<dark_gray>Select Material - %armor%")
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getMaterialSelection()
+            .getInventoryTitle()
             .replace("%armor%", armorSlot.getDisplayName());
     this.gui.put(1, InventoryUtil.createInventory(title, INVENTORY_ROWS));
     build();
@@ -117,10 +121,7 @@ public class MaterialSelectionGui extends Gui {
     ArmorTrimTier tier = profile.getCosmeticsData().getActiveTier();
     if (!player.hasPermission(tier.getPermissionNode())) {
       String tierPermDeniedMessage =
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.TIER-PERMISSION-DENIED-MESSAGE",
-                  "<red>You do not have permission for this armor tier.");
+          PracticeConfig.guis().getGuis().getCosmetics().getTierPermissionDeniedMessage();
       Common.sendMmMessage(player, tierPermDeniedMessage);
       return;
     }
@@ -129,10 +130,7 @@ public class MaterialSelectionGui extends Gui {
         "ap.cosmetics.armortrim.material." + CosmeticsPermissionManager.getTrimId(material);
     if (!player.hasPermission(permissionNode)) {
       String permDeniedMessage =
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.MATERIAL-PERMISSION-DENIED-MESSAGE",
-                  "<red>You do not have permission to use this trim material.");
+          PracticeConfig.guis().getGuis().getCosmetics().getMaterialPermissionDeniedMessage();
       Common.sendMmMessage(player, permDeniedMessage);
       return;
     }
@@ -155,15 +153,22 @@ public class MaterialSelectionGui extends Gui {
     GuiItem item = new GuiItem(resolveIcon(materialId));
 
     String itemName =
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.MATERIAL-SELECTION.MATERIAL-ITEM.NAME",
-                "<gold>%material_name% Material")
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getMaterialSelection()
+            .getMaterialItem()
+            .getName()
             .replace("%material_name%", StringUtil.getNormalizedName(materialId));
     item.setName(itemName);
 
     List<String> configLore =
-        GuiFile.getConfig().getStringList("GUIS.COSMETICS.MATERIAL-SELECTION.MATERIAL-ITEM.LORE");
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getMaterialSelection()
+            .getMaterialItem()
+            .getLore();
     List<String> lore = new ArrayList<>();
     for (String loreLine : configLore) {
       lore.add(
@@ -180,11 +185,10 @@ public class MaterialSelectionGui extends Gui {
 
   private Material resolveIcon(String materialId) {
     // Check if material icon is configured
+    Map<String, String> materialIcons =
+        PracticeConfig.guis().getGuis().getCosmetics().getMaterialSelection().getMaterialIcons();
     String configuredMaterial =
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.MATERIAL-SELECTION.MATERIAL-ICONS." + materialId.toUpperCase(),
-                null);
+        materialIcons != null ? materialIcons.get(materialId.toUpperCase()) : null;
     if (configuredMaterial != null) {
       try {
         return Material.valueOf(configuredMaterial);

@@ -1,9 +1,9 @@
 package dev.lokspel.practice.command.arena.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
 import dev.lokspel.practice.manager.arena.setup.SpawnMarkerManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.gui.setup.arena.ArenaGuiSetupManager;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
@@ -17,14 +17,20 @@ public final class DeleteArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("command.arena.no-permission"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.delete.command-help")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDelete()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -33,7 +39,12 @@ public final class DeleteArg {
     if (arena == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.delete.not-exists")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDelete()
+              .getNotExists()
               .replace("%arena%", args[1]));
       return;
     }
@@ -41,7 +52,12 @@ public final class DeleteArg {
     if (arena.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.delete.arena-enabled")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDelete()
+              .getArenaEnabled()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -55,7 +71,12 @@ public final class DeleteArg {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.delete.delete-success")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDelete()
+              .getDeleteSuccess()
               .replace("%arena%", arena.getName()));
     }
   }

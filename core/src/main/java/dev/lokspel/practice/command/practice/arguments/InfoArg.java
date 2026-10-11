@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.guis.profile.ProfileSetupGui;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -19,14 +18,20 @@ public final class InfoArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.practice.info")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.INFO.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getInfo()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -36,17 +41,27 @@ public final class InfoArg {
     if (target == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.INFO.TARGET-NOT-FOUND")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getInfo()
+              .getTargetNotFound()
               .replace("%target%", args[1]));
       return;
     }
 
     if (!player.equals(target.getPlayer())
         && target.getPlayer().isOp()
-        && ConfigManager.getBoolean("ADMIN-SETTINGS.OP-BYPASS-INFOGUI")) {
+        && PracticeConfig.settings().getAdminSettings().isOpBypassInfogui()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.INFO.TARGET-OP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getInfo()
+              .getTargetOp()
               .replace("%target%", target.getPlayer().getName()));
       return;
     }

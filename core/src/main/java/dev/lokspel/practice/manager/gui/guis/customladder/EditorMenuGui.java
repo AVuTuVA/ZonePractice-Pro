@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.customladder;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -17,14 +17,22 @@ import org.bukkit.inventory.ItemStack;
 public class EditorMenuGui extends Gui {
 
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.EDITOR-MENU.ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getKitEditor()
+                  .getEditorMenu()
+                  .getIcons()
+                  .getFillerItem())
+          .get();
 
   public EditorMenuGui() {
     super(GuiType.CustomLadder_EditorMenu);
 
     this.gui.put(
         1,
-        InventoryUtil.createInventory(GuiFile.getString("GUIS.KIT-EDITOR.EDITOR-MENU.TITLE"), 3));
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getKitEditor().getEditorMenu().getTitle(), 3));
     this.build();
   }
 
@@ -42,9 +50,25 @@ public class EditorMenuGui extends Gui {
     }
 
     inventory.setItem(
-        11, GuiFile.getGuiItem("GUIS.KIT-EDITOR.EDITOR-MENU.ICONS.PREMADE-LADDER").get());
+        11,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getKitEditor()
+                    .getEditorMenu()
+                    .getIcons()
+                    .getPremadeLadder())
+            .get());
     inventory.setItem(
-        15, GuiFile.getGuiItem("GUIS.KIT-EDITOR.EDITOR-MENU.ICONS.PLAYER-LADDER").get());
+        15,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getKitEditor()
+                    .getEditorMenu()
+                    .getIcons()
+                    .getPlayerLadder())
+            .get());
 
     this.updatePlayers();
   }
@@ -63,7 +87,7 @@ public class EditorMenuGui extends Gui {
       case 15:
         if (profile.getGroup() == null || profile.getGroup().getCustomKitLimit() == 0) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("CUSTOM-PLAYER-KIT.NO-CUSTOM-KIT"));
+              player, PracticeConfig.language().getCustomPlayerKit().getNoCustomKit());
           return;
         }
 

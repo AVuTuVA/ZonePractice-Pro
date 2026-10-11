@@ -1,8 +1,8 @@
 package dev.lokspel.practice.command.ffa.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -20,14 +20,20 @@ public final class SpectateArg {
   public static void run(Player player, String label, String[] args) {
     if (args.length != 2) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("FFA.COMMAND.SPECTATE.HELP").replace("%label%", label));
+          player,
+          PracticeConfig.language()
+              .getFfa()
+              .getCommand()
+              .getSpectate()
+              .getHelp()
+              .replace("%label%", label));
       return;
     }
 
     FfaArena ffaArena = ArenaManager.getInstance().getFfaArena(args[1]);
     if (ffaArena == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("FFA.COMMAND.SPECTATE.ARENA-NOT-FOUND"));
+          player, PracticeConfig.language().getFfa().getCommand().getSpectate().getArenaNotFound());
       return;
     }
 
@@ -35,7 +41,11 @@ public final class SpectateArg {
     if (ffa == null || !ffa.isOpen()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("FFA.COMMAND.SPECTATE.ARENA-CLOSED")
+          PracticeConfig.language()
+              .getFfa()
+              .getCommand()
+              .getSpectate()
+              .getArenaClosed()
               .replace("%arena%", ffaArena.getDisplayName()));
       return;
     }
@@ -43,7 +53,8 @@ public final class SpectateArg {
     Profile profile = ProfileManager.getInstance().getProfile(player);
     if (!profile.getStatus().equals(ProfileStatus.LOBBY)
         && !profile.getStatus().equals(ProfileStatus.SPECTATE)) {
-      Common.sendMmMessage(player, LanguageManager.getString("FFA.COMMAND.SPECTATE.CANT-JOIN-FFA"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getFfa().getCommand().getSpectate().getCantJoinFfa());
       return;
     }
 

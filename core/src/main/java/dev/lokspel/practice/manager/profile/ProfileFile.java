@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.profile;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.backend.ConfigFile;
-import dev.lokspel.practice.manager.backend.ConfigManager;
 import dev.lokspel.practice.manager.fight.match.util.CustomKit;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
@@ -211,20 +211,29 @@ public class ProfileFile extends ConfigFile {
     setCustomKitPerm();
 
     config.set(
-        "settings.duelrequest", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.DUELREQUEST"));
-    config.set("settings.autoqueue", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.AUTOQUEUE"));
-    config.set("settings.sidebar", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.SIDEBAR"));
+        "settings.duelrequest",
+        PracticeConfig.settings().getPlayer().getDefaultSettings().isDuelrequest());
     config.set(
-        "settings.hideplayers", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.HIDEPLAYERS"));
+        "settings.autoqueue",
+        PracticeConfig.settings().getPlayer().getDefaultSettings().isAutoqueue());
     config.set(
-        "settings.partyinvites", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.PARTYINVITES"));
+        "settings.sidebar", PracticeConfig.settings().getPlayer().getDefaultSettings().isSidebar());
+    config.set(
+        "settings.hideplayers",
+        PracticeConfig.settings().getPlayer().getDefaultSettings().isHideplayers());
+    config.set(
+        "settings.partyinvites",
+        PracticeConfig.settings().getPlayer().getDefaultSettings().isPartyinvites());
     config.set(
         "settings.allowspectate",
-        ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.ALLOWSPECTATE"));
-    config.set("settings.flying", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.FLYING"));
+        PracticeConfig.settings().getPlayer().getDefaultSettings().isAllowspectate());
     config.set(
-        "settings.messages", ConfigManager.getBoolean("PLAYER.DEFAULT-SETTINGS.PRIVATEMESSAGE"));
-    String defaultWorldTime = ConfigManager.getString("PLAYER.DEFAULT-SETTINGS.WORLD-TIME");
+        "settings.flying", PracticeConfig.settings().getPlayer().getDefaultSettings().isFlying());
+    config.set(
+        "settings.messages",
+        PracticeConfig.settings().getPlayer().getDefaultSettings().isPrivatemessage());
+    String defaultWorldTime =
+        PracticeConfig.settings().getPlayer().getDefaultSettings().getWorldTime();
     try {
       config.set(
           "settings.worldtime",
@@ -234,7 +243,7 @@ public class ProfileFile extends ConfigFile {
     }
 
     String defaultPrefixVisibility =
-        ConfigManager.getString("PLAYER.DEFAULT-SETTINGS.PREFIX-VISIBILITY");
+        PracticeConfig.settings().getPlayer().getDefaultSettings().getPrefixVisibility();
     try {
       config.set(
           "settings.prefix-visibility",

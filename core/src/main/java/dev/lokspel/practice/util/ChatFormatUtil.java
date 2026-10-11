@@ -1,8 +1,7 @@
 package dev.lokspel.practice.util;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.group.Group;
@@ -33,7 +32,10 @@ public final class ChatFormatUtil {
             : player.getName();
 
     return normalizeStaticSpacing(
-        LanguageManager.getString("GENERAL-CHAT.PARTY-CHAT").replace("%%player%%", playerName));
+        PracticeConfig.language()
+            .getGeneralChat()
+            .getPartyChat()
+            .replace("%%player%%", playerName));
   }
 
   public static String buildStaffChatMessage(Player player) {
@@ -46,22 +48,25 @@ public final class ChatFormatUtil {
             : player.getName();
 
     return normalizeStaticSpacing(
-        LanguageManager.getString("GENERAL-CHAT.STAFF-CHAT").replace("%%player%%", playerName));
+        PracticeConfig.language()
+            .getGeneralChat()
+            .getStaffChat()
+            .replace("%%player%%", playerName));
   }
 
   public static String buildServerChatMessage(Profile profile, Player player) {
     String format;
 
-    if (ConfigManager.getBoolean("PLAYER.GROUP-CHAT.ENABLED")) {
+    if (PracticeConfig.settings().getPlayer().getGroupChat().isEnabled()) {
       Group group = profile.getGroup();
 
       if (group != null && group.getChatFormat() != null) {
         format = group.getChatFormat();
       } else {
-        format = LanguageManager.getString("GENERAL-CHAT.SERVER-CHAT");
+        format = PracticeConfig.language().getGeneralChat().getServerChat();
       }
     } else {
-      format = LanguageManager.getString("GENERAL-CHAT.SERVER-CHAT");
+      format = PracticeConfig.language().getGeneralChat().getServerChat();
     }
 
     String decoratedPlayer =

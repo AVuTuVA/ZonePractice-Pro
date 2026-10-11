@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.party;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -23,7 +23,14 @@ import org.bukkit.inventory.ItemStack;
 public class PartySettingsGui extends Gui {
 
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getParty()
+                  .getPartySettings()
+                  .getIcons()
+                  .getFillerItem())
+          .get();
   private final Party party;
 
   public PartySettingsGui(Party party) {
@@ -31,7 +38,9 @@ public class PartySettingsGui extends Gui {
     this.party = party;
 
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString("GUIS.PARTY.PARTY-SETTINGS.TITLE"), 3));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getParty().getPartySettings().getTitle(), 3));
 
     build();
   }
@@ -51,44 +60,134 @@ public class PartySettingsGui extends Gui {
 
     if (party.isDuelRequests()) {
       inventory.setItem(
-          10, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.DUEL-REQUESTS.ENABLED").get());
+          10,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getParty()
+                      .getPartySettings()
+                      .getIcons()
+                      .getDuelRequests()
+                      .getEnabled())
+              .get());
     } else {
       inventory.setItem(
-          10, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.DUEL-REQUESTS.DISABLED").get());
+          10,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getParty()
+                      .getPartySettings()
+                      .getIcons()
+                      .getDuelRequests()
+                      .getDisabled())
+              .get());
     }
 
     inventory.setItem(11, getPlayerLimitItem(party.getMaxPlayerLimit()));
 
     if (party.isPartyChat()) {
       inventory.setItem(
-          12, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.PARTY-CHAT.ENABLED").get());
+          12,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getParty()
+                      .getPartySettings()
+                      .getIcons()
+                      .getPartyChat()
+                      .getEnabled())
+              .get());
     } else {
       inventory.setItem(
-          12, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.PARTY-CHAT.DISABLED").get());
+          12,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getParty()
+                      .getPartySettings()
+                      .getIcons()
+                      .getPartyChat()
+                      .getDisabled())
+              .get());
     }
 
     if (party.isAllInvite()) {
       inventory.setItem(
-          14, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.ALL-INVITE.ENABLED").get());
+          14,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getParty()
+                      .getPartySettings()
+                      .getIcons()
+                      .getAllInvite()
+                      .getEnabled())
+              .get());
     } else {
       inventory.setItem(
-          14, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.ALL-INVITE.DISABLED").get());
+          14,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getParty()
+                      .getPartySettings()
+                      .getIcons()
+                      .getAllInvite()
+                      .getDisabled())
+              .get());
     }
 
     if (party.isPublicParty()) {
       inventory.setItem(
-          15, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.ACCESS-MODIFIERS.PUBLIC").get());
+          15,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getParty()
+                      .getPartySettings()
+                      .getIcons()
+                      .getAccessModifiers()
+                      .getPublicValue())
+              .get());
     } else {
       inventory.setItem(
-          15, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.ACCESS-MODIFIERS.PRIVATE").get());
+          15,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getParty()
+                      .getPartySettings()
+                      .getIcons()
+                      .getAccessModifiers()
+                      .getPrivateValue())
+              .get());
     }
 
     if (party.isBroadcastParty()) {
       inventory.setItem(
-          16, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.BROADCAST.ENABLED").get());
+          16,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getParty()
+                      .getPartySettings()
+                      .getIcons()
+                      .getBroadcast()
+                      .getEnabled())
+              .get());
     } else {
       inventory.setItem(
-          16, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.BROADCAST.DISABLED").get());
+          16,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getParty()
+                      .getPartySettings()
+                      .getIcons()
+                      .getBroadcast()
+                      .getDisabled())
+              .get());
     }
 
     this.updatePlayers();
@@ -117,7 +216,7 @@ public class PartySettingsGui extends Gui {
           party.setDuelRequests(!party.isDuelRequests());
           update();
         } else {
-          Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
+          Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoPermission());
         }
         break;
       case 11:
@@ -129,7 +228,8 @@ public class PartySettingsGui extends Gui {
               party.setMaxPlayerLimit(party.getMaxPlayerLimit() - 1);
               update();
             } else {
-              Common.sendMmMessage(player, LanguageManager.getString("PARTY.CANT-DECREASE-LIMIT"));
+              Common.sendMmMessage(
+                  player, PracticeConfig.language().getParty().getCantDecreaseLimit());
             }
           } else if (clickType.isRightClick() && party.getMaxPlayerLimit() < groupPartyLimit) {
             party.setMaxPlayerLimit(party.getMaxPlayerLimit() + 1);
@@ -137,7 +237,7 @@ public class PartySettingsGui extends Gui {
             update();
           }
         } else {
-          Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
+          Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoPermission());
         }
         break;
       case 12:
@@ -148,7 +248,7 @@ public class PartySettingsGui extends Gui {
           // Turning party chat off also turns it off for every member,
           // so nobody keeps a toggle the party no longer allows.
           if (!partyChat) {
-            String disabled = LanguageManager.getString("PARTY.PARTY-CHAT-DISABLED-BY-LEADER");
+            String disabled = PracticeConfig.language().getParty().getPartyChatDisabledByLeader();
 
             for (Player member : party.getMembers()) {
               if (member.equals(party.getLeader())) {
@@ -167,7 +267,7 @@ public class PartySettingsGui extends Gui {
 
           update();
         } else {
-          Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
+          Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoPermission());
         }
         break;
       case 14:
@@ -175,7 +275,7 @@ public class PartySettingsGui extends Gui {
           party.setAllInvite(!party.isAllInvite());
           update();
         } else {
-          Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
+          Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoPermission());
         }
         break;
       case 15:
@@ -184,7 +284,7 @@ public class PartySettingsGui extends Gui {
             Common.sendMmMessage(
                 player,
                 StringUtil.replaceSecondString(
-                    LanguageManager.getString("WAIT-FOR-COOLDOWN"),
+                    PracticeConfig.language().getWaitForCooldown(),
                     PlayerCooldown.getLeftInDouble(
                         player, CooldownObject.LEADERBOARD_GUI_REFRESH)));
             return;
@@ -200,7 +300,7 @@ public class PartySettingsGui extends Gui {
           GuiManager.getInstance().searchGui(GuiType.Party_PublicParties).update();
           update();
         } else {
-          Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
+          Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoPermission());
         }
         break;
       case 16:
@@ -210,7 +310,7 @@ public class PartySettingsGui extends Gui {
               Common.sendMmMessage(
                   player,
                   StringUtil.replaceSecondString(
-                      LanguageManager.getString("WAIT-FOR-COOLDOWN"),
+                      PracticeConfig.language().getWaitForCooldown(),
                       PlayerCooldown.getLeftInDouble(
                           player, CooldownObject.BROADCAST_PARTY_CHANGE)));
               return;
@@ -224,7 +324,8 @@ public class PartySettingsGui extends Gui {
               Profile leaderProfile = ProfileManager.getInstance().getProfile(player);
               if (!player.hasPermission("ap.bypass.party.broadcast.limit")
                   && leaderProfile.getPartyBroadcastLeft() <= 0) {
-                Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-BROADCAST-LEFT"));
+                Common.sendMmMessage(
+                    player, PracticeConfig.language().getParty().getNoBroadcastLeft());
                 return;
               }
               if (!player.hasPermission("ap.bypass.party.broadcast.limit")) {
@@ -235,7 +336,7 @@ public class PartySettingsGui extends Gui {
                 Common.sendMmMessage(
                     player,
                     StringUtil.replaceSecondString(
-                        LanguageManager.getString("WAIT-FOR-COOLDOWN"),
+                        PracticeConfig.language().getWaitForCooldown(),
                         PlayerCooldown.getLeftInDouble(
                             player, CooldownObject.BROADCAST_PARTY_CHANGE)));
                 return;
@@ -245,11 +346,12 @@ public class PartySettingsGui extends Gui {
               party.getBroadcastTask().begin();
               update();
             } else {
-              Common.sendMmMessage(player, LanguageManager.getString("PARTY.PARTY-NOT-PUBLIC"));
+              Common.sendMmMessage(
+                  player, PracticeConfig.language().getParty().getPartyNotPublic());
             }
           }
         } else {
-          Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
+          Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoPermission());
         }
         break;
 
@@ -259,7 +361,13 @@ public class PartySettingsGui extends Gui {
   }
 
   public ItemStack getPlayerLimitItem(int limit) {
-    return GuiFile.getGuiItem("GUIS.PARTY.PARTY-SETTINGS.ICONS.PLAYER-LIMIT")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getParty()
+                .getPartySettings()
+                .getIcons()
+                .getPlayerLimit())
         .replace("%limit%", String.valueOf(limit))
         .get();
   }

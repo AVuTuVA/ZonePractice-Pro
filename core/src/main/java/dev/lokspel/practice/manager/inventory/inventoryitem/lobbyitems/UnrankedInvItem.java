@@ -1,14 +1,13 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.lobbyitems;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
 import org.bukkit.entity.Player;
 
 public class UnrankedInvItem extends InvItem {
 
   public UnrankedInvItem() {
-    super(
-        getItemStack("LOBBY-BASIC.NORMAL.UNRANKED.ITEM"),
-        getInt("LOBBY-BASIC.NORMAL.UNRANKED.SLOT"));
+    super(PracticeConfig.inventories().getLobbyBasic().getNormal().get("UNRANKED"));
   }
 
   @Override

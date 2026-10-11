@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.fight.ffa;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.ffa.game.FfaArenaSelectorGui;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -41,12 +41,14 @@ public class FfaManager {
   public boolean joinArena(Player player, FfaArena arena) {
     Profile profile = ProfileManager.getInstance().getProfile(player);
     if (!profile.getStatus().equals(ProfileStatus.LOBBY)) {
-      Common.sendMmMessage(player, LanguageManager.getString("FFA.COMMAND.JOIN.CANT-JOIN-FFA"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getFfa().getCommand().getJoin().getCantJoinFfa());
       return false;
     }
 
     if (arena == null) {
-      Common.sendMmMessage(player, LanguageManager.getString("FFA.COMMAND.JOIN.ARENA-NOT-FOUND"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getFfa().getCommand().getJoin().getArenaNotFound());
       return false;
     }
 
@@ -54,7 +56,11 @@ public class FfaManager {
     if (!arena.isEnabled() || ffa == null || !ffa.isOpen()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("FFA.COMMAND.JOIN.ARENA-CLOSED")
+          PracticeConfig.language()
+              .getFfa()
+              .getCommand()
+              .getJoin()
+              .getArenaClosed()
               .replace("%arena%", arena.getDisplayName()));
       return false;
     }

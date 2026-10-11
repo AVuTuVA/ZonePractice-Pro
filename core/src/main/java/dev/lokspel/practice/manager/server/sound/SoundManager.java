@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.server.sound;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.settings.SettingsConfig;
 import dev.lokspel.practice.util.Common;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,11 +26,13 @@ public class SoundManager {
   }
 
   private void loadSounds() {
-    if (ConfigManager.getConfig().isConfigurationSection("SOUNDS")) {
-      for (String soundName : ConfigManager.getConfigSectionKeys("SOUNDS")) {
+    Map<String, SettingsConfig.Sound> configured = PracticeConfig.settings().getSounds();
+    if (configured != null) {
+      for (Map.Entry<String, SettingsConfig.Sound> entry : configured.entrySet()) {
+        String soundName = entry.getKey();
         try {
           SoundType type = SoundType.valueOf(soundName);
-          sounds.put(type, new SoundEffect(soundName));
+          sounds.put(type, new SoundEffect(entry.getValue()));
         } catch (IllegalArgumentException e) {
           Common.sendConsoleMmMessage("<red>Invalid sound type: " + soundName);
         }

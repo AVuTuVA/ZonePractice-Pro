@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -20,14 +19,20 @@ public final class ResetArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.practice.reset")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RESET.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getReset()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -37,17 +42,27 @@ public final class ResetArg {
     if (target == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RESET.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getReset()
+              .getTargetOffline()
               .replace("%target%", args[1]));
       return;
     }
 
     if (player != target.getPlayer()
         && target.getPlayer().isOp()
-        && ConfigManager.getBoolean("ADMIN-SETTINGS.OP-BYPASS-FULL-RESET")) {
+        && PracticeConfig.settings().getAdminSettings().isOpBypassFullReset()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RESET.TARGET-OP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getReset()
+              .getTargetOp()
               .replace("%target%", target.getPlayer().getName()));
       return;
     }
@@ -67,14 +82,24 @@ public final class ResetArg {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RESET.RESET-PLAYER")
+        PracticeConfig.language()
+            .getCommand()
+            .getPractice()
+            .getArguments()
+            .getReset()
+            .getResetPlayer()
             .replace("%target%", target.getPlayer().getName()));
   }
 
   public static void run(String label, String[] args) {
     if (args.length != 2) {
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RESET.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getReset()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -83,7 +108,12 @@ public final class ResetArg {
         ProfileManager.getInstance().getProfile(ServerManager.getInstance().resolvePlayer(args[1]));
     if (target == null) {
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RESET.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getReset()
+              .getTargetOffline()
               .replace("%target%", args[1]));
       return;
     }
@@ -100,7 +130,12 @@ public final class ResetArg {
     target.getStats().setExperience(0);
 
     Common.sendConsoleMmMessage(
-        LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RESET.RESET-PLAYER")
+        PracticeConfig.language()
+            .getCommand()
+            .getPractice()
+            .getArguments()
+            .getReset()
+            .getResetPlayer()
             .replace("%target%", target.getPlayer().getName()));
   }
 

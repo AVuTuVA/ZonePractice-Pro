@@ -1,7 +1,7 @@
 package dev.lokspel.practice.command.arena.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.gui.guis.arena.ArenaCreateGui;
 import dev.lokspel.practice.util.Common;
 import java.text.Normalizer;
@@ -13,21 +13,33 @@ public final class CreateArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CREATE.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getCreate()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
 
     if (ArenaManager.getInstance().getArenaList().size() == 243) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CREATE.REACHED-MAX"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getCreate()
+              .getReachedMax());
       return;
     }
 
@@ -43,17 +55,17 @@ public final class CreateArg {
 
   public static String checkName(String input) {
     if (input.isEmpty()) {
-      return LanguageManager.getString("ARENA.CREATE.NO-NAME");
+      return PracticeConfig.language().getArena().getCreate().getNoName();
     } else if (input.contains(" ")) {
-      return LanguageManager.getString("ARENA.CREATE.ONLY-ALPHANUMERIC");
+      return PracticeConfig.language().getArena().getCreate().getOnlyAlphanumeric();
     } else if (!Normalizer.isNormalized(input, Normalizer.Form.NFD)) {
-      return LanguageManager.getString("ARENA.CREATE.NO-ACCENTS");
+      return PracticeConfig.language().getArena().getCreate().getNoAccents();
     } else if (input.length() < 4) {
-      return LanguageManager.getString("ARENA.CREATE.FEW-CHAR");
+      return PracticeConfig.language().getArena().getCreate().getFewChar();
     } else if (input.length() > 16) {
-      return LanguageManager.getString("ARENA.CREATE.MANY-CHAR");
+      return PracticeConfig.language().getArena().getCreate().getManyChar();
     } else if (ArenaManager.getInstance().getArena(input) != null) {
-      return LanguageManager.getString("ARENA.CREATE.NAME-TAKEN");
+      return PracticeConfig.language().getArena().getCreate().getNameTaken();
     } else {
       return null;
     }

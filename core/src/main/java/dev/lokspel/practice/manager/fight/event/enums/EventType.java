@@ -1,7 +1,6 @@
 package dev.lokspel.practice.manager.fight.event.enums;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.ItemCreateUtil;
 import java.util.List;
 import lombok.Getter;
@@ -12,11 +11,11 @@ import org.bukkit.inventory.ItemStack;
 public enum EventType {
   LMS(
       10,
-      ConfigManager.getString("EVENT.LMS.NAME"),
+      PracticeConfig.settings().getEvent().getLms().getName(),
       ItemCreateUtil.createItem("<yellow>Last Man Standing", Material.DIAMOND_SWORD),
       15,
-      LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.LMS.BROADCAST"),
-      ConfigManager.getList("EVENT.LMS.WINNER-COMMAND"),
+      PracticeConfig.language().getCommand().getEvent().getArguments().getLms().getBroadcast(),
+      PracticeConfig.settings().getEvent().getLms().getWinnerCommand(),
       40,
       15 * 60,
       30 * 60,
@@ -25,11 +24,11 @@ public enum EventType {
       50),
   OITC(
       11,
-      ConfigManager.getString("EVENT.OITC.NAME"),
+      PracticeConfig.settings().getEvent().getOitc().getName(),
       ItemCreateUtil.createItem("<gold>One In The Chamber", Material.BOW),
       15,
-      LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.OITC.BROADCAST"),
-      ConfigManager.getList("EVENT.OITC.WINNER-COMMAND"),
+      PracticeConfig.language().getCommand().getEvent().getArguments().getOitc().getBroadcast(),
+      PracticeConfig.settings().getEvent().getOitc().getWinnerCommand(),
       40,
       15 * 60,
       30 * 60,
@@ -38,11 +37,11 @@ public enum EventType {
       30),
   TNTTAG(
       12,
-      ConfigManager.getString("EVENT.TNTTAG.NAME"),
+      PracticeConfig.settings().getEvent().getTnttag().getName(),
       ItemCreateUtil.createItem("<red>TNT Tag", Material.TNT),
       15,
-      LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.TNTTAG.BROADCAST"),
-      ConfigManager.getList("EVENT.TNTTAG.WINNER-COMMAND"),
+      PracticeConfig.language().getCommand().getEvent().getArguments().getTnttag().getBroadcast(),
+      PracticeConfig.settings().getEvent().getTnttag().getWinnerCommand(),
       30,
       10 * 60,
       30, // TNT Explode time
@@ -51,11 +50,11 @@ public enum EventType {
       20),
   BRACKETS(
       13,
-      ConfigManager.getString("EVENT.BRACKETS.NAME"),
+      PracticeConfig.settings().getEvent().getBrackets().getName(),
       ItemCreateUtil.createItem("<green>Brackets", Material.POTION, Short.valueOf("34")),
       15,
-      LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.BRACKETS.BROADCAST"),
-      ConfigManager.getList("EVENT.BRACKETS.WINNER-COMMAND"),
+      PracticeConfig.language().getCommand().getEvent().getArguments().getBrackets().getBroadcast(),
+      PracticeConfig.settings().getEvent().getBrackets().getWinnerCommand(),
       60,
       15 * 60,
       8 * 60,
@@ -64,11 +63,11 @@ public enum EventType {
       60),
   SUMO(
       14,
-      ConfigManager.getString("EVENT.SUMO.NAME"),
+      PracticeConfig.settings().getEvent().getSumo().getName(),
       ItemCreateUtil.createItem("<gold>Sumo", Material.STICK),
       15,
-      LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.SUMO.BROADCAST"),
-      ConfigManager.getList("EVENT.SUMO.WINNER-COMMAND"),
+      PracticeConfig.language().getCommand().getEvent().getArguments().getSumo().getBroadcast(),
+      PracticeConfig.settings().getEvent().getSumo().getWinnerCommand(),
       45,
       10 * 60,
       3 * 60,
@@ -77,11 +76,11 @@ public enum EventType {
       100),
   SPLEGG(
       15,
-      ConfigManager.getString("EVENT.SPLEGG.NAME"),
+      PracticeConfig.settings().getEvent().getSplegg().getName(),
       ItemCreateUtil.createItem("<aqua>Splegg", Material.EGG),
       15,
-      LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.SPLEGG.BROADCAST"),
-      ConfigManager.getList("EVENT.SPLEGG.WINNER-COMMAND"),
+      PracticeConfig.language().getCommand().getEvent().getArguments().getSplegg().getBroadcast(),
+      PracticeConfig.settings().getEvent().getSplegg().getWinnerCommand(),
       40,
       12 * 60,
       15 * 60,
@@ -90,11 +89,16 @@ public enum EventType {
       50),
   JUGGERNAUT(
       16,
-      ConfigManager.getString("EVENT.JUGGERNAUT.NAME"),
+      PracticeConfig.settings().getEvent().getJuggernaut().getName(),
       ItemCreateUtil.createItem("<gold>Juggernaut", Material.GOLDEN_APPLE),
       15,
-      LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.BROADCAST"),
-      ConfigManager.getList("EVENT.JUGGERNAUT.WINNER-COMMAND"),
+      PracticeConfig.language()
+          .getCommand()
+          .getEvent()
+          .getArguments()
+          .getJuggernaut()
+          .getBroadcast(),
+      PracticeConfig.settings().getEvent().getJuggernaut().getWinnerCommand(),
       60,
       15 * 60,
       30 * 60,

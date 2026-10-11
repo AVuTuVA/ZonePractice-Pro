@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.gui.setup.arena.arenasettings.ffa;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.util.Common;
@@ -14,37 +15,179 @@ import org.bukkit.inventory.ItemStack;
 public class FfaSettingsGui extends Gui {
 
   private static final ItemStack GO_BACK_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.GO-BACK").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getGoBack())
+          .get();
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.FILLER").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getFiller())
+          .get();
   private static final ItemStack BUILD_ENABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.BUILD.ENABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getBuild()
+                  .getEnabled())
+          .get();
   private static final ItemStack BUILD_DISABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.BUILD.DISABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getBuild()
+                  .getDisabled())
+          .get();
   private static final ItemStack TNT_ENABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.MAP-BLOWABLE.ENABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getMapBlowable()
+                  .getEnabled())
+          .get();
   private static final ItemStack TNT_DISABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.MAP-BLOWABLE.DISABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getMapBlowable()
+                  .getDisabled())
+          .get();
   private static final ItemStack REKIT_ENABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.RE-KIT-AFTER-KILL.ENABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getReKitAfterKill()
+                  .getEnabled())
+          .get();
   private static final ItemStack REKIT_DISABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.RE-KIT-AFTER-KILL.DISABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getReKitAfterKill()
+                  .getDisabled())
+          .get();
   private static final ItemStack HEALTH_BELOW_NAME_ENABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.HEALTH-BELOW-NAME.ENABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getHealthBelowName()
+                  .getEnabled())
+          .get();
   private static final ItemStack HEALTH_BELOW_NAME_DISABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.HEALTH-BELOW-NAME.DISABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getHealthBelowName()
+                  .getDisabled())
+          .get();
   private static final ItemStack HEALTH_RESET_ENABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.HEALTH-RESET-ON-KILL.ENABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getHealthResetOnKill()
+                  .getEnabled())
+          .get();
   private static final ItemStack HEALTH_RESET_DISABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.HEALTH-RESET-ON-KILL.DISABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getHealthResetOnKill()
+                  .getDisabled())
+          .get();
   private static final ItemStack LOBBYDEATH_ENABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.LOBBY-AFTER-DEATH.ENABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getLobbyAfterDeath()
+                  .getEnabled())
+          .get();
   private static final ItemStack LOBBYDEATH_DISABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.LOBBY-AFTER-DEATH.DISABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getLobbyAfterDeath()
+                  .getDisabled())
+          .get();
   private static final ItemStack ALLOW_DROP_ENABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.ALLOW-DROP-ITEMS.ENABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getAllowDropItems()
+                  .getEnabled())
+          .get();
   private static final ItemStack ALLOW_DROP_DISABLED_ITEM =
-      GuiFile.getGuiItem("GUIS.SETUP.FFA-ARENA.SETTINGS.ICONS.ALLOW-DROP-ITEMS.DISABLED").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getFfaArena()
+                  .getSettings()
+                  .getIcons()
+                  .getAllowDropItems()
+                  .getDisabled())
+          .get();
 
   private final FfaArena ffaArena;
   private final ArenaMainGui arenaMainGui;
@@ -55,7 +198,12 @@ public class FfaSettingsGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.FFA-ARENA.SETTINGS.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getFfaArena()
+                .getSettings()
+                .getTitle()
                 .replace("%arenaName%", ffaArena.getName()),
             4));
     this.ffaArena = ffaArena;

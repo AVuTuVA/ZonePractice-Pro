@@ -1,5 +1,6 @@
 package dev.lokspel.practice.manager.arena.setup;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
@@ -7,8 +8,6 @@ import dev.lokspel.practice.manager.arena.util.ArenaUtil;
 import dev.lokspel.practice.manager.arena.util.ArenaWorldUtil;
 import dev.lokspel.practice.manager.arena.util.BedLocation;
 import dev.lokspel.practice.manager.arena.util.PortalLocation;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.util.BedUtil;
 import dev.lokspel.practice.manager.fight.util.BlockUtil;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -158,7 +157,12 @@ public class ArenaSetupListener implements Listener {
       arena.setDeadZone(false);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.POSITION.DEADZONE-TO-HIGH")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPosition()
+              .getDeadzoneToHigh()
               .replace("%arena%", arena.getName()));
     }
 
@@ -171,7 +175,12 @@ public class ArenaSetupListener implements Listener {
       arena.setPosition1(loc);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.POSITION.SAVED-POSITION")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPosition()
+              .getSavedPosition()
               .replace("%arena%", arena.getName())
               .replace("%position%", "1."));
     } else {
@@ -183,7 +192,12 @@ public class ArenaSetupListener implements Listener {
       arena.setPosition2(loc);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.POSITION.SAVED-POSITION")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPosition()
+              .getSavedPosition()
               .replace("%arena%", arena.getName())
               .replace("%position%", "2."));
     }
@@ -211,7 +225,12 @@ public class ArenaSetupListener implements Listener {
       if (ffaArena.getFfaPositions().size() >= 18) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.FFA-POSITIONS.MAX-18")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getFfaPositions()
+                .getMax18()
                 .replace("%arena%", ffaArena.getName()));
         return;
       }
@@ -231,7 +250,12 @@ public class ArenaSetupListener implements Listener {
       updateGui(ffaArena);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.FFA-POSITIONS.SET-FFAPOS")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getFfaPositions()
+              .getSetFfapos()
               .replace("%arena%", ffaArena.getName())
               .replace("%posCount%", String.valueOf(ffaArena.getFfaPositions().size())));
 
@@ -258,14 +282,26 @@ public class ArenaSetupListener implements Listener {
     Block targetBlock = event.getClickedBlock();
     if (targetBlock == null || targetBlock.getType().equals(Material.AIR)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CORNER.NO-BLOCK"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getCorner()
+              .getNoBlock());
       return;
     }
 
     Location cornerLocation = targetBlock.getLocation();
     if (!cornerLocation.getWorld().equals(ArenaWorldUtil.getArenasWorld())) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CORNER.CORNER-WORLD"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getCorner()
+              .getCornerWorld());
       return;
     }
 
@@ -279,7 +315,12 @@ public class ArenaSetupListener implements Listener {
     arena.createCuboid();
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CORNER.SAVED-CORNER")
+        PracticeConfig.language()
+            .getCommand()
+            .getArena()
+            .getArguments()
+            .getCorner()
+            .getSavedCorner()
             .replace("%arena%", arena.getName())
             .replace("%corner%", cornerId + "."));
 
@@ -303,7 +344,12 @@ public class ArenaSetupListener implements Listener {
     if (!BlockUtil.isBedMaterial(block.getType())) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.BED.NO-BED")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getBed()
+              .getNoBed()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -318,13 +364,23 @@ public class ArenaSetupListener implements Listener {
       arena.setBedLoc1(bedLocation);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.BED.SET-BED1")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getBed()
+              .getSetBed1()
               .replace("%arena%", arena.getName()));
     } else {
       arena.setBedLoc2(bedLocation);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.BED.SET-BED2")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getBed()
+              .getSetBed2()
               .replace("%arena%", arena.getName()));
     }
     updateGui(arena);
@@ -337,7 +393,12 @@ public class ArenaSetupListener implements Listener {
     if (!arena.isBuild()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.NOT-BUILD")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPortal()
+              .getNotBuild()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -349,7 +410,12 @@ public class ArenaSetupListener implements Listener {
     if (block == null || block.getType().equals(Material.AIR)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.NO-BLOCK")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPortal()
+              .getNoBlock()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -374,7 +440,12 @@ public class ArenaSetupListener implements Listener {
     if (portalLoc.getBlockY() <= floorY + 1) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.TOO-LOW-FOR-FLOOR")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPortal()
+              .getTooLowForFloor()
               .replace("%floor_type%", floorType)
               .replace("%floor_y%", String.valueOf(floorY)));
       return;
@@ -386,27 +457,47 @@ public class ArenaSetupListener implements Listener {
       if (arena.getPortalLoc2() != null && arena.getPortalLoc2().isOverlap(portalLocation)) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.PORTAL-OVERLAP")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getPortal()
+                .getPortalOverlap()
                 .replace("%arena%", arena.getName()));
         return;
       }
       arena.setPortalLoc1(portalLocation);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.SET-PORTAL1")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPortal()
+              .getSetPortal1()
               .replace("%arena%", arena.getName()));
     } else {
       if (arena.getPortalLoc1() != null && arena.getPortalLoc1().isOverlap(portalLocation)) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.PORTAL-OVERLAP")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getPortal()
+                .getPortalOverlap()
                 .replace("%arena%", arena.getName()));
         return;
       }
       arena.setPortalLoc2(portalLocation);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.SET-PORTAL2")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPortal()
+              .getSetPortal2()
               .replace("%arena%", arena.getName()));
     }
     portalLocation.setPortal();
@@ -420,14 +511,14 @@ public class ArenaSetupListener implements Listener {
 
     if (action.name().contains("LEFT")) {
       arena.setBuildMax(false);
-      arena.setBuildMaxValue(ConfigManager.getInt("MATCH-SETTINGS.BUILD-LIMIT-DEFAULT"));
+      arena.setBuildMaxValue(PracticeConfig.settings().getMatchSettings().getBuildLimitDefault());
       arena.setData();
       Common.sendMmMessage(
           player,
           "<red>Build Height Limit disabled for "
               + arena.getName()
               + " <gray>(now relative: spawn Y + "
-              + ConfigManager.getInt("MATCH-SETTINGS.BUILD-LIMIT-DEFAULT")
+              + PracticeConfig.settings().getMatchSettings().getBuildLimitDefault()
               + " blocks — use right-click to set an absolute limit)");
       return;
     }
@@ -447,7 +538,12 @@ public class ArenaSetupListener implements Listener {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETBUILDMAX.SET-BUILDMAX")
+        PracticeConfig.language()
+            .getCommand()
+            .getArena()
+            .getArguments()
+            .getSetbuildmax()
+            .getSetBuildmax()
             .replace("%arena%", arena.getName())
             .replace("%y-level%", String.valueOf(pos.getBlockY())));
   }
@@ -491,7 +587,12 @@ public class ArenaSetupListener implements Listener {
       if ((spawnPosition.getY() - 1) <= deadZoneY) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETDEADZONE.LOWER-THAN-SPAWN"));
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getSetdeadzone()
+                .getLowerThanSpawn());
         return;
       }
     }
@@ -505,7 +606,12 @@ public class ArenaSetupListener implements Listener {
         a.setPortalLoc1(null);
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.TOO-LOW-FOR-FLOOR")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getPortal()
+                .getTooLowForFloor()
                 .replace("%floor_type%", "dead zone (portal 1 removed)")
                 .replace("%floor_y%", String.valueOf(deadZoneY)));
       }
@@ -513,7 +619,12 @@ public class ArenaSetupListener implements Listener {
         a.setPortalLoc2(null);
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.TOO-LOW-FOR-FLOOR")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getPortal()
+                .getTooLowForFloor()
                 .replace("%floor_type%", "dead zone (portal 2 removed)")
                 .replace("%floor_y%", String.valueOf(deadZoneY)));
       }
@@ -521,7 +632,12 @@ public class ArenaSetupListener implements Listener {
 
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.SETDEADZONE.SET-DEADZONE")
+        PracticeConfig.language()
+            .getCommand()
+            .getArena()
+            .getArguments()
+            .getSetdeadzone()
+            .getSetDeadzone()
             .replace("%arena%", arena.getName())
             .replace("%y-level%", String.valueOf(deadZoneY)));
   }
@@ -531,7 +647,12 @@ public class ArenaSetupListener implements Listener {
       if (arena.isEnabled()) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ENABLE.ALREADY-ENABLED")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getEnable()
+                .getAlreadyEnabled()
                 .replace("%arena%", arena.getName()));
         return;
       }
@@ -539,7 +660,12 @@ public class ArenaSetupListener implements Listener {
       if (ArenaUtil.changeStatus(player, arena)) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ENABLE.ARENA-ENABLED")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getEnable()
+                .getArenaEnabled()
                 .replace("%arena%", arena.getName()));
         updateGui(arena);
       }
@@ -550,14 +676,24 @@ public class ArenaSetupListener implements Listener {
     if (arena.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.POSITION.CANT-EDIT2")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPosition()
+              .getCantEdit2()
               .replace("%arena%", arena.getName()));
       return true;
     }
     if (arena instanceof Arena && ((Arena) arena).hasCopies()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.POSITION.CANT-EDIT")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPosition()
+              .getCantEdit()
               .replace("%arena%", arena.getName()));
       return true;
     }
@@ -568,7 +704,12 @@ public class ArenaSetupListener implements Listener {
     if (arena.getCuboid() == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.POSITION.NO-REGION")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPosition()
+              .getNoRegion()
               .replace("%arena%", arena.getName()));
       return true;
     }
@@ -579,7 +720,12 @@ public class ArenaSetupListener implements Listener {
     if (!arena.getCuboid().contains(loc)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.POSITION.POS-OUTSIDE-REGION")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getPosition()
+              .getPosOutsideRegion()
               .replace("%arena%", arena.getName()));
       return true;
     }
@@ -616,7 +762,12 @@ public class ArenaSetupListener implements Listener {
       arena.setEnabled(false);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CORNER.POSITION-REMOVED")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getCorner()
+              .getPositionRemoved()
               .replace("%arena%", arena.getName())
               .replace("%position%", "1"));
     }
@@ -626,7 +777,12 @@ public class ArenaSetupListener implements Listener {
       arena.setEnabled(false);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CORNER.POSITION-REMOVED")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getCorner()
+              .getPositionRemoved()
               .replace("%arena%", arena.getName())
               .replace("%position%", "2"));
     }
@@ -645,7 +801,12 @@ public class ArenaSetupListener implements Listener {
         // Keep it in absolute mode (buildMax stays true)
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CORNER.BUILD-MAX-ADJUSTED")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getCorner()
+                .getBuildMaxAdjusted()
                 .replace("%arena%", arena.getName())
                 .replace("%old%", String.valueOf(buildMaxValue))
                 .replace("%new%", String.valueOf(clampedValue)));
@@ -658,7 +819,12 @@ public class ArenaSetupListener implements Listener {
       arena.setDeadZone(false);
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CORNER.DEAD-ZONE-REMOVED")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getCorner()
+              .getDeadZoneRemoved()
               .replace("%arena%", arena.getName()));
     }
     // Clean Portals — must remain at least 1 block above the effective floor Y
@@ -668,7 +834,12 @@ public class ArenaSetupListener implements Listener {
         a.setPortalLoc1(null);
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.TOO-LOW-FOR-FLOOR")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getPortal()
+                .getTooLowForFloor()
                 .replace("%floor_type%", "new arena floor (portal 1 removed)")
                 .replace("%floor_y%", String.valueOf(floorY)));
       }
@@ -676,7 +847,12 @@ public class ArenaSetupListener implements Listener {
         a.setPortalLoc2(null);
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.PORTAL.TOO-LOW-FOR-FLOOR")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getPortal()
+                .getTooLowForFloor()
                 .replace("%floor_type%", "new arena floor (portal 2 removed)")
                 .replace("%floor_y%", String.valueOf(floorY)));
       }
@@ -688,7 +864,12 @@ public class ArenaSetupListener implements Listener {
         a.setEnabled(false);
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CORNER.BED-REMOVED")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getCorner()
+                .getBedRemoved()
                 .replace("%arena%", arena.getName())
                 .replace("%bed%", "1"));
       }
@@ -697,7 +878,12 @@ public class ArenaSetupListener implements Listener {
         a.setEnabled(false);
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.CORNER.BED-REMOVED")
+            PracticeConfig.language()
+                .getCommand()
+                .getArena()
+                .getArguments()
+                .getCorner()
+                .getBedRemoved()
                 .replace("%arena%", arena.getName())
                 .replace("%bed%", "2"));
       }

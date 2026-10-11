@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.profile;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -57,7 +57,11 @@ public class ProfileLadderStats extends Gui {
     for (int page = 1; PageUtil.isPageValid(ladders.size(), page, spaces) || page == 1; page++) {
       Inventory inventory = existingInventories.get(page);
       String title =
-          GuiFile.getString("GUIS.PLAYER-INFORMATION.LADDER-STATS.TITLE")
+          PracticeConfig.guis()
+              .getGuis()
+              .getPlayerInformation()
+              .getLadderStats()
+              .getTitle()
               .replace("%player%", Objects.requireNonNull(profile.getPlayer().getName()))
               .replace("%page%", String.valueOf(page));
       if (inventory == null || inventory.getSize() != 6 * 9) {
@@ -87,28 +91,63 @@ public class ProfileLadderStats extends Gui {
       newLadderSlots.put(page, pageSlots);
 
       inventory.setItem(
-          45, GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.BACK-TO-HUB").get());
+          45,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getPlayerInformation()
+                      .getLadderStats()
+                      .getIcons()
+                      .getBackToHub())
+              .get());
 
       inventory.setItem(
           46,
           page > 1
-              ? GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.PAGE-LEFT")
+              ? BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getPlayerInformation()
+                          .getLadderStats()
+                          .getIcons()
+                          .getPageLeft())
                   .replace("%page%", String.valueOf(page - 1))
                   .get()
               : GuiManager.getFILLER_ITEM());
       inventory.setItem(
           47,
           PageUtil.isPageValid(ladders.size(), page + 1, spaces)
-              ? GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.PAGE-RIGHT")
+              ? BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getPlayerInformation()
+                          .getLadderStats()
+                          .getIcons()
+                          .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
               : GuiManager.getFILLER_ITEM());
 
       inventory.setItem(
-          49, GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.REFRESH").get());
+          49,
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getPlayerInformation()
+                      .getLadderStats()
+                      .getIcons()
+                      .getRefresh())
+              .get());
       inventory.setItem(
           53,
-          GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.RESET-ALL-STATS").get());
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getPlayerInformation()
+                      .getLadderStats()
+                      .getIcons()
+                      .getResetAllStats())
+              .get());
     }
 
     updatePages(newGui, ladderSlots, newLadderSlots);
@@ -150,7 +189,7 @@ public class ProfileLadderStats extends Gui {
         break;
       case 53:
         if (!player.hasPermission("ap.practice.info.resetstats")) {
-          Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           return;
         }
 
@@ -165,7 +204,7 @@ public class ProfileLadderStats extends Gui {
         }
 
         if (!player.hasPermission("ap.practice.info.resetstats")) {
-          Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+          Common.sendMmMessage(player, PracticeConfig.language().getProfile().getNoPermission());
           return;
         }
 
@@ -179,13 +218,24 @@ public class ProfileLadderStats extends Gui {
   private ItemStack getLadderStatItem(NormalLadder ladder) {
     List<String> lore = new ArrayList<>();
     String nullString =
-        GuiFile.getString("GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.LADDER." + "NULL-STAT");
+        PracticeConfig.guis()
+            .getGuis()
+            .getPlayerInformation()
+            .getLadderStats()
+            .getIcons()
+            .getLadder()
+            .getNullStat();
 
     if (!ladder.isRanked()) {
       for (String line :
-          GuiFile.getStringList(
-              "GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.LADDER."
-                  + "UNRANKED-LADDER-STATS.LORE")) {
+          PracticeConfig.guis()
+              .getGuis()
+              .getPlayerInformation()
+              .getLadderStats()
+              .getIcons()
+              .getLadder()
+              .getUnrankedLadderStats()
+              .getLore()) {
         lore.add(
             line.replace("%ladder%", ladder.getDisplayName())
                 .replace(
@@ -204,28 +254,49 @@ public class ProfileLadderStats extends Gui {
       if (ladder.getIcon() != null) {
         return ItemCreateUtil.createItem(
             ladder.getIcon(),
-            GuiFile.getString(
-                    "GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.LADDER."
-                        + "UNRANKED-LADDER-STATS.NAME")
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerInformation()
+                .getLadderStats()
+                .getIcons()
+                .getLadder()
+                .getUnrankedLadderStats()
+                .getName()
                 .replace("%ladder%", ladder.getDisplayName()),
             lore);
       } else {
         return ItemCreateUtil.createItem(
-            GuiFile.getString(
-                    "GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.LADDER."
-                        + "UNRANKED-LADDER-STATS.NAME")
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerInformation()
+                .getLadderStats()
+                .getIcons()
+                .getLadder()
+                .getUnrankedLadderStats()
+                .getName()
                 .replace("%ladder%", ladder.getDisplayName()),
             Material.valueOf(
-                GuiFile.getString(
-                    "GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.LADDER."
-                        + "UNRANKED-LADDER-STATS.DEFAULT-MATERIAL")),
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getPlayerInformation()
+                    .getLadderStats()
+                    .getIcons()
+                    .getLadder()
+                    .getUnrankedLadderStats()
+                    .getDefaultMaterial()),
             lore);
       }
     } else {
       LadderStats ladderStats = profile.getStats().getLadderStat(ladder);
       for (String line :
-          GuiFile.getStringList(
-              "GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.LADDER." + "RANKED-LADDER-STATS.LORE")) {
+          PracticeConfig.guis()
+              .getGuis()
+              .getPlayerInformation()
+              .getLadderStats()
+              .getIcons()
+              .getLadder()
+              .getRankedLadderStats()
+              .getLore()) {
         lore.add(
             line.replace("%unranked_wins%", String.valueOf(ladderStats.getUnRankedWins()))
                 .replace("%unranked_losses%", String.valueOf(ladderStats.getUnRankedLosses()))
@@ -249,21 +320,36 @@ public class ProfileLadderStats extends Gui {
       if (ladder.getIcon() != null) {
         return ItemCreateUtil.createItem(
             ladder.getIcon(),
-            GuiFile.getString(
-                    "GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.LADDER."
-                        + "RANKED-LADDER-STATS.NAME")
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerInformation()
+                .getLadderStats()
+                .getIcons()
+                .getLadder()
+                .getRankedLadderStats()
+                .getName()
                 .replace("%ladder%", ladder.getDisplayName()),
             lore);
       } else {
         return ItemCreateUtil.createItem(
-            GuiFile.getString(
-                    "GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.LADDER."
-                        + "RANKED-LADDER-STATS.NAME")
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerInformation()
+                .getLadderStats()
+                .getIcons()
+                .getLadder()
+                .getRankedLadderStats()
+                .getName()
                 .replace("%ladder%", ladder.getDisplayName()),
             Material.valueOf(
-                GuiFile.getString(
-                    "GUIS.PLAYER-INFORMATION.LADDER-STATS.ICONS.LADDER."
-                        + "RANKED-LADDER-STATS.DEFAULT-MATERIAL")),
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getPlayerInformation()
+                    .getLadderStats()
+                    .getIcons()
+                    .getLadder()
+                    .getRankedLadderStats()
+                    .getDefaultMaterial()),
             lore);
       }
     }

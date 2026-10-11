@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.selectors;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.duel.DuelManager;
 import dev.lokspel.practice.manager.duel.DuelRequest;
 import dev.lokspel.practice.manager.fight.match.Match;
@@ -47,9 +47,22 @@ public class LadderSelectorGui extends Gui {
   private final Map<Integer, Map<Integer, Ladder>> ladderSlots = new HashMap<>();
 
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.SELECTORS.LADDER-SELECTOR.ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSelectors()
+                  .getLadderSelector()
+                  .getIcons()
+                  .getFillerItem())
+          .get();
   private static final GuiItem CUSTOM_PLAYER_KIT_ITEM =
-      GuiFile.getGuiItem("GUIS.SELECTORS.LADDER-SELECTOR.ICONS.BASE-CUSTOM-PLAYER-KIT-ICON");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis()
+              .getGuis()
+              .getSelectors()
+              .getLadderSelector()
+              .getIcons()
+              .getBaseCustomPlayerKitIcon());
   private static final int CUSTOM_KIT_SLOT = 53;
   private static final int PAGE_LEFT_SLOT = 45;
   private static final int PAGE_RIGHT_SLOT = 49;
@@ -83,7 +96,11 @@ public class LadderSelectorGui extends Gui {
     for (int page = 1; PageUtil.isPageValid(ladders.size(), page, spaces) || page == 1; page++) {
       Inventory inventory = existingInventories.get(page);
       String title =
-          GuiFile.getString("GUIS.SELECTORS.LADDER-SELECTOR.TITLE")
+          PracticeConfig.guis()
+              .getGuis()
+              .getSelectors()
+              .getLadderSelector()
+              .getTitle()
               .replace("%matchType%", this.matchType.getName(false));
       if (inventory == null || inventory.getSize() != 6 * 9) {
         inventory = InventoryUtil.createInventory(title, 6);
@@ -108,14 +125,26 @@ public class LadderSelectorGui extends Gui {
         NormalLadder ladder = ladders.get(i);
         List<String> lore = new ArrayList<>();
         for (String line :
-            GuiFile.getStringList("GUIS.SELECTORS.LADDER-SELECTOR.ICONS.LADDER.LORE")) {
+            PracticeConfig.guis()
+                .getGuis()
+                .getSelectors()
+                .getLadderSelector()
+                .getIcons()
+                .getLadder()
+                .getLore()) {
           lore.add(line.replace("%ladder%", ladder.getDisplayName()));
         }
 
         ItemStack icon =
             ItemCreateUtil.createItem(
                 ladder.getIcon(),
-                GuiFile.getString("GUIS.SELECTORS.LADDER-SELECTOR.ICONS.LADDER.NAME")
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSelectors()
+                    .getLadderSelector()
+                    .getIcons()
+                    .getLadder()
+                    .getName()
                     .replace("%ladder%", ladder.getDisplayName()),
                 lore);
 
@@ -148,14 +177,26 @@ public class LadderSelectorGui extends Gui {
       ItemStack left =
           page == 1
               ? FILLER_ITEM
-              : GuiFile.getGuiItem("GUIS.SELECTORS.LADDER-SELECTOR.ICONS.PAGE-LEFT")
+              : BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSelectors()
+                          .getLadderSelector()
+                          .getIcons()
+                          .getPageLeft())
                   .replace("%page%", String.valueOf(page - 1))
                   .get();
       inventory.setItem(PAGE_LEFT_SLOT, left);
 
       ItemStack right =
           PageUtil.isPageValid(ladders.size(), page + 1, spaces)
-              ? GuiFile.getGuiItem("GUIS.SELECTORS.LADDER-SELECTOR.ICONS.PAGE-RIGHT")
+              ? BackendUtil.getGuiItem(
+                      PracticeConfig.guis()
+                          .getGuis()
+                          .getSelectors()
+                          .getLadderSelector()
+                          .getIcons()
+                          .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
               : FILLER_ITEM;
@@ -198,29 +239,35 @@ public class LadderSelectorGui extends Gui {
       }
     } else if (customKitButtonClick && profile.getSelectedCustomLadder() == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("LADDER.SELECTOR.PARTY.NO-CUSTOM-KIT-SELECTED"));
+          player,
+          PracticeConfig.language().getLadder().getSelector().getParty().getNoCustomKitSelected());
     } else if (ladderSlots.containsKey(page) && ladderSlots.get(page).containsKey(slot)) {
       Ladder ladder = ladderSlots.get(page).get(slot);
 
       if (ladder instanceof NormalLadder) {
         if (!ladder.isEnabled() || !ladder.getMatchTypes().contains(matchType)) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("LADDER.SELECTOR.LADDER-NOT-AVAILABLE"));
+              player, PracticeConfig.language().getLadder().getSelector().getLadderNotAvailable());
           update();
           return;
         } else if (((NormalLadder) ladder).isFrozen()) {
-          Common.sendMmMessage(player, LanguageManager.getString("LADDER.SELECTOR.LADDER-FROZEN"));
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getLadder().getSelector().getLadderFrozen());
           return;
         }
       } else if (ladder instanceof CustomLadder) {
         if (!ladder.isEnabled()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("LADDER.SELECTOR.CUSTOM-LADDER-NOT-READY"));
+              player,
+              PracticeConfig.language().getLadder().getSelector().getCustomLadderNotReady());
           return;
         } else if (!ladder.getMatchTypes().contains(matchType)) {
           Common.sendMmMessage(
               player,
-              LanguageManager.getString("LADDER.SELECTOR.CUSTOM-LADDER-CANT-PLAY-MATCHTYPE"));
+              PracticeConfig.language()
+                  .getLadder()
+                  .getSelector()
+                  .getCustomLadderCantPlayMatchtype());
           return;
         }
       }
@@ -241,7 +288,8 @@ public class LadderSelectorGui extends Gui {
             DuelManager.getInstance().sendRequest(request);
           } else {
             Common.sendMmMessage(
-                player, LanguageManager.getString("LADDER.SELECTOR.DUEL.TARGET-LEFT"));
+                player,
+                PracticeConfig.language().getLadder().getSelector().getDuel().getTargetLeft());
             player.closeInventory();
           }
         }
@@ -257,7 +305,12 @@ public class LadderSelectorGui extends Gui {
           if (party.getMembers().size() < 2) {
             player.closeInventory();
             Common.sendMmMessage(
-                player, LanguageManager.getString("LADDER.SELECTOR.PARTY.NOT-ENOUGH-PLAYERS"));
+                player,
+                PracticeConfig.language()
+                    .getLadder()
+                    .getSelector()
+                    .getParty()
+                    .getNotEnoughPlayers());
             return;
           }
 
@@ -283,7 +336,12 @@ public class LadderSelectorGui extends Gui {
 
           if (!PartyManager.getInstance().getParties().contains(target)) {
             Common.sendMmMessage(
-                player, LanguageManager.getString("LADDER.SELECTOR.PARTY.TARGET-PARTY-DISBANDED"));
+                player,
+                PracticeConfig.language()
+                    .getLadder()
+                    .getSelector()
+                    .getParty()
+                    .getTargetPartyDisbanded());
             GuiManager.getInstance().searchGui(GuiType.Party_OtherParties).open(player);
             return;
           }
@@ -298,7 +356,12 @@ public class LadderSelectorGui extends Gui {
             Arena arena = LadderUtil.getAvailableArena(ladder);
             if (arena == null) {
               Common.sendMmMessage(
-                  player, LanguageManager.getString("LADDER.SELECTOR.PARTY.NO-AVAILABLE-ARENA"));
+                  player,
+                  PracticeConfig.language()
+                      .getLadder()
+                      .getSelector()
+                      .getParty()
+                      .getNoAvailableArena());
               return;
             }
 
@@ -340,7 +403,8 @@ public class LadderSelectorGui extends Gui {
     Arena arena = LadderUtil.getAvailableArena(ladder);
     if (arena == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("LADDER.SELECTOR.PARTY.NO-AVAILABLE-ARENA"));
+          player,
+          PracticeConfig.language().getLadder().getSelector().getParty().getNoAvailableArena());
       return;
     }
 
@@ -353,7 +417,8 @@ public class LadderSelectorGui extends Gui {
 
     Match match = getMatch(party, ladder, arena, rounds);
     if (match == null) {
-      Common.sendMmMessage(player, LanguageManager.getString("LADDER.SELECTOR.PARTY.ERROR"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getLadder().getSelector().getParty().getError());
       return;
     }
 

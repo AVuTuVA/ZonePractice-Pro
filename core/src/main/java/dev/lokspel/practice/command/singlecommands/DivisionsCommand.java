@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.guis.DivisionGui;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -15,14 +15,15 @@ public class DivisionsCommand implements CommandExecutor {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
     Profile profile = ProfileManager.getInstance().getProfile(player);
 
     if (!player.hasPermission("ap.divisions.view")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.DIVISIONS.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getDivisions().getNoPermission());
       return false;
     }
 
@@ -31,7 +32,8 @@ public class DivisionsCommand implements CommandExecutor {
         case MATCH:
         case FFA:
         case EVENT:
-          Common.sendMmMessage(player, LanguageManager.getString("COMMAND.DIVISIONS.CANT-USE"));
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getCommand().getDivisions().getCantUse());
           return false;
 
         default:

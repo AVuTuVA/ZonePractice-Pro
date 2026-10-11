@@ -1,6 +1,6 @@
 package dev.lokspel.practice.listener;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.Common;
 import java.util.Locale;
 import org.bukkit.event.EventHandler;
@@ -20,7 +20,7 @@ public class PlayerCommandPreprocess implements Listener {
 
     if (command.equals("reload") || command.equals("rl")) {
       e.setCancelled(true);
-      Common.sendMmMessage(e.getPlayer(), LanguageManager.getString("RELOAD-DISABLED"));
+      Common.sendMmMessage(e.getPlayer(), PracticeConfig.language().getReloadDisabled());
     }
   }
 }

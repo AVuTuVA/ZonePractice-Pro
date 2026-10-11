@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.guis.leaderboard.LbSelectorGui;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -22,7 +22,7 @@ public class StatisticsCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
@@ -33,7 +33,8 @@ public class StatisticsCommand implements CommandExecutor, TabCompleter {
         case MATCH:
         case FFA:
         case EVENT:
-          Common.sendMmMessage(player, LanguageManager.getString("COMMAND.STATISTICS.CANT-USE"));
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getCommand().getStatistics().getCantUse());
           return false;
 
         default:
@@ -43,14 +44,16 @@ public class StatisticsCommand implements CommandExecutor, TabCompleter {
 
     if (args.length == 0) {
       if (!player.hasPermission("ap.statistics")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.STATISTICS.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getStatistics().getNoPermission());
         return false;
       }
 
       new LbSelectorGui(player, profile).open(player);
     } else if (args.length == 1) {
       if (!player.hasPermission("ap.statistics.other")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.STATISTICS.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getStatistics().getNoPermission());
         return false;
       }
 
@@ -60,14 +63,17 @@ public class StatisticsCommand implements CommandExecutor, TabCompleter {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.STATISTICS.TARGET-NOT-EXISTS")
+            PracticeConfig.language()
+                .getCommand()
+                .getStatistics()
+                .getTargetNotExists()
                 .replace("%target%", args[0]));
         return false;
       }
 
       new LbSelectorGui(player, target).open(player);
     } else {
-      for (String line : LanguageManager.getList("COMMAND.STATISTICS.COMMAND-HELP")) {
+      for (String line : PracticeConfig.language().getCommand().getStatistics().getCommandHelp()) {
         Common.sendMmMessage(player, line.replace("%label%", label));
       }
     }

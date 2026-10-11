@@ -1,8 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.ladder;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -41,7 +40,12 @@ public class LadderCreateGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.LADDER-CREATE.TITLE").replace("%ladder%", ladderName), 4));
+            PracticeConfig.guis()
+                .getGuis()
+                .getLadderCreate()
+                .getTitle()
+                .replace("%ladder%", ladderName),
+            4));
 
     build();
   }
@@ -124,7 +128,10 @@ public class LadderCreateGui extends Gui {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("LADDER.CREATE.LADDER-CREATED")
+          PracticeConfig.language()
+              .getLadder()
+              .getCreate()
+              .getLadderCreated()
               .replace("%ladder%", ladderName));
 
       Bukkit.getScheduler()

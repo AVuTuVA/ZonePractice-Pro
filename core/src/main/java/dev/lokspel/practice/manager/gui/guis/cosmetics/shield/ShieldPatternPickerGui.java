@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics.shield;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -45,8 +46,11 @@ public class ShieldPatternPickerGui extends Gui {
   };
   private static final int PER_PAGE = PATTERN_SLOTS.length; // 28
 
-  private static final ItemStack FILLER = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
-  private static final ItemStack BACK = GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BACK-TO").get();
+  private static final ItemStack FILLER =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  private static final ItemStack BACK =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+          .get();
 
   // All banner patterns discovered from the registry (sorted for stable paging).
   private static final List<PatternType> ALL_PATTERNS = loadAllPatterns();
@@ -72,8 +76,7 @@ public class ShieldPatternPickerGui extends Gui {
     this.backToGui = backToGui;
 
     String title =
-        GuiFile.getConfig()
-            .getString("GUIS.COSMETICS.SHIELD.PATTERN-PICKER.TITLE", "<dark_gray>Pick Pattern");
+        PracticeConfig.guis().getGuis().getCosmetics().getShield().getPatternPicker().getTitle();
     this.gui.put(1, InventoryUtil.createInventory(title, ROWS));
     build();
   }
@@ -173,10 +176,13 @@ public class ShieldPatternPickerGui extends Gui {
       if (!layout.addLayer(chosenColor, pattern)) {
         Common.sendMmMessage(
             player,
-            GuiFile.getConfig()
-                .getString(
-                    "GUIS.COSMETICS.SHIELD.EDITOR.MAX-LAYERS.MESSAGE",
-                    "<red>Maximum layers reached!"));
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getShield()
+                .getEditor()
+                .getMaxLayers()
+                .getMessage());
         return;
       }
     }
@@ -190,9 +196,12 @@ public class ShieldPatternPickerGui extends Gui {
 
     Common.sendMmMessage(
         player,
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.SHIELD.PATTERN-PICKER.APPLIED-MESSAGE", "<green>Layer applied!"));
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getShield()
+            .getPatternPicker()
+            .getAppliedMessage());
 
     // Go back to editor
     backToGui.update(true);

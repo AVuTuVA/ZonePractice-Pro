@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.queue.customkit;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -24,32 +24,44 @@ import org.bukkit.inventory.ItemStack;
 
 public class ChooseQueueTypeGui extends Gui {
 
-  private static final String GUI_PATH = "GUIS.CUSTOM-KIT-QUEUE.CHOOSE-TYPE";
   private final Map<UUID, GuiType> backTargets = new HashMap<>();
 
   public ChooseQueueTypeGui() {
     super(GuiType.Queue_CustomKitChooseType);
 
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString(GUI_PATH + ".TITLE"), getRows()));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getCustomKitQueue().getChooseType().getTitle(),
+            getRows()));
     build();
   }
 
   private int getRows() {
-    int rows = GuiFile.getInt(GUI_PATH + ".SIZE");
+    int rows = PracticeConfig.guis().getGuis().getCustomKitQueue().getChooseType().getSize();
     return Math.clamp(rows <= 0 ? 3 : rows, 1, 6);
   }
 
   private int hostOwnSlot() {
-    return GuiFile.getInt(GUI_PATH + ".SLOTS.HOST-OWN");
+    return PracticeConfig.guis()
+        .getGuis()
+        .getCustomKitQueue()
+        .getChooseType()
+        .getSlots()
+        .getHostOwn();
   }
 
   private int joinOthersSlot() {
-    return GuiFile.getInt(GUI_PATH + ".SLOTS.JOIN-OTHERS");
+    return PracticeConfig.guis()
+        .getGuis()
+        .getCustomKitQueue()
+        .getChooseType()
+        .getSlots()
+        .getJoinOthers();
   }
 
   private int backSlot() {
-    return GuiFile.getInt(GUI_PATH + ".SLOTS.BACK");
+    return PracticeConfig.guis().getGuis().getCustomKitQueue().getChooseType().getSlots().getBack();
   }
 
   public void openFor(Player player, GuiType backTarget) {
@@ -74,7 +86,15 @@ public class ChooseQueueTypeGui extends Gui {
     Inventory inventory = this.gui.get(1);
     inventory.clear();
 
-    ItemStack filler = GuiFile.getGuiItem(GUI_PATH + ".ICONS.FILLER-ITEM").get();
+    ItemStack filler =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getCustomKitQueue()
+                    .getChooseType()
+                    .getIcons()
+                    .getFillerItem())
+            .get();
     if (filler == null) {
       filler = ItemCreateUtil.createItem(" ", Material.BLACK_STAINED_GLASS_PANE);
     }
@@ -83,17 +103,41 @@ public class ChooseQueueTypeGui extends Gui {
       inventory.setItem(i, filler);
     }
 
-    ItemStack hostItem = GuiFile.getGuiItem(GUI_PATH + ".ICONS.QUEUE-OWN-KIT").get();
+    ItemStack hostItem =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getCustomKitQueue()
+                    .getChooseType()
+                    .getIcons()
+                    .getQueueOwnKit())
+            .get();
     if (hostItem == null) {
       hostItem = ItemCreateUtil.createItem("<green>Queue Your Own Kit", Material.WRITABLE_BOOK);
     }
 
-    ItemStack joinOthersItem = GuiFile.getGuiItem(GUI_PATH + ".ICONS.QUEUE-OTHERS-KITS").get();
+    ItemStack joinOthersItem =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getCustomKitQueue()
+                    .getChooseType()
+                    .getIcons()
+                    .getQueueOthersKits())
+            .get();
     if (joinOthersItem == null) {
       joinOthersItem = ItemCreateUtil.createItem("<yellow>Queue Others Kits", Material.BOOK);
     }
 
-    ItemStack backItem = GuiFile.getGuiItem(GUI_PATH + ".ICONS.BACK").get();
+    ItemStack backItem =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getCustomKitQueue()
+                    .getChooseType()
+                    .getIcons()
+                    .getBack())
+            .get();
     if (backItem == null) {
       backItem = ItemCreateUtil.createItem("<red>Back", Material.ARROW);
     }
@@ -124,19 +168,21 @@ public class ChooseQueueTypeGui extends Gui {
 
     Profile profile = ProfileManager.getInstance().getProfile(player);
     if (profile == null || profile.getStatus() != ProfileStatus.LOBBY) {
-      Common.sendMmMessage(player, LanguageManager.getString("CANT-USE-COMMAND"));
+      Common.sendMmMessage(player, PracticeConfig.language().getCantUseCommand());
       player.closeInventory();
       return;
     }
 
     if (slot == hostOwnSlot()) {
       if (CustomKitQueueManager.getInstance().getHostableKits(profile).isEmpty()) {
-        Common.sendMmMessage(player, LanguageManager.getString("QUEUES.CUSTOM.NO-SAVED-KITS"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getQueues().getCustom().getNoSavedKits());
         return;
       }
 
       if (!player.hasPermission("ap.playerkit.queue.host")) {
-        Common.sendMmMessage(player, LanguageManager.getString("QUEUES.CUSTOM.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getQueues().getCustom().getNoPermission());
         return;
       }
 

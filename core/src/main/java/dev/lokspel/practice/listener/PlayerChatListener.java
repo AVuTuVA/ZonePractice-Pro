@@ -1,8 +1,7 @@
 package dev.lokspel.practice.listener;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.ffa.FfaManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.Match;
@@ -43,12 +42,12 @@ public class PlayerChatListener implements Listener {
     String rawMessage = PlainTextComponentSerializer.plainText().serialize(e.message());
 
     // Party chat
-    String partyChatShortcut = ConfigManager.getPartyChatShortcut();
+    String partyChatShortcut = PracticeConfig.settings().getChat().getPartyChat().getShortcut();
 
     boolean partyChatShortcutUsed =
         !partyChatShortcut.isEmpty() && rawMessage.startsWith(partyChatShortcut);
 
-    if (ConfigManager.isPartyChatEnabled()
+    if (PracticeConfig.settings().getChat().getPartyChat().isEnabled()
         && profile.isParty()
         && party != null
         && (partyChatShortcutUsed || profile.isPartyChat())) {
@@ -66,7 +65,7 @@ public class PlayerChatListener implements Listener {
       } else {
         e.setCancelled(true);
 
-        String disabled = LanguageManager.getString("PARTY.PARTY-CHAT-DISABLED-BY-LEADER");
+        String disabled = PracticeConfig.language().getParty().getPartyChatDisabledByLeader();
 
         Bukkit.getScheduler()
             .runTask(AstralPractice.getInstance(), () -> Common.sendMmMessage(player, disabled));
@@ -85,7 +84,7 @@ public class PlayerChatListener implements Listener {
 
     // Staff shortcut
     if (player.hasPermission("ap.staff")
-        && ConfigManager.getBoolean("CHAT.STAFF-CHAT.SHORTCUT")
+        && PracticeConfig.settings().getChat().getStaffChat().isShortcut()
         && rawMessage.startsWith("#")) {
 
       applyStaffChat(e, player, rawMessage.substring(1));
@@ -94,7 +93,7 @@ public class PlayerChatListener implements Listener {
     }
 
     // Server chat
-    if (ConfigManager.getBoolean("CHAT.SERVER-CHAT-ENABLED")) {
+    if (PracticeConfig.settings().getChat().isServerChatEnabled()) {
 
       applyMatchChatIsolation(e, player);
 
@@ -138,7 +137,7 @@ public class PlayerChatListener implements Listener {
 
   private void applyMatchChatIsolation(AsyncChatEvent e, Player sender) {
 
-    if (!ConfigManager.isMatchChatIsolated()) {
+    if (!PracticeConfig.settings().getChat().isIsolateMatchChat()) {
       return;
     }
 
@@ -154,7 +153,7 @@ public class PlayerChatListener implements Listener {
     if (match != null) {
       viewers.clear();
       viewers.addAll(match.getPlayers());
-      if (ConfigManager.isShowMatchChatToSpectators()) {
+      if (PracticeConfig.settings().getChat().isShowMatchChatToSpectators()) {
         viewers.addAll(match.getSpectators());
       }
       return;
@@ -165,7 +164,7 @@ public class PlayerChatListener implements Listener {
     if (ffa != null) {
       viewers.clear();
       viewers.addAll(ffa.getPlayers().keySet());
-      if (ConfigManager.isShowMatchChatToSpectators()) {
+      if (PracticeConfig.settings().getChat().isShowMatchChatToSpectators()) {
         viewers.addAll(ffa.getSpectators());
       }
       return;

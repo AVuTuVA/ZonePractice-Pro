@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.party.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.util.Common;
@@ -18,7 +18,12 @@ public final class PartyLeaderArg {
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.LEADER.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getLeader()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -26,13 +31,25 @@ public final class PartyLeaderArg {
     Party party = PartyManager.getInstance().getParty(player);
     if (party == null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.LEADER.NO-PARTY"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getLeader()
+              .getNoParty());
       return;
     }
 
     if (!party.getLeader().equals(player)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.LEADER.NOT-LEADER"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getLeader()
+              .getNotLeader());
       return;
     }
 
@@ -40,21 +57,37 @@ public final class PartyLeaderArg {
     if (target == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.LEADER.TARGET-OFFLINE")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getLeader()
+              .getTargetOffline()
               .replace("%target%", args[1]));
       return;
     }
 
     if (target.equals(player)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.LEADER.ALREADY-LEADER"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getLeader()
+              .getAlreadyLeader());
       return;
     }
 
     if (!party.getMembers().contains(target)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PARTY.ARGUMENTS.LEADER.NOT-MEMBER")
+          PracticeConfig.language()
+              .getCommand()
+              .getParty()
+              .getArguments()
+              .getLeader()
+              .getNotMember()
               .replace("%target%", target.getName()));
       return;
     }

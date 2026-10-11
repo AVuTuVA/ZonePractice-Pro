@@ -3,7 +3,8 @@ package dev.lokspel.practice.util;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
@@ -52,9 +53,12 @@ public class GoldenHead implements Listener {
 
   public void reload() {
     this.consumeCooldownSeconds =
-        Math.max(0, ConfigManager.getInt("MATCH-SETTINGS.GOLDEN-HEAD.COOLDOWN"));
+        Math.max(0, PracticeConfig.settings().getMatchSettings().getGoldenHead().getCooldown());
 
-    ItemStack item = ConfigManager.getGuiItem("MATCH-SETTINGS.GOLDEN-HEAD.ITEM").get();
+    ItemStack item =
+        BackendUtil.getGuiItem(
+                PracticeConfig.settings().getMatchSettings().getGoldenHead().getItem())
+            .get();
     if (item == null) {
       this.goldenHeadItem = new ItemStack(Material.GOLDEN_APPLE);
     } else {
@@ -74,7 +78,8 @@ public class GoldenHead implements Listener {
   }
 
   private void loadEffects() {
-    for (String effect : ConfigManager.getList("MATCH-SETTINGS.GOLDEN-HEAD.EFFECTS")) {
+    for (String effect :
+        PracticeConfig.settings().getMatchSettings().getGoldenHead().getEffects()) {
       String[] split = effect.split("::");
       if (split.length != 3) {
         continue;
@@ -133,7 +138,7 @@ public class GoldenHead implements Listener {
 
   private ItemStack applyCustomTexture(ItemStack item) {
     String textureConfigValue =
-        ConfigManager.getConfig().getString("MATCH-SETTINGS.GOLDEN-HEAD.TEXTURE", "").trim();
+        PracticeConfig.settings().getMatchSettings().getGoldenHead().getTexture().trim();
     if (textureConfigValue.isEmpty()) {
       return item;
     }
@@ -224,8 +229,10 @@ public class GoldenHead implements Listener {
                       .getActionBar()
                       .setMessage(
                           "golden_head",
-                          ConfigManager.getString(
-                                  "MATCH-SETTINGS.GOLDEN-HEAD.ACTION-BAR-COOLDOWN-MSG")
+                          PracticeConfig.settings()
+                              .getMatchSettings()
+                              .getGoldenHead()
+                              .getActionBarCooldownMsg()
                               .replace("%remaining%", String.valueOf(remaining)),
                           2,
                           ActionBarPriority.HIGHEST);

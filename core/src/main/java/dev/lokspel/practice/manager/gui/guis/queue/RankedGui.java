@@ -1,7 +1,9 @@
 package dev.lokspel.practice.manager.gui.guis.queue;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.gui.QueueGui;
+import dev.lokspel.practice.config.settings.QueueSettings;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.WeightClass;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -19,9 +21,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class RankedGui extends QueueSelectorGui {
 
-  private static final String CUSTOM_QUEUE_ITEM_PATH = "GUIS.RANKED-GUI.ICONS.CUSTOM-KIT-QUEUE";
-  private static final String SWITCH_TO_UNRANKED_ITEM_PATH =
-      "GUIS.RANKED-GUI.ICONS.SWITCH-TO-UNRANKED";
   private static final int DEFAULT_SWITCH_SLOT = 49;
 
   public RankedGui() {
@@ -30,17 +29,17 @@ public class RankedGui extends QueueSelectorGui {
 
   @Override
   protected long getUpdateCooldownMinutes() {
-    return ConfigManager.getInt("QUEUE.RANKED.GUI-UPDATE-MINUTE");
+    return PracticeConfig.settings().getQueue().getRanked().getGuiUpdateMinute();
   }
 
   @Override
-  protected String getQueueConfigPath() {
-    return "QUEUE.RANKED";
+  protected QueueSettings queueSettings() {
+    return PracticeConfig.settings().getQueue().getRanked();
   }
 
   @Override
-  protected String getGuiConfigPath() {
-    return "GUIS.RANKED-GUI";
+  protected QueueGui gui() {
+    return PracticeConfig.guis().getGuis().getRankedGui();
   }
 
   @Override
@@ -69,16 +68,23 @@ public class RankedGui extends QueueSelectorGui {
     int slot = inventory.getSize() - 1;
     placeSwitchItem(inventory);
 
-    if (!ConfigManager.getBoolean("QUEUE.RANKED.CUSTOM-KIT.ENTRY-ENABLED")
+    if (!Boolean.TRUE.equals(
+            PracticeConfig.settings().getQueue().getRanked().getCustomKit().getEntryEnabled())
         || !CustomKitQueueManager.getInstance().isCustomKitQueueEnabled()) {
-      ItemStack filler = GuiFile.getGuiItem("GUIS.RANKED-GUI.ICONS.FILLER-ITEM").get();
+      ItemStack filler =
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis().getGuis().getRankedGui().getIcons().getFillerItem())
+              .get();
       if (filler != null) {
         inventory.setItem(slot, filler);
       }
       return;
     }
 
-    ItemStack customQueueItem = GuiFile.getGuiItem(CUSTOM_QUEUE_ITEM_PATH).get();
+    ItemStack customQueueItem =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getRankedGui().getIcons().getCustomKitQueue())
+            .get();
     if (customQueueItem == null) {
       customQueueItem = ItemCreateUtil.createItem("<gold>Custom Kit Queue", Material.BOOK);
     }
@@ -107,7 +113,8 @@ public class RankedGui extends QueueSelectorGui {
       return false;
     }
 
-    if (!ConfigManager.getBoolean("QUEUE.RANKED.CUSTOM-KIT.ENTRY-ENABLED")
+    if (!Boolean.TRUE.equals(
+            PracticeConfig.settings().getQueue().getRanked().getCustomKit().getEntryEnabled())
         || !CustomKitQueueManager.getInstance().isCustomKitQueueEnabled()) {
       return true;
     }
@@ -131,7 +138,10 @@ public class RankedGui extends QueueSelectorGui {
       return;
     }
 
-    ItemStack switchItem = GuiFile.getGuiItem(SWITCH_TO_UNRANKED_ITEM_PATH).get();
+    ItemStack switchItem =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getRankedGui().getIcons().getSwitchToUnranked())
+            .get();
     if (switchItem == null) {
       switchItem = ItemCreateUtil.createItem("<green>Switch to Unranked", Material.WOODEN_SWORD);
     }
@@ -140,15 +150,10 @@ public class RankedGui extends QueueSelectorGui {
   }
 
   private int getSwitchModeSlot() {
-    return ConfigManager.getInt("QUEUE.RANKED.SELECTOR-GUI.SWITCH-MODE-SLOT", DEFAULT_SWITCH_SLOT);
+    return PracticeConfig.settings().getQueue().getRanked().getSelectorGui().getSwitchModeSlot();
   }
 
   private boolean isQueueGuiSwitchEnabled() {
-    String path = "QUEUE.COMBINED.SWITCH-ENABLED";
-    if (!ConfigManager.getConfig().isBoolean(path)) {
-      return true;
-    }
-
-    return ConfigManager.getBoolean(path);
+    return PracticeConfig.settings().getQueue().getCombined().isSwitchEnabled();
   }
 }

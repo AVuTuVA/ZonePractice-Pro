@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -29,13 +29,13 @@ public class CustomQueueCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return true;
     }
 
     if (!player.hasPermission("ap.playerkit.queue.use")) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.QUEUES.CUSTOM.NO-PERMISSION"));
+          player, PracticeConfig.language().getCommand().getQueues().getCustom().getNoPermission());
       return true;
     }
 
@@ -44,7 +44,7 @@ public class CustomQueueCommand implements CommandExecutor, TabCompleter {
         || profile.getStatus() != ProfileStatus.LOBBY
         || profile.isStaffMode()
         || profile.isParty()) {
-      Common.sendMmMessage(player, LanguageManager.getString("CANT-USE-COMMAND"));
+      Common.sendMmMessage(player, PracticeConfig.language().getCantUseCommand());
       return true;
     }
 
@@ -60,13 +60,15 @@ public class CustomQueueCommand implements CommandExecutor, TabCompleter {
       case "join", "search" -> {
         if (queueManager.getJoinSearch(player) != null) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.QUEUES.CUSTOM.ALREADY-SEARCHING"));
+              player,
+              PracticeConfig.language().getCommand().getQueues().getCustom().getAlreadySearching());
           return true;
         }
 
         if (queueManager.getHostedQueue(player) != null) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.QUEUES.CUSTOM.ALREADY-HOSTING"));
+              player,
+              PracticeConfig.language().getCommand().getQueues().getCustom().getAlreadyHosting());
           return true;
         }
 
@@ -75,19 +77,22 @@ public class CustomQueueCommand implements CommandExecutor, TabCompleter {
       }
       case "host" -> {
         if (!player.hasPermission("ap.playerkit.queue.host")) {
-          Common.sendMmMessage(player, LanguageManager.getString("QUEUES.CUSTOM.NO-PERMISSION"));
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getQueues().getCustom().getNoPermission());
           return true;
         }
 
         if (args.length < 2) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.QUEUES.CUSTOM.HOST-USAGE"));
+              player,
+              PracticeConfig.language().getCommand().getQueues().getCustom().getHostUsage());
           return true;
         }
 
         if (queueManager.getHostedQueue(player) != null) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.QUEUES.CUSTOM.ALREADY-HOSTING"));
+              player,
+              PracticeConfig.language().getCommand().getQueues().getCustom().getAlreadyHosting());
           return true;
         }
 
@@ -96,7 +101,11 @@ public class CustomQueueCommand implements CommandExecutor, TabCompleter {
         if (customLadder == null) {
           Common.sendMmMessage(
               player,
-              LanguageManager.getString("COMMAND.QUEUES.CUSTOM.KIT-NOT-FOUND")
+              PracticeConfig.language()
+                  .getCommand()
+                  .getQueues()
+                  .getCustom()
+                  .getKitNotFound()
                   .replace("%kit%", kitName));
           return true;
         }
@@ -109,12 +118,14 @@ public class CustomQueueCommand implements CommandExecutor, TabCompleter {
         boolean cancelledHost = queueManager.cancelHostedQueue(player, true, true);
         if (!cancelledSearch && !cancelledHost) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.QUEUES.CUSTOM.NOT-IN-CUSTOM-QUEUE"));
+              player,
+              PracticeConfig.language().getCommand().getQueues().getCustom().getNotInCustomQueue());
         }
         return true;
       }
       default -> {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.QUEUES.CUSTOM.HELP"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getQueues().getCustom().getHelp());
         return true;
       }
     }

@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.leaderboard;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -29,7 +30,11 @@ public class LbProfileStatGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.STATISTICS.PLAYER-STATISTICS.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getStatistics()
+                .getPlayerStatistics()
+                .getTitle()
                 .replace("%player%", profile.getPlayer().getName()),
             6));
 
@@ -67,7 +72,14 @@ public class LbProfileStatGui extends Gui {
               }
 
               ItemStack fillerItem =
-                  GuiFile.getGuiItem("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.FILLER-ITEM").get();
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getStatistics()
+                              .getPlayerStatistics()
+                              .getIcons()
+                              .getFillerItem())
+                      .get();
               for (int i = 0; i < 45; i++) {
                 ItemStack current = inventory.getItem(i);
                 if (current == null || current.getType().equals(Material.AIR)) {
@@ -77,7 +89,14 @@ public class LbProfileStatGui extends Gui {
 
               inventory.setItem(
                   45,
-                  GuiFile.getGuiItem("GUIS.STATISTICS.PLAYER-STATISTICS.ICONS.BACK-TO-HUB").get());
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getStatistics()
+                              .getPlayerStatistics()
+                              .getIcons()
+                              .getBackToHub())
+                      .get());
               inventory.setItem(49, LbGuiUtil.createProfileAllStatItem(profile));
 
               updatePlayers();

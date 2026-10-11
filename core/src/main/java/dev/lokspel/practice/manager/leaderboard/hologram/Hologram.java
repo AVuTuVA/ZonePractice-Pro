@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.leaderboard.hologram;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.backend.BackendManager;
-import dev.lokspel.practice.manager.backend.ConfigManager;
 import dev.lokspel.practice.manager.division.Division;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -48,7 +48,7 @@ public abstract class Hologram {
   // Configuration
   protected static final YamlConfiguration config = BackendManager.getConfig();
   private static final String NULL_LINE_FORMAT =
-      ConfigManager.getString("LEADERBOARD.HOLOGRAM.FORMAT.NULL-LINE");
+      PracticeConfig.settings().getLeaderboard().getHologram().getFormat().getNullLine();
   private static final double DEFAULT_SPACING = 0.25;
 
   // Core properties
@@ -404,15 +404,29 @@ public abstract class Hologram {
           case SETUP -> {
             currentState = HologramState.SETUP_MODE;
             yield List.of(
-                ConfigManager.getString("LEADERBOARD.HOLOGRAM.FORMAT.SETUP-HOLO.TITLE"),
+                PracticeConfig.settings()
+                    .getLeaderboard()
+                    .getHologram()
+                    .getFormat()
+                    .getSetupHolo()
+                    .getTitle(),
                 StringUtil.cc(
-                    ConfigManager.getString("LEADERBOARD.HOLOGRAM.FORMAT.SETUP-HOLO.LINE")
+                    PracticeConfig.settings()
+                        .getLeaderboard()
+                        .getHologram()
+                        .getFormat()
+                        .getSetupHolo()
+                        .getLine()
                         .replace("%name%", name)));
           }
           case NO_DISPLAY -> {
             currentState = HologramState.NO_DISPLAY;
             yield List.of(
-                ConfigManager.getString("LEADERBOARD.HOLOGRAM.FORMAT.NOTHING-TO-DISPLAY"));
+                PracticeConfig.settings()
+                    .getLeaderboard()
+                    .getHologram()
+                    .getFormat()
+                    .getNothingToDisplay());
           }
         };
 

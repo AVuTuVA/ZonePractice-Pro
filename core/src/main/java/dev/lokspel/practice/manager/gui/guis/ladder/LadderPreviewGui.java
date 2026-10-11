@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.ladder;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -29,7 +30,10 @@ public class LadderPreviewGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.LADDER-PREVIEW.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getLadderPreview()
+                .getTitle()
                 .replace("%ladder%", ladder.getDisplayName()),
             6));
 
@@ -99,7 +103,12 @@ public class LadderPreviewGui extends Gui {
       List<String> effects = new ArrayList<>();
       for (PotionEffect potionEffect : kitData.getEffects()) {
         effects.add(
-            GuiFile.getString("GUIS.LADDER-PREVIEW.ICONS.HAS-EFFECT.FORMAT")
+            PracticeConfig.guis()
+                .getGuis()
+                .getLadderPreview()
+                .getIcons()
+                .getHasEffect()
+                .getFormat()
                 .replace(
                     "%name%",
                     StringUtils.capitalize(
@@ -110,7 +119,14 @@ public class LadderPreviewGui extends Gui {
       }
 
       List<String> lore = new ArrayList<>();
-      for (String line : GuiFile.getStringList("GUIS.LADDER-PREVIEW.ICONS.HAS-EFFECT.ICON.LORE")) {
+      for (String line :
+          PracticeConfig.guis()
+              .getGuis()
+              .getLadderPreview()
+              .getIcons()
+              .getHasEffect()
+              .getIcon()
+              .getLore()) {
         if (line.contains("%effects%")) {
           lore.addAll(effects);
         } else {
@@ -118,12 +134,20 @@ public class LadderPreviewGui extends Gui {
         }
       }
 
-      return GuiFile.getGuiItem("GUIS.LADDER-PREVIEW.ICONS.HAS-EFFECT.ICON")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getLadderPreview()
+                  .getIcons()
+                  .getHasEffect()
+                  .getIcon())
           .replace("%ladder%", ladder.getDisplayName())
           .setLore(lore)
           .get();
     } else {
-      return GuiFile.getGuiItem("GUIS.LADDER-PREVIEW.ICONS.NO-EFFECT").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis().getGuis().getLadderPreview().getIcons().getNoEffect())
+          .get();
     }
   }
 }

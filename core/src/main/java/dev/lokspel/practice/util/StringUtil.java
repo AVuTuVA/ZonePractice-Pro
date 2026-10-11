@@ -1,6 +1,6 @@
 package dev.lokspel.practice.util;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -101,16 +101,16 @@ public final class StringUtil {
           .replace(
               "%secondName%",
               (seconds < 2
-                  ? LanguageManager.getString("SECOND-NAME.1SEC")
-                  : LanguageManager.getString("SECOND-NAME.1<SEC")));
+                  ? PracticeConfig.language().getSecondName().getOneSecond()
+                  : PracticeConfig.language().getSecondName().getUnderOneSecond()));
     } else {
       return string
           .replace("%seconds%", String.valueOf(seconds))
           .replace(
               "%secondName%",
               (seconds < 2
-                  ? LanguageManager.getString("SECOND-NAME.1SEC")
-                  : LanguageManager.getString("SECOND-NAME.1<SEC")));
+                  ? PracticeConfig.language().getSecondName().getOneSecond()
+                  : PracticeConfig.language().getSecondName().getUnderOneSecond()));
     }
   }
 

@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.nametag;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.inventory.InventoryUtil;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -33,10 +33,6 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 public class NametagManager {
-
-  private static final String HEALTH_PATH = "MATCH-SETTINGS.HEALTH-BELOW-NAME";
-  private static final String LOBBY_PATH = "PLAYER.LOBBY-NAMETAG";
-  private static final String FFA_PATH = "FFA.NAMETAG";
 
   private boolean saturatedHeartIndicator;
   private boolean decimalAlwaysShow;
@@ -128,26 +124,40 @@ public class NametagManager {
   }
 
   private void reloadConfig() {
-    saturatedHeartIndicator = ConfigManager.getBoolean(HEALTH_PATH + ".SATURATED-HEART-INDICATOR");
+    saturatedHeartIndicator =
+        PracticeConfig.settings()
+            .getMatchSettings()
+            .getHealthBelowName()
+            .isSaturatedHeartIndicator();
     decimalAlwaysShow =
-        ConfigManager.getBoolean(HEALTH_PATH + ".DECIMAL-HEART-INDICATOR.ALWAYS-SHOW");
+        PracticeConfig.settings()
+            .getMatchSettings()
+            .getHealthBelowName()
+            .getDecimalHeartIndicator()
+            .isAlwaysShow();
     lowHealthRatio =
-        ConfigManager.getBoolean(HEALTH_PATH + ".DECIMAL-HEART-INDICATOR.LOW-HEALTH-DECIMAL-RATIO");
-    lowHealthThreshold = ConfigManager.getDouble(HEALTH_PATH + ".LOW-HEALTH-THRESHOLD") * 2.0;
-    configScale = ConfigManager.getDouble(HEALTH_PATH + ".SCALE");
-    healthSymbol = ConfigManager.getString(HEALTH_PATH + ".SYMBOL");
-    textShadow = ConfigManager.getBoolean(HEALTH_PATH + ".TEXT-SHADOW");
-    background = ConfigManager.getInt(HEALTH_PATH + ".BACKGROUND");
-    topLine = ConfigManager.getString(HEALTH_PATH + ".TOP-LINE");
-    bottomLine = ConfigManager.getString(HEALTH_PATH + ".BOTTOM-LINE");
-    lobbyTopLine = ConfigManager.getString(LOBBY_PATH + ".TOP-LINE");
-    lobbyBottomLine = ConfigManager.getString(LOBBY_PATH + ".BOTTOM-LINE");
-    lobbyTextShadow = ConfigManager.getBoolean(LOBBY_PATH + ".TEXT-SHADOW");
-    lobbyBackground = ConfigManager.getInt(LOBBY_PATH + ".BACKGROUND");
-    ffaTopLine = ConfigManager.getString(FFA_PATH + ".TOP-LINE");
-    ffaBottomLine = ConfigManager.getString(FFA_PATH + ".BOTTOM-LINE");
-    ffaTextShadow = ConfigManager.getBoolean(FFA_PATH + ".TEXT-SHADOW");
-    ffaBackground = ConfigManager.getInt(FFA_PATH + ".BACKGROUND");
+        PracticeConfig.settings()
+            .getMatchSettings()
+            .getHealthBelowName()
+            .getDecimalHeartIndicator()
+            .isLowHealthDecimalRatio();
+    lowHealthThreshold =
+        PracticeConfig.settings().getMatchSettings().getHealthBelowName().getLowHealthThreshold()
+            * 2.0;
+    configScale = PracticeConfig.settings().getMatchSettings().getHealthBelowName().getScale();
+    healthSymbol = PracticeConfig.settings().getMatchSettings().getHealthBelowName().getSymbol();
+    textShadow = PracticeConfig.settings().getMatchSettings().getHealthBelowName().isTextShadow();
+    background = PracticeConfig.settings().getMatchSettings().getHealthBelowName().getBackground();
+    topLine = PracticeConfig.settings().getMatchSettings().getHealthBelowName().getTopLine();
+    bottomLine = PracticeConfig.settings().getMatchSettings().getHealthBelowName().getBottomLine();
+    lobbyTopLine = PracticeConfig.settings().getPlayer().getLobbyNametag().getTopLine();
+    lobbyBottomLine = PracticeConfig.settings().getPlayer().getLobbyNametag().getBottomLine();
+    lobbyTextShadow = PracticeConfig.settings().getPlayer().getLobbyNametag().isTextShadow();
+    lobbyBackground = PracticeConfig.settings().getPlayer().getLobbyNametag().getBackground();
+    ffaTopLine = PracticeConfig.settings().getFfa().getNametag().getTopLine();
+    ffaBottomLine = PracticeConfig.settings().getFfa().getNametag().getBottomLine();
+    ffaTextShadow = PracticeConfig.settings().getFfa().getNametag().isTextShadow();
+    ffaBackground = PracticeConfig.settings().getFfa().getNametag().getBackground();
   }
 
   public void shutdown() {

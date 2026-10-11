@@ -31,6 +31,7 @@ import dev.lokspel.practice.command.singlecommands.SpectateCommand;
 import dev.lokspel.practice.command.singlecommands.StatisticsCommand;
 import dev.lokspel.practice.command.singlecommands.UnrankedCommand;
 import dev.lokspel.practice.command.staff.StaffCommand;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.listener.EntityDamage;
 import dev.lokspel.practice.listener.ItemConsume;
 import dev.lokspel.practice.listener.PlayerChatListener;
@@ -48,9 +49,6 @@ import dev.lokspel.practice.manager.arena.listener.ArenaListener;
 import dev.lokspel.practice.manager.arena.setup.SpawnMarkerManager;
 import dev.lokspel.practice.manager.arena.util.ArenaWorldUtil;
 import dev.lokspel.practice.manager.backend.BackendManager;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.backend.database.Database;
 import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.fight.event.EventManager;
@@ -82,7 +80,6 @@ import dev.lokspel.practice.manager.sidebar.SidebarManager;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.DataFolderMigrationUtil;
 import dev.lokspel.practice.util.MiniMessageTagResolver;
-import dev.lokspel.practice.util.SaveResource;
 import dev.lokspel.practice.util.SoftDependUtil;
 import dev.lokspel.practice.util.StartUpTypes;
 import dev.lokspel.practice.util.StartUpUtil;
@@ -90,10 +87,14 @@ import dev.lokspel.practice.util.UpdateChecker;
 import dev.lokspel.practice.util.VersionChecker;
 import dev.lokspel.practice.util.placeholderapi.PlayerExpansion;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import java.io.File;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import lombok.Getter;
+import me.whereareiam.configura.exception.ConfigException;
+import me.whereareiam.strata.exception.MigrationException;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -105,6 +106,37 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class AstralPractice extends JavaPlugin {
+
+  private static final List<String> DEFAULT_LADDERS =
+      List.of(
+          "archer",
+          "axe",
+          "battlerush",
+          "bedwars",
+          "boxing",
+          "bridges",
+          "builduhc",
+          "cart",
+          "creeper",
+          "crystal",
+          "diamondpotion",
+          "fireball",
+          "gapple",
+          "mace",
+          "mlgrush",
+          "netheritepotion",
+          "pearlfight",
+          "sg",
+          "skywars",
+          "soup",
+          "spearelytra",
+          "spearmace",
+          "spleef",
+          "sumo",
+          "sword",
+          "tntsumo");
+
+  private boolean configurationLoaded;
 
   @Getter
   private final Map<StartUpTypes, Boolean> startUpProgress = new EnumMap<>(StartUpTypes.class);
@@ -159,13 +191,19 @@ public final class AstralPractice extends JavaPlugin {
     }
 
     DataFolderMigrationUtil.migrate(this);
-    new SaveResource().saveResources(this);
+    try {
+      PracticeConfig.load(getDataFolder().toPath());
+      configurationLoaded = true;
+    } catch (ConfigException | MigrationException e) {
+      Common.sendConsoleMmMessage(
+          "<red>Couldn't load the configuration files: " + PracticeConfig.describeFailure(e));
+      Bukkit.getPluginManager().disablePlugin(this);
+      return;
+    }
+    saveDefaultLadders();
 
-    ConfigManager.createFile();
     EloMode.validateConfig();
     BackendManager.createFile(this);
-    LanguageManager.createFile(this);
-    GuiFile.createFile(this);
     initializeDatabase();
     MatchHistoryManager.getInstance(); // eagerly initialise singleton
     DivisionManager.getInstance().getData();
@@ -247,6 +285,9 @@ public final class AstralPractice extends JavaPlugin {
   @Override
   public void onDisable() {
     PacketEvents.getAPI().terminate();
+    if (!configurationLoaded) {
+      return;
+    }
 
     // Shutdown nametag manager and unregister packet blocker
     NametagManager.getInstance().shutdown();
@@ -281,6 +322,19 @@ public final class AstralPractice extends JavaPlugin {
     BackendManager.save();
   }
 
+  /** On 26.2 and newer, a server without a ladders folder starts with the bundled ladders. */
+  private void saveDefaultLadders() {
+    File ladderFolder = new File(getDataFolder(), "ladders");
+    if (!VersionChecker.isAtLeast(VersionChecker.BukkitVersion.v_26_2_R1)
+        || ladderFolder.exists()) {
+      return;
+    }
+
+    for (String ladder : DEFAULT_LADDERS) {
+      saveResource("ladders/" + ladder + ".yml", false);
+    }
+  }
+
   /**
    * Opens the configured database.
    *
@@ -288,19 +342,20 @@ public final class AstralPractice extends JavaPlugin {
    * storage, so the failure is reported and the plugin starts without one.
    */
   private static void initializeDatabase() {
-    if (!ConfigManager.getBoolean("MARIADB-DATABASE.ENABLED")) {
+    if (!PracticeConfig.settings().getMariadbDatabase().isEnabled()) {
       return;
     }
 
     try {
       database =
           Database.forMariaDb(
-              ConfigManager.getString("MARIADB-DATABASE.CONNECTION.HOST"),
-              ConfigManager.getInt("MARIADB-DATABASE.CONNECTION.PORT"),
-              ConfigManager.getString("MARIADB-DATABASE.CONNECTION.DATABASE"),
-              ConfigManager.getString("MARIADB-DATABASE.CONNECTION.USER"),
-              ConfigManager.getString("MARIADB-DATABASE.CONNECTION.PASSWORD"),
-              Math.max(2, ConfigManager.getInt("MARIADB-DATABASE.CONNECTION.POOL-SIZE")));
+              PracticeConfig.settings().getMariadbDatabase().getConnection().getHost(),
+              PracticeConfig.settings().getMariadbDatabase().getConnection().getPort(),
+              PracticeConfig.settings().getMariadbDatabase().getConnection().getDatabase(),
+              PracticeConfig.settings().getMariadbDatabase().getConnection().getUser(),
+              PracticeConfig.settings().getMariadbDatabase().getConnection().getPassword(),
+              Math.max(
+                  2, PracticeConfig.settings().getMariadbDatabase().getConnection().getPoolSize()));
     } catch (Exception e) {
       Common.sendConsoleMmMessage(
           "<red>Error during database initialization, continuing without it: "
@@ -336,12 +391,12 @@ public final class AstralPractice extends JavaPlugin {
     registerCommand(server, "customqueue", new CustomQueueCommand());
     registerCommand(server, "nick", new NickCommand());
 
-    if (ConfigManager.getBoolean("CHAT.PRIVATE-CHAT-ENABLED")) {
+    if (PracticeConfig.settings().getChat().isPrivateChatEnabled()) {
       new MessageCommand();
       new ReplyCommand();
     }
 
-    if (ConfigManager.getBoolean("MATCH-SETTINGS.LEAVE-COMMAND.ENABLED")) {
+    if (PracticeConfig.settings().getMatchSettings().getLeaveCommand().isEnabled()) {
       new LeaveCommand();
     }
   }

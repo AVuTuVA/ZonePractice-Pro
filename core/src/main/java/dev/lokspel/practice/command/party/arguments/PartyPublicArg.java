@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.party.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.party.PartyManager;
@@ -13,12 +13,12 @@ public final class PartyPublicArg {
 
   public static void publicCommand(Player player) {
     if (!player.hasPermission("ap.party.view")) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-PERMISSION"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoPermission());
       return;
     }
 
     if (!PartyManager.getInstance().hasJoinablePublicParty()) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-JOINABLE-PARTY"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoJoinableParty());
       return;
     }
 

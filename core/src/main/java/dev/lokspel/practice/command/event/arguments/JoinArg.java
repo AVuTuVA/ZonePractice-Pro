@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.event.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
@@ -18,27 +18,45 @@ public final class JoinArg {
     if (args.length != 1) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JOIN.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJoin()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
 
     if (!player.hasPermission("ap.event.join")) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JOIN.NO-PERMISSION"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJoin()
+              .getNoPermission());
       return;
     }
 
     Profile profile = ProfileManager.getInstance().getProfile(player);
     if (!profile.getStatus().equals(ProfileStatus.LOBBY) || profile.isParty()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JOIN.CANT-JOIN"));
+          player,
+          PracticeConfig.language().getCommand().getEvent().getArguments().getJoin().getCantJoin());
       return;
     }
 
     if (EventManager.getInstance().getEventByPlayer(player) != null) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JOIN.ALREADY-IN-EVENT"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJoin()
+              .getAlreadyInEvent());
       return;
     }
 
@@ -49,6 +67,7 @@ public final class JoinArg {
       }
     }
     Common.sendMmMessage(
-        player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JOIN.NO-EVENT"));
+        player,
+        PracticeConfig.language().getCommand().getEvent().getArguments().getJoin().getNoEvent());
   }
 }

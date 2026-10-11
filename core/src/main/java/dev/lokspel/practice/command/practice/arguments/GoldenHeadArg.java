@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.server.ServerManager;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.GoldenHead;
@@ -14,14 +14,20 @@ public final class GoldenHeadArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
       return;
     }
 
     if (player.getInventory().firstEmpty() == -1) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.GOLDENHEAD.INVENTORY-FULL"));
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getGoldenhead()
+              .getInventoryFull());
       return;
     }
 
@@ -32,7 +38,12 @@ public final class GoldenHeadArg {
       if (NumberUtil.isNotInteger(args[1])) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.GOLDENHEAD.INVALID-AMOUNT"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getGoldenhead()
+                .getInvalidAmount());
         return;
       }
 
@@ -40,7 +51,12 @@ public final class GoldenHeadArg {
       if (amount < 1 || amount > 64) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.GOLDENHEAD.INVALID-AMOUNT-2"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getGoldenhead()
+                .getInvalidAmount2());
         return;
       }
 
@@ -51,7 +67,12 @@ public final class GoldenHeadArg {
     } else {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.GOLDENHEAD.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getGoldenhead()
+              .getCommandHelp()
               .replace("%label%", label));
     }
   }

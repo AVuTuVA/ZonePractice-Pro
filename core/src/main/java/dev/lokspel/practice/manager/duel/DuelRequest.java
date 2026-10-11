@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.duel;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.type.duel.Duel;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
@@ -47,10 +47,12 @@ public class DuelRequest {
     if (arena != null) {
       arenaName = arena.getDisplayName();
     } else {
-      arenaName = LanguageManager.getString("COMMAND.DUEL.REQUEST-MESSAGE.RANDOM-ARENA-NAME");
+      arenaName =
+          PracticeConfig.language().getCommand().getDuel().getRequestMessage().getRandomArenaName();
     }
 
-    for (String line : LanguageManager.getList("COMMAND.DUEL.REQUEST-MESSAGE.SENDER")) {
+    for (String line :
+        PracticeConfig.language().getCommand().getDuel().getRequestMessage().getSender()) {
       Common.sendMmMessage(
           sender,
           line.replace("%ladder%", ladder.getDisplayName())
@@ -60,7 +62,8 @@ public class DuelRequest {
               .replace("%targetPing%", String.valueOf(PlayerUtil.getPing(target))));
     }
 
-    for (String line : LanguageManager.getList("COMMAND.DUEL.REQUEST-MESSAGE.TARGET")) {
+    for (String line :
+        PracticeConfig.language().getCommand().getDuel().getRequestMessage().getTarget()) {
       Common.sendMmMessage(
           target,
           line.replace("%ladder%", ladder.getDisplayName())
@@ -82,7 +85,10 @@ public class DuelRequest {
       if (arena.getAvailableArena() == null) {
         Common.sendMmMessage(
             sender,
-            LanguageManager.getString("COMMAND.DUEL.ARENA-BUSY")
+            PracticeConfig.language()
+                .getCommand()
+                .getDuel()
+                .getArenaBusy()
                 .replace("%arena%", this.getArena().getDisplayName()));
         arena = LadderUtil.getAvailableArena(ladder);
         playerSelected = false;
@@ -96,8 +102,10 @@ public class DuelRequest {
       duel.setPlayerSelectedArena(playerSelected);
       duel.startMatch();
     } else {
-      Common.sendMmMessage(sender, LanguageManager.getString("COMMAND.DUEL.NO-AVAILABLE-ARENA"));
-      Common.sendMmMessage(target, LanguageManager.getString("COMMAND.DUEL.NO-AVAILABLE-ARENA"));
+      Common.sendMmMessage(
+          sender, PracticeConfig.language().getCommand().getDuel().getNoAvailableArena());
+      Common.sendMmMessage(
+          target, PracticeConfig.language().getCommand().getDuel().getNoAvailableArena());
     }
   }
 

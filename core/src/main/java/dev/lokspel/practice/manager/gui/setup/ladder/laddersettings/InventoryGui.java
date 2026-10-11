@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -42,7 +42,12 @@ public class InventoryGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.LADDER.INVENTORY.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getInventory()
+                .getTitle()
                 .replace("%ladder%", ladder.getName()),
             6));
 
@@ -71,7 +76,16 @@ public class InventoryGui extends Gui {
               }
 
               inventory.setItem(
-                  45, GuiFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.BACK-TO").get());
+                  45,
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getLadder()
+                              .getInventory()
+                              .getIcons()
+                              .getBackTo())
+                      .get());
               inventory.setItem(47, getCustomKitEditorItem(ladder));
               inventory.setItem(48, getEffectItem(kitData.getEffects()));
 
@@ -158,7 +172,8 @@ public class InventoryGui extends Gui {
         } else {
           e.setCancelled(true);
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getLadder().getCantEditEnabled());
         }
       }
     }
@@ -200,10 +215,26 @@ public class InventoryGui extends Gui {
 
   private static ItemStack getCustomKitEditorItem(NormalLadder ladder) {
     if (ladder.isEditable()) {
-      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.CUSTOM-KIT-EDITOR.EDITABLE")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getInventory()
+                  .getIcons()
+                  .getCustomKitEditor()
+                  .getEditable())
           .get();
     } else {
-      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.CUSTOM-KIT-EDITOR.NOT-EDITABLE")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getInventory()
+                  .getIcons()
+                  .getCustomKitEditor()
+                  .getNotEditable())
           .get();
     }
   }
@@ -211,13 +242,29 @@ public class InventoryGui extends Gui {
   private ItemStack getEffectItem(List<PotionEffect> effects) {
     if (!effects.isEmpty()) {
       GuiItem guiItem =
-          GuiFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.EFFECTS.HAS-EFFECT")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getSetup()
+                      .getLadder()
+                      .getInventory()
+                      .getIcons()
+                      .getEffects()
+                      .getHasEffect())
               .replace("%ladder%", ladder.getName());
 
       List<String> effectStrings = new ArrayList<>();
       for (PotionEffect potionEffect : effects) {
         effectStrings.add(
-            GuiFile.getString("GUIS.SETUP.LADDER.INVENTORY.ICONS.EFFECTS.HAS-EFFECT.EFFECT-FORMAT")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getInventory()
+                .getIcons()
+                .getEffects()
+                .getHasEffect()
+                .getEffectFormat()
                 .replace(
                     "%name%",
                     StringUtils.capitalize(
@@ -239,7 +286,16 @@ public class InventoryGui extends Gui {
       guiItem.setLore(lore);
       return guiItem.get();
     } else {
-      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.INVENTORY.ICONS.EFFECTS.NO-EFFECT").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getInventory()
+                  .getIcons()
+                  .getEffects()
+                  .getNoEffect())
+          .get();
     }
   }
 }

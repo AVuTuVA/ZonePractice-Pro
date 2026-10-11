@@ -1,5 +1,6 @@
 package dev.lokspel.practice.manager.arena.arenas.interfaces;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaFile;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.ArenaType;
@@ -7,8 +8,7 @@ import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.ArenaCopy;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
 import dev.lokspel.practice.manager.arena.setup.SpawnMarkerManager;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
@@ -28,9 +28,9 @@ import org.bukkit.inventory.ItemStack;
 public abstract class DisplayArena extends NormalArena {
 
   private static final boolean DEFAULT_ICON =
-      ConfigManager.getBoolean("ARENA.DEFAULT-ICON.ENABLED");
+      PracticeConfig.settings().getArena().getDefaultIcon().isEnabled();
   private static final GuiItem DEFAULT_ICON_ITEM =
-      ConfigManager.getGuiItem("ARENA.DEFAULT-ICON.ICON");
+      BackendUtil.getGuiItem(PracticeConfig.settings().getArena().getDefaultIcon().getIcon());
 
   protected final ArenaFile arenaFile;
   protected ItemStack icon;
@@ -84,7 +84,7 @@ public abstract class DisplayArena extends NormalArena {
       if (this instanceof FfaArena) {
         Ffa ffa = ((FfaArena) this).getFfa();
         if (ffa != null) {
-          ffa.close(LanguageManager.getString("FFA.ALL-LADDERS-DISABLED"));
+          ffa.close(PracticeConfig.language().getFfa().getAllLaddersDisabled());
         }
       }
     }

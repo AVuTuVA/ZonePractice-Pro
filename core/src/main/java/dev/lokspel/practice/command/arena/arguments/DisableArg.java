@@ -1,9 +1,9 @@
 package dev.lokspel.practice.command.arena.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +16,20 @@ public final class DisableArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.DISABLE.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDisable()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -32,7 +38,12 @@ public final class DisableArg {
     if (arena == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.DISABLE.NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDisable()
+              .getNotExists()
               .replace("%arena%", args[1]));
       return;
     }
@@ -40,7 +51,12 @@ public final class DisableArg {
     if (!arena.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.DISABLE.ALREADY-DISABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDisable()
+              .getAlreadyDisabled()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -48,7 +64,12 @@ public final class DisableArg {
     if (ArenaUtil.changeStatus(player, arena)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.DISABLE.ARENA-DISABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getDisable()
+              .getArenaDisabled()
               .replace("%arena%", arena.getName()));
     }
   }

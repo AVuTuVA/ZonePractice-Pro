@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.ladder.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.util.Common;
@@ -14,14 +14,20 @@ public final class InfoArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.LADDER.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getLadder().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.INFO.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getInfo()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -30,12 +36,23 @@ public final class InfoArg {
     if (ladder == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.INFO.NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getLadder()
+              .getArguments()
+              .getInfo()
+              .getNotExists()
               .replace("%ladder%", args[1]));
       return;
     }
 
-    for (String line : LanguageManager.getList("COMMAND.LADDER.ARGUMENTS.INFO.LADDER-INFO")) {
+    for (String line :
+        PracticeConfig.language()
+            .getCommand()
+            .getLadder()
+            .getArguments()
+            .getInfo()
+            .getLadderInfo()) {
       Common.sendMmMessage(
           player,
           line.replace("%ladder%", ladder.getName())
@@ -43,24 +60,56 @@ public final class InfoArg {
               .replace(
                   "%icon%",
                   ladder.getIcon() != null
-                      ? LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.INFO.STATUS-NAMES.SET")
-                      : LanguageManager.getString(
-                          "COMMAND.LADDER.ARGUMENTS.INFO.STATUS-NAMES.NOT-SET"))
+                      ? PracticeConfig.language()
+                          .getCommand()
+                          .getLadder()
+                          .getArguments()
+                          .getInfo()
+                          .getStatusNames()
+                          .getSet()
+                      : PracticeConfig.language()
+                          .getCommand()
+                          .getLadder()
+                          .getArguments()
+                          .getInfo()
+                          .getStatusNames()
+                          .getNotSet())
               .replace("%displayName%", ladder.getDisplayName())
               .replace(
                   "%inventory%",
                   ladder.getKitData().isSet()
-                      ? LanguageManager.getString("COMMAND.LADDER.ARGUMENTS.INFO.STATUS-NAMES.SET")
-                      : LanguageManager.getString(
-                          "COMMAND.LADDER.ARGUMENTS.INFO.STATUS-NAMES.NOT-SET"))
+                      ? PracticeConfig.language()
+                          .getCommand()
+                          .getLadder()
+                          .getArguments()
+                          .getInfo()
+                          .getStatusNames()
+                          .getSet()
+                      : PracticeConfig.language()
+                          .getCommand()
+                          .getLadder()
+                          .getArguments()
+                          .getInfo()
+                          .getStatusNames()
+                          .getNotSet())
               .replace("%effects%", String.valueOf(ladder.getKitData().getEffects().size()))
               .replace(
                   "%status%",
                   ladder.isEnabled()
-                      ? LanguageManager.getString(
-                          "COMMAND.LADDER.ARGUMENTS.INFO.STATUS-NAMES.ENABLED")
-                      : LanguageManager.getString(
-                          "COMMAND.LADDER.ARGUMENTS.INFO.STATUS-NAMES.DISABLED")));
+                      ? PracticeConfig.language()
+                          .getCommand()
+                          .getLadder()
+                          .getArguments()
+                          .getInfo()
+                          .getStatusNames()
+                          .getEnabled()
+                      : PracticeConfig.language()
+                          .getCommand()
+                          .getLadder()
+                          .getArguments()
+                          .getInfo()
+                          .getStatusNames()
+                          .getDisabled()));
     }
   }
 

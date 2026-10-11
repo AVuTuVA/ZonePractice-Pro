@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.inventory.inventories;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.Inventory;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
@@ -30,7 +30,7 @@ public class LobbyInventory extends Inventory {
     this.invItems.add(new KitEditorInvItem());
     this.invItems.add(new PartyCreateInvItem());
     this.invItems.add(new PartyJoinInvItem());
-    if (ConfigManager.getBoolean("QUEUE.COMBINED.ENABLED")) {
+    if (PracticeConfig.settings().getQueue().getCombined().isEnabled()) {
       this.invItems.add(new QueueInvItem());
     } else {
       this.invItems.add(new RankedInvItem());

@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.setup.event.eventsettings;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.interfaces.EventData;
 import dev.lokspel.practice.manager.fight.event.setup.EventWandSetupManager;
 import dev.lokspel.practice.manager.fight.event.util.EventUtil;
@@ -32,7 +32,12 @@ public class EventMainGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.EVENT.EVENT-MAIN.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getEvent()
+                .getEventMain()
+                .getTitle()
                 .replace("%eventName%", eventData.getType().getName()),
             4));
     this.eventData = eventData;
@@ -44,13 +49,33 @@ public class EventMainGui extends Gui {
   public void build() {
     Inventory inventory = gui.get(1);
 
-    inventory.setItem(27, GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.BACK-TO").get());
+    inventory.setItem(
+        27,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getEvent()
+                    .getEventMain()
+                    .getIcons()
+                    .getBackTo())
+            .get());
 
     for (int i : new int[] {28, 29, 30, 31, 32, 33, 34, 35}) {
       inventory.setItem(i, GuiManager.getFILLER_ITEM());
     }
 
-    inventory.setItem(15, GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.SETTINGS").get());
+    inventory.setItem(
+        15,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getEvent()
+                    .getEventMain()
+                    .getIcons()
+                    .getSettings())
+            .get());
 
     update();
   }
@@ -61,7 +86,14 @@ public class EventMainGui extends Gui {
 
     inventory.setItem(
         10,
-        GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.EVENT-NAME")
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getEvent()
+                    .getEventMain()
+                    .getIcons()
+                    .getEventName())
             .replace("%eventName%", eventData.getType().getName())
             .setBaseItem(eventData.getIcon().get())
             .get());
@@ -69,12 +101,37 @@ public class EventMainGui extends Gui {
     inventory.setItem(
         11,
         eventData.isEnabled()
-            ? GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.STATUS.ENABLED").get()
-            : GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.STATUS.DISABLED").get());
+            ? BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getEvent()
+                        .getEventMain()
+                        .getIcons()
+                        .getStatus()
+                        .getEnabled())
+                .get()
+            : BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getEvent()
+                        .getEventMain()
+                        .getIcons()
+                        .getStatus()
+                        .getDisabled())
+                .get());
 
     inventory.setItem(
         16,
-        GuiFile.getGuiItem("GUIS.SETUP.EVENT.EVENT-MAIN.ICONS.LOCATION")
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getEvent()
+                    .getEventMain()
+                    .getIcons()
+                    .getLocation())
             .replace("%eventName%", eventData.getType().getName())
             .replace("%corner1%", ArenaUtil.convertLocation(eventData.getCuboidLoc1()))
             .replace("%corner2%", ArenaUtil.convertLocation(eventData.getCuboidLoc2()))
@@ -100,13 +157,19 @@ public class EventMainGui extends Gui {
           if (click.isLeftClick()) {
             if (eventData.isEnabled()) {
               Common.sendMmMessage(
-                  player, LanguageManager.getString("COMMAND.SETUP.EVENT.CANT-EDIT-ENABLED"));
+                  player,
+                  PracticeConfig.language()
+                      .getCommand()
+                      .getSetup()
+                      .getEvent()
+                      .getCantEditEnabled());
               return;
             }
             ItemStack cursorItem = player.getItemOnCursor();
             if (cursorItem == null || cursorItem.getType().equals(Material.AIR)) {
               Common.sendMmMessage(
-                  player, LanguageManager.getString("COMMAND.SETUP.EVENT.NO-ITEM-ON-CURSOR"));
+                  player,
+                  PracticeConfig.language().getCommand().getSetup().getEvent().getNoItemOnCursor());
               return;
             }
 
@@ -124,7 +187,8 @@ public class EventMainGui extends Gui {
             Location location = eventData.getAvailableLocation();
             if (location == null) {
               Common.sendMmMessage(
-                  player, LanguageManager.getString("COMMAND.SETUP.EVENT.NO-LOCATION"));
+                  player,
+                  PracticeConfig.language().getCommand().getSetup().getEvent().getNoLocation());
               return;
             }
 
@@ -147,7 +211,8 @@ public class EventMainGui extends Gui {
         case 16:
           if (eventData.isEnabled()) {
             Common.sendMmMessage(
-                player, LanguageManager.getString("COMMAND.SETUP.EVENT.CANT-EDIT-ENABLED"));
+                player,
+                PracticeConfig.language().getCommand().getSetup().getEvent().getCantEditEnabled());
             return;
           }
 

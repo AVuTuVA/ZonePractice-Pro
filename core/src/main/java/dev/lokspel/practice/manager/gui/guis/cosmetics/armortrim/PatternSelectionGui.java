@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics.armortrim;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -25,16 +26,18 @@ import org.bukkit.inventory.meta.trim.TrimPattern;
 
 public class PatternSelectionGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
+  private static final ItemStack FILLER_ITEM =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BACK-TO").get();
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+          .get();
 
   private static final int INVENTORY_ROWS =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.PATTERN-SELECTION.INVENTORY-ROWS", 5);
+      PracticeConfig.guis().getGuis().getCosmetics().getPatternSelection().getInventoryRows();
   private static final int BACK_SLOT =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.PATTERN-SELECTION.BACK-SLOT", 36);
+      PracticeConfig.guis().getGuis().getCosmetics().getPatternSelection().getBackSlot();
   private static final int START_SLOT =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.PATTERN-SELECTION.START-SLOT", 10);
+      PracticeConfig.guis().getGuis().getCosmetics().getPatternSelection().getStartSlot();
 
   private final Profile profile;
   private final ArmorSlot armorSlot;
@@ -47,10 +50,11 @@ public class PatternSelectionGui extends Gui {
     this.armorSlot = armorSlot;
     this.backToGui = backToGui;
     String title =
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.PATTERN-SELECTION.INVENTORY-TITLE",
-                "<dark_gray>Select Pattern - %armor%")
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getPatternSelection()
+            .getInventoryTitle()
             .replace("%armor%", armorSlot.getDisplayName());
     this.gui.put(1, InventoryUtil.createInventory(title, INVENTORY_ROWS));
     build();
@@ -118,10 +122,7 @@ public class PatternSelectionGui extends Gui {
     ArmorTrimTier tier = profile.getCosmeticsData().getActiveTier();
     if (!player.hasPermission(tier.getPermissionNode())) {
       String tierPermDeniedMessage =
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.TIER-PERMISSION-DENIED-MESSAGE",
-                  "<red>You do not have permission for this armor tier.");
+          PracticeConfig.guis().getGuis().getCosmetics().getTierPermissionDeniedMessage();
       Common.sendMmMessage(player, tierPermDeniedMessage);
       return;
     }
@@ -130,10 +131,7 @@ public class PatternSelectionGui extends Gui {
         "ap.cosmetics.armortrim.pattern." + CosmeticsPermissionManager.getTrimId(pattern);
     if (!player.hasPermission(permissionNode)) {
       String permDeniedMessage =
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.PATTERN-PERMISSION-DENIED-MESSAGE",
-                  "<red>You do not have permission to use this trim pattern.");
+          PracticeConfig.guis().getGuis().getCosmetics().getPatternPermissionDeniedMessage();
       Common.sendMmMessage(player, permDeniedMessage);
       return;
     }
@@ -161,15 +159,22 @@ public class PatternSelectionGui extends Gui {
     GuiItem item = new GuiItem(templateMaterial == null ? Material.PAPER : templateMaterial);
 
     String itemName =
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.PATTERN-SELECTION.PATTERN-ITEM.NAME",
-                "<aqua>%pattern_name% Pattern")
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getPatternSelection()
+            .getPatternItem()
+            .getName()
             .replace("%pattern_name%", StringUtil.getNormalizedName(patternId));
     item.setName(itemName);
 
     List<String> configLore =
-        GuiFile.getConfig().getStringList("GUIS.COSMETICS.PATTERN-SELECTION.PATTERN-ITEM.LORE");
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getPatternSelection()
+            .getPatternItem()
+            .getLore();
     List<String> lore = new ArrayList<>();
     for (String loreLine : configLore) {
       lore.add(

@@ -1,9 +1,8 @@
 package dev.lokspel.practice.manager.fight.match.type.duel;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.Round;
@@ -77,7 +76,7 @@ public class Duel extends Match implements Team {
       // If it's the first round
       if (ranked && ladder instanceof NormalLadder normalLadder) {
 
-        for (String line : LanguageManager.getList("MATCH.DUEL.MATCH-START-RANKED")) {
+        for (String line : PracticeConfig.language().getMatch().getDuel().getMatchStartRanked()) {
           this.sendMessage(
               line.replace("%matchTypeName%", MatchType.DUEL.getName(true))
                   .replace("%weightClassName%", WeightClass.RANKED.getMmName())
@@ -121,7 +120,7 @@ public class Duel extends Match implements Team {
               false);
         }
       } else {
-        for (String line : LanguageManager.getList("MATCH.DUEL.MATCH-START-UNRANKED")) {
+        for (String line : PracticeConfig.language().getMatch().getDuel().getMatchStartUnranked()) {
           this.sendMessage(
               line.replace("%matchTypeName%", MatchType.DUEL.getName(true))
                   .replace("%weightClassName%", WeightClass.UNRANKED.getMmName())
@@ -246,7 +245,9 @@ public class Duel extends Match implements Team {
 
       this.sendMessage(
           TeamUtil.replaceTeamNames(
-              LanguageManager.getString("MATCH.DUEL.PLAYER-LEFT"), player, this.getTeam(player)),
+              PracticeConfig.language().getMatch().getDuel().getPlayerLeft(),
+              player,
+              this.getTeam(player)),
           true);
 
       DuelRound duelRound = this.getCurrentRound();
@@ -298,7 +299,8 @@ public class Duel extends Match implements Team {
         .runTaskLater(
             AstralPractice.getInstance(),
             () -> {
-              boolean masterEnabled = ConfigManager.getBoolean("MATCH-SETTINGS.AUTO-QUEUE.ENABLED");
+              boolean masterEnabled =
+                  PracticeConfig.settings().getMatchSettings().getAutoQueue().isEnabled();
               Profile profile = ProfileManager.getInstance().getProfile(player);
               if (profile == null) {
                 return;

@@ -7,7 +7,7 @@ import dev.lokspel.practice.command.ladder.arguments.HelpArg;
 import dev.lokspel.practice.command.ladder.arguments.InfoArg;
 import dev.lokspel.practice.command.ladder.arguments.SetArg;
 import dev.lokspel.practice.command.ladder.arguments.StopArg;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +24,7 @@ public class LadderCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 

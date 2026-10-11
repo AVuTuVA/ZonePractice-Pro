@@ -1,6 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics.deatheffect;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.gui.Cosmetics;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -12,6 +14,7 @@ import dev.lokspel.practice.util.InventoryUtil;
 import dev.lokspel.practice.util.ItemCreateUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,9 +25,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 /** GUI for selecting a kill effect cosmetic. Opens via the cosmetics hub → Kill Effects section. */
 public class DeathEffectsGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
+  private static final ItemStack FILLER_ITEM =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
   private static final ItemStack BACK_ITEM =
-      GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BACK-TO").get();
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+          .get();
 
   /* layout: 5 rows, last row = back + filler */
   private static final int ROWS = 4;
@@ -49,9 +54,7 @@ public class DeathEffectsGui extends Gui {
     this.profile = profile;
     this.backToGui = backToGui;
 
-    String title =
-        GuiFile.getConfig()
-            .getString("GUIS.COSMETICS.DEATH-EFFECTS.TITLE", "<dark_gray>Death Effects");
+    String title = PracticeConfig.guis().getGuis().getCosmetics().getDeathEffects().getTitle();
     this.gui.put(1, InventoryUtil.createInventory(title, ROWS));
     build();
   }
@@ -112,10 +115,7 @@ public class DeathEffectsGui extends Gui {
         && !player.hasPermission("ap.cosmetics.deatheffect.*")
         && !CosmeticsPermissionManager.hasDeathEffectPermission(player, deathEffect)) {
       String msg =
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.DEATH-EFFECTS.NO-PERMISSION-MESSAGE",
-                  "<red>You don't have permission for this kill effect!");
+          PracticeConfig.guis().getGuis().getCosmetics().getDeathEffects().getNoPermissionMessage();
       Common.sendMmMessage(player, msg);
       return;
     }
@@ -150,11 +150,14 @@ public class DeathEffectsGui extends Gui {
             || CosmeticsPermissionManager.hasDeathEffectPermission(player, deathEffect)
             || deathEffect == DeathEffect.NONE;
 
+    Map<String, Cosmetics.DeathEffects.DeathEffectEntry> entries =
+        PracticeConfig.guis().getGuis().getCosmetics().getDeathEffects().getEntries();
+    Cosmetics.DeathEffects.DeathEffectEntry entry =
+        entries != null ? entries.get(deathEffect.name()) : null;
     String nameTemplate =
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.DEATH-EFFECTS.ENTRIES." + deathEffect.name() + ".DISPLAY-NAME",
-                deathEffect.getDefaultDisplayName());
+        entry != null && entry.getDisplayName() != null
+            ? entry.getDisplayName()
+            : deathEffect.getDefaultDisplayName();
 
     String statusPrefix;
     if (isActive) {
@@ -168,11 +171,10 @@ public class DeathEffectsGui extends Gui {
     item.setName(statusPrefix + nameTemplate);
 
     List<String> lore = new ArrayList<>();
-    List<String> loreTemplate =
-        GuiFile.getConfig()
-            .getStringList("GUIS.COSMETICS.DEATH-EFFECTS.ENTRIES." + deathEffect.name() + ".LORE");
-    if (loreTemplate.isEmpty()) {
-      loreTemplate = GuiFile.getConfig().getStringList("GUIS.COSMETICS.DEATH-EFFECTS.DEFAULT-LORE");
+    List<String> loreTemplate = entry != null ? entry.getLore() : null;
+    if (loreTemplate == null || loreTemplate.isEmpty()) {
+      loreTemplate =
+          PracticeConfig.guis().getGuis().getCosmetics().getDeathEffects().getDefaultLore();
     }
     for (String line : loreTemplate) {
       lore.add(
@@ -190,17 +192,10 @@ public class DeathEffectsGui extends Gui {
     if (isActive) {
       lore.add("");
       lore.add(
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.DEATH-EFFECTS.CLICK-TO-DESELECT",
-                  "<gray>Click to deselect this effect."));
+          PracticeConfig.guis().getGuis().getCosmetics().getDeathEffects().getClickToDeselect());
     } else if (hasPerms) {
       lore.add("");
-      lore.add(
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.DEATH-EFFECTS.CLICK-TO-SELECT",
-                  "<yellow>Click to select this effect."));
+      lore.add(PracticeConfig.guis().getGuis().getCosmetics().getDeathEffects().getClickToSelect());
       lore.add("<gray>A preview will play for you.");
     } else {
       lore.add("");

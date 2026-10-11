@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.profile.group;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import java.util.List;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -104,7 +104,10 @@ public class Group {
     Permission perm =
         new Permission(
             this.permission,
-            LanguageManager.getString("PROFILE.GROUP-PERMISSION-NAME").replace("%group%", name),
+            PracticeConfig.language()
+                .getProfile()
+                .getGroupPermissionName()
+                .replace("%group%", name),
             PermissionDefault.FALSE);
     Bukkit.getPluginManager().addPermission(perm);
   }

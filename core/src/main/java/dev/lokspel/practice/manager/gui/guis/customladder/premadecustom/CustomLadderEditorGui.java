@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.customladder.premadecustom;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.WeightClass;
 import dev.lokspel.practice.manager.fight.match.util.CustomKit;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
@@ -45,7 +45,14 @@ public class CustomLadderEditorGui extends Gui {
 
   @Getter
   private static final ItemStack fillerItem =
-      GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getKitEditor()
+                  .getKitEditor()
+                  .getIcons()
+                  .getFillerItem())
+          .get();
 
   @Getter private final Profile profile;
   @Getter private final NormalLadder ladder;
@@ -69,7 +76,11 @@ public class CustomLadderEditorGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.KIT-EDITOR.KIT-EDITOR.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getKitEditor()
+                .getKitEditor()
+                .getTitle()
                 .replace("%kit%", String.valueOf(kit))
                 .replace(
                     "%weightClass%",
@@ -120,7 +131,8 @@ public class CustomLadderEditorGui extends Gui {
     inventory.clear();
 
     ItemStack infoItem =
-        GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.INFO")
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getKitEditor().getKitEditor().getIcons().getInfo())
             .replace("%kit%", String.valueOf(this.kit))
             .replace(
                 "%weightClass%",
@@ -130,9 +142,31 @@ public class CustomLadderEditorGui extends Gui {
             .get();
     inventory.setItem(0, infoItem);
 
-    inventory.setItem(6, GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.SAVE").get());
-    inventory.setItem(7, GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.LOAD-DEFAULT").get());
-    inventory.setItem(8, GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.CANCEL").get());
+    inventory.setItem(
+        6,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getKitEditor().getKitEditor().getIcons().getSave())
+            .get());
+    inventory.setItem(
+        7,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getKitEditor()
+                    .getKitEditor()
+                    .getIcons()
+                    .getLoadDefault())
+            .get());
+    inventory.setItem(
+        8,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getKitEditor()
+                    .getKitEditor()
+                    .getIcons()
+                    .getCancel())
+            .get());
 
     // Frame
     for (int i : new int[] {1, 3, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 28, 37, 46}) {
@@ -224,7 +258,8 @@ public class CustomLadderEditorGui extends Gui {
     if (!ladder.isEnabled() || !ladder.isEditable() || ladder.isFrozen()) {
       e.setCancelled(true);
       Common.sendMmMessage(
-          player, LanguageManager.getString("LADDER.KIT-EDITOR.KIT-EDITOR.NOT-AVAILABLE"));
+          player,
+          PracticeConfig.language().getLadder().getKitEditor().getKitEditor().getNotAvailable());
       GuiManager.getInstance().searchGui(GuiType.CustomLadder_Selector).open(player);
       return;
     }
@@ -298,7 +333,11 @@ public class CustomLadderEditorGui extends Gui {
       if (PlayerCooldown.isActive(player, CooldownObject.CUSTOM_KIT_WEIGHTCLASS_CHANGE)) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("LADDER.KIT-EDITOR.KIT-EDITOR.WEIGHT-CLASS-CHANGE-COOLDOWN")
+            PracticeConfig.language()
+                .getLadder()
+                .getKitEditor()
+                .getKitEditor()
+                .getWeightClassChangeCooldown()
                 .replace(
                     "%timeLeft%",
                     String.valueOf(
@@ -427,11 +466,23 @@ public class CustomLadderEditorGui extends Gui {
         return GuiManager.getFILLER_ITEM();
       case UNRANKED_AND_RANKED:
         if (this.ranked) {
-          return GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.SWITCH-TO-UNRANKED")
+          return BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getKitEditor()
+                      .getKitEditor()
+                      .getIcons()
+                      .getSwitchToUnranked())
               .replace("%weightClass%", WeightClass.UNRANKED.getName())
               .get();
         } else {
-          return GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.SWITCH-TO-RANKED")
+          return BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getKitEditor()
+                      .getKitEditor()
+                      .getIcons()
+                      .getSwitchToRanked())
               .replace("%weightClass%", WeightClass.RANKED.getName())
               .get();
         }
@@ -447,7 +498,13 @@ public class CustomLadderEditorGui extends Gui {
       List<String> effects = new ArrayList<>();
       for (PotionEffect potionEffect : ladder.getKitData().getEffects()) {
         effects.add(
-            GuiFile.getString("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.HAS-EFFECT.FORMAT")
+            PracticeConfig.guis()
+                .getGuis()
+                .getKitEditor()
+                .getKitEditor()
+                .getIcons()
+                .getHasEffect()
+                .getFormat()
                 .replace(
                     "%name%",
                     StringUtils.capitalize(
@@ -458,7 +515,15 @@ public class CustomLadderEditorGui extends Gui {
       }
 
       ItemStack effectItem =
-          GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.HAS-EFFECT.ICON").get();
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getKitEditor()
+                      .getKitEditor()
+                      .getIcons()
+                      .getHasEffect()
+                      .getIcon())
+              .get();
       ItemMeta effectItemMeta = effectItem.getItemMeta();
       ItemCreateUtil.hideItemFlags(effectItemMeta);
 
@@ -475,7 +540,14 @@ public class CustomLadderEditorGui extends Gui {
       effectItem.setItemMeta(effectItemMeta);
       return effectItem;
     } else {
-      return GuiFile.getGuiItem("GUIS.KIT-EDITOR.KIT-EDITOR.ICONS.NO-EFFECT").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getKitEditor()
+                  .getKitEditor()
+                  .getIcons()
+                  .getNoEffect())
+          .get();
     }
   }
 

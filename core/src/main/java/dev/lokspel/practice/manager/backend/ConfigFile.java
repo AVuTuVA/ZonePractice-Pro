@@ -1,7 +1,6 @@
 package dev.lokspel.practice.manager.backend;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.util.Common;
 import java.io.File;
 import java.io.IOException;
@@ -82,9 +81,5 @@ public abstract class ConfigFile {
 
   public ItemStack getItemStack(String loc) {
     return config.getItemStack(loc);
-  }
-
-  public GuiItem getGuiItem(String loc) {
-    return BackendUtil.getGuiItem(config, loc);
   }
 }

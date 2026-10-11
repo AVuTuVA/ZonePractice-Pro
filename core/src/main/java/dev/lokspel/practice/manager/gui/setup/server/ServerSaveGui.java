@@ -1,9 +1,9 @@
 package dev.lokspel.practice.manager.gui.setup.server;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -27,7 +27,8 @@ public class ServerSaveGui extends Gui {
     super(GuiType.Server_Save);
     this.gui.put(
         1,
-        InventoryUtil.createInventory(GuiFile.getString("GUIS.SETUP.SERVER.FILE-SAVE.TITLE"), 1));
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getSetup().getServer().getFileSave().getTitle(), 1));
     this.backTo = backTo;
   }
 
@@ -48,36 +49,87 @@ public class ServerSaveGui extends Gui {
                 inventory.setItem(i, GuiManager.getFILLER_ITEM());
               }
               inventory.setItem(
-                  0, GuiFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.BACK-TO").get());
+                  0,
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getServer()
+                              .getFileSave()
+                              .getIcons()
+                              .getBackTo())
+                      .get());
 
               inventory.setItem(
                   3,
-                  GuiFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE")
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getServer()
+                              .getFileSave()
+                              .getIcons()
+                              .getDataSave())
                       .replace("%data%", "Arena")
                       .get());
               inventory.setItem(
                   4,
-                  GuiFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE")
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getServer()
+                              .getFileSave()
+                              .getIcons()
+                              .getDataSave())
                       .replace("%data%", "Ladder")
                       .get());
               inventory.setItem(
                   5,
-                  GuiFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE")
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getServer()
+                              .getFileSave()
+                              .getIcons()
+                              .getDataSave())
                       .replace("%data%", "Event")
                       .get());
               inventory.setItem(
                   6,
-                  GuiFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE")
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getServer()
+                              .getFileSave()
+                              .getIcons()
+                              .getDataSave())
                       .replace("%data%", "Player")
                       .get());
               inventory.setItem(
                   7,
-                  GuiFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE")
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getServer()
+                              .getFileSave()
+                              .getIcons()
+                              .getDataSave())
                       .replace("%data%", "Hologram")
                       .get());
               inventory.setItem(
                   8,
-                  GuiFile.getGuiItem("GUIS.SETUP.SERVER.FILE-SAVE.ICONS.DATA-SAVE")
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getServer()
+                              .getFileSave()
+                              .getIcons()
+                              .getDataSave())
                       .replace("%data%", "Mariadb")
                       .get());
 
@@ -108,28 +160,32 @@ public class ServerSaveGui extends Gui {
               .runTaskAsynchronously(
                   AstralPractice.getInstance(), () -> ArenaManager.getInstance().saveArenas());
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.SERVER.DATA-SAVED-MANUALLY"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getServer().getDataSavedManually());
           break;
         case 4:
           Bukkit.getScheduler()
               .runTaskAsynchronously(
                   AstralPractice.getInstance(), () -> LadderManager.getInstance().saveLadders());
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.SERVER.DATA-SAVED-MANUALLY"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getServer().getDataSavedManually());
           break;
         case 5:
           Bukkit.getScheduler()
               .runTaskAsynchronously(
                   AstralPractice.getInstance(), () -> EventManager.getInstance().saveEventData());
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.SERVER.DATA-SAVED-MANUALLY"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getServer().getDataSavedManually());
           break;
         case 6:
           Bukkit.getScheduler()
               .runTaskAsynchronously(
                   AstralPractice.getInstance(), () -> ProfileManager.getInstance().saveProfiles());
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.SERVER.DATA-SAVED-MANUALLY"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getServer().getDataSavedManually());
           break;
         case 7:
           Bukkit.getScheduler()
@@ -137,7 +193,8 @@ public class ServerSaveGui extends Gui {
                   AstralPractice.getInstance(),
                   () -> HologramManager.getInstance().saveHolograms());
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.SERVER.DATA-SAVED-MANUALLY"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getServer().getDataSavedManually());
           break;
         case 8:
           if (AstralPractice.getDatabase() != null) {
@@ -146,10 +203,16 @@ public class ServerSaveGui extends Gui {
                     AstralPractice.getInstance(),
                     () -> ServerManager.getInstance().getMariadbSaveRunnable().save());
             Common.sendMmMessage(
-                player, LanguageManager.getString("COMMAND.SETUP.SERVER.DATA-SAVED-MANUALLY"));
+                player,
+                PracticeConfig.language()
+                    .getCommand()
+                    .getSetup()
+                    .getServer()
+                    .getDataSavedManually());
           } else {
             Common.sendMmMessage(
-                player, LanguageManager.getString("COMMAND.SETUP.SERVER.MARIADB-DISABLED"));
+                player,
+                PracticeConfig.language().getCommand().getSetup().getServer().getMariadbDisabled());
           }
           break;
 

@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.inventory;
 
 import dev.lokspel.api.utilities.PlayerNametag;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.nametag.NametagManager;
 import dev.lokspel.practice.manager.nametag.TabIntegration;
@@ -18,7 +18,7 @@ public enum InventoryUtil {
   ;
 
   public static void setLobbyNametag(Player player, Profile profile) {
-    if (!ConfigManager.getBoolean("PLAYER.LOBBY-NAMETAG.ENABLED")) {
+    if (!PracticeConfig.settings().getPlayer().getLobbyNametag().isEnabled()) {
       if (PermanentConfig.NAMETAG_MANAGEMENT_ENABLED) {
         NametagManager.getInstance().reset(player.getName());
       }

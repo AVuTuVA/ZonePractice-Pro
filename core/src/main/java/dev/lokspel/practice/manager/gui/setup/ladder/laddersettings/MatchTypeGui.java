@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -32,7 +32,12 @@ public class MatchTypeGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.LADDER.MATCH-TYPE.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getMatchType()
+                .getTitle()
                 .replace("%ladder%", ladder.getName()),
             1));
     this.ladder = ladder;
@@ -45,7 +50,17 @@ public class MatchTypeGui extends Gui {
     LadderType ladderType = ladder.getType();
     Inventory inventory = gui.get(1);
 
-    inventory.setItem(0, GuiFile.getGuiItem("GUIS.SETUP.LADDER.MATCH-TYPE.ICONS.GO-BACK").get());
+    inventory.setItem(
+        0,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getLadder()
+                    .getMatchType()
+                    .getIcons()
+                    .getGoBack())
+            .get());
 
     for (int i : new int[] {1, 2, 3, 4}) {
       inventory.setItem(i, GuiManager.getDUMMY_ITEM());
@@ -106,7 +121,8 @@ public class MatchTypeGui extends Gui {
 
     if (ladder.isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
+          player,
+          PracticeConfig.language().getCommand().getSetup().getLadder().getCantEditEnabled());
       return;
     }
 
@@ -118,7 +134,11 @@ public class MatchTypeGui extends Gui {
     if (ladder.getWeightClass().equals(WeightClassType.RANKED)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-RANKED-WEIGHTCLASS-MATCHTYPE"));
+          PracticeConfig.language()
+              .getCommand()
+              .getSetup()
+              .getLadder()
+              .getCantEditRankedWeightclassMatchtype());
       return;
     }
 
@@ -133,11 +153,25 @@ public class MatchTypeGui extends Gui {
 
   private ItemStack getMatchTypeItem(Ladder ladder, MatchType matchType) {
     if (ladder.getMatchTypes().contains(matchType)) {
-      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.MATCH-TYPE.ICONS.ENABLED")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getMatchType()
+                  .getIcons()
+                  .getEnabled())
           .replace("%matchType%", matchType.getName(false))
           .get();
     } else {
-      return GuiFile.getGuiItem("GUIS.SETUP.LADDER.MATCH-TYPE.ICONS.DISABLED")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getMatchType()
+                  .getIcons()
+                  .getDisabled())
           .replace("%matchType%", matchType.getName(false))
           .get();
     }

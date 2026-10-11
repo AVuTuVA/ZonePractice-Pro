@@ -1,8 +1,7 @@
 package dev.lokspel.practice.manager.sidebar;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigFile;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.sidebar.adapter.PracticeAdapter;
@@ -23,7 +22,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 
-public class SidebarManager extends ConfigFile implements Listener {
+public class SidebarManager implements Listener {
 
   private static SidebarManager instance;
 
@@ -41,7 +40,6 @@ public class SidebarManager extends ConfigFile implements Listener {
   private BukkitTask updateTask;
 
   private SidebarManager() {
-    super("", "sidebar");
     this.sidebarAdapter = new PracticeAdapter();
 
     Bukkit.getServer().getPluginManager().registerEvents(this, AstralPractice.getInstance());
@@ -57,7 +55,7 @@ public class SidebarManager extends ConfigFile implements Listener {
   }
 
   public boolean isSidebarGloballyEnabled() {
-    return ConfigManager.getBoolean("SIDEBAR.ENABLED");
+    return PracticeConfig.settings().getSidebar().isEnabled();
   }
 
   private void ensureScoreboardLibrary() {
@@ -99,7 +97,7 @@ public class SidebarManager extends ConfigFile implements Listener {
                   }
                 },
                 20L,
-                ConfigManager.getInt("SIDEBAR.UPDATE-TIME"));
+                PracticeConfig.settings().getSidebar().getUpdateTime());
   }
 
   private void stopUpdateTask() {
@@ -223,8 +221,6 @@ public class SidebarManager extends ConfigFile implements Listener {
   }
 
   public void reloadSidebarConfig() {
-    reloadFile();
-
     Bukkit.getScheduler()
         .runTask(
             AstralPractice.getInstance(),
@@ -258,12 +254,6 @@ public class SidebarManager extends ConfigFile implements Listener {
               }
             });
   }
-
-  @Override
-  public void setData() {}
-
-  @Override
-  public void getData() {}
 
   public void close() {
     stopUpdateTask();

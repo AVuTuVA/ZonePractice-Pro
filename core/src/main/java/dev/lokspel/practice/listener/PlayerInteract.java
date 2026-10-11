@@ -1,6 +1,6 @@
 package dev.lokspel.practice.listener;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.util.BlockUtil;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -20,7 +20,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerInteract implements Listener {
 
-  private static final double SOUP_HEAL = ConfigManager.getDouble("MATCH-SETTINGS.SOUP.HEAL", 6.5);
+  private static final double SOUP_HEAL =
+      PracticeConfig.settings().getMatchSettings().getSoup().getHeal();
 
   @EventHandler
   public void onFlowerPotManipulate(PlayerFlowerPotManipulateEvent e) {

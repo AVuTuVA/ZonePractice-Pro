@@ -1,7 +1,9 @@
 package dev.lokspel.practice.manager.profile.cosmetics.armortrim;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.gui.Cosmetics;
 import java.util.Locale;
+import java.util.Map;
 import lombok.Getter;
 import org.bukkit.Material;
 
@@ -66,9 +68,9 @@ public enum ArmorTrimTier {
   }
 
   public String getDisplayName() {
-    String configKey = "GUIS.COSMETICS.ARMOR-TIERS." + this.name() + ".DISPLAY-NAME";
-    String configValue = GuiFile.getString(configKey);
-    return !configValue.isBlank() ? configValue : defaultDisplayName;
+    Cosmetics.ArmorTier config = config();
+    String configValue = config != null ? config.getDisplayName() : null;
+    return configValue != null && !configValue.isBlank() ? configValue : defaultDisplayName;
   }
 
   public String getPermissionNode() {
@@ -80,10 +82,10 @@ public enum ArmorTrimTier {
       return Material.AIR;
     }
 
-    String configKey = "GUIS.COSMETICS.ARMOR-TIERS." + this.name() + "." + getConfigSlotKey(slot);
-    String materialName = GuiFile.getString(configKey);
+    Cosmetics.ArmorTier config = config();
+    String materialName = config != null ? getConfiguredMaterial(config, slot) : null;
 
-    if (!materialName.isBlank()) {
+    if (materialName != null && !materialName.isBlank()) {
       try {
         return Material.valueOf(materialName.toUpperCase(Locale.ROOT));
       } catch (IllegalArgumentException ignored) {
@@ -100,13 +102,21 @@ public enum ArmorTrimTier {
     };
   }
 
-  private static String getConfigSlotKey(ArmorSlot slot) {
+  /** The GUIS.COSMETICS.ARMOR-TIERS entry of this tier, or null when it is not configured. */
+  private Cosmetics.ArmorTier config() {
+    Map<String, Cosmetics.ArmorTier> tiers =
+        PracticeConfig.guis().getGuis().getCosmetics().getArmorTiers();
+    return tiers != null ? tiers.get(this.name()) : null;
+  }
+
+  private static String getConfiguredMaterial(Cosmetics.ArmorTier config, ArmorSlot slot) {
     return switch (slot) {
-      case HELMET -> "HELMET-MATERIAL";
-      case CHESTPLATE -> "CHESTPLATE-MATERIAL";
-      case LEGGINGS -> "LEGGINGS-MATERIAL";
-      case BOOTS -> "BOOTS-MATERIAL";
-      case SHIELD -> "SHIELD-MATERIAL";
+      case HELMET -> config.getHelmetMaterial();
+      case CHESTPLATE -> config.getChestplateMaterial();
+      case LEGGINGS -> config.getLeggingsMaterial();
+      case BOOTS -> config.getBootsMaterial();
+      // The tiers have no shield material; the shield always uses the default.
+      case SHIELD -> null;
     };
   }
 

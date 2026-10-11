@@ -1,7 +1,6 @@
 package dev.lokspel.practice.manager.party;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.enums.MatchStatus;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -25,13 +24,13 @@ import org.bukkit.entity.Player;
 public class Party implements dev.lokspel.api.interfaces.Party {
 
   private static final boolean DEFAULT_PUBLIC_PARTY =
-      ConfigManager.getBoolean("PARTY.SETTINGS.DEFAULT.PUBLIC-PARTY");
+      PracticeConfig.settings().getParty().getSettings().getDefaultValue().isPublicParty();
   private static final boolean DEFAULT_ALL_INVITE =
-      ConfigManager.getBoolean("PARTY.SETTINGS.DEFAULT.ALL-INVITE");
+      PracticeConfig.settings().getParty().getSettings().getDefaultValue().isAllInvite();
   private static final boolean DEFAULT_PARTY_CHAT =
-      ConfigManager.getBoolean("PARTY.SETTINGS.DEFAULT.PARTY-CHAT");
+      PracticeConfig.settings().getParty().getSettings().getDefaultValue().isPartyChat();
   private static final boolean DEFAULT_DUEL_REQUEST =
-      ConfigManager.getBoolean("PARTY.SETTINGS.DEFAULT.DUEL-REQUESTS");
+      PracticeConfig.settings().getParty().getSettings().getDefaultValue().isDuelRequests();
 
   @Setter private Player leader;
   private final List<Player> members = new ArrayList<>();
@@ -66,7 +65,7 @@ public class Party implements dev.lokspel.api.interfaces.Party {
         && this.match.getStatus() != MatchStatus.END
         && this.match.getStatus() != MatchStatus.OVER) {
 
-      this.match.sendMessage(LanguageManager.getString("PARTY.PREVIOUS-MATCH-ENDED"), true);
+      this.match.sendMessage(PracticeConfig.language().getParty().getPreviousMatchEnded(), true);
       this.match.endMatch();
     }
 
@@ -96,7 +95,10 @@ public class Party implements dev.lokspel.api.interfaces.Party {
     leader = newOwner;
     refreshMaxPlayerLimitForLeader();
     sendMessage(
-        LanguageManager.getString("PARTY.NEW-LEADER").replace("%player%", newOwner.getName()));
+        PracticeConfig.language()
+            .getParty()
+            .getNewLeader()
+            .replace("%player%", newOwner.getName()));
   }
 
   public void refreshMaxPlayerLimitForLeader() {
@@ -116,7 +118,10 @@ public class Party implements dev.lokspel.api.interfaces.Party {
     InventoryManager.getInstance().setLobbyInventory(member, false);
 
     sendMessage(
-        LanguageManager.getString("PARTY.PLAYER-JOINED").replace("%player%", member.getName()));
+        PracticeConfig.language()
+            .getParty()
+            .getPlayerJoined()
+            .replace("%player%", member.getName()));
     GuiManager.getInstance().searchGui(GuiType.Party_OtherParties).update();
     GuiManager.getInstance().searchGui(GuiType.Party_PublicParties).update();
 
@@ -131,10 +136,16 @@ public class Party implements dev.lokspel.api.interfaces.Party {
 
     if (kick) {
       sendMessage(
-          LanguageManager.getString("PARTY.PLAYER-KICKED").replace("%player%", member.getName()));
+          PracticeConfig.language()
+              .getParty()
+              .getPlayerKicked()
+              .replace("%player%", member.getName()));
     } else {
       sendMessage(
-          LanguageManager.getString("PARTY.PLAYER-LEFT").replace("%player%", member.getName()));
+          PracticeConfig.language()
+              .getParty()
+              .getPlayerLeft()
+              .replace("%player%", member.getName()));
     }
 
     if (member.equals(leader)) {
@@ -155,7 +166,7 @@ public class Party implements dev.lokspel.api.interfaces.Party {
 
   public void disband() {
     broadcastTask.cancel();
-    sendMessage(LanguageManager.getString("PARTY.PARTY-DISBANDED"));
+    sendMessage(PracticeConfig.language().getParty().getPartyDisbanded());
 
     for (Player member : members) {
       Profile memberProfile = ProfileManager.getInstance().getProfile(member);
@@ -167,8 +178,8 @@ public class Party implements dev.lokspel.api.interfaces.Party {
     members.clear();
 
     if (match != null) {
-      if (ConfigManager.getBoolean("PARTY.END-MATCH-ON-DISBAND")) {
-        match.sendMessage(LanguageManager.getString("PARTY.MATCH-END"), true);
+      if (PracticeConfig.settings().getParty().isEndMatchOnDisband()) {
+        match.sendMessage(PracticeConfig.language().getParty().getMatchEnd(), true);
         match.endMatch();
       }
     } else {

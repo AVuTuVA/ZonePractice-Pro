@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.hologram;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -35,7 +35,12 @@ public class HologramMainGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MAIN.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getHologram()
+                .getHologramMain()
+                .getTitle()
                 .replace("%hologram%", hologram.getName()),
             4));
     this.hologram = hologram;
@@ -47,13 +52,33 @@ public class HologramMainGui extends Gui {
   public void build() {
     // Navigation
     gui.get(1)
-        .setItem(27, GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MAIN.ICONS.BACK-TO").get());
+        .setItem(
+            27,
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getHologram()
+                        .getHologramMain()
+                        .getIcons()
+                        .getBackTo())
+                .get());
     for (int i : new int[] {28, 29, 30, 31, 32, 33, 34}) {
       gui.get(1).setItem(i, GuiManager.getFILLER_ITEM());
     }
 
     gui.get(1)
-        .setItem(35, GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MAIN.ICONS.DELETE").get());
+        .setItem(
+            35,
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getHologram()
+                        .getHologramMain()
+                        .getIcons()
+                        .getDelete())
+                .get());
 
     update();
   }
@@ -120,7 +145,8 @@ public class HologramMainGui extends Gui {
           }
         } else {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.HOLOGRAM.CANT-EDIT-ENABLED"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getHologram().getCantEditEnabled());
         }
         break;
       case 12:
@@ -147,7 +173,8 @@ public class HologramMainGui extends Gui {
           GuiManager.getInstance().searchGui(GuiType.Hologram_Summary).update();
         } else {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.HOLOGRAM.CANT-EDIT-ENABLED"));
+              player,
+              PracticeConfig.language().getCommand().getSetup().getHologram().getCantEditEnabled());
         }
         break;
       case 16:
@@ -156,7 +183,12 @@ public class HologramMainGui extends Gui {
         } else {
           if (!hologram.isReadyToEnable()) {
             Common.sendMmMessage(
-                player, LanguageManager.getString("COMMAND.SETUP.HOLOGRAM.NO-REQUIREMENTS"));
+                player,
+                PracticeConfig.language()
+                    .getCommand()
+                    .getSetup()
+                    .getHologram()
+                    .getNoRequirements());
             break;
           } else {
             hologram.setEnabled(true);
@@ -188,7 +220,15 @@ public class HologramMainGui extends Gui {
               + StringUtil.getNormalizedName(hologramType.name()));
     }
 
-    GuiItem guiItem = GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MAIN.ICONS.EVENT-TYPE");
+    GuiItem guiItem =
+        BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getHologram()
+                .getHologramMain()
+                .getIcons()
+                .getEventType());
 
     List<String> lore = new ArrayList<>();
     for (String line : guiItem.getLore()) {
@@ -203,26 +243,66 @@ public class HologramMainGui extends Gui {
 
   private static ItemStack getLadderItem(Hologram hologram) {
     if (hologram.getHologramType().equals(HologramType.GLOBAL)) {
-      return GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MAIN.ICONS.LADDER.NO-LADDER-SETTINGS")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getHologram()
+                  .getHologramMain()
+                  .getIcons()
+                  .getLadder()
+                  .getNoLadderSettings())
           .get();
     } else {
-      return GuiFile.getGuiItem(
-              "GUIS.SETUP.HOLOGRAM.HOLOGRAM-MAIN.ICONS.LADDER.HAS-LADDER-SETTINGS")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getHologram()
+                  .getHologramMain()
+                  .getIcons()
+                  .getLadder()
+                  .getHasLadderSettings())
           .get();
     }
   }
 
   private static ItemStack getShowItem(Hologram hologram) {
-    return GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MAIN.ICONS.SHOW-STATS")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getHologram()
+                .getHologramMain()
+                .getIcons()
+                .getShowStats())
         .replace("%showStats%", String.valueOf(hologram.getShowStat()))
         .get();
   }
 
   private static ItemStack getStatusItem(Hologram hologram) {
     if (hologram.isEnabled()) {
-      return GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MAIN.ICONS.STATUS.ENABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getHologram()
+                  .getHologramMain()
+                  .getIcons()
+                  .getStatus()
+                  .getEnabled())
+          .get();
     } else {
-      return GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MAIN.ICONS.STATUS.DISABLED").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getHologram()
+                  .getHologramMain()
+                  .getIcons()
+                  .getStatus()
+                  .getDisabled())
+          .get();
     }
   }
 
@@ -236,7 +316,11 @@ public class HologramMainGui extends Gui {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.SETUP.HOLOGRAM.HOLOGRAM-DELETED")
+          PracticeConfig.language()
+              .getCommand()
+              .getSetup()
+              .getHologram()
+              .getHologramDeleted()
               .replace("%hologram%", hologram.getName()));
     }
   }

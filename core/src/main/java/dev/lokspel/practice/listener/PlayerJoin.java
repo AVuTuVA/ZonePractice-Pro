@@ -1,7 +1,7 @@
 package dev.lokspel.practice.listener;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
@@ -31,7 +31,7 @@ public class PlayerJoin implements Listener {
     Profile profile = ProfileManager.getInstance().getProfile(player);
 
     // Suppress default join message if disabled in config
-    if (!ConfigManager.getBoolean("PLAYER.JOIN-MESSAGE")) {
+    if (!PracticeConfig.settings().getPlayer().isJoinMessage()) {
       e.joinMessage(Component.empty());
     }
 
@@ -65,7 +65,7 @@ public class PlayerJoin implements Listener {
               () -> {
                 PlayerUtil.setPlayerWorldTime(player);
 
-                if (ConfigManager.getBoolean("STAFF-MODE.JOIN-HIDE-FROM-PLAYERS")
+                if (PracticeConfig.settings().getStaffMode().isJoinHideFromPlayers()
                     && player.hasPermission("ap.staffmode")) {
                   profile1.setHideFromPlayers(true);
                 }

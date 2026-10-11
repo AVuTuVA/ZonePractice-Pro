@@ -3,10 +3,9 @@ package dev.lokspel.practice.manager.fight.ffa;
 import static dev.lokspel.practice.util.PermanentConfig.FIGHT_ENTITY;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.FfaArena;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.listener.BuildListener;
 import dev.lokspel.practice.manager.fight.util.BlockUtil;
@@ -272,7 +271,7 @@ public class FfaListener implements Listener {
   }
 
   private static final boolean DISPLAY_ARROW_HIT =
-      ConfigManager.getBoolean("FFA.DISPLAY-ARROW-HIT-HEALTH");
+      PracticeConfig.settings().getFfa().isDisplayArrowHitHealth();
 
   protected static void arrowDisplayHearth(
       Player shooter, Player target, double finalDamage, EntityDamageByEntityEvent event) {
@@ -298,13 +297,16 @@ public class FfaListener implements Listener {
 
     Common.sendMmMessage(
         shooter,
-        LanguageManager.getString("FFA.GAME.ARROW-HIT-PLAYER")
+        PracticeConfig.language()
+            .getFfa()
+            .getGame()
+            .getArrowHitPlayer()
             .replace("%player%", target.getName())
             .replace("%health%", String.valueOf(health)));
   }
 
   private static final boolean ALLOW_DESTROYABLE_BLOCK =
-      ConfigManager.getBoolean("FFA.ALLOW-DESTROYABLE-BLOCK");
+      PracticeConfig.settings().getFfa().isAllowDestroyableBlock();
 
   /**
    * Validates FFA build rules (build enabled, build limits). Actual block tracking is done by
@@ -334,7 +336,8 @@ public class FfaListener implements Listener {
     if (ffa.getArena().isBuildMax()
         && e.getBlock().getLocation().getY()
             >= ListenerUtil.getCalculatedBuildLimit(ffa.getArena())) {
-      Common.sendMmMessage(player, LanguageManager.getString("FFA.GAME.CANT-BUILD-OVER-LIMIT"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getFfa().getGame().getCantBuildOverLimit());
       e.setCancelled(true);
       return;
     }
@@ -382,14 +385,16 @@ public class FfaListener implements Listener {
     FfaArena arena = ffa.getArena();
 
     if (!arena.getCuboid().contains(block.getLocation())) {
-      Common.sendMmMessage(player, LanguageManager.getString("FFA.GAME.CANT-BUILD-OUTSIDE-ARENA"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getFfa().getGame().getCantBuildOutsideArena());
       e.setCancelled(true);
       return;
     }
 
     if (arena.isBuildMax()
         && block.getLocation().getY() >= ListenerUtil.getCalculatedBuildLimit(arena)) {
-      Common.sendMmMessage(player, LanguageManager.getString("FFA.GAME.CANT-BUILD-OVER-LIMIT"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getFfa().getGame().getCantBuildOverLimit());
       e.setCancelled(true);
       return;
     }
@@ -420,7 +425,8 @@ public class FfaListener implements Listener {
 
     Block block = e.getBlockClicked();
     if (!ffa.getArena().getCuboid().contains(block.getLocation())) {
-      Common.sendMmMessage(player, LanguageManager.getString("FFA.GAME.CANT-BUILD-OUTSIDE-ARENA"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getFfa().getGame().getCantBuildOutsideArena());
       e.setCancelled(true);
       return;
     }
@@ -428,7 +434,8 @@ public class FfaListener implements Listener {
     if (ffa.getArena().isBuildMax()
         && block.getRelative(e.getBlockFace()).getLocation().getY()
             >= ListenerUtil.getCalculatedBuildLimit(ffa.getArena())) {
-      Common.sendMmMessage(player, LanguageManager.getString("FFA.GAME.CANT-BUILD-OVER-LIMIT"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getFfa().getGame().getCantBuildOverLimit());
       e.setCancelled(true);
     }
     // Liquid source block captured for rollback at MONITOR priority by
@@ -461,7 +468,7 @@ public class FfaListener implements Listener {
 
     if (!ffa.isBuild()) {
       e.setCancelled(true);
-      Common.sendMmMessage(player, LanguageManager.getString("FFA.GAME.CANT-CRAFT"));
+      Common.sendMmMessage(player, PracticeConfig.language().getFfa().getGame().getCantCraft());
     }
   }
 

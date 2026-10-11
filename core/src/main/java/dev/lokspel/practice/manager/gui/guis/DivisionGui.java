@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.division.Division;
 import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.division.DivisionUtil;
@@ -19,17 +20,25 @@ import org.bukkit.inventory.ItemStack;
 public class DivisionGui extends Gui {
 
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.DIVISION.ICONS.BACK-TO").get();
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getDivision().getIcons().getBackTo())
+          .get();
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.DIVISION.ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis().getGuis().getDivision().getIcons().getFillerItem())
+          .get();
   private static final ItemStack FILLER_ITEM2 =
-      GuiFile.getGuiItem("GUIS.DIVISION.ICONS.FILLER-ITEM2").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis().getGuis().getDivision().getIcons().getFillerItem2())
+          .get();
   private static final GuiItem PAST_DIVISION_ITEM =
-      GuiFile.getGuiItem("GUIS.DIVISION.ICONS.PAST-DIVISION");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getDivision().getIcons().getPastDivision());
   private static final GuiItem CURRENT_DIVISION_ITEM =
-      GuiFile.getGuiItem("GUIS.DIVISION.ICONS.CURRENT-DIVISION");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getDivision().getIcons().getCurrentDivision());
   private static final GuiItem NEXT_DIVISION_ITEM =
-      GuiFile.getGuiItem("GUIS.DIVISION.ICONS.NEXT-DIVISION");
+      BackendUtil.getGuiItem(
+          PracticeConfig.guis().getGuis().getDivision().getIcons().getNextDivision());
 
   private final Profile profile;
   private final Gui backToGui;
@@ -40,7 +49,9 @@ public class DivisionGui extends Gui {
     this.profile = profile;
     this.backToGui = backToGui;
 
-    this.gui.put(1, InventoryUtil.createInventory(GuiFile.getString("GUIS.DIVISION.TITLE"), 6));
+    this.gui.put(
+        1,
+        InventoryUtil.createInventory(PracticeConfig.guis().getGuis().getDivision().getTitle(), 6));
 
     this.build();
   }

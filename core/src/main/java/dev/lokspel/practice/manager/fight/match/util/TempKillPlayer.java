@@ -3,13 +3,13 @@ package dev.lokspel.practice.manager.fight.match.util;
 import static dev.lokspel.practice.manager.fight.match.util.TeamUtil.replaceTeamNames;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.language.LadderSpecificMessages;
+import dev.lokspel.practice.config.language.MatchTypeMessages;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.Round;
 import dev.lokspel.practice.manager.fight.match.enums.TeamEnum;
 import dev.lokspel.practice.manager.fight.match.interfaces.Team;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
-import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.RespawnableLadder;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.StringUtil;
@@ -21,7 +21,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class TempKillPlayer extends BukkitRunnable {
 
-  private final String languagePath;
   @Getter private boolean running = false;
 
   private final Match match;
@@ -44,26 +43,21 @@ public class TempKillPlayer extends BukkitRunnable {
       playerTeam = TeamEnum.TEAM1;
     }
 
-    // Use the ladder's language path method
-    this.languagePath = resolveLanguagePath(match.getLadder());
-
     this.begin();
   }
 
   /**
-   * Resolves the language path for respawn messages from the ladder. Uses the RespawnableLadder
-   * interface.
+   * Resolves the respawn messages from the ladder. Uses the RespawnableLadder interface. Resolved
+   * on each call so a language reload applies.
    */
-  private String resolveLanguagePath(Ladder ladder) {
-    String matchTypePath = "MATCH." + match.getType().getPathName() + ".LADDER-SPECIFIC.";
-
-    if (ladder instanceof RespawnableLadder respawnableLadder) {
-      String basePath = respawnableLadder.getRespawnLanguagePath();
-      if (basePath != null && !basePath.equals("MATCH.RESPAWN")) {
-        return matchTypePath + basePath;
-      }
+  private LadderSpecificMessages getMessages() {
+    if (!(match.getLadder() instanceof RespawnableLadder respawnableLadder)) {
+      return null;
     }
-    return null;
+
+    MatchTypeMessages matchTypeMessages = match.getType().messages();
+    MatchTypeMessages.LadderSpecific ladderSpecific = matchTypeMessages.getLadderSpecific();
+    return ladderSpecific != null ? respawnableLadder.getRespawnMessages(ladderSpecific) : null;
   }
 
   public void begin() {
@@ -109,11 +103,9 @@ public class TempKillPlayer extends BukkitRunnable {
       return;
     }
 
-    if (languagePath != null && respawnTime > 0) {
-      match.sendMessage(
-          replaceTeamNames(
-              LanguageManager.getString(languagePath + ".PLAYER-RESPAWNED"), player, playerTeam),
-          true);
+    LadderSpecificMessages messages = getMessages();
+    if (messages != null && respawnTime > 0) {
+      match.sendMessage(replaceTeamNames(messages.getPlayerRespawned(), player, playerTeam), true);
     }
 
     // Clear spectator remnants immediately so damage/projectile listeners no longer treat the
@@ -135,13 +127,12 @@ public class TempKillPlayer extends BukkitRunnable {
       return;
     }
 
-    if (languagePath != null) {
+    LadderSpecificMessages messages = getMessages();
+    if (messages != null) {
       Common.sendMmMessage(
           player,
           StringUtil.replaceSecondString(
-              replaceTeamNames(
-                  LanguageManager.getString(languagePath + ".RESPAWN"), player, playerTeam),
-              respawnTime));
+              replaceTeamNames(messages.getRespawn(), player, playerTeam), respawnTime));
     }
 
     respawnTime--;

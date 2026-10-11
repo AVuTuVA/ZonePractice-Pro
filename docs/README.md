@@ -7,6 +7,7 @@
 - [📃Permissions](./permissions.md)
 - [🅿Placeholders](./placeholders.md)
 - [💻API](./api.md)
+- [⚙Configuration files](./configuration.md)
 
 > [!IMPORTANT]
 > Join our [Discord server](https://discord.gg/3t8tZRkJ6H) for support.

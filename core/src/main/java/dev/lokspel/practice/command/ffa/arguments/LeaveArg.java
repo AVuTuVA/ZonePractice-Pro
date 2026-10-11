@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.ffa.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.ffa.FfaManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.util.Common;
@@ -16,7 +16,8 @@ public final class LeaveArg {
 
     if (ffa != null) {
       if (ffa.isFfaLeaveBlocked() && ffa.isFfaInCombat(player)) {
-        Common.sendMmMessage(player, LanguageManager.getString("FFA.COMMAND.LEAVE.IN-COMBAT"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getFfa().getCommand().getLeave().getInCombat());
         return;
       }
 
@@ -32,6 +33,7 @@ public final class LeaveArg {
     }
 
     // Player is not in any FFA
-    Common.sendMmMessage(player, LanguageManager.getString("FFA.COMMAND.LEAVE.NOT-IN-FFA"));
+    Common.sendMmMessage(
+        player, PracticeConfig.language().getFfa().getCommand().getLeave().getNotInFfa());
   }
 }

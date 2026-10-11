@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.singlecommands;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.ffa.FfaManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.Match;
@@ -50,7 +49,8 @@ public class LeaveCommand extends BukkitCommand {
     Ffa ffa = FfaManager.getInstance().getFfaByPlayer(player);
     if (ffa != null) {
       if (ffa.isFfaLeaveBlocked() && ffa.isFfaInCombat(player)) {
-        Common.sendMmMessage(player, LanguageManager.getString("FFA.COMMAND.LEAVE.IN-COMBAT"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getFfa().getCommand().getLeave().getInCombat());
         return true;
       }
 
@@ -74,7 +74,8 @@ public class LeaveCommand extends BukkitCommand {
 
     // Otherwise, check if player is in a match as a participant
     if (!profile.getStatus().equals(ProfileStatus.MATCH)) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.LEAVE.NOT-IN-MATCH"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getLeave().getNotInMatch());
       return false;
     }
 
@@ -85,15 +86,23 @@ public class LeaveCommand extends BukkitCommand {
 
     if (match instanceof Duel duel) {
       if (!duel.isRanked()) {
-        if (!ConfigManager.getBoolean("MATCH-SETTINGS.LEAVE-COMMAND.WEIGHT-CLASS.UNRANKED")) {
+        if (!PracticeConfig.settings()
+            .getMatchSettings()
+            .getLeaveCommand()
+            .getWeightClass()
+            .isUnranked()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.LEAVE.CANT-LEAVE-DUEL-UNRANKED"));
+              player, PracticeConfig.language().getCommand().getLeave().getCantLeaveDuelUnranked());
           return false;
         }
       } else {
-        if (!ConfigManager.getBoolean("MATCH-SETTINGS.LEAVE-COMMAND.WEIGHT-CLASS.RANKED")) {
+        if (!PracticeConfig.settings()
+            .getMatchSettings()
+            .getLeaveCommand()
+            .getWeightClass()
+            .isRanked()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.LEAVE.CANT-LEAVE-DUEL-RANKED"));
+              player, PracticeConfig.language().getCommand().getLeave().getCantLeaveDuelRanked());
           return false;
         }
       }

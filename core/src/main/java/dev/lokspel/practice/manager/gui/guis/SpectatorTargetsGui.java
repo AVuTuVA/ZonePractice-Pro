@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.enums.TeamEnum;
 import dev.lokspel.practice.manager.fight.match.interfaces.Team;
@@ -19,8 +20,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class SpectatorTargetsGui extends Gui {
 
-  private static final String GUI_PATH = "GUIS.SPECTATOR-TARGETS";
-
   private final Match match;
   private final Map<Integer, Player> headSlots = new HashMap<>();
 
@@ -30,7 +29,9 @@ public class SpectatorTargetsGui extends Gui {
     this.match = match;
 
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString(GUI_PATH + ".TITLE"), getRows(match)));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getSpectatorTargets().getTitle(), getRows(match)));
 
     build();
   }
@@ -64,7 +65,9 @@ public class SpectatorTargetsGui extends Gui {
   public void update() {}
 
   private ItemStack getTargetItem(Player target) {
-    GuiItem configItem = GuiFile.getGuiItem(GUI_PATH + ".ICONS.TARGET-ITEM");
+    GuiItem configItem =
+        BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getSpectatorTargets().getIcons().getTargetItem());
 
     GuiItem headItem = new GuiItem(ItemCreateUtil.getPlayerHead(target));
     headItem.setName(configItem.getName());

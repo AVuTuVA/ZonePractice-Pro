@@ -1,5 +1,7 @@
 package dev.lokspel.practice.manager.ladder.abstraction.interfaces;
 
+import dev.lokspel.practice.config.language.LadderSpecificMessages;
+import dev.lokspel.practice.config.language.MatchTypeMessages;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.Round;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
@@ -40,13 +42,15 @@ public interface RespawnableLadder {
   void setRespawnTime(int respawnTime);
 
   /**
-   * Gets the language path for respawn messages. Used to retrieve the appropriate language strings
-   * for death/respawn notifications.
+   * Gets the respawn messages of this ladder from a match type's ladder-specific language section.
+   * Used to retrieve the appropriate language strings for death/respawn notifications.
    *
-   * @return The language path prefix (e.g., "MATCH.BRIDGES", "MATCH.BEDWARS")
+   * @param ladderSpecific The LADDER-SPECIFIC language section of the current match type
+   * @return The ladder's messages, or null if the ladder has no respawn messages
    */
-  default String getRespawnLanguagePath() {
-    return "MATCH.RESPAWN";
+  default LadderSpecificMessages getRespawnMessages(
+      MatchTypeMessages.LadderSpecific ladderSpecific) {
+    return null;
   }
 
   /**

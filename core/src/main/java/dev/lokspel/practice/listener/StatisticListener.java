@@ -1,7 +1,7 @@
 package dev.lokspel.practice.listener;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.ffa.FfaManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.Match;
@@ -51,13 +51,23 @@ public class StatisticListener implements Listener {
             AstralPractice.getInstance(),
             () -> {
               customCooldownEnabled =
-                  ConfigManager.getBoolean("MATCH-SETTINGS.BOXING.CUSTOM-ATTACK-COOLDOWN.ENABLED");
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getBoxing()
+                      .getCustomAttackCooldown()
+                      .isEnabled();
               onlySword =
-                  ConfigManager.getBoolean(
-                      "MATCH-SETTINGS.BOXING.CUSTOM-ATTACK-COOLDOWN.ONLY-SWORD");
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getBoxing()
+                      .getCustomAttackCooldown()
+                      .isOnlySword();
               double value =
-                  ConfigManager.getDouble(
-                      "MATCH-SETTINGS.BOXING.CUSTOM-ATTACK-COOLDOWN.COUNT-FROM");
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getBoxing()
+                      .getCustomAttackCooldown()
+                      .getCountFrom();
               if (value < 0.0 || value > 1.0) {
                 value = 0.0;
               }

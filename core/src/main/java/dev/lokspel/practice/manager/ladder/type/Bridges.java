@@ -1,5 +1,7 @@
 package dev.lokspel.practice.manager.ladder.type;
 
+import dev.lokspel.practice.config.language.LadderSpecificMessages;
+import dev.lokspel.practice.config.language.MatchTypeMessages;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.Round;
 import dev.lokspel.practice.manager.ladder.abstraction.interfaces.DeathResult;
@@ -38,8 +40,9 @@ public class Bridges extends PortalFight implements LadderHandle, RespawnableLad
   }
 
   @Override
-  public String getRespawnLanguagePath() {
-    return "BRIDGES";
+  public LadderSpecificMessages getRespawnMessages(
+      MatchTypeMessages.LadderSpecific ladderSpecific) {
+    return ladderSpecific.getBridges();
   }
 
   @Override

@@ -1,7 +1,6 @@
 package dev.lokspel.practice.manager.fight.event;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.events.duel.brackets.Brackets;
 import dev.lokspel.practice.manager.fight.event.events.ffa.lms.Lms;
@@ -13,8 +12,6 @@ import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
-import dev.lokspel.practice.util.Common;
-import dev.lokspel.practice.util.StringUtil;
 import dev.lokspel.practice.util.cooldown.CooldownObject;
 import dev.lokspel.practice.util.cooldown.EnderpearlRunnable;
 import dev.lokspel.practice.util.cooldown.PlayerCooldown;
@@ -153,7 +150,7 @@ public class EventListener implements Listener {
     if (!event.getStatus().equals(EventStatus.LIVE)) {
       e.setCancelled(true);
     } else {
-      int duration = ConfigManager.getInt("EVENT.ENDERPEARL-COOLDOWN");
+      int duration = PracticeConfig.settings().getEvent().getEnderpearlCooldown();
       if (duration <= 0) {
         return;
       }
@@ -164,11 +161,8 @@ public class EventListener implements Listener {
       } else {
         e.setCancelled(true);
 
-        Common.sendMmMessage(
-            player,
-            StringUtil.replaceSecondString(
-                LanguageManager.getString("EVENT.ENDERPEARL-COOLDOWN"),
-                PlayerCooldown.getLeftInDouble(player, CooldownObject.ENDER_PEARL)));
+        // No cooldown message: language.yml never had EVENT.ENDERPEARL-COOLDOWN (the text sits
+        // under EVENT.MAP-SCAN), so the old lookup never produced one.
         player.updateInventory();
       }
     }

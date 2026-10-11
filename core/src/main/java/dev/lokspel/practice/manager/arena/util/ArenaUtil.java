@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.arena.util;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.ArenaCopy;
@@ -8,7 +9,6 @@ import dev.lokspel.practice.manager.arena.arenas.FfaArena;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.BasicArena;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
 import dev.lokspel.practice.manager.arena.setup.ArenaSetupManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
@@ -59,17 +59,23 @@ public enum ArenaUtil {
 
   public static String convertLocation(final Location location) {
     if (location != null) {
-      return LanguageManager.getString("ARENA.LOCATION-CONVERSION.CONVERSION")
+      return PracticeConfig.language()
+          .getArena()
+          .getLocationConversion()
+          .getConversion()
           .replace("%x%", String.valueOf(NumberUtil.doubleToInt(Math.ceil(location.getX()))))
           .replace("%y%", String.valueOf(NumberUtil.doubleToInt(Math.ceil(location.getY()))))
           .replace("%z%", String.valueOf(NumberUtil.doubleToInt(Math.ceil(location.getZ()))));
     }
-    return LanguageManager.getString("ARENA.LOCATION-CONVERSION.LOCATION-NULL");
+    return PracticeConfig.language().getArena().getLocationConversion().getLocationNull();
   }
 
   public static String convertLocation(final PortalLocation portalLocation) {
     if (portalLocation != null && portalLocation.getCenter() != null) {
-      return LanguageManager.getString("ARENA.LOCATION-CONVERSION.CONVERSION")
+      return PracticeConfig.language()
+          .getArena()
+          .getLocationConversion()
+          .getConversion()
           .replace(
               "%x%",
               String.valueOf(NumberUtil.doubleToInt(Math.ceil(portalLocation.getCenter().getX()))))
@@ -80,7 +86,7 @@ public enum ArenaUtil {
               "%z%",
               String.valueOf(NumberUtil.doubleToInt(Math.ceil(portalLocation.getCenter().getZ()))));
     }
-    return LanguageManager.getString("ARENA.LOCATION-CONVERSION.LOCATION-NULL");
+    return PracticeConfig.language().getArena().getLocationConversion().getLocationNull();
   }
 
   public static List<String> getLadderTypeNames(Arena arena) {
@@ -104,41 +110,45 @@ public enum ArenaUtil {
 
     if (!arena.isEnabled()) {
       if (arena.getIcon() == null || arena.getIcon().getType().equals(Material.AIR)) {
-        Common.sendMmMessage(player, LanguageManager.getString("ARENA.STATUS-CHANGE.NO-ICON"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getArena().getStatusChange().getNoIcon());
         returnVal = false;
       }
 
       if (arena.getCuboid() == null) {
-        Common.sendMmMessage(player, LanguageManager.getString("ARENA.STATUS-CHANGE.NO-CUBOID"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getArena().getStatusChange().getNoCuboid());
         returnVal = false;
       }
 
       //            if (arena.getAssignedLadders().isEmpty()) {
       //                Common.sendMMMessage(player,
-      // LanguageManager.getString("ARENA.STATUS-CHANGE.NO-LADDER-ASSIGNED"));
+      // PracticeConfig.language().getArena().getStatusChange().getNoLadderAssigned());
       //                returnVal = false;
       //            }
 
       if (arena instanceof Arena) {
         if (isArenaBedRelated((Arena) arena) && !arena.isBedSet()) {
-          Common.sendMmMessage(player, LanguageManager.getString("ARENA.STATUS-CHANGE.NO-BED"));
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getArena().getStatusChange().getNoBed());
           returnVal = false;
         }
 
         if (isArenaPortalRelated((Arena) arena) && !arena.isPortalSet()) {
-          Common.sendMmMessage(player, LanguageManager.getString("ARENA.STATUS-CHANGE.NO-PORTAL"));
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getArena().getStatusChange().getNoPortal());
           returnVal = false;
         }
 
         if (arena.getPosition1() == null || arena.getPosition2() == null) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("ARENA.STATUS-CHANGE.NO-SPAWN-POSITIONS"));
+              player, PracticeConfig.language().getArena().getStatusChange().getNoSpawnPositions());
           returnVal = false;
         }
       } else if (arena instanceof FfaArena) {
         if (arena.getFfaPositions().isEmpty()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("ARENA.STATUS-CHANGE.NO-FFA-POSITIONS"));
+              player, PracticeConfig.language().getArena().getStatusChange().getNoFfaPositions());
           returnVal = false;
         }
         if (arena.getAssignedLadders().isEmpty()) {
@@ -149,12 +159,12 @@ public enum ArenaUtil {
     } else {
       if (!MatchManager.getInstance().getLiveMatchesByArena(arena).isEmpty()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("ARENA.STATUS-CHANGE.CANT-DISABLE1"));
+            player, PracticeConfig.language().getArena().getStatusChange().getCantDisable1());
         returnVal = false;
       } else if (arena.isBuild()) {
         if (arena instanceof Arena && ((Arena) arena).isCopying()) {
           Common.sendMmMessage(
-              player, LanguageManager.getString("ARENA.STATUS-CHANGE.CANT-DISABLE2"));
+              player, PracticeConfig.language().getArena().getStatusChange().getCantDisable2());
           returnVal = false;
         }
       }

@@ -1,9 +1,9 @@
 package dev.lokspel.practice.command.arena.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.DisplayArena;
 import dev.lokspel.practice.manager.arena.util.ArenaUtil;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +16,20 @@ public final class EnableArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.ARENA.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ENABLE.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getEnable()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -32,7 +38,12 @@ public final class EnableArg {
     if (arena == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ENABLE.NOT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getEnable()
+              .getNotExists()
               .replace("%arena%", args[1]));
       return;
     }
@@ -40,7 +51,12 @@ public final class EnableArg {
     if (arena.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ENABLE.ALREADY-ENABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getEnable()
+              .getAlreadyEnabled()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -48,7 +64,12 @@ public final class EnableArg {
     if (ArenaUtil.changeStatus(player, arena)) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.ARENA.ARGUMENTS.ENABLE.ARENA-ENABLED")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getEnable()
+              .getArenaEnabled()
               .replace("%arena%", arena.getName()));
     }
   }

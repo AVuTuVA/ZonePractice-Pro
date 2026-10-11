@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics.armortrim;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -24,33 +25,44 @@ import org.bukkit.inventory.meta.trim.TrimPattern;
 
 public class ArmorPieceHubGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
+  private static final ItemStack FILLER_ITEM =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
   private static final ItemStack BACK_TO_ITEM =
-      GuiFile.getGuiItem("GUIS.COSMETICS.ICONS.BACK-TO").get();
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+          .get();
 
   private static final int INVENTORY_ROWS =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.ARMOR-PIECE-HUB.INVENTORY-ROWS", 4);
+      PracticeConfig.guis().getGuis().getCosmetics().getArmorPieceHub().getInventoryRows();
   private static final int BACK_SLOT =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.ARMOR-PIECE-HUB.SLOTS.BACK", 27);
+      PracticeConfig.guis().getGuis().getCosmetics().getArmorPieceHub().getSlots().getBack();
   private static final int PREVIEW_SLOT =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.ARMOR-PIECE-HUB.SLOTS.PREVIEW", 13);
+      PracticeConfig.guis().getGuis().getCosmetics().getArmorPieceHub().getSlots().getPreview();
   private static final int PATTERN_MENU_SLOT =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.ARMOR-PIECE-HUB.SLOTS.PATTERN-MENU", 20);
+      PracticeConfig.guis().getGuis().getCosmetics().getArmorPieceHub().getSlots().getPatternMenu();
   private static final int MATERIAL_MENU_SLOT =
-      GuiFile.getConfig().getInt("GUIS.COSMETICS.ARMOR-PIECE-HUB.SLOTS.MATERIAL-MENU", 24);
+      PracticeConfig.guis()
+          .getGuis()
+          .getCosmetics()
+          .getArmorPieceHub()
+          .getSlots()
+          .getMaterialMenu();
 
   private static final Material DEFAULT_PATTERN_BUTTON_MATERIAL =
       Material.valueOf(
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.ARMOR-PIECE-HUB.PATTERN-SELECTION-BUTTON.DEFAULT-MATERIAL",
-                  "SMITHING_TABLE"));
+          PracticeConfig.guis()
+              .getGuis()
+              .getCosmetics()
+              .getArmorPieceHub()
+              .getPatternSelectionButton()
+              .getDefaultMaterial());
   private static final Material DEFAULT_MATERIAL_BUTTON_MATERIAL =
       Material.valueOf(
-          GuiFile.getConfig()
-              .getString(
-                  "GUIS.COSMETICS.ARMOR-PIECE-HUB.MATERIAL-SELECTION-BUTTON.DEFAULT-MATERIAL",
-                  "ANVIL"));
+          PracticeConfig.guis()
+              .getGuis()
+              .getCosmetics()
+              .getArmorPieceHub()
+              .getMaterialSelectionButton()
+              .getDefaultMaterial());
 
   private final Profile profile;
   private final ArmorSlot armorSlot;
@@ -123,9 +135,12 @@ public class ArmorPieceHubGui extends Gui {
     Material previewMaterial = tier.getMaterial(armorSlot);
     GuiItem item = new GuiItem(previewMaterial);
     item.setName(
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.ARMOR-PIECE-HUB.PREVIEW-ITEM.NAME", "<yellow>Current Preview"));
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getArmorPieceHub()
+            .getPreviewItem()
+            .getName());
 
     ItemStack itemStack = item.get();
     if (armorSlot != ArmorSlot.SHIELD
@@ -163,13 +178,19 @@ public class ArmorPieceHubGui extends Gui {
     }
 
     String name =
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.ARMOR-PIECE-HUB.PATTERN-SELECTION-BUTTON.NAME",
-                "<aqua>Pattern Selection");
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getArmorPieceHub()
+            .getPatternSelectionButton()
+            .getName();
     String loreLine =
-        GuiFile.getConfig()
-            .getStringList("GUIS.COSMETICS.ARMOR-PIECE-HUB.PATTERN-SELECTION-BUTTON.LORE")
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getArmorPieceHub()
+            .getPatternSelectionButton()
+            .getLore()
             .getFirst();
     return buildNavigationItem(buttonMaterial, name, loreLine);
   }
@@ -185,13 +206,19 @@ public class ArmorPieceHubGui extends Gui {
     }
 
     String name =
-        GuiFile.getConfig()
-            .getString(
-                "GUIS.COSMETICS.ARMOR-PIECE-HUB.MATERIAL-SELECTION-BUTTON.NAME",
-                "<gold>Material Selection");
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getArmorPieceHub()
+            .getMaterialSelectionButton()
+            .getName();
     String loreLine =
-        GuiFile.getConfig()
-            .getStringList("GUIS.COSMETICS.ARMOR-PIECE-HUB.MATERIAL-SELECTION-BUTTON.LORE")
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getArmorPieceHub()
+            .getMaterialSelectionButton()
+            .getLore()
             .getFirst();
     return buildNavigationItem(buttonMaterial, name, loreLine);
   }

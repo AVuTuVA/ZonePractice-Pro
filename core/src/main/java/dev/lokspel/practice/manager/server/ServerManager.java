@@ -1,11 +1,9 @@
 package dev.lokspel.practice.manager.server;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.util.ArenaWorldUtil;
 import dev.lokspel.practice.manager.backend.BackendManager;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.division.DivisionManager;
 import dev.lokspel.practice.manager.fight.match.util.EloMode;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
@@ -80,10 +78,10 @@ public class ServerManager implements Listener {
   }
 
   public void start() {
-    if (ConfigManager.getBoolean("AUTO-SAVE.ENABLED")) {
+    if (PracticeConfig.settings().getAutoSave().isEnabled()) {
       autoSaveRunnable.begin();
     }
-    if (ConfigManager.getBoolean("PLAYER.DELETE-INACTIVE-USER.ENABLED")) {
+    if (PracticeConfig.settings().getPlayer().getDeleteInactiveUser().isEnabled()) {
       BukkitRunnable runnable =
           new BukkitRunnable() {
             @Override
@@ -98,10 +96,10 @@ public class ServerManager implements Listener {
           };
       runnable.runTaskTimer(AstralPractice.getInstance(), 0, 20L * 5);
     }
-    if (ConfigManager.getBoolean("RANKED.LIMIT.ENABLED")) {
+    if (PracticeConfig.settings().getRanked().getLimit().isEnabled()) {
       profileLimitRunnable.begin();
     }
-    if (ConfigManager.getBoolean("MARIADB-DATABASE.ENABLED")) {
+    if (PracticeConfig.settings().getMariadbDatabase().isEnabled()) {
       mariadbSaveRunnable.begin();
     }
 
@@ -213,7 +211,7 @@ public class ServerManager implements Listener {
                 () -> {
                   PlayerUtil.setPlayerWorldTime(player);
 
-                  if (ConfigManager.getBoolean("STAFF-MODE.JOIN-HIDE-FROM-PLAYERS")
+                  if (PracticeConfig.settings().getStaffMode().isJoinHideFromPlayers()
                       && player.hasPermission("ap.staffmode")) {
                     profile1.setHideFromPlayers(true);
                   }
@@ -246,9 +244,9 @@ public class ServerManager implements Listener {
     Player player = e.getPlayer();
 
     if (ServerManager.getLobby() == null) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("SET-SERVER-LOBBY"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getSetServerLobby());
       if (player.isOp()) {
-        Common.sendMmMessage(player, LanguageManager.getString("SET-SERVER-LOBBY"));
+        Common.sendMmMessage(player, PracticeConfig.language().getSetServerLobby());
       }
     }
 
@@ -263,12 +261,19 @@ public class ServerManager implements Listener {
   }
 
   public boolean reloadFiles() {
+    // A broken configuration file keeps its previous values; the rest is reloaded regardless.
+    boolean configurationReloaded = true;
     try {
-      ConfigManager.reload();
+      PracticeConfig.reload();
+    } catch (RuntimeException e) {
+      Common.sendConsoleMmMessage(
+          "<red>Failed to reload practice files: " + PracticeConfig.describeFailure(e));
+      configurationReloaded = false;
+    }
+
+    try {
       EloMode.validateConfig();
-      LanguageManager.reload();
-      GuiFile.reload();
-      InventoryManager.getInstance().reloadFile();
+      InventoryManager.getInstance().reload();
       DivisionManager.getInstance().reloadRanks();
       BackendManager.reload();
       CombatLogUtil.getInstance().reload();
@@ -276,9 +281,10 @@ public class ServerManager implements Listener {
       SidebarManager.getInstance().reloadSidebarConfig();
       goldenHead.reload();
       NametagManager.getInstance().reload();
-      return true;
+      return configurationReloaded;
     } catch (Exception e) {
-      Common.sendConsoleMmMessage("<red>Failed to reload practice files: " + e.getMessage());
+      Common.sendConsoleMmMessage(
+          "<red>Failed to reload practice files: " + PracticeConfig.describeFailure(e));
       return false;
     }
   }

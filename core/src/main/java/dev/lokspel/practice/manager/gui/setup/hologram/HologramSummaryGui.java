@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.hologram;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -48,7 +49,12 @@ public class HologramSummaryGui extends Gui {
     for (int page = 1; PageUtil.isPageValid(holograms.size(), page, spaces) || page == 1; page++) {
       Inventory inventory = existingInventories.get(page);
       String title =
-          GuiFile.getString("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MANAGER.TITLE")
+          PracticeConfig.guis()
+              .getGuis()
+              .getSetup()
+              .getHologram()
+              .getHologramManager()
+              .getTitle()
               .replace("%page%", String.valueOf(page));
       if (inventory == null || inventory.getSize() != 3 * 9) {
         inventory = InventoryUtil.createInventory(title, 3);
@@ -80,10 +86,26 @@ public class HologramSummaryGui extends Gui {
       // Left navigation
       ItemStack left;
       if (page == 1) {
-        left = GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MANAGER.ICONS.BACK-TO").get();
+        left =
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getHologram()
+                        .getHologramManager()
+                        .getIcons()
+                        .getBackTo())
+                .get();
       } else {
         left =
-            GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MANAGER.ICONS.PAGE-LEFT")
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getHologram()
+                        .getHologramManager()
+                        .getIcons()
+                        .getPageLeft())
                 .replace("%page%", String.valueOf(page - 1))
                 .get();
       }
@@ -93,7 +115,14 @@ public class HologramSummaryGui extends Gui {
       ItemStack right;
       if (PageUtil.isPageValid(holograms.size(), page + 1, spaces)) {
         right =
-            GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MANAGER.ICONS.PAGE-RIGHT")
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getHologram()
+                        .getHologramManager()
+                        .getIcons()
+                        .getPageRight())
                 .replace("%page%", String.valueOf(page + 1))
                 .get();
       } else {
@@ -153,24 +182,49 @@ public class HologramSummaryGui extends Gui {
   }
 
   private ItemStack getSummaryHologramMainItem(Hologram hologram) {
-    return GuiFile.getGuiItem("GUIS.SETUP.HOLOGRAM.HOLOGRAM-MANAGER.ICONS.HOLOGRAM-ICON")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getHologram()
+                .getHologramManager()
+                .getIcons()
+                .getHologramIcon())
         .replace("%hologramName%", hologram.getName())
         .replace(
             "%state%",
             (hologram.isEnabled()
-                ? GuiFile.getString(
-                    "GUIS.SETUP.HOLOGRAM.HOLOGRAM-MANAGER.ICONS.HOLOGRAM-ICON."
-                        + "STATUS-NAMES.ENABLED")
-                : GuiFile.getString(
-                    "GUIS.SETUP.HOLOGRAM.HOLOGRAM-MANAGER.ICONS.HOLOGRAM-ICON."
-                        + "STATUS-NAMES.DISABLED")))
+                ? PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getHologram()
+                    .getHologramManager()
+                    .getIcons()
+                    .getHologramIcon()
+                    .getStatusNames()
+                    .getEnabled()
+                : PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getHologram()
+                    .getHologramManager()
+                    .getIcons()
+                    .getHologramIcon()
+                    .getStatusNames()
+                    .getDisabled()))
         .replace(
             "%type%",
             (hologram.getHologramType() != null
                 ? hologram.getHologramType().getName()
-                : GuiFile.getString(
-                    "GUIS.SETUP.HOLOGRAM.HOLOGRAM-MANAGER.ICONS.HOLOGRAM-ICON."
-                        + "STATUS-NAMES.TYPE-NULL")))
+                : PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getHologram()
+                    .getHologramManager()
+                    .getIcons()
+                    .getHologramIcon()
+                    .getStatusNames()
+                    .getTypeNull()))
         .replace("%statsShow%", String.valueOf(hologram.getShowStat()))
         .get();
   }

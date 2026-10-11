@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.event.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
@@ -18,32 +17,55 @@ public final class HostArg {
     if (args.length != 1) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.HOST.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getHost()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
 
     if (!player.hasPermission("ap.event.host")) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.HOST.NO-PERMISSION"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getHost()
+              .getNoPermission());
       return;
     }
 
     if (!EventManager.getInstance().getEvents().isEmpty()
-        && ConfigManager.getBoolean("EVENT.MULTIPLE")) {
+        && PracticeConfig.settings().getEvent().isMultiple()) {
       for (Event event : EventManager.getInstance().getEvents()) {
         if (!event.getStatus().equals(EventStatus.COLLECTING)) {
           continue;
         }
 
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.HOST.CANT-HOST-NOW"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getHost()
+                .getCantHostNow());
         return;
       }
     } else if (!EventManager.getInstance().getEvents().isEmpty()
-        && !ConfigManager.getBoolean("EVENT.MULTIPLE")) {
+        && !PracticeConfig.settings().getEvent().isMultiple()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.HOST.CANT-HOST-MULTIPLE"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getHost()
+              .getCantHostMultiple());
       return;
     }
 

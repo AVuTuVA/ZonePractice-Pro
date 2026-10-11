@@ -1,8 +1,8 @@
 package dev.lokspel.practice.command.arena.arguments;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.arena.ArenaGuiSetupManager;
@@ -18,14 +18,20 @@ public final class FreezeArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.arena.freeze")) {
-      Common.sendMmMessage(player, LanguageManager.getString("command.arena.no-permission"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getArena().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.freeze.command-help")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getFreeze()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -34,7 +40,12 @@ public final class FreezeArg {
     if (arena == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.freeze.not-exists")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getFreeze()
+              .getNotExists()
               .replace("%arena%", args[1]));
       return;
     }
@@ -42,7 +53,12 @@ public final class FreezeArg {
     if (!arena.isEnabled()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.freeze.arena-frozen")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getFreeze()
+              .getArenaFrozen()
               .replace("%arena%", arena.getName()));
       return;
     }
@@ -50,12 +66,22 @@ public final class FreezeArg {
     if (!arena.isFrozen()) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.freeze.freeze-success")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getFreeze()
+              .getFreezeSuccess()
               .replace("%arena%", arena.getName()));
     } else {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("command.arena.arguments.freeze.unfreeze-success")
+          PracticeConfig.language()
+              .getCommand()
+              .getArena()
+              .getArguments()
+              .getFreeze()
+              .getUnfreezeSuccess()
               .replace("%arena%", arena.getName()));
     }
 

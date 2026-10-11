@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.playerkit.guis;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -164,7 +164,7 @@ public class MainGui extends Gui {
         case 7:
           if (!player.hasPermission("ap.playerkit.share")) {
             Common.sendMmMessage(
-                player, LanguageManager.getString("CUSTOM-PLAYER-KIT.NO-PERMISSION"));
+                player, PracticeConfig.language().getCustomPlayerKit().getNoPermission());
             return;
           }
 
@@ -182,7 +182,7 @@ public class MainGui extends Gui {
             PlayerKitManager.getInstance().getCopy().put(code, customLadder);
           }
 
-          for (String line : LanguageManager.getList("CUSTOM-PLAYER-KIT.CUSTOM-KIT-SHARE")) {
+          for (String line : PracticeConfig.language().getCustomPlayerKit().getCustomKitShare()) {
             Common.sendMmMessage(player, line.replace("%code%", code != null ? code : "N/A"));
           }
           break;

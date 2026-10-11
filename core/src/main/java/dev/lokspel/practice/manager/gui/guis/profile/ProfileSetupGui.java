@@ -1,8 +1,8 @@
 package dev.lokspel.practice.manager.gui.guis.profile;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
 import dev.lokspel.practice.manager.fight.ffa.FfaManager;
@@ -44,7 +44,11 @@ public class ProfileSetupGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.PLAYER-INFORMATION.MAIN-PAGE.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getPlayerInformation()
+                .getMainPage()
+                .getTitle()
                 .replace("%player%", Objects.requireNonNull(profile.getPlayer().getName())),
             4));
 
@@ -74,10 +78,25 @@ public class ProfileSetupGui extends Gui {
               inventory.setItem(14, getGameItem(profile));
               inventory.setItem(
                   16,
-                  GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.STATISTICS").get());
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getPlayerInformation()
+                              .getMainPage()
+                              .getIcons()
+                              .getStatistics())
+                      .get());
               inventory.setItem(19, getRankedBanItem(profile));
               inventory.setItem(
-                  31, GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.REFRESH").get());
+                  31,
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getPlayerInformation()
+                              .getMainPage()
+                              .getIcons()
+                              .getRefresh())
+                      .get());
 
               updatePlayers();
             });
@@ -111,23 +130,29 @@ public class ProfileSetupGui extends Gui {
 
               if (click.isLeftClick()) {
                 if (!player.hasPermission("ap.practice.info.teleport")) {
-                  Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+                  Common.sendMmMessage(
+                      player, PracticeConfig.language().getProfile().getNoPermission());
                   return;
                 }
 
                 match.addSpectator(player, target, true, false);
               } else if (click.isRightClick()) {
                 if (!player.hasPermission("ap.practice.info.cancel")) {
-                  Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+                  Common.sendMmMessage(
+                      player, PracticeConfig.language().getProfile().getNoPermission());
                   return;
                 }
 
                 Common.sendMmMessage(
                     player,
-                    LanguageManager.getString("PROFILE.PLAYER-REMOVED-MATCH")
+                    PracticeConfig.language()
+                        .getProfile()
+                        .getPlayerRemovedMatch()
                         .replace("%target%", target.getName()));
                 match.sendMessage(
-                    LanguageManager.getString("PROFILE.REMOVED-PLAYER-MATCH")
+                    PracticeConfig.language()
+                        .getProfile()
+                        .getRemovedPlayerMatch()
                         .replace("%target%", target.getName()),
                     true);
 
@@ -142,14 +167,16 @@ public class ProfileSetupGui extends Gui {
 
               if (click.isLeftClick()) {
                 if (!player.hasPermission("ap.practice.info.teleport")) {
-                  Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+                  Common.sendMmMessage(
+                      player, PracticeConfig.language().getProfile().getNoPermission());
                   return;
                 }
 
                 ffa.addSpectator(player, target, true, false);
               } else if (click.isRightClick()) {
                 if (!player.hasPermission("ap.practice.info.cancel")) {
-                  Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+                  Common.sendMmMessage(
+                      player, PracticeConfig.language().getProfile().getNoPermission());
                   return;
                 }
 
@@ -164,23 +191,29 @@ public class ProfileSetupGui extends Gui {
 
               if (click.isLeftClick()) {
                 if (!player.hasPermission("ap.practice.info.teleport")) {
-                  Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+                  Common.sendMmMessage(
+                      player, PracticeConfig.language().getProfile().getNoPermission());
                   return;
                 }
 
                 event.addSpectator(player, target, true, false);
               } else if (click.isRightClick()) {
                 if (!player.hasPermission("ap.practice.info.cancel")) {
-                  Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+                  Common.sendMmMessage(
+                      player, PracticeConfig.language().getProfile().getNoPermission());
                   return;
                 }
 
                 Common.sendMmMessage(
                     player,
-                    LanguageManager.getString("PROFILE.PLAYER-REMOVED-EVENT")
+                    PracticeConfig.language()
+                        .getProfile()
+                        .getPlayerRemovedEvent()
                         .replace("%target%", target.getName()));
                 event.sendMessage(
-                    LanguageManager.getString("PROFILE.REMOVED-PLAYER-EVENT")
+                    PracticeConfig.language()
+                        .getProfile()
+                        .getRemovedPlayerEvent()
                         .replace("%target%", target.getName()),
                     true);
 
@@ -192,7 +225,8 @@ public class ProfileSetupGui extends Gui {
 
               if (click.isLeftClick()) {
                 if (!player.hasPermission("ap.practice.info.teleport")) {
-                  Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+                  Common.sendMmMessage(
+                      player, PracticeConfig.language().getProfile().getNoPermission());
                   return;
                 }
 
@@ -201,7 +235,8 @@ public class ProfileSetupGui extends Gui {
                 }
               } else if (click.isRightClick()) {
                 if (!player.hasPermission("ap.practice.info.cancel")) {
-                  Common.sendMmMessage(player, LanguageManager.getString("PROFILE.NO-PERMISSION"));
+                  Common.sendMmMessage(
+                      player, PracticeConfig.language().getProfile().getNoPermission());
                   return;
                 }
 
@@ -211,7 +246,9 @@ public class ProfileSetupGui extends Gui {
 
                 Common.sendMmMessage(
                     player,
-                    LanguageManager.getString("PROFILE.PLAYER-REMOVED-SPECTATOR")
+                    PracticeConfig.language()
+                        .getProfile()
+                        .getPlayerRemovedSpectator()
                         .replace("%target%", target.getName()));
               }
               break;
@@ -240,9 +277,22 @@ public class ProfileSetupGui extends Gui {
 
   private static ItemStack getBasicInfoItem(Profile profile) {
     GuiItem guiItem = new GuiItem(ItemCreateUtil.getPlayerHead(profile.getPlayer()));
-    guiItem.setName(GuiFile.getString("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.BASIC-INFO.NAME"));
+    guiItem.setName(
+        PracticeConfig.guis()
+            .getGuis()
+            .getPlayerInformation()
+            .getMainPage()
+            .getIcons()
+            .getBasicInfo()
+            .getName());
     guiItem.setLore(
-        GuiFile.getStringList("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.BASIC-INFO.LORE"));
+        PracticeConfig.guis()
+            .getGuis()
+            .getPlayerInformation()
+            .getMainPage()
+            .getIcons()
+            .getBasicInfo()
+            .getLore());
 
     guiItem
         .replace("%player%", profile.getPlayer().getName())
@@ -252,8 +302,13 @@ public class ProfileSetupGui extends Gui {
             "%last_played%",
             (profile.getStatus().equals(ProfileStatus.OFFLINE)
                 ? TimeUtil.formatDate(profile.getLastJoin())
-                : GuiFile.getString(
-                    "GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.BASIC-INFO.ONLINE-STATUS")))
+                : PracticeConfig.guis()
+                    .getGuis()
+                    .getPlayerInformation()
+                    .getMainPage()
+                    .getIcons()
+                    .getBasicInfo()
+                    .getOnlineStatus()))
         .replace("%unranked_left%", String.valueOf(profile.getUnrankedLeft()))
         .replace("%ranked_left%", String.valueOf(profile.getRankedLeft()))
         .replace(
@@ -274,12 +329,25 @@ public class ProfileSetupGui extends Gui {
     Player player = profile.getPlayer().getPlayer();
 
     if (profile.getStatus().equals(ProfileStatus.OFFLINE) || player == null) {
-      return GuiFile.getGuiItem(
-              "GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.ONLINE-INFO.PLAYER-OFFLINE")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerInformation()
+                  .getMainPage()
+                  .getIcons()
+                  .getOnlineInfo()
+                  .getPlayerOffline())
           .get();
     } else {
       player.playerListName();
-      return GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.ONLINE-INFO.PLAYER-ONLINE")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerInformation()
+                  .getMainPage()
+                  .getIcons()
+                  .getOnlineInfo()
+                  .getPlayerOnline())
           .replace("%world%", player.getWorld().getName())
           .replace("%gamemode%", player.getGameMode().name())
           .replace("%flying%", String.valueOf(player.isFlying()))
@@ -298,38 +366,108 @@ public class ProfileSetupGui extends Gui {
 
     return switch (profileStatus) {
       case OFFLINE ->
-          GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.ONLINE-INFO.GAME.OFFLINE")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getPlayerInformation()
+                      .getMainPage()
+                      .getIcons()
+                      .getOnlineInfo()
+                      .getGame()
+                      .getOffline())
               .get();
       case MATCH ->
-          GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.ONLINE-INFO.GAME.IN-MATCH")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getPlayerInformation()
+                      .getMainPage()
+                      .getIcons()
+                      .getOnlineInfo()
+                      .getGame()
+                      .getInMatch())
               .get();
       case FFA ->
-          GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.ONLINE-INFO.GAME.IN-FFA")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getPlayerInformation()
+                      .getMainPage()
+                      .getIcons()
+                      .getOnlineInfo()
+                      .getGame()
+                      .getInFfa())
               .get();
       case EVENT ->
-          GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.ONLINE-INFO.GAME.IN-EVENT")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getPlayerInformation()
+                      .getMainPage()
+                      .getIcons()
+                      .getOnlineInfo()
+                      .getGame()
+                      .getInEvent())
               .get();
       case SPECTATE ->
-          GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.ONLINE-INFO.GAME.SPECTATING")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getPlayerInformation()
+                      .getMainPage()
+                      .getIcons()
+                      .getOnlineInfo()
+                      .getGame()
+                      .getSpectating())
               .get();
       default ->
-          GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.ONLINE-INFO.GAME.NOTHING")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getPlayerInformation()
+                      .getMainPage()
+                      .getIcons()
+                      .getOnlineInfo()
+                      .getGame()
+                      .getNothing())
               .get();
     };
   }
 
   private static ItemStack getPartyItem(Profile profile) {
     if (profile.isParty()) {
-      return GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.PARTY.IN-PARTY").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerInformation()
+                  .getMainPage()
+                  .getIcons()
+                  .getParty()
+                  .getInParty())
+          .get();
     } else {
-      return GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.PARTY.NOT-IN-PARTY").get();
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerInformation()
+                  .getMainPage()
+                  .getIcons()
+                  .getParty()
+                  .getNotInParty())
+          .get();
     }
   }
 
   private static ItemStack getRankedBanItem(Profile profile) {
     if (profile.getRankedBan().isBanned()) {
       RankedBan rankedBan = profile.getRankedBan();
-      return GuiFile.getGuiItem("GUIS.PLAYER-INFORMATION.MAIN-PAGE.ICONS.RANKED-BAN")
+      return BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getPlayerInformation()
+                  .getMainPage()
+                  .getIcons()
+                  .getRankedBan())
           .replace("%player%", profile.getPlayer().getName())
           .replace(
               "%banner%",

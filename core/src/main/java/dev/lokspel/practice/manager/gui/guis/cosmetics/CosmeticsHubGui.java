@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.cosmetics;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -28,7 +29,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class CosmeticsHubGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM = GuiFile.getGuiItem("GENERAL-FILLER-ITEM").get();
+  private static final ItemStack FILLER_ITEM =
+      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
 
   private static final int ROWS = 3;
   private static final int TRIMS_SLOT = 10;
@@ -42,8 +44,7 @@ public class CosmeticsHubGui extends Gui {
     super(GuiType.Cosmetics_Hub);
     this.profile = profile;
 
-    String title =
-        GuiFile.getConfig().getString("GUIS.COSMETICS.HUB.TITLE", "<dark_gray>✦ Cosmetics");
+    String title = PracticeConfig.guis().getGuis().getCosmetics().getHub().getTitle();
     this.gui.put(1, InventoryUtil.createInventory(title, ROWS));
     build();
   }
@@ -88,33 +89,68 @@ public class CosmeticsHubGui extends Gui {
   // Button builders
   private ItemStack buildTrimsButton() {
     String name =
-        GuiFile.getConfig()
-            .getString("GUIS.COSMETICS.HUB.BUTTONS.ARMOR-TRIMS.NAME", "<gold>✦ Armor Trims");
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getHub()
+            .getButtons()
+            .getArmorTrims()
+            .getName();
     Material mat =
         safeMaterial(
-            GuiFile.getConfig().getString("GUIS.COSMETICS.HUB.BUTTONS.ARMOR-TRIMS.MATERIAL"),
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getHub()
+                .getButtons()
+                .getArmorTrims()
+                .getMaterial(),
             Material.DIAMOND_CHESTPLATE);
     List<String> lore =
         getOrDefaultLore(
-            "GUIS.COSMETICS.HUB.BUTTONS.ARMOR-TRIMS.LORE",
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getHub()
+                .getButtons()
+                .getArmorTrims()
+                .getLore(),
             List.of("<gray>Customize your armor tier,", "<gray>trim patterns and materials."));
 
     GuiItem item = new GuiItem(name, mat, lore);
     item.setGlowing(
-        GuiFile.getConfig().getBoolean("GUIS.COSMETICS.HUB.BUTTONS.ARMOR-TRIMS.GLOW", true));
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getHub()
+            .getButtons()
+            .getArmorTrims()
+            .isGlow());
     return ItemCreateUtil.hideItemFlags(item.get());
   }
 
   private ItemStack buildShieldButton() {
     String name =
-        GuiFile.getConfig().getString("GUIS.COSMETICS.HUB.BUTTONS.SHIELD.NAME", "<blue>✦ Shield");
+        PracticeConfig.guis().getGuis().getCosmetics().getHub().getButtons().getShield().getName();
     Material mat =
         safeMaterial(
-            GuiFile.getConfig().getString("GUIS.COSMETICS.HUB.BUTTONS.SHIELD.MATERIAL"),
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getHub()
+                .getButtons()
+                .getShield()
+                .getMaterial(),
             Material.SHIELD);
     List<String> lore =
         getOrDefaultLore(
-            "GUIS.COSMETICS.HUB.BUTTONS.SHIELD.LORE",
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getHub()
+                .getButtons()
+                .getShield()
+                .getLore(),
             List.of(
                 "<gray>Design your shield with any",
                 "<gray>color and pattern combination.",
@@ -130,21 +166,38 @@ public class CosmeticsHubGui extends Gui {
 
     GuiItem item = new GuiItem(name, mat, finalLore);
     item.setGlowing(
-        GuiFile.getConfig().getBoolean("GUIS.COSMETICS.HUB.BUTTONS.SHIELD.GLOW", false));
+        PracticeConfig.guis().getGuis().getCosmetics().getHub().getButtons().getShield().isGlow());
     return item.get();
   }
 
   private ItemStack buildKillEffectButton() {
     String name =
-        GuiFile.getConfig()
-            .getString("GUIS.COSMETICS.HUB.BUTTONS.KILL-EFFECTS.NAME", "<red>✦ Death Effects");
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getHub()
+            .getButtons()
+            .getKillEffects()
+            .getName();
     Material mat =
         safeMaterial(
-            GuiFile.getConfig().getString("GUIS.COSMETICS.HUB.BUTTONS.KILL-EFFECTS.MATERIAL"),
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getHub()
+                .getButtons()
+                .getKillEffects()
+                .getMaterial(),
             Material.BLAZE_POWDER);
     List<String> lore =
         getOrDefaultLore(
-            "GUIS.COSMETICS.HUB.BUTTONS.KILL-EFFECTS.LORE",
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getHub()
+                .getButtons()
+                .getKillEffects()
+                .getLore(),
             List.of("<gray>Choose a particle effect", "<gray>that plays when you kill someone."));
 
     DeathEffect active = profile.getCosmeticsData().getDeathEffect();
@@ -155,21 +208,44 @@ public class CosmeticsHubGui extends Gui {
 
     GuiItem item = new GuiItem(name, mat, finalLore);
     item.setGlowing(
-        GuiFile.getConfig().getBoolean("GUIS.COSMETICS.HUB.BUTTONS.KILL-EFFECTS.GLOW", false));
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getHub()
+            .getButtons()
+            .getKillEffects()
+            .isGlow());
     return item.get();
   }
 
   private ItemStack buildLobbyItemsButton() {
     String name =
-        GuiFile.getConfig()
-            .getString("GUIS.COSMETICS.HUB.BUTTONS.LOBBY-ITEMS.NAME", "<aqua>✦ Lobby Items");
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getHub()
+            .getButtons()
+            .getLobbyItems()
+            .getName();
     Material mat =
         safeMaterial(
-            GuiFile.getConfig().getString("GUIS.COSMETICS.HUB.BUTTONS.LOBBY-ITEMS.MATERIAL"),
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getHub()
+                .getButtons()
+                .getLobbyItems()
+                .getMaterial(),
             Material.ELYTRA);
     List<String> lore =
         getOrDefaultLore(
-            "GUIS.COSMETICS.HUB.BUTTONS.LOBBY-ITEMS.LORE",
+            PracticeConfig.guis()
+                .getGuis()
+                .getCosmetics()
+                .getHub()
+                .getButtons()
+                .getLobbyItems()
+                .getLore(),
             List.of("<gray>Select movement cosmetics", "<gray>for your lobby loadout."));
 
     CosmeticsData.LobbyItemType active = profile.getCosmeticsData().getLobbyItemType();
@@ -180,14 +256,19 @@ public class CosmeticsHubGui extends Gui {
 
     GuiItem item = new GuiItem(name, mat, finalLore);
     item.setGlowing(
-        GuiFile.getConfig().getBoolean("GUIS.COSMETICS.HUB.BUTTONS.LOBBY-ITEMS.GLOW", false));
+        PracticeConfig.guis()
+            .getGuis()
+            .getCosmetics()
+            .getHub()
+            .getButtons()
+            .getLobbyItems()
+            .isGlow());
     return item.get();
   }
 
   // Helpers
-  private List<String> getOrDefaultLore(String key, List<String> defaults) {
-    List<String> lore = GuiFile.getConfig().getStringList(key);
-    return lore.isEmpty() ? defaults : lore;
+  private List<String> getOrDefaultLore(List<String> lore, List<String> defaults) {
+    return lore == null || lore.isEmpty() ? defaults : new ArrayList<>(lore);
   }
 
   private static Material safeMaterial(String name, Material fallback) {

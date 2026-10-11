@@ -1,6 +1,6 @@
 package dev.lokspel.practice.manager.fight.event.runnables.queue;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
 import dev.lokspel.practice.manager.server.sound.SoundEffect;
 import dev.lokspel.practice.manager.server.sound.SoundManager;
@@ -24,13 +24,15 @@ public class QueueStartRunnable extends Runnable {
         || seconds == 10
         || seconds <= 5 && seconds != 0) {
       event.sendMessage(
-          LanguageManager.getString("EVENT.QUEUE-START-COUNTDOWN")
+          PracticeConfig.language()
+              .getEvent()
+              .getQueueStartCountdown()
               .replace("%seconds%", String.valueOf(seconds))
               .replace(
                   "%secondName%",
                   (seconds == 1
-                      ? LanguageManager.getString("SECOND-NAME.1SEC")
-                      : LanguageManager.getString("SECOND-NAME.1<SEC"))),
+                      ? PracticeConfig.language().getSecondName().getOneSecond()
+                      : PracticeConfig.language().getSecondName().getUnderOneSecond())),
           false);
 
       if (seconds <= 5) {

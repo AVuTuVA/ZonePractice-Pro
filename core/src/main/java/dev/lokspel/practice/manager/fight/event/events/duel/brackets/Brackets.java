@@ -1,5 +1,6 @@
 package dev.lokspel.practice.manager.fight.event.events.duel.brackets;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.events.duel.interfaces.DuelEvent;
 import dev.lokspel.practice.util.KitData;
 import dev.lokspel.practice.util.playerutil.PlayerUtil;
@@ -15,7 +16,10 @@ public class Brackets extends DuelEvent {
   }
 
   public Brackets(Object starter, BracketsData eventData, KitData selectedKitData) {
-    super(starter, eventData, "COMMAND.EVENT.ARGUMENTS.BRACKETS");
+    super(
+        starter,
+        eventData,
+        () -> PracticeConfig.language().getCommand().getEvent().getArguments().getBrackets());
 
     // Snapshot the chosen kit so runtime edits do not mutate live event kits.
     this.selectedKitData =

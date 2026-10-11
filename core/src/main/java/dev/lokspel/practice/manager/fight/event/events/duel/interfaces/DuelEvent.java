@@ -3,8 +3,8 @@ package dev.lokspel.practice.manager.fight.event.events.duel.interfaces;
 import dev.lokspel.api.event.event.EventEndEvent;
 import dev.lokspel.api.event.spectate.start.EventSpectateStartEvent;
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.language.EventMessages;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.interfaces.Event;
@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -37,7 +38,7 @@ public abstract class DuelEvent extends Event {
 
   private static final Random random = new Random();
 
-  private final String languagePath;
+  private final Supplier<EventMessages> messages;
   private final List<DuelFight> fights = new ArrayList<>();
   private final Map<Player, Player> duelList = new HashMap<>();
   private final Map<Player, Player> spectating = new HashMap<>();
@@ -46,9 +47,14 @@ public abstract class DuelEvent extends Event {
   private StartRunnable startRunnable;
   private DurationRunnable durationRunnable;
 
-  public DuelEvent(Object starter, DuelEventData eventData, String languagePath) {
+  public DuelEvent(Object starter, DuelEventData eventData, Supplier<EventMessages> messages) {
     super(starter, eventData);
-    this.languagePath = languagePath;
+    this.messages = messages;
+  }
+
+  /** Returns this event's language section, resolved on each call so reloads apply. */
+  public EventMessages getMessages() {
+    return this.messages.get();
   }
 
   @Override
@@ -67,9 +73,7 @@ public abstract class DuelEvent extends Event {
     this.getNextFights(
         leftPlayer -> {
           sendMessage(
-              LanguageManager.getString(languagePath + ".ROUND-DRAWN")
-                  .replace("%round%", String.valueOf(round)),
-              true);
+              getMessages().getRoundDrawn().replace("%round%", String.valueOf(round)), true);
 
           for (DuelFight fight : fights) {
             Player player1 = fight.getPlayers().get(0);
@@ -96,8 +100,7 @@ public abstract class DuelEvent extends Event {
           Set<Player> spectatorsToRefresh = new LinkedHashSet<>(this.getSpectators());
           if (leftPlayer != null) {
             this.sendMessage(
-                LanguageManager.getString(languagePath + ".PLAYER-OUT-OF-ROUND")
-                    .replace("%player%", leftPlayer.getName()),
+                getMessages().getPlayerOutOfRound().replace("%player%", leftPlayer.getName()),
                 true);
             spectatorsToRefresh.add(leftPlayer);
           }
@@ -134,20 +137,22 @@ public abstract class DuelEvent extends Event {
       this.getDurationRunnable().begin();
       this.status = EventStatus.LIVE;
     } else {
-      int titleCountdownFrom = ConfigManager.getInt("MATCH-SETTINGS.TITLE.START-COUNTDOWN-FROM", 5);
+      int titleCountdownFrom =
+          PracticeConfig.settings().getMatchSettings().getTitle().getStartCountdownFrom();
       if (seconds <= titleCountdownFrom) {
         this.sendEventStartCountdownTitle(seconds);
       }
 
       if (seconds <= 5) {
         this.sendMessage(
-            LanguageManager.getString(languagePath + ".ROUND-STARTING")
+            getMessages()
+                .getRoundStarting()
                 .replace("%seconds%", String.valueOf(seconds))
                 .replace(
                     "%secondName%",
                     (seconds == 1
-                        ? LanguageManager.getString("SECOND-NAME.1SEC")
-                        : LanguageManager.getString("SECOND-NAME.1<SEC"))),
+                        ? PracticeConfig.language().getSecondName().getOneSecond()
+                        : PracticeConfig.language().getSecondName().getUnderOneSecond())),
             true);
 
         SoundEffect sound = SoundManager.getInstance().getSound(SoundType.EVENT_START_COUNTDOWN);
@@ -162,7 +167,10 @@ public abstract class DuelEvent extends Event {
 
   private void sendEventStartCountdownTitle(int seconds) {
     String countdownTitle =
-        LanguageManager.getString("MATCH.START-TITLES.COUNTDOWN")
+        PracticeConfig.language()
+            .getMatch()
+            .getStartTitles()
+            .getCountdown()
             .replace("%remaining%", String.valueOf(seconds));
     for (Player recipient : this.getTitleRecipients()) {
       EventManager.getInstance().sendRawEventTitle(recipient, countdownTitle, "");
@@ -170,7 +178,7 @@ public abstract class DuelEvent extends Event {
   }
 
   private void sendEventStartFightTitle() {
-    String fightTitle = LanguageManager.getString("MATCH.START-TITLES.FIGHT");
+    String fightTitle = PracticeConfig.language().getMatch().getStartTitles().getFight();
     for (Player recipient : this.getTitleRecipients()) {
       EventManager.getInstance().sendRawEventTitle(recipient, fightTitle, "");
     }
@@ -199,13 +207,14 @@ public abstract class DuelEvent extends Event {
     } else {
       if (seconds <= 5 || seconds == 30 || seconds == 60) {
         sendMessage(
-            LanguageManager.getString(languagePath + ".ROUND-ENDING")
+            getMessages()
+                .getRoundEnding()
                 .replace("%seconds%", String.valueOf(seconds))
                 .replace(
                     "%secondName%",
                     (seconds == 1
-                        ? LanguageManager.getString("SECOND-NAME.1SEC")
-                        : LanguageManager.getString("SECOND-NAME.1<SEC"))),
+                        ? PracticeConfig.language().getSecondName().getOneSecond()
+                        : PracticeConfig.language().getSecondName().getUnderOneSecond())),
             true);
       }
 
@@ -256,15 +265,13 @@ public abstract class DuelEvent extends Event {
     if (this.winner != null) {
 
       this.sendMessage(
-          LanguageManager.getString(languagePath + ".WON-EVENT")
-              .replace("%winner%", this.winner.getName()),
-          true);
+          getMessages().getWonEvent().replace("%winner%", this.winner.getName()), true);
 
       for (String cmd : this.eventData.getType().getWinnerCmd()) {
         ServerManager.runConsoleCommand(cmd.replace("%player%", this.winner.getName()));
       }
     } else {
-      this.sendMessage(LanguageManager.getString(languagePath + ".NO-WINNER"), true);
+      this.sendMessage(getMessages().getNoWinner(), true);
     }
   }
 
@@ -400,9 +407,7 @@ public abstract class DuelEvent extends Event {
 
       if (message && !this.status.equals(EventStatus.END)) {
         sendMessage(
-            LanguageManager.getString(languagePath + ".STARTED-SPECTATING")
-                .replace("%spectator%", spectator.getName()),
-            true);
+            getMessages().getStartedSpectating().replace("%spectator%", spectator.getName()), true);
       }
     }
 

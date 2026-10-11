@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.event.arguments.events;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.fight.event.events.onevsall.juggernaut.JuggernautData;
@@ -18,7 +18,8 @@ public final class JuggernautArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.EVENT.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getEvent().getNoPermission());
       return;
     }
 
@@ -29,7 +30,13 @@ public final class JuggernautArg {
     // Checking if the event is live, if it is, it will send a message to the player and return.
     if (EventManager.getInstance().isEventLive(EventType.JUGGERNAUT)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.EVENT-LIVE"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJuggernaut()
+              .getEventLive());
       return;
     }
 
@@ -40,7 +47,12 @@ public final class JuggernautArg {
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.EVENT-ALREADY-ENABLED"));
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getJuggernaut()
+                .getEventAlreadyEnabled());
       }
 
       return;
@@ -50,7 +62,12 @@ public final class JuggernautArg {
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.EVENT-ALREADY-DISABLED"));
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getJuggernaut()
+                .getEventAlreadyDisabled());
       }
 
       return;
@@ -63,7 +80,13 @@ public final class JuggernautArg {
     // Checking if the arena is enabled, if it is, it will send a message to the player and return.
     if (juggernautData.isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.CANT-EDIT"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getJuggernaut()
+              .getCantEdit());
       return;
     }
 
@@ -75,18 +98,33 @@ public final class JuggernautArg {
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.JUGGERNAUT-KIT-SET"));
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getJuggernaut()
+                .getJuggernautKitSet());
       } else if (args[2].equalsIgnoreCase("players")) {
         KitData kitData = juggernautData.getPlayerKitData();
         kitData.setKitData(player, true);
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.PLAYERS-KIT-SET"));
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getJuggernaut()
+                .getPlayersKitSet());
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.KIT-COMMAND-HELP")
+            PracticeConfig.language()
+                .getCommand()
+                .getEvent()
+                .getArguments()
+                .getJuggernaut()
+                .getKitCommandHelp()
                 .replace("%label%", label)
                 .replace("%label2%", label2));
       }
@@ -96,7 +134,13 @@ public final class JuggernautArg {
   }
 
   private static void sendHelpMsg(Player player, String label, String label2) {
-    for (String line : LanguageManager.getList("COMMAND.EVENT.ARGUMENTS.JUGGERNAUT.COMMAND-HELP")) {
+    for (String line :
+        PracticeConfig.language()
+            .getCommand()
+            .getEvent()
+            .getArguments()
+            .getJuggernaut()
+            .getCommandHelp()) {
       Common.sendMmMessage(player, line.replace("%label%", label).replace("%label2%", label2));
     }
   }

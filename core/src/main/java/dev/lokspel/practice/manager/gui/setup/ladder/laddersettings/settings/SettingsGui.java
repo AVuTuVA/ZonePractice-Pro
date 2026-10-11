@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -87,7 +87,12 @@ public class SettingsGui extends Gui {
     gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.LADDER.SETTINGS.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getLadder()
+                .getSettings()
+                .getTitle()
                 .replace("%ladder%", ladder.getName()),
             (guiSlot.getRows() + 1)));
 
@@ -102,7 +107,15 @@ public class SettingsGui extends Gui {
 
     inventory.setItem(
         guiSlot.getBackSlot(),
-        GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.GO-BACK").get());
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getLadder()
+                    .getSettings()
+                    .getIcons()
+                    .getGoBack())
+            .get());
 
     addItems();
 
@@ -166,7 +179,8 @@ public class SettingsGui extends Gui {
 
     if (ladder.isEnabled()) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.SETUP.LADDER.CANT-EDIT-ENABLED"));
+          player,
+          PracticeConfig.language().getCommand().getSetup().getLadder().getCantEditEnabled());
       return;
     }
 

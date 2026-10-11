@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.items;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingItem;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingType;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.settings.SettingsGui;
@@ -21,11 +22,27 @@ public class FireballBlockDestroyItem extends SettingItem {
   public void updateItemStack() {
     if (fireballFight.isFireballBlockDestroy()) {
       this.guiItem =
-          GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.FIREBALL-BLOCK-DESTROY.ENABLED")
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getSetup()
+                      .getLadder()
+                      .getSettings()
+                      .getIcons()
+                      .getFireballBlockDestroy()
+                      .getEnabled())
               .setGlowing(true);
     } else {
       this.guiItem =
-          GuiFile.getGuiItem("GUIS.SETUP.LADDER.SETTINGS.ICONS.FIREBALL-BLOCK-DESTROY.DISABLED");
+          BackendUtil.getGuiItem(
+              PracticeConfig.guis()
+                  .getGuis()
+                  .getSetup()
+                  .getLadder()
+                  .getSettings()
+                  .getIcons()
+                  .getFireballBlockDestroy()
+                  .getDisabled());
     }
   }
 

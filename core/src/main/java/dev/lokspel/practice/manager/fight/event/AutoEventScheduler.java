@@ -1,7 +1,8 @@
 package dev.lokspel.practice.manager.fight.event;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.config.settings.SettingsConfig;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.util.Common;
 import java.time.LocalTime;
@@ -25,18 +26,6 @@ public class AutoEventScheduler {
 
   private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("H:mm");
 
-  private static final Map<EventType, String> CONFIG_KEYS = new EnumMap<>(EventType.class);
-
-  static {
-    CONFIG_KEYS.put(EventType.LMS, "EVENT.LMS.AUTO-EVENTS");
-    CONFIG_KEYS.put(EventType.OITC, "EVENT.OITC.AUTO-EVENTS");
-    CONFIG_KEYS.put(EventType.TNTTAG, "EVENT.TNTTAG.AUTO-EVENTS");
-    CONFIG_KEYS.put(EventType.BRACKETS, "EVENT.BRACKETS.AUTO-EVENTS");
-    CONFIG_KEYS.put(EventType.SUMO, "EVENT.SUMO.AUTO-EVENTS");
-    CONFIG_KEYS.put(EventType.SPLEGG, "EVENT.SPLEGG.AUTO-EVENTS");
-    CONFIG_KEYS.put(EventType.JUGGERNAUT, "EVENT.JUGGERNAUT.AUTO-EVENTS");
-  }
-
   // Parsed times per event type
   private final Map<EventType, List<LocalTime>> scheduledTimes = new EnumMap<>(EventType.class);
 
@@ -54,25 +43,20 @@ public class AutoEventScheduler {
   public void reload() {
     scheduledTimes.clear();
 
-    if (!ConfigManager.getBoolean("EVENT.AUTO-EVENTS")) {
+    if (!PracticeConfig.settings().getEvent().isAutoEvents()) {
       return;
     }
 
-    for (Map.Entry<EventType, String> entry : CONFIG_KEYS.entrySet()) {
-      List<String> raw;
-      try {
-        raw = ConfigManager.getList(entry.getValue());
-      } catch (Exception e) {
-        continue; // key not present for this event type
-      }
-
-      if (raw.isEmpty()) {
+    SettingsConfig.Event settings = PracticeConfig.settings().getEvent();
+    for (EventType type : EventType.values()) {
+      List<String> raw = getAutoEvents(settings, type);
+      if (raw == null || raw.isEmpty()) {
         continue;
       }
 
       List<LocalTime> times = new ArrayList<>();
       for (String s : raw) {
-        // Strip legacy colour codes that ConfigManager.getList may inject,
+        // Strip legacy colour codes that may be present in the value,
         // then trim whitespace.
         String clean = s.replaceAll("(?i)§[0-9a-fk-or]", "").trim();
         if (clean.isEmpty()) {
@@ -94,15 +78,27 @@ public class AutoEventScheduler {
               "<yellow>[AutoEvent] Invalid time \""
                   + clean
                   + "\" for "
-                  + entry.getKey().name()
+                  + type.name()
                   + " — expected HH:mm");
         }
       }
 
       if (!times.isEmpty()) {
-        scheduledTimes.put(entry.getKey(), times);
+        scheduledTimes.put(type, times);
       }
     }
+  }
+
+  private static List<String> getAutoEvents(SettingsConfig.Event settings, EventType type) {
+    return switch (type) {
+      case LMS -> settings.getLms().getAutoEvents();
+      case OITC -> settings.getOitc().getAutoEvents();
+      case TNTTAG -> settings.getTnttag().getAutoEvents();
+      case BRACKETS -> settings.getBrackets().getAutoEvents();
+      case SUMO -> settings.getSumo().getAutoEvents();
+      case SPLEGG -> settings.getSplegg().getAutoEvents();
+      case JUGGERNAUT -> settings.getJuggernaut().getAutoEvents();
+    };
   }
 
   /** Starts the repeating check task. Called once after event data is loaded. */
@@ -116,7 +112,7 @@ public class AutoEventScheduler {
         new BukkitRunnable() {
           @Override
           public void run() {
-            if (!ConfigManager.getBoolean("EVENT.AUTO-EVENTS")) {
+            if (!PracticeConfig.settings().getEvent().isAutoEvents()) {
               return;
             }
 

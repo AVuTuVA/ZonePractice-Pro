@@ -1,5 +1,6 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.staffitems;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
 import dev.lokspel.practice.manager.profile.ProfileManager;
@@ -9,8 +10,7 @@ import org.bukkit.entity.Player;
 public class ModeOffInvItem extends InvItem {
 
   public ModeOffInvItem() {
-    super(
-        getItemStack("STAFF-MODE.NORMAL.TURN-OFF.ITEM"), getInt("STAFF-MODE.NORMAL.TURN-OFF.SLOT"));
+    super(PracticeConfig.inventories().getStaffMode().getNormal().get("TURN-OFF"));
   }
 
   @Override

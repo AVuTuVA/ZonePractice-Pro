@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.fight.event.interfaces;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.backend.ConfigFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
 import dev.lokspel.practice.manager.fight.event.setup.EventSpawnMarkerManager;
@@ -150,7 +150,12 @@ public abstract class EventData extends ConfigFile {
 
     if (cuboid == null) {
       throw new IllegalStateException(
-          LanguageManager.getString("COMMAND.EVENT.ARGUMENTS.SPAWN-POSITION.NO-REGION"));
+          PracticeConfig.language()
+              .getCommand()
+              .getEvent()
+              .getArguments()
+              .getSpawnPosition()
+              .getNoRegion());
     }
 
     if (!cuboid.contains(spawn)) {

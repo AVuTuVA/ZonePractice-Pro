@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -58,19 +59,20 @@ public class MatchHistoryGui extends Gui {
   @Override
   public void update() {
     // Read config
-    String rawTitle = GuiFile.getString("GUIS.MATCH-HISTORY.TITLE");
+    String rawTitle = PracticeConfig.guis().getGuis().getMatchHistory().getTitle();
     if (rawTitle == null || rawTitle.isEmpty()) {
       rawTitle = "<dark_gray>Match History <gray>- <gold>%player%";
     }
     rawTitle = rawTitle.replace("%player%", targetName);
 
-    int size = GuiFile.getInt("GUIS.MATCH-HISTORY.SIZE");
+    int size = PracticeConfig.guis().getGuis().getMatchHistory().getSize();
     if (size < 9 || size > 54 || size % 9 != 0) {
       size = 27;
     }
 
-    boolean centerItems = getBooleanOrDefault("GUIS.MATCH-HISTORY.CENTER-ITEMS", true);
-    int configuredStart = GuiFile.getInt("GUIS.MATCH-HISTORY.START-SLOT"); // -1 means auto
+    boolean centerItems = PracticeConfig.guis().getGuis().getMatchHistory().isCenterItems();
+    int configuredStart =
+        PracticeConfig.guis().getGuis().getMatchHistory().getStartSlot(); // -1 means auto
 
     // Build inventory
     Inventory inventory = InventoryUtil.createInventory(rawTitle, size / 9);
@@ -92,7 +94,8 @@ public class MatchHistoryGui extends Gui {
     }
 
     // Place match items
-    String materialStr = GuiFile.getString("GUIS.MATCH-HISTORY.MATCH-ITEM.MATERIAL");
+    String materialStr =
+        PracticeConfig.guis().getGuis().getMatchHistory().getMatchItem().getMaterial();
     Material material = Material.PAPER;
     if (materialStr != null && !materialStr.isBlank()) {
       try {
@@ -104,7 +107,7 @@ public class MatchHistoryGui extends Gui {
     }
 
     boolean usePlayerHead =
-        getBooleanOrDefault("GUIS.MATCH-HISTORY.MATCH-ITEM.USE-PLAYER-HEAD", true);
+        PracticeConfig.guis().getGuis().getMatchHistory().getMatchItem().isUsePlayerHead();
 
     for (int i = 0; i < entries.size(); i++) {
       int slot = startSlot + i;
@@ -130,10 +133,13 @@ public class MatchHistoryGui extends Gui {
     // Resolve result label — must be effectively final for lambda capture
     String rawResult =
         won
-            ? StringUtil.cc(GuiFile.getString("GUIS.MATCH-HISTORY.MESSAGES.WIN"))
+            ? StringUtil.cc(
+                PracticeConfig.guis().getGuis().getMatchHistory().getMessages().getWin())
             : draw
-                ? StringUtil.cc(GuiFile.getString("GUIS.MATCH-HISTORY.MESSAGES.DRAW"))
-                : StringUtil.cc(GuiFile.getString("GUIS.MATCH-HISTORY.MESSAGES.LOSS"));
+                ? StringUtil.cc(
+                    PracticeConfig.guis().getGuis().getMatchHistory().getMessages().getDraw())
+                : StringUtil.cc(
+                    PracticeConfig.guis().getGuis().getMatchHistory().getMessages().getLoss());
     final String result =
         (rawResult == null || rawResult.isBlank())
             ? (won ? "<green>Win" : draw ? "<yellow>Equality" : "<red>Loss")
@@ -145,7 +151,7 @@ public class MatchHistoryGui extends Gui {
     int oppScore = getOpponentScore(entry);
 
     // Name
-    String rawName = GuiFile.getString("GUIS.MATCH-HISTORY.MATCH-ITEM.NAME");
+    String rawName = PracticeConfig.guis().getGuis().getMatchHistory().getMatchItem().getName();
     if (rawName == null || rawName.isBlank()) {
       rawName = "<yellow>Match vs <white>%opponent%";
     }
@@ -154,7 +160,8 @@ public class MatchHistoryGui extends Gui {
             rawName, entry, oppName, result, myScore, oppScore, myHealth, oppHealth, won, draw);
 
     // Lore
-    List<String> loreCfg = GuiFile.getStringList("GUIS.MATCH-HISTORY.MATCH-ITEM.LORE");
+    List<String> loreCfg =
+        PracticeConfig.guis().getGuis().getMatchHistory().getMatchItem().getLore();
     if (loreCfg == null || loreCfg.isEmpty()) {
       loreCfg = defaultLore();
     }
@@ -177,7 +184,8 @@ public class MatchHistoryGui extends Gui {
     }
 
     // Apply win/loss enchant glow if configured
-    boolean glowOnWin = getBooleanOrDefault("GUIS.MATCH-HISTORY.MATCH-ITEM.GLOW-ON-WIN", true);
+    boolean glowOnWin =
+        PracticeConfig.guis().getGuis().getMatchHistory().getMatchItem().isGlowOnWin();
 
     ItemMeta meta = item.getItemMeta();
     if (meta != null) {
@@ -207,7 +215,8 @@ public class MatchHistoryGui extends Gui {
   }
 
   private ItemStack buildFillerItem() {
-    GuiItem fillerCfg = GuiFile.getGuiItem("GUIS.MATCH-HISTORY.FILLER-ITEM");
+    GuiItem fillerCfg =
+        BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getMatchHistory().getFillerItem());
     if (fillerCfg != null) {
       ItemStack built = fillerCfg.get();
       if (built != null) {
@@ -315,14 +324,6 @@ public class MatchHistoryGui extends Gui {
     lore.add("<gray>Played: <white>%date%");
     lore.add("<dark_gray><st>--------------------");
     return lore;
-  }
-
-  // Utility
-  private boolean getBooleanOrDefault(String path, boolean def) {
-    if (GuiFile.getConfig().isSet(path.toUpperCase())) {
-      return GuiFile.getConfig().getBoolean(path.toUpperCase());
-    }
-    return def;
   }
 
   @Override

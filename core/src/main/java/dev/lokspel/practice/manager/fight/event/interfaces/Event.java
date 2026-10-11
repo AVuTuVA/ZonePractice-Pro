@@ -3,8 +3,8 @@ package dev.lokspel.practice.manager.fight.event.interfaces;
 import dev.lokspel.api.event.event.EventEndEvent;
 import dev.lokspel.api.event.event.EventStartEvent;
 import dev.lokspel.api.event.spectate.end.EventSpectateEndEvent;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.event.enums.EventStatus;
 import dev.lokspel.practice.manager.fight.event.enums.EventType;
@@ -61,16 +61,19 @@ public abstract class Event implements Spectatable, dev.lokspel.api.interfaces.E
 
   public void addPlayer(final Player player) throws IllegalStateException {
     if (this.players.size() >= this.eventData.getMaxPlayer()) {
-      throw new IllegalStateException(LanguageManager.getString("EVENT.EVENT-FULL"));
+      throw new IllegalStateException(PracticeConfig.language().getEvent().getEventFull());
     }
 
     if (!this.status.equals(EventStatus.COLLECTING)) {
-      throw new IllegalStateException(LanguageManager.getString("EVENT.EVENT-ALREADY-STARTED"));
+      throw new IllegalStateException(
+          PracticeConfig.language().getEvent().getEventAlreadyStarted());
     }
 
     this.players.add(player);
     this.sendMessage(
-        LanguageManager.getString("EVENT.PLAYER-JOINED")
+        PracticeConfig.language()
+            .getEvent()
+            .getPlayerJoined()
             .replace("%player%", player.getName())
             .replace("%playerSize%", String.valueOf(players.size()))
             .replace("%maxPlayerSize%", String.valueOf(eventData.getMaxPlayer())),
@@ -99,7 +102,10 @@ public abstract class Event implements Spectatable, dev.lokspel.api.interfaces.E
 
       if (message) {
         this.sendMessage(
-            LanguageManager.getString("EVENT.PLAYER-QUIT").replace("%player%", player.getName()),
+            PracticeConfig.language()
+                .getEvent()
+                .getPlayerQuit()
+                .replace("%player%", player.getName()),
             false);
       }
 
@@ -109,7 +115,10 @@ public abstract class Event implements Spectatable, dev.lokspel.api.interfaces.E
 
       if (message && !status.equals(EventStatus.END)) {
         this.sendMessage(
-            LanguageManager.getString("EVENT.PLAYER-QUIT").replace("%player%", player.getName()),
+            PracticeConfig.language()
+                .getEvent()
+                .getPlayerQuit()
+                .replace("%player%", player.getName()),
             true);
       }
 
@@ -143,14 +152,18 @@ public abstract class Event implements Spectatable, dev.lokspel.api.interfaces.E
       if (starter instanceof Player starterPlayer) {
         Common.sendMmMessage(
             online,
-            LanguageManager.getString("EVENT.EVENT-QUEUE-STARTED-PLAYER")
+            PracticeConfig.language()
+                .getEvent()
+                .getEventQueueStartedPlayer()
                 .replace("%player%", starterPlayer.getName())
                 .replace("%event%", type.getName()));
       } else {
         Common.sendMmMessage(
             online,
-            LanguageManager.getString("EVENT.EVENT-QUEUE-STARTED-CONSOLE")
-                .replace("%consoleName%", LanguageManager.getString("CONSOLE-NAME"))
+            PracticeConfig.language()
+                .getEvent()
+                .getEventQueueStartedConsole()
+                .replace("%consoleName%", PracticeConfig.language().getConsoleName())
                 .replace("%event%", type.getName()));
       }
     }
@@ -172,7 +185,7 @@ public abstract class Event implements Spectatable, dev.lokspel.api.interfaces.E
     SpectatorManager.getInstance().getSpectatorMenuGui().update();
 
     this.cancelAllRunnable();
-    sendMessage(LanguageManager.getString("EVENT.EVENT-CANT-START-ONTIME"), false);
+    sendMessage(PracticeConfig.language().getEvent().getEventCantStartOntime(), false);
 
     for (Player player : new ArrayList<>(players)) {
       removePlayer(player, false);
@@ -221,9 +234,21 @@ public abstract class Event implements Spectatable, dev.lokspel.api.interfaces.E
     if (player != null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.FORCE-END.EVENT.PLAYER-END-MSG"));
+          PracticeConfig.language()
+              .getCommand()
+              .getStaff()
+              .getArguments()
+              .getForceEnd()
+              .getEvent()
+              .getPlayerEndMsg());
       sendMessage(
-          LanguageManager.getString("COMMAND.STAFF.ARGUMENTS.FORCE-END.EVENT.MATCH-END-MSG")
+          PracticeConfig.language()
+              .getCommand()
+              .getStaff()
+              .getArguments()
+              .getForceEnd()
+              .getEvent()
+              .getMatchEndMsg()
               .replace("%player%", player.getName()),
           true);
     }
@@ -274,7 +299,9 @@ public abstract class Event implements Spectatable, dev.lokspel.api.interfaces.E
 
     if (!status.equals(EventStatus.END)) {
       sendMessage(
-          LanguageManager.getString("EVENT.PLAYER-STOPPED-SPECTATING")
+          PracticeConfig.language()
+              .getEvent()
+              .getPlayerStoppedSpectating()
               .replace("%player%", player.getName()),
           true);
     }
@@ -305,7 +332,8 @@ public abstract class Event implements Spectatable, dev.lokspel.api.interfaces.E
 
   @Override
   public GuiItem getSpectatorMenuItem() {
-    return GuiFile.getGuiItem("GUIS.SPECTATOR-MENU.ICONS.EVENT-ICON")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getSpectatorMenu().getIcons().getEventIcon())
         .setBaseItem(eventData.getIcon().get())
         .replace("%event_type%", type.getName())
         .replace("%event_duration%", this.getDurationRunnable().getFormattedTime())

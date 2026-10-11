@@ -1,9 +1,9 @@
 package dev.lokspel.practice.manager.gui.setup.arena.arenasettings.normal;
 
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiManager;
@@ -34,7 +34,12 @@ public class LadderTypeGui extends Gui {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            GuiFile.getString("GUIS.SETUP.ARENA.ARENA-LADDERS-TYPE.TITLE")
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getArena()
+                .getArenaLaddersType()
+                .getTitle()
                 .replace("%arenaName%", arena.getName()),
             3));
     this.arena = arena;
@@ -53,9 +58,27 @@ public class LadderTypeGui extends Gui {
 
     // Navigation item
     inventory.setItem(
-        18, GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-LADDERS-TYPE.ICONS.BACK-TO").get());
+        18,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getArena()
+                    .getArenaLaddersType()
+                    .getIcons()
+                    .getBackTo())
+            .get());
     inventory.setItem(
-        26, GuiFile.getGuiItem("GUIS.SETUP.ARENA.ARENA-LADDERS-TYPE.ICONS.GO-TO-LADDERS").get());
+        26,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getSetup()
+                    .getArena()
+                    .getArenaLaddersType()
+                    .getIcons()
+                    .getGoToLadders())
+            .get());
 
     update();
   }
@@ -77,13 +100,27 @@ public class LadderTypeGui extends Gui {
                 GuiItem item;
                 if (arena.getAssignedLadderTypes().contains(ladderType)) {
                   item =
-                      GuiFile.getGuiItem(
-                          "GUIS.SETUP.ARENA.ARENA-LADDERS-TYPE.ICONS.LADDER-TYPE-ICONS.ENABLED");
+                      BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getArena()
+                              .getArenaLaddersType()
+                              .getIcons()
+                              .getLadderTypeIcons()
+                              .getEnabled());
                   item.setGlowing(true);
                 } else {
                   item =
-                      GuiFile.getGuiItem(
-                          "GUIS.SETUP.ARENA.ARENA-LADDERS-TYPE.ICONS.LADDER-TYPE-ICONS.DISABLED");
+                      BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getArena()
+                              .getArenaLaddersType()
+                              .getIcons()
+                              .getLadderTypeIcons()
+                              .getDisabled());
                   item.setGlowing(false);
                 }
 
@@ -102,8 +139,15 @@ public class LadderTypeGui extends Gui {
               int slot = inventory.firstEmpty();
               inventory.setItem(
                   slot,
-                  GuiFile.getGuiItem(
-                          "GUIS.SETUP.ARENA.ARENA-LADDERS-TYPE.ICONS.CUSTOM-KIT-ICONS.ICON")
+                  BackendUtil.getGuiItem(
+                          PracticeConfig.guis()
+                              .getGuis()
+                              .getSetup()
+                              .getArena()
+                              .getArenaLaddersType()
+                              .getIcons()
+                              .getCustomKitIcons()
+                              .getIcon())
                       .replace(
                           "%status%",
                           arena.isAllowCustomKitOnMap() ? "<green>Enabled" : "<red>Disabled")
@@ -158,7 +202,12 @@ public class LadderTypeGui extends Gui {
           GuiManager.getInstance().searchGui(GuiType.Arena_Summary).update();
         } else {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.ARENA.CANT-REMOVE-LADDER-TYPE"));
+              player,
+              PracticeConfig.language()
+                  .getCommand()
+                  .getSetup()
+                  .getArena()
+                  .getCantRemoveLadderType());
         }
       } else {
         if (arena.isBuild() == ladderType.isBuild()) {
@@ -195,7 +244,12 @@ public class LadderTypeGui extends Gui {
           GuiManager.getInstance().searchGui(GuiType.Arena_Summary).update();
         } else {
           Common.sendMmMessage(
-              player, LanguageManager.getString("COMMAND.SETUP.ARENA.CANT-ASSIGN-BUILD-DIFF"));
+              player,
+              PracticeConfig.language()
+                  .getCommand()
+                  .getSetup()
+                  .getArena()
+                  .getCantAssignBuildDiff());
         }
       }
     } else if (slot == customKitSlot) {

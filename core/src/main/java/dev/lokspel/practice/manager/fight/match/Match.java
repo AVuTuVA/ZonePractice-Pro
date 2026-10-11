@@ -7,10 +7,10 @@ import dev.lokspel.api.event.match.MatchStartEvent;
 import dev.lokspel.api.event.spectate.end.MatchSpectateEndEvent;
 import dev.lokspel.api.event.spectate.start.MatchSpectateStartEvent;
 import dev.lokspel.practice.AstralPractice;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.arena.arenas.interfaces.NormalArena;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.enums.MatchStatus;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
 import dev.lokspel.practice.manager.fight.match.enums.RoundStatus;
@@ -446,17 +446,20 @@ public abstract class Match extends BukkitRunnable
 
   public void addSpectator(Player player, Player target, boolean teleport, boolean message) {
     if (this.spectators.contains(player)) {
-      Common.sendMmMessage(player, LanguageManager.getString("SPECTATE.MATCH.ALREADY-SPECTATING"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getSpectate().getMatch().getAlreadySpectating());
       return;
     }
 
     if (this.status.equals(MatchStatus.OVER) || this.players.isEmpty()) {
-      Common.sendMmMessage(player, LanguageManager.getString("SPECTATE.MATCH.MATCH-ENDED"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getSpectate().getMatch().getMatchEnded());
       return;
     }
 
     if (!isAllowSpectators() && !player.hasPermission("ap.bypass.spectate")) {
-      Common.sendMmMessage(player, LanguageManager.getString("SPECTATE.MATCH.CANT-SPECTATE"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getSpectate().getMatch().getCantSpectate());
       return;
     }
 
@@ -484,7 +487,10 @@ public abstract class Match extends BukkitRunnable
 
     if (message) {
       sendMessage(
-          LanguageManager.getString("SPECTATE.MATCH.SPECTATE-START")
+          PracticeConfig.language()
+              .getSpectate()
+              .getMatch()
+              .getSpectateStart()
               .replace("%player%", player.getName()),
           true);
     }
@@ -590,7 +596,7 @@ public abstract class Match extends BukkitRunnable
 
     if (this.isBuild()) {
       // Inform everyone that they must wait for the arena to regenerate.
-      sendMessage(LanguageManager.getString("MATCH.ARENA-ROLLING-BACK"), true);
+      sendMessage(PracticeConfig.language().getMatch().getArenaRollingBack(), true);
     }
 
     Runnable onRollbackComplete =
@@ -682,7 +688,7 @@ public abstract class Match extends BukkitRunnable
 
       if (ladder instanceof NormalLadder) {
         if (ladder.getMaxDuration() - 30 == this.duration) {
-          this.sendMessage(LanguageManager.getString("MATCH.MATCH-OVER-IN-30"), true);
+          this.sendMessage(PracticeConfig.language().getMatch().getMatchOverIn30(), true);
         } else if (ladder.getMaxDuration() == this.duration) {
           Bukkit.getScheduler()
               .runTask(
@@ -702,7 +708,8 @@ public abstract class Match extends BukkitRunnable
 
   @Override
   public GuiItem getSpectatorMenuItem() {
-    return GuiFile.getGuiItem("GUIS.SPECTATOR-MENU.ICONS.MATCH-ICON")
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getSpectatorMenu().getIcons().getMatchIcon())
         .setMaterial(ladder.getIcon().getType())
         .setDamage(Common.getItemDamage(ladder.getIcon()))
         .replace("%match_id%", id)

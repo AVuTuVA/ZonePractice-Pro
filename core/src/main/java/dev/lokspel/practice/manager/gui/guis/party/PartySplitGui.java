@@ -1,8 +1,9 @@
 package dev.lokspel.practice.manager.gui.guis.party;
 
+import dev.lokspel.practice.config.ItemConfig;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.enums.TeamEnum;
 import dev.lokspel.practice.manager.fight.match.type.duel.Duel;
@@ -33,7 +34,9 @@ import org.bukkit.inventory.ItemStack;
 public class PartySplitGui extends Gui {
 
   private static final ItemStack FILLER_ITEM =
-      GuiFile.getGuiItem("GUIS.PARTY.PARTY-SPLIT.ICONS.FILLER-ITEM").get();
+      BackendUtil.getGuiItem(
+              PracticeConfig.guis().getGuis().getParty().getPartySplit().getIcons().getFillerItem())
+          .get();
 
   private static final int BACK_SLOT = 45;
   private static final int RANDOM_SPLIT_SLOT = 49;
@@ -57,7 +60,9 @@ public class PartySplitGui extends Gui {
     this.backTo = backTo;
 
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString("GUIS.PARTY.PARTY-SPLIT.TITLE"), 6));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getParty().getPartySplit().getTitle(), 6));
 
     build();
   }
@@ -80,11 +85,35 @@ public class PartySplitGui extends Gui {
     }
 
     inventory.setItem(
-        BACK_SLOT, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SPLIT.ICONS.BACK-TO-SELECTOR").get());
+        BACK_SLOT,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getParty()
+                    .getPartySplit()
+                    .getIcons()
+                    .getBackToSelector())
+            .get());
     inventory.setItem(
-        RANDOM_SPLIT_SLOT, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SPLIT.ICONS.RANDOM-SPLIT").get());
+        RANDOM_SPLIT_SLOT,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getParty()
+                    .getPartySplit()
+                    .getIcons()
+                    .getRandomSplit())
+            .get());
     inventory.setItem(
-        START_MATCH_SLOT, GuiFile.getGuiItem("GUIS.PARTY.PARTY-SPLIT.ICONS.START-MATCH").get());
+        START_MATCH_SLOT,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getParty()
+                    .getPartySplit()
+                    .getIcons()
+                    .getStartMatch())
+            .get());
 
     headSlots.clear();
     int slot = 0;
@@ -102,8 +131,10 @@ public class PartySplitGui extends Gui {
   }
 
   private ItemStack getPlayerItem(Player member) {
-    GuiItem configItem =
-        GuiFile.getGuiItem("GUIS.PARTY.PARTY-SPLIT.ICONS.PLAYER-ITEM." + getPlayerItemIcon(member));
+    Map<String, ItemConfig> playerItems =
+        PracticeConfig.guis().getGuis().getParty().getPartySplit().getIcons().getPlayerItem();
+    ItemConfig playerItem = playerItems != null ? playerItems.get(getPlayerItemIcon(member)) : null;
+    GuiItem configItem = playerItem != null ? BackendUtil.getGuiItem(playerItem) : new GuiItem();
 
     GuiItem headItem = new GuiItem(ItemCreateUtil.getPlayerHead(member));
     headItem.setName(configItem.getName());
@@ -203,7 +234,7 @@ public class PartySplitGui extends Gui {
       if (teamAssignments.get(TeamEnum.TEAM1).isEmpty()
           || teamAssignments.get(TeamEnum.TEAM2).isEmpty()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("PARTY.PARTY-SPLIT.BOTH-TEAMS-NEEDED"));
+            player, PracticeConfig.language().getParty().getPartySplit().getBothTeamsNeeded());
         return;
       }
     }
@@ -215,7 +246,7 @@ public class PartySplitGui extends Gui {
       selectedArena = LadderUtil.getAvailableArena(ladder);
     }
     if (selectedArena == null || selectedArena.getAvailableArena() == null) {
-      Common.sendMmMessage(player, LanguageManager.getString("PARTY.NO-AVAILABLE-ARENA"));
+      Common.sendMmMessage(player, PracticeConfig.language().getParty().getNoAvailableArena());
       return;
     }
 

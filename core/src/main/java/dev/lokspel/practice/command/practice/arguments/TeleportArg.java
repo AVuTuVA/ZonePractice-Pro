@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,14 +15,20 @@ public final class TeleportArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.setup")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
       return;
     }
 
     if (args.length != 2) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.TELEPORT.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getTeleport()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -31,7 +37,12 @@ public final class TeleportArg {
     if (world == null) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.TELEPORT.WORLD-DONT-EXISTS")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getTeleport()
+              .getWorldDontExists()
               .replace("%world%", args[1]));
       return;
     }
@@ -39,7 +50,12 @@ public final class TeleportArg {
     player.teleport(world.getSpawnLocation());
     Common.sendMmMessage(
         player,
-        LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.TELEPORT.TELEPORTED")
+        PracticeConfig.language()
+            .getCommand()
+            .getPractice()
+            .getArguments()
+            .getTeleport()
+            .getTeleported()
             .replace("%world%", world.getName()));
   }
 

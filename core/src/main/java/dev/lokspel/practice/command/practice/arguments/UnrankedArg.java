@@ -1,7 +1,6 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.ConfigManager;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.group.Group;
@@ -20,7 +19,8 @@ public final class UnrankedArg {
   public static void run(Player player, String label, String[] args) {
     if (args.length == 3 && args[1].equalsIgnoreCase("reset")) {
       if (!player.hasPermission("ap.practice.unranked.default")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -30,16 +30,27 @@ public final class UnrankedArg {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.TARGET-OFFLINE")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getTargetOffline()
                 .replace("%target%", args[2]));
         return;
       }
 
       if (player != target.getPlayer()
           && target.getPlayer().isOp()
-          && ConfigManager.getBoolean("ADMIN-SETTINGS.OP-BYPASS-UNRANKED-CHANGE")) {
+          && PracticeConfig.settings().getAdminSettings().isOpBypassUnrankedChange()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.TARGET-OP"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getTargetOp());
         return;
       }
 
@@ -49,18 +60,29 @@ public final class UnrankedArg {
 
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.RESET-DAILY-LIMIT")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getResetDailyLimit()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%dailyUnrankedLimit%", String.valueOf(group.getUnrankedLimit())));
       } else {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.NO-GROUP")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getNoGroup()
                 .replace("%target%", target.getPlayer().getName()));
       }
     } else if (args.length == 4 && args[1].equalsIgnoreCase("add")) {
       if (!player.hasPermission("ap.practice.unranked.add")) {
-        Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+        Common.sendMmMessage(
+            player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
         return;
       }
 
@@ -70,15 +92,26 @@ public final class UnrankedArg {
       if (target == null) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.TARGET-OFFLINE"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getTargetOffline());
         return;
       }
 
       if (player != target.getPlayer()
           && target.getPlayer().isOp()
-          && ConfigManager.getBoolean("ADMIN-SETTINGS.OP-BYPASS-UNRANKED-CHANGE")) {
+          && PracticeConfig.settings().getAdminSettings().isOpBypassUnrankedChange()) {
         Common.sendMmMessage(
-            player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.TARGET-OP"));
+            player,
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getTargetOp());
         return;
       }
 
@@ -86,7 +119,12 @@ public final class UnrankedArg {
       if (extraUnranked <= 0) {
         Common.sendMmMessage(
             player,
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getInvalidNumber());
         return;
       }
 
@@ -94,7 +132,12 @@ public final class UnrankedArg {
 
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.ADD-EXTRA-UNRANKED")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getUnranked()
+              .getAddExtraUnranked()
               .replace("%extraUnranked%", String.valueOf(extraUnranked))
               .replace("%target%", target.getPlayer().getName())
               .replace("%newUnranked%", String.valueOf(target.getUnrankedLeft())));
@@ -102,7 +145,12 @@ public final class UnrankedArg {
       if (player.hasPermission("ap.practice.unranked.default")
           || player.hasPermission("ap.practice.unranked.add")) {
         for (String line :
-            LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.COMMAND-HELP")) {
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getCommandHelp()) {
           Common.sendMmMessage(player, line.replace("%label%", label));
         }
       }
@@ -116,7 +164,12 @@ public final class UnrankedArg {
               .getProfile(ServerManager.getInstance().resolvePlayer(args[2]));
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.TARGET-OFFLINE"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getTargetOffline());
         return;
       }
 
@@ -125,12 +178,22 @@ public final class UnrankedArg {
         target.setUnrankedLeft(group.getUnrankedLimit());
 
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.RESET-DAILY-LIMIT")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getResetDailyLimit()
                 .replace("%target%", target.getPlayer().getName())
                 .replace("%dailyUnrankedLimit%", String.valueOf(group.getUnrankedLimit())));
       } else {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.NO-GROUP")
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getNoGroup()
                 .replace("%target%", target.getPlayer().getName()));
       }
     } else if (args.length == 4 && args[1].equalsIgnoreCase("add")) {
@@ -139,27 +202,47 @@ public final class UnrankedArg {
               .getProfile(ServerManager.getInstance().resolvePlayer(args[2]));
       if (target == null) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.TARGET-OFFLINE"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getTargetOffline());
         return;
       }
 
       final int extraUnranked = Integer.parseInt(args[3]);
       if (extraUnranked <= 0) {
         Common.sendConsoleMmMessage(
-            LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.INVALID-NUMBER"));
+            PracticeConfig.language()
+                .getCommand()
+                .getPractice()
+                .getArguments()
+                .getUnranked()
+                .getInvalidNumber());
         return;
       }
 
       target.setUnrankedLeft(target.getUnrankedLeft() + extraUnranked);
 
       Common.sendConsoleMmMessage(
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.ADD-EXTRA-UNRANKED")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getUnranked()
+              .getAddExtraUnranked()
               .replace("%extraUnranked%", String.valueOf(extraUnranked))
               .replace("%target%", target.getPlayer().getName())
               .replace("%newUnranked%", String.valueOf(target.getUnrankedLeft())));
     } else {
       for (String line :
-          LanguageManager.getList("COMMAND.PRACTICE.ARGUMENTS.UNRANKED.COMMAND-HELP")) {
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getUnranked()
+              .getCommandHelp()) {
         Common.sendConsoleMmMessage(line.replace("%label%", label));
       }
     }

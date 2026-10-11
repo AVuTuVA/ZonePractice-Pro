@@ -1,6 +1,6 @@
 package dev.lokspel.practice.command.practice.arguments;
 
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.StringUtil;
 import java.util.Arrays;
@@ -16,14 +16,20 @@ public final class RenameArg {
 
   public static void run(Player player, String label, String[] args) {
     if (!player.hasPermission("ap.practice.rename")) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PRACTICE.NO-PERMISSION"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getPractice().getNoPermission());
       return;
     }
 
     if (args.length <= 1) {
       Common.sendMmMessage(
           player,
-          LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RENAME.COMMAND-HELP")
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getRename()
+              .getCommandHelp()
               .replace("%label%", label));
       return;
     }
@@ -31,7 +37,13 @@ public final class RenameArg {
     ItemStack handItem = player.getInventory().getItemInMainHand();
     if (handItem.getType().equals(Material.AIR)) {
       Common.sendMmMessage(
-          player, LanguageManager.getString("COMMAND.PRACTICE.ARGUMENTS.RENAME.ITEM-IN-HAND"));
+          player,
+          PracticeConfig.language()
+              .getCommand()
+              .getPractice()
+              .getArguments()
+              .getRename()
+              .getItemInHand());
       return;
     }
 

@@ -1,5 +1,6 @@
 package dev.lokspel.practice.manager.sidebar.adapter;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.Round;
@@ -15,7 +16,6 @@ import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.fight.util.stats.Statistic;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
-import dev.lokspel.practice.manager.sidebar.SidebarManager;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.NameFormatUtil;
 import net.kyori.adventure.text.Component;
@@ -28,16 +28,12 @@ public enum AdapterUtil {
   ;
 
   private static String getRoundSymbol() {
-    String symbol = SidebarManager.getInstance().getConfig().getString("MATCH.ROUND-SYMBOL");
+    String symbol = PracticeConfig.sidebar().getMatch().getRoundSymbol();
     return symbol == null || symbol.isBlank() ? "|" : symbol;
   }
 
   private static int getRoundSymbolMaxRounds() {
-    if (!SidebarManager.getInstance().getConfig().contains("MATCH.ROUND-SYMBOL-MAX-ROUNDS")) {
-      return 3;
-    }
-    return Math.max(
-        0, SidebarManager.getInstance().getConfig().getInt("MATCH.ROUND-SYMBOL-MAX-ROUNDS"));
+    return Math.max(0, PracticeConfig.sidebar().getMatch().getRoundSymbolMaxRounds());
   }
 
   /** Creates a text replacement config for a simple string replacement. */
@@ -134,10 +130,7 @@ public enum AdapterUtil {
     }
 
     // Read the SIDEBAR-NAME-FORMAT config option to determine how names should be displayed.
-    String format =
-        SidebarManager.getInstance()
-            .getConfig()
-            .getString("SIDEBAR-NAME-FORMAT", "PREFIX_NAME_SUFFIX");
+    String format = PracticeConfig.sidebar().getSidebarNameFormat();
     return switch (format.toUpperCase()) {
       case "NAME_ONLY" -> NameFormatUtil.resolveName(profile, player.getName(), player, null);
       case "PREFIX_NAME" ->

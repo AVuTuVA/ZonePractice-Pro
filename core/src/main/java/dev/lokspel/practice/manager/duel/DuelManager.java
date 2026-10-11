@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.duel;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +77,6 @@ public class DuelManager {
       }
     }.runTaskLater(
         AstralPractice.getInstance(),
-        20L * ConfigManager.getInt("MATCH-SETTINGS.DUEL.INVITATION-EXPIRY"));
+        20L * PracticeConfig.settings().getMatchSettings().getDuel().getInvitationExpiry());
   }
 }

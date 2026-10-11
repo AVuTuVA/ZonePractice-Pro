@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.fight.match.enums;
 
 import dev.lokspel.practice.AstralPractice;
-import dev.lokspel.practice.manager.backend.ConfigManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.util.StringUtil;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -12,39 +12,71 @@ public enum TeamEnum {
       AstralPractice.getMiniMessage()
           .deserialize(
               StringUtil.legacyToMiniMessage(
-                  ConfigManager.getConfig().getString("MATCH-SETTINGS.TEAMS.TEAM1.NAME"))),
-      ConfigManager.getConfig().getString("MATCH-SETTINGS.TEAMS.TEAM1.COLOR"),
+                  PracticeConfig.settings().getMatchSettings().getTeams().getTeam1().getName())),
+      PracticeConfig.settings().getMatchSettings().getTeams().getTeam1().getColor(),
       AstralPractice.getMiniMessage()
           .deserialize(
               StringUtil.legacyToMiniMessage(
-                  ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM1.NAMETAG.PREFIX"))),
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getTeams()
+                      .getTeam1()
+                      .getNametag()
+                      .getPrefix())),
       NamedTextColor.NAMES.valueOr(
-          ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM1.NAMETAG.NAME-COLOR").toLowerCase(),
+          PracticeConfig.settings()
+              .getMatchSettings()
+              .getTeams()
+              .getTeam1()
+              .getNametag()
+              .getNameColor()
+              .toLowerCase(),
           NamedTextColor.WHITE),
       AstralPractice.getMiniMessage()
           .deserialize(
               StringUtil.legacyToMiniMessage(
-                  ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM1.NAMETAG.SUFFIX")))),
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getTeams()
+                      .getTeam1()
+                      .getNametag()
+                      .getSuffix()))),
   TEAM2(
       AstralPractice.getMiniMessage()
           .deserialize(
               StringUtil.legacyToMiniMessage(
-                  ConfigManager.getConfig().getString("MATCH-SETTINGS.TEAMS.TEAM2.NAME"))),
-      ConfigManager.getConfig().getString("MATCH-SETTINGS.TEAMS.TEAM2.COLOR"),
+                  PracticeConfig.settings().getMatchSettings().getTeams().getTeam2().getName())),
+      PracticeConfig.settings().getMatchSettings().getTeams().getTeam2().getColor(),
       AstralPractice.getMiniMessage()
           .deserialize(
               StringUtil.legacyToMiniMessage(
-                  ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM2.NAMETAG.PREFIX"))),
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getTeams()
+                      .getTeam2()
+                      .getNametag()
+                      .getPrefix())),
       NamedTextColor.NAMES.valueOr(
-          ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM2.NAMETAG.NAME-COLOR").toLowerCase(),
+          PracticeConfig.settings()
+              .getMatchSettings()
+              .getTeams()
+              .getTeam2()
+              .getNametag()
+              .getNameColor()
+              .toLowerCase(),
           NamedTextColor.WHITE),
       AstralPractice.getMiniMessage()
           .deserialize(
               StringUtil.legacyToMiniMessage(
-                  ConfigManager.getString("MATCH-SETTINGS.TEAMS.TEAM2.NAMETAG.SUFFIX")))),
+                  PracticeConfig.settings()
+                      .getMatchSettings()
+                      .getTeams()
+                      .getTeam2()
+                      .getNametag()
+                      .getSuffix()))),
   FFA(
       Component.empty(),
-      ConfigManager.getString("MATCH-SETTINGS.TEAMS.FFA.COLOR"),
+      PracticeConfig.settings().getMatchSettings().getTeams().getFfa().getColor(),
       Component.empty(),
       NamedTextColor.WHITE,
       Component.empty());

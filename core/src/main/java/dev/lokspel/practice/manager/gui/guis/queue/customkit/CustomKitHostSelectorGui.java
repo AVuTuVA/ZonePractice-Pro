@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.guis.queue.customkit;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -26,8 +26,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class CustomKitHostSelectorGui extends Gui {
 
-  private static final String GUI_PATH = "GUIS.CUSTOM-KIT-QUEUE.HOST-SELECTOR";
-
   private final Profile profile;
   private final Map<Integer, CustomLadder> slotToKit = new HashMap<>();
 
@@ -36,27 +34,45 @@ public class CustomKitHostSelectorGui extends Gui {
     this.profile = profile;
 
     this.gui.put(
-        1, InventoryUtil.createInventory(GuiFile.getString(GUI_PATH + ".TITLE"), getRows()));
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getCustomKitQueue().getHostSelector().getTitle(),
+            getRows()));
     build();
   }
 
   private int getRows() {
-    int rows = GuiFile.getInt(GUI_PATH + ".SIZE");
+    int rows = PracticeConfig.guis().getGuis().getCustomKitQueue().getHostSelector().getSize();
     return Math.clamp(rows <= 0 ? 3 : rows, 1, 6);
   }
 
   private int backSlot() {
-    return GuiFile.getInt(GUI_PATH + ".SLOTS.BACK");
+    return PracticeConfig.guis()
+        .getGuis()
+        .getCustomKitQueue()
+        .getHostSelector()
+        .getSlots()
+        .getBack();
   }
 
   private int noKitsSlot() {
-    return GuiFile.getInt(GUI_PATH + ".SLOTS.NO-KITS");
+    return PracticeConfig.guis()
+        .getGuis()
+        .getCustomKitQueue()
+        .getHostSelector()
+        .getSlots()
+        .getNoKits();
   }
 
   private List<Integer> kitSlots() {
     List<Integer> slots =
-        GuiFile.getConfig().getIntegerList((GUI_PATH + ".SLOTS.KIT-SLOTS").toUpperCase());
-    if (slots.isEmpty()) {
+        PracticeConfig.guis()
+            .getGuis()
+            .getCustomKitQueue()
+            .getHostSelector()
+            .getSlots()
+            .getKitSlots();
+    if (slots == null || slots.isEmpty()) {
       return List.of(10, 11, 12, 13, 14, 15, 16);
     }
     return slots;
@@ -73,7 +89,15 @@ public class CustomKitHostSelectorGui extends Gui {
     inventory.clear();
     slotToKit.clear();
 
-    ItemStack filler = GuiFile.getGuiItem(GUI_PATH + ".ICONS.FILLER-ITEM").get();
+    ItemStack filler =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getCustomKitQueue()
+                    .getHostSelector()
+                    .getIcons()
+                    .getFillerItem())
+            .get();
     if (filler == null) {
       filler = ItemCreateUtil.createItem(" ", Material.BLACK_STAINED_GLASS_PANE);
     }
@@ -87,7 +111,15 @@ public class CustomKitHostSelectorGui extends Gui {
       return;
     }
 
-    ItemStack backItem = GuiFile.getGuiItem(GUI_PATH + ".ICONS.BACK").get();
+    ItemStack backItem =
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis()
+                    .getGuis()
+                    .getCustomKitQueue()
+                    .getHostSelector()
+                    .getIcons()
+                    .getBack())
+            .get();
     if (backItem == null) {
       backItem = ItemCreateUtil.createItem("<red>Back", Material.ARROW);
     }
@@ -98,7 +130,15 @@ public class CustomKitHostSelectorGui extends Gui {
     List<CustomLadder> hostableKits =
         new ArrayList<>(CustomKitQueueManager.getInstance().getHostableKits(profile));
     if (hostableKits.isEmpty()) {
-      ItemStack noKitsItem = GuiFile.getGuiItem(GUI_PATH + ".ICONS.NO-KITS").get();
+      ItemStack noKitsItem =
+          BackendUtil.getGuiItem(
+                  PracticeConfig.guis()
+                      .getGuis()
+                      .getCustomKitQueue()
+                      .getHostSelector()
+                      .getIcons()
+                      .getNoKits())
+              .get();
       if (noKitsItem == null) {
         noKitsItem = ItemCreateUtil.createItem("<red>No Saved Custom Kits", Material.BARRIER);
       }
@@ -153,7 +193,7 @@ public class CustomKitHostSelectorGui extends Gui {
 
     Profile currentProfile = ProfileManager.getInstance().getProfile(player);
     if (currentProfile == null || currentProfile.getStatus() != ProfileStatus.LOBBY) {
-      Common.sendMmMessage(player, LanguageManager.getString("CANT-USE-COMMAND"));
+      Common.sendMmMessage(player, PracticeConfig.language().getCantUseCommand());
       player.closeInventory();
       return;
     }

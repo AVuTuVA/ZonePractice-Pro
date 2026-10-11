@@ -1,5 +1,6 @@
 package dev.lokspel.practice.manager.inventory.inventoryitem.staffitems;
 
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -10,9 +11,7 @@ import org.bukkit.entity.Player;
 public class HideOnInvItem extends InvItem {
 
   public HideOnInvItem() {
-    super(
-        getItemStack("STAFF-MODE.NORMAL.HIDE-FROM-PLAYERS-ON.ITEM"),
-        getInt("STAFF-MODE.NORMAL.HIDE-FROM-PLAYERS-ON.SLOT"));
+    super(PracticeConfig.inventories().getStaffMode().getNormal().get("HIDE-FROM-PLAYERS-ON"));
   }
 
   @Override

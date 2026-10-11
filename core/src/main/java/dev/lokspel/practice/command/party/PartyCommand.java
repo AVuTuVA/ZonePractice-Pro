@@ -11,7 +11,7 @@ import dev.lokspel.practice.command.party.arguments.PartyKickArg;
 import dev.lokspel.practice.command.party.arguments.PartyLeaderArg;
 import dev.lokspel.practice.command.party.arguments.PartyLeaveArg;
 import dev.lokspel.practice.command.party.arguments.PartyPublicArg;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.party.Party;
 import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -32,14 +32,15 @@ public class PartyCommand implements CommandExecutor, TabCompleter {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
     if (!(sender instanceof Player player)) {
-      Common.sendConsoleMmMessage(LanguageManager.getString("CANT-USE-CONSOLE"));
+      Common.sendConsoleMmMessage(PracticeConfig.language().getCantUseConsole());
       return false;
     }
 
     Profile profile = ProfileManager.getInstance().getProfile(player);
 
     if (profile.isStaffMode() || profile.isSpectatorMode()) {
-      Common.sendMmMessage(player, LanguageManager.getString("COMMAND.PARTY.CANT-USE-COMMAND"));
+      Common.sendMmMessage(
+          player, PracticeConfig.language().getCommand().getParty().getCantUseCommand());
       return false;
     }
 

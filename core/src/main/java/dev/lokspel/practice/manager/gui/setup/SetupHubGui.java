@@ -1,7 +1,7 @@
 package dev.lokspel.practice.manager.gui.setup;
 
-import dev.lokspel.practice.manager.backend.GuiFile;
-import dev.lokspel.practice.manager.backend.LanguageManager;
+import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -16,7 +16,10 @@ public class SetupHubGui extends Gui {
 
   public SetupHubGui() {
     super(GuiType.Setup_Hub);
-    this.gui.put(1, InventoryUtil.createInventory(GuiFile.getString("GUIS.SETUP.HUB.TITLE"), 4));
+    this.gui.put(
+        1,
+        InventoryUtil.createInventory(
+            PracticeConfig.guis().getGuis().getSetup().getHub().getTitle(), 4));
 
     build();
   }
@@ -25,15 +28,44 @@ public class SetupHubGui extends Gui {
   public void build() {
     Inventory inventory = gui.get(1);
 
-    inventory.setItem(11, GuiFile.getGuiItem("GUIS.SETUP.HUB.ICONS.ARENA-MANAGER").get());
-    inventory.setItem(13, GuiFile.getGuiItem("GUIS.SETUP.HUB.ICONS.LADDER-MANAGER").get());
-    inventory.setItem(15, GuiFile.getGuiItem("GUIS.SETUP.HUB.ICONS.HOLOGRAM-MANAGER").get());
-    inventory.setItem(21, GuiFile.getGuiItem("GUIS.SETUP.HUB.ICONS.EVENT-MANAGER").get());
-    inventory.setItem(23, GuiFile.getGuiItem("GUIS.SETUP.HUB.ICONS.SERVER-MANAGER").get());
+    inventory.setItem(
+        11,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getSetup().getHub().getIcons().getArenaManager())
+            .get());
+    inventory.setItem(
+        13,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getSetup().getHub().getIcons().getLadderManager())
+            .get());
+    inventory.setItem(
+        15,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getSetup().getHub().getIcons().getHologramManager())
+            .get());
+    inventory.setItem(
+        21,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getSetup().getHub().getIcons().getEventManager())
+            .get());
+    inventory.setItem(
+        23,
+        BackendUtil.getGuiItem(
+                PracticeConfig.guis().getGuis().getSetup().getHub().getIcons().getServerManager())
+            .get());
 
     for (int i = 0; i < inventory.getSize(); i++) {
       if (inventory.getItem(i) == null) {
-        inventory.setItem(i, GuiFile.getGuiItem("GUIS.SETUP.HUB.ICONS.GENERAL-FILLER-ITEM").get());
+        inventory.setItem(
+            i,
+            BackendUtil.getGuiItem(
+                    PracticeConfig.guis()
+                        .getGuis()
+                        .getSetup()
+                        .getHub()
+                        .getIcons()
+                        .getGeneralFillerItem())
+                .get());
       }
     }
   }
@@ -67,7 +99,8 @@ public class SetupHubGui extends Gui {
         if (hologramSummaryGui != null) {
           hologramSummaryGui.open(player);
         } else {
-          Common.sendMmMessage(player, LanguageManager.getString("COMMAND.SETUP.GUI-LOADING"));
+          Common.sendMmMessage(
+              player, PracticeConfig.language().getCommand().getSetup().getGuiLoading());
         }
         break;
       case 21:
