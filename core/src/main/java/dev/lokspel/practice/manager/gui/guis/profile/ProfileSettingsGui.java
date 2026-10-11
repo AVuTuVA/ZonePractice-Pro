@@ -113,7 +113,7 @@ public class ProfileSettingsGui extends Gui {
     if (item == null) {
       return;
     }
-    if (item.equals(GuiManager.getFILLER_ITEM())) {
+    if (item.equals(GuiManager.fillerItem())) {
       return;
     }
 

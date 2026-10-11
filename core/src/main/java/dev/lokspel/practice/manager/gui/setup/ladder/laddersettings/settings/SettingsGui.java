@@ -136,7 +136,7 @@ public class SettingsGui extends Gui {
     // Filler items
     for (int i = 0; i < inventory.getSize(); i++) {
       if (inventory.getItem(i) == null) {
-        inventory.setItem(i, GuiManager.getFILLER_ITEM());
+        inventory.setItem(i, GuiManager.fillerItem());
       }
     }
 
@@ -173,7 +173,7 @@ public class SettingsGui extends Gui {
     if (item == null) {
       return;
     }
-    if (item.equals(GuiManager.getFILLER_ITEM())) {
+    if (item.equals(GuiManager.fillerItem())) {
       return;
     }
 

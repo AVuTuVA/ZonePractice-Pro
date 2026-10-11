@@ -53,7 +53,7 @@ public class LadderTypeGui extends Gui {
 
     // Set filler items
     for (int i : new int[] {19, 20, 21, 22, 23, 24, 25}) {
-      inventory.setItem(i, GuiManager.getFILLER_ITEM());
+      inventory.setItem(i, GuiManager.fillerItem());
     }
 
     // Navigation item

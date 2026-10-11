@@ -25,18 +25,27 @@ import org.bukkit.inventory.meta.trim.TrimMaterial;
 
 public class MaterialSelectionGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
-  private static final ItemStack BACK_TO_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  }
 
-  private static final int INVENTORY_ROWS =
-      PracticeConfig.guis().getGuis().getCosmetics().getMaterialSelection().getInventoryRows();
-  private static final int BACK_SLOT =
-      PracticeConfig.guis().getGuis().getCosmetics().getMaterialSelection().getBackSlot();
-  private static final int START_SLOT =
-      PracticeConfig.guis().getGuis().getCosmetics().getMaterialSelection().getStartSlot();
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+        .get();
+  }
+
+  private static int inventoryRows() {
+    return PracticeConfig.guis().getGuis().getCosmetics().getMaterialSelection().getInventoryRows();
+  }
+
+  private static int backSlot() {
+    return PracticeConfig.guis().getGuis().getCosmetics().getMaterialSelection().getBackSlot();
+  }
+
+  private static int startSlot() {
+    return PracticeConfig.guis().getGuis().getCosmetics().getMaterialSelection().getStartSlot();
+  }
 
   private final Profile profile;
   private final ArmorSlot armorSlot;
@@ -55,7 +64,7 @@ public class MaterialSelectionGui extends Gui {
             .getMaterialSelection()
             .getInventoryTitle()
             .replace("%armor%", armorSlot.getDisplayName());
-    this.gui.put(1, InventoryUtil.createInventory(title, INVENTORY_ROWS));
+    this.gui.put(1, InventoryUtil.createInventory(title, inventoryRows()));
     build();
   }
 
@@ -71,14 +80,14 @@ public class MaterialSelectionGui extends Gui {
     materialBySlot.clear();
 
     for (int i = 0; i < inventory.getSize(); i++) {
-      inventory.setItem(i, FILLER_ITEM);
+      inventory.setItem(i, fillerItem());
     }
 
     inventory.setItem(
-        BACK_SLOT, BACK_TO_ITEM == null ? new ItemStack(Material.ARROW) : BACK_TO_ITEM);
+        backSlot(), backToItem() == null ? new ItemStack(Material.ARROW) : backToItem());
 
     ArmorTrimTier tier = profile.getCosmeticsData().getActiveTier();
-    int slot = START_SLOT;
+    int slot = startSlot();
     for (TrimMaterial material : CosmeticsPermissionManager.getRegisteredMaterials()) {
       if (slot >= inventory.getSize()) {
         break;
@@ -107,7 +116,7 @@ public class MaterialSelectionGui extends Gui {
     Player player = (Player) e.getWhoClicked();
     int slot = e.getRawSlot();
 
-    if (slot == BACK_SLOT) {
+    if (slot == backSlot()) {
       backToGui.update(true);
       backToGui.open(player);
       return;

@@ -29,41 +29,48 @@ public class PlayerCustomKitSelector extends Gui {
           4, List.of(10, 12, 14, 16),
           5, List.of(9, 11, 13, 15, 17));
 
-  private static final GuiItem KIT_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getKitEditor()
-              .getPlayerCustomKitSelector()
-              .getIcons()
-              .getKit());
-  private static final ItemStack SELECTED_KIT_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getKitEditor()
-                  .getPlayerCustomKitSelector()
-                  .getIcons()
-                  .getSelected())
-          .get();
-  private static final ItemStack UNSELECTED_KIT_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getKitEditor()
-                  .getPlayerCustomKitSelector()
-                  .getIcons()
-                  .getUnselected())
-          .get();
-  private static final ItemStack GUIDE_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getKitEditor()
-                  .getPlayerCustomKitSelector()
-                  .getIcons()
-                  .getGuide())
-          .get();
+  private static GuiItem kitItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getKitEditor()
+            .getPlayerCustomKitSelector()
+            .getIcons()
+            .getKit());
+  }
+
+  private static ItemStack selectedKitItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getKitEditor()
+                .getPlayerCustomKitSelector()
+                .getIcons()
+                .getSelected())
+        .get();
+  }
+
+  private static ItemStack unselectedKitItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getKitEditor()
+                .getPlayerCustomKitSelector()
+                .getIcons()
+                .getUnselected())
+        .get();
+  }
+
+  private static ItemStack guideItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getKitEditor()
+                .getPlayerCustomKitSelector()
+                .getIcons()
+                .getGuide())
+        .get();
+  }
 
   private final Profile profile;
   private final int kitLimit;
@@ -96,7 +103,7 @@ public class PlayerCustomKitSelector extends Gui {
     inventory.clear();
     this.slots.clear();
 
-    inventory.setItem(49, GUIDE_ITEM);
+    inventory.setItem(49, guideItem());
 
     for (int i = 0; i < this.kitLimit; i++) {
       CustomLadder customLadder = this.getCustomLadder(i);
@@ -104,7 +111,7 @@ public class PlayerCustomKitSelector extends Gui {
         continue;
       }
 
-      GuiItem kitItem = KIT_ITEM.cloneItem();
+      GuiItem kitItem = kitItem().cloneItem();
       kitItem.replace(
           "%kit%",
           customLadder.getDisplayName() != null ? customLadder.getDisplayName() : "Kit " + i);
@@ -113,9 +120,9 @@ public class PlayerCustomKitSelector extends Gui {
       inventory.setItem(slot, kitItem.get());
 
       if (profile.getSelectedCustomLadder() == customLadder) {
-        inventory.setItem(slot + 9, SELECTED_KIT_ITEM);
+        inventory.setItem(slot + 9, selectedKitItem());
       } else {
-        inventory.setItem(slot + 9, UNSELECTED_KIT_ITEM);
+        inventory.setItem(slot + 9, unselectedKitItem());
       }
 
       this.slots.put(slot, customLadder);

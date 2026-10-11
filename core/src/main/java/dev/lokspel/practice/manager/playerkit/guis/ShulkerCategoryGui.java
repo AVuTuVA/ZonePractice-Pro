@@ -64,7 +64,7 @@ public class ShulkerCategoryGui extends Gui {
 
   public ShulkerCategoryGui() {
     super(GuiType.PlayerCustom_Shulker);
-    this.gui.put(1, InventoryUtil.createInventory(StaticItems.CATEGORY_SHULKER_TITLE, 6));
+    this.gui.put(1, InventoryUtil.createInventory(StaticItems.categoryShulkerTitle(), 6));
     build();
   }
 
@@ -84,7 +84,7 @@ public class ShulkerCategoryGui extends Gui {
       inv.setItem(slot, item);
     }
 
-    inv.setItem(BACK_SLOT, StaticItems.CATEGORY_GUI_PAGE_BACK_ICON.get());
+    inv.setItem(BACK_SLOT, StaticItems.categoryGuiPageBackIcon().get());
     updatePlayers();
   }
 

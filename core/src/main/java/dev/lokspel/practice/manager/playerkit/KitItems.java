@@ -28,39 +28,39 @@ public class KitItems {
     this.kitData = kitData;
 
     if (kitData.getArmor() != null) {
-      helmet = new KitItem(StaticItems.MAIN_GUI_HEAD_PLACEHOLDER_ICON, kitData.getArmor()[3]);
-      chest = new KitItem(StaticItems.MAIN_GUI_CHEST_PLACEHOLDER_ICON, kitData.getArmor()[2]);
-      legs = new KitItem(StaticItems.MAIN_GUI_LEGS_PLACEHOLDER_ICON, kitData.getArmor()[1]);
-      boots = new KitItem(StaticItems.MAIN_GUI_BOOTS_PLACEHOLDER_ICON, kitData.getArmor()[0]);
+      helmet = new KitItem(StaticItems.mainGuiHeadPlaceholderIcon(), kitData.getArmor()[3]);
+      chest = new KitItem(StaticItems.mainGuiChestPlaceholderIcon(), kitData.getArmor()[2]);
+      legs = new KitItem(StaticItems.mainGuiLegsPlaceholderIcon(), kitData.getArmor()[1]);
+      boots = new KitItem(StaticItems.mainGuiBootsPlaceholderIcon(), kitData.getArmor()[0]);
     } else {
-      helmet = new KitItem(StaticItems.MAIN_GUI_HEAD_PLACEHOLDER_ICON);
-      chest = new KitItem(StaticItems.MAIN_GUI_CHEST_PLACEHOLDER_ICON);
-      legs = new KitItem(StaticItems.MAIN_GUI_LEGS_PLACEHOLDER_ICON);
-      boots = new KitItem(StaticItems.MAIN_GUI_BOOTS_PLACEHOLDER_ICON);
+      helmet = new KitItem(StaticItems.mainGuiHeadPlaceholderIcon());
+      chest = new KitItem(StaticItems.mainGuiChestPlaceholderIcon());
+      legs = new KitItem(StaticItems.mainGuiLegsPlaceholderIcon());
+      boots = new KitItem(StaticItems.mainGuiBootsPlaceholderIcon());
     }
 
     if (kitData.getExtra() != null) {
-      offhand = new KitItem(StaticItems.MAIN_GUI_OFF_HAND_PLACEHOLDER_ICON, kitData.getExtra()[0]);
+      offhand = new KitItem(StaticItems.mainGuiOffHandPlaceholderIcon(), kitData.getExtra()[0]);
     } else {
-      offhand = new KitItem(StaticItems.MAIN_GUI_OFF_HAND_PLACEHOLDER_ICON);
+      offhand = new KitItem(StaticItems.mainGuiOffHandPlaceholderIcon());
     }
 
     if (kitData.getStorage() != null) {
       for (int i = 0; i < 9; i++) {
         hotbar.put(
-            i, new KitItem(StaticItems.MAIN_GUI_HOTBAR_PLACEHOLDER_ICON, kitData.getStorage()[i]));
+            i, new KitItem(StaticItems.mainGuiHotbarPlaceholderIcon(), kitData.getStorage()[i]));
       }
       for (int i = 9; i < 36; i++) {
         inventory.put(
             i - 9,
-            new KitItem(StaticItems.MAIN_GUI_INVENTORY_PLACEHOLDER_ICON, kitData.getStorage()[i]));
+            new KitItem(StaticItems.mainGuiInventoryPlaceholderIcon(), kitData.getStorage()[i]));
       }
     } else {
       for (int i = 0; i < 9; i++) {
-        hotbar.put(i, new KitItem(StaticItems.MAIN_GUI_HOTBAR_PLACEHOLDER_ICON));
+        hotbar.put(i, new KitItem(StaticItems.mainGuiHotbarPlaceholderIcon()));
       }
       for (int i = 9; i < 36; i++) {
-        inventory.put(i - 9, new KitItem(StaticItems.MAIN_GUI_INVENTORY_PLACEHOLDER_ICON));
+        inventory.put(i - 9, new KitItem(StaticItems.mainGuiInventoryPlaceholderIcon()));
       }
     }
 

@@ -5,6 +5,7 @@ import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.gui.guis.customladder.EditorMenuGui;
 import dev.lokspel.practice.manager.gui.guis.customladder.premadecustom.CustomLadderSelectorGui;
+import dev.lokspel.practice.manager.gui.guis.ladder.LadderPreviewGui;
 import dev.lokspel.practice.manager.gui.guis.queue.RankedGui;
 import dev.lokspel.practice.manager.gui.guis.queue.UnrankedGui;
 import dev.lokspel.practice.manager.gui.guis.queue.customkit.ChooseQueueTypeGui;
@@ -103,6 +104,23 @@ public class LadderManager {
 
   public void loadGuis() {
     LadderSetupManager.getInstance().loadGuis();
+    GuiManager.getInstance().addGui(new UnrankedGui());
+    GuiManager.getInstance().addGui(new RankedGui());
+    GuiManager.getInstance().addGui(new ChooseQueueTypeGui());
+    GuiManager.getInstance().addGui(new CustomLadderSelectorGui());
+    GuiManager.getInstance().addGui(new EditorMenuGui());
+  }
+
+  /**
+   * Re-creates the queue, kit editor and ladder setup GUIs and every ladder's preview from the
+   * reloaded configuration.
+   */
+  public void reloadGuis() {
+    for (NormalLadder ladder : ladders) {
+      ladder.setPreviewGui(new LadderPreviewGui(ladder));
+    }
+
+    LadderSetupManager.getInstance().reloadGuis();
     GuiManager.getInstance().addGui(new UnrankedGui());
     GuiManager.getInstance().addGui(new RankedGui());
     GuiManager.getInstance().addGui(new ChooseQueueTypeGui());

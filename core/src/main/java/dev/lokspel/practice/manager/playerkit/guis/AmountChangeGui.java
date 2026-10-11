@@ -33,7 +33,7 @@ public class AmountChangeGui extends Gui {
     this.kitItem = kitItem;
     this.maxStackSize = kitItem.getMaterial().getMaxStackSize();
     this.backTo = backTo;
-    this.gui.put(1, InventoryUtil.createInventory(StaticItems.CHANGE_AMOUNT_TITLE, 6));
+    this.gui.put(1, InventoryUtil.createInventory(StaticItems.changeAmountTitle(), 6));
     this.build();
   }
 
@@ -42,8 +42,8 @@ public class AmountChangeGui extends Gui {
     Inventory inventory = gui.get(1);
     Material material = kitItem.get().getType();
 
-    inventory.setItem(45, StaticItems.CHANGE_AMOUNT_BACK_ICON);
-    inventory.setItem(18, StaticItems.CHANGE_CUSTOM_AMOUNT_ICON);
+    inventory.setItem(45, StaticItems.changeAmountBackIcon());
+    inventory.setItem(18, StaticItems.changeCustomAmountIcon());
 
     for (Map.Entry<Integer, Integer> entry : AMOUNTS.entrySet()) {
       if (material.getMaxStackSize() >= entry.getValue()) {
@@ -104,8 +104,8 @@ public class AmountChangeGui extends Gui {
                 })
             .text("#")
             .title(
-                StaticItems.CHANGE_CUSTOM_AMOUNT_TITLE.replace(
-                    "%max%", String.valueOf(maxStackSize)))
+                StaticItems.changeCustomAmountTitle()
+                    .replace("%max%", String.valueOf(maxStackSize)))
             .open(player);
         break;
       default:

@@ -12,14 +12,17 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public class ConfirmGui {
 
-  private static final ItemStack CANCEL_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis().getGuis().getValidationGui().getIcons().getCancel())
-          .get();
-  private static final ItemStack APPROVE_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis().getGuis().getValidationGui().getIcons().getApprove())
-          .get();
+  private static ItemStack cancelItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getValidationGui().getIcons().getCancel())
+        .get();
+  }
+
+  private static ItemStack approveItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getValidationGui().getIcons().getApprove())
+        .get();
+  }
 
   private final ConfirmGuiType type;
   private final String description;
@@ -43,9 +46,9 @@ public class ConfirmGui {
             PracticeConfig.guis().getGuis().getValidationGui().getTitle(), 1);
 
     for (int i = 0; i < 9; i++) {
-      inventory.setItem(i, CANCEL_ITEM);
+      inventory.setItem(i, cancelItem());
     }
-    inventory.setItem(4, APPROVE_ITEM);
+    inventory.setItem(4, approveItem());
   }
 
   public void openInventory(Player player) {

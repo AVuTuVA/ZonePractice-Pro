@@ -69,17 +69,21 @@ public class ArenaGuiSetupManager implements Listener {
   }
 
   public void loadGuis() {
-    Bukkit.getScheduler()
-        .runTaskAsynchronously(
-            AstralPractice.getInstance(),
-            () -> {
-              GuiManager.getInstance().addGui(new ArenaSummaryGui());
+    Bukkit.getScheduler().runTaskAsynchronously(AstralPractice.getInstance(), this::createGuis);
+  }
 
-              for (DisplayArena arena :
-                  new ArrayList<>(ArenaManager.getInstance().getArenaList())) {
-                buildArenaSetupGuis(arena);
-              }
-            });
+  /** Re-creates the summary and every arena's setup GUIs from the reloaded configuration. */
+  public void reloadGuis() {
+    arenaSetupGuis.clear();
+    createGuis();
+  }
+
+  private void createGuis() {
+    GuiManager.getInstance().addGui(new ArenaSummaryGui());
+
+    for (DisplayArena arena : new ArrayList<>(ArenaManager.getInstance().getArenaList())) {
+      buildArenaSetupGuis(arena);
+    }
   }
 
   public void removeArenaGuis(DisplayArena arena) {

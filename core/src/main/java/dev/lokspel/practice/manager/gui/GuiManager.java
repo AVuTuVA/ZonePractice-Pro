@@ -63,9 +63,9 @@ public class GuiManager implements Listener {
   @Getter private final Map<GuiType, Gui> guis = new HashMap<>();
   @Getter private final Map<Player, Gui> openGui = new HashMap<>();
 
-  @Getter
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  public static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  }
 
   @Getter
   private static final ItemStack DUMMY_ITEM =
@@ -88,6 +88,27 @@ public class GuiManager implements Listener {
   public Gui addGui(Gui gui) {
     guis.put(gui.getType(), gui);
     return gui;
+  }
+
+  /**
+   * Prepares the GUIs for reloaded configuration files: closes every open GUI, drops the cached
+   * pages and re-creates the GUIs this manager owns. The managers owning further GUIs re-create
+   * theirs afterwards.
+   */
+  public void reload() {
+    closeOpenGuis();
+    GuiCache.clearAll();
+
+    addGui(new SetupHubGui());
+  }
+
+  /** Closes the GUI of every player who has one open, so no inventory outlives its GUI. */
+  private void closeOpenGuis() {
+    // Closing fires the close event, which already detaches the player from the GUI.
+    for (Map.Entry<Player, Gui> entry : new HashMap<>(openGui).entrySet()) {
+      entry.getKey().closeInventory();
+      entry.getValue().close(entry.getKey());
+    }
   }
 
   @EventHandler

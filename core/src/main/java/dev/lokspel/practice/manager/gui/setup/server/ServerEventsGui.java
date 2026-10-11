@@ -52,7 +52,7 @@ public class ServerEventsGui extends Gui {
               eventSlots.clear();
 
               for (int i : new int[] {10, 11, 12, 13, 14, 15, 16}) {
-                inventory.setItem(i, GuiManager.getFILLER_ITEM());
+                inventory.setItem(i, GuiManager.fillerItem());
               }
 
               inventory.setItem(
@@ -102,7 +102,7 @@ public class ServerEventsGui extends Gui {
     if (inventory.getSize() <= slot) {
       return;
     }
-    if (item == GuiManager.getFILLER_ITEM()) {
+    if (item == GuiManager.fillerItem()) {
       return;
     }
 

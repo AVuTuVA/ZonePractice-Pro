@@ -52,7 +52,7 @@ public class ArenaCreateGui extends Gui {
     Inventory inventory = gui.get(1);
 
     for (int i = 0; i < inventory.getSize(); i++) {
-      inventory.setItem(i, GuiManager.getFILLER_ITEM());
+      inventory.setItem(i, GuiManager.fillerItem());
     }
 
     update();

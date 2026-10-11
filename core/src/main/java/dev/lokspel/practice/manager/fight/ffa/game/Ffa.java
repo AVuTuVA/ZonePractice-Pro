@@ -639,22 +639,25 @@ public class Ffa implements Spectatable, dev.lokspel.api.interfaces.Ffa {
     Bukkit.getPluginManager().callEvent(ffaSpectateEndEvent);
   }
 
-  private static final String BUILD_ON =
-      PracticeConfig.guis()
-          .getGuis()
-          .getSpectatorMenu()
-          .getIcons()
-          .getFfaIcon()
-          .getBuildStatus()
-          .getEnabled();
-  private static final String BUILD_OFF =
-      PracticeConfig.guis()
-          .getGuis()
-          .getSpectatorMenu()
-          .getIcons()
-          .getFfaIcon()
-          .getBuildStatus()
-          .getDisabled();
+  private static String buildOn() {
+    return PracticeConfig.guis()
+        .getGuis()
+        .getSpectatorMenu()
+        .getIcons()
+        .getFfaIcon()
+        .getBuildStatus()
+        .getEnabled();
+  }
+
+  private static String buildOff() {
+    return PracticeConfig.guis()
+        .getGuis()
+        .getSpectatorMenu()
+        .getIcons()
+        .getFfaIcon()
+        .getBuildStatus()
+        .getDisabled();
+  }
 
   @Override
   public GuiItem getSpectatorMenuItem() {
@@ -665,7 +668,7 @@ public class Ffa implements Spectatable, dev.lokspel.api.interfaces.Ffa {
         .replace("%players%", String.valueOf(players.size()))
         .replace("%spectators%", String.valueOf(spectators.size()))
         .replace("%arena%", arena.getDisplayName())
-        .replace("%build_status%", arena.isBuild() ? BUILD_ON : BUILD_OFF);
+        .replace("%build_status%", arena.isBuild() ? buildOn() : buildOff());
   }
 
   @Override

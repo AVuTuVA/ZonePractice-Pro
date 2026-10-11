@@ -29,8 +29,9 @@ import org.bukkit.inventory.ItemStack;
  */
 public class CosmeticsHubGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  }
 
   private static final int ROWS = 3;
   private static final int TRIMS_SLOT = 10;
@@ -59,7 +60,7 @@ public class CosmeticsHubGui extends Gui {
     Inventory inv = gui.get(1);
     inv.clear();
     for (int i = 0; i < inv.getSize(); i++) {
-      inv.setItem(i, FILLER_ITEM);
+      inv.setItem(i, fillerItem());
     }
 
     inv.setItem(TRIMS_SLOT, buildTrimsButton());

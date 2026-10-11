@@ -26,45 +26,52 @@ public class ServerArmorLobbyGui extends Gui {
 
   private final Gui backTo;
 
-  private static final ItemStack BACK_TO_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getServer()
-                  .getLobbyArmors()
-                  .getIcons()
-                  .getBackTo())
-          .get();
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getServer()
-                  .getLobbyArmors()
-                  .getIcons()
-                  .getFillerItem())
-          .get();
-  private static final ItemStack FILLER_ITEM2 =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSetup()
-                  .getServer()
-                  .getLobbyArmors()
-                  .getIcons()
-                  .getFillerItem2())
-          .get();
-  private static final GuiItem NAME_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getSetup()
-              .getServer()
-              .getLobbyArmors()
-              .getIcons()
-              .getNameItem());
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getServer()
+                .getLobbyArmors()
+                .getIcons()
+                .getBackTo())
+        .get();
+  }
+
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getServer()
+                .getLobbyArmors()
+                .getIcons()
+                .getFillerItem())
+        .get();
+  }
+
+  private static ItemStack fillerItem2() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSetup()
+                .getServer()
+                .getLobbyArmors()
+                .getIcons()
+                .getFillerItem2())
+        .get();
+  }
+
+  private static GuiItem nameItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getSetup()
+            .getServer()
+            .getLobbyArmors()
+            .getIcons()
+            .getNameItem());
+  }
 
   private static final List<Integer> helmetSlots = Arrays.asList(9, 11, 13, 15, 17);
   private static final List<Integer> chestplateSlots = Arrays.asList(18, 20, 22, 24, 26);
@@ -89,12 +96,12 @@ public class ServerArmorLobbyGui extends Gui {
     // Filler item
     for (int x : new int[] {1, 3, 5, 7}) {
       for (int y = 0; y < 6; y++) {
-        inventory.setItem(x + (y * 9), FILLER_ITEM);
+        inventory.setItem(x + (y * 9), fillerItem());
       }
     }
 
     // Back to item
-    inventory.setItem(45, BACK_TO_ITEM);
+    inventory.setItem(45, backToItem());
 
     this.update();
   }
@@ -112,7 +119,7 @@ public class ServerArmorLobbyGui extends Gui {
         switch (c) {
           case 0:
             inventory.setItem(
-                slot, NAME_ITEM.cloneItem().replace("%inventoryName%", type.getName()).get());
+                slot, nameItem().cloneItem().replace("%inventoryName%", type.getName()).get());
             break;
           case 1:
             inventory.setItem(slot, inv.getInvArmor().getHelmet());
@@ -128,7 +135,7 @@ public class ServerArmorLobbyGui extends Gui {
             break;
           case 5:
             if (column != 0) {
-              inventory.setItem(slot, FILLER_ITEM2);
+              inventory.setItem(slot, fillerItem2());
             }
             break;
 

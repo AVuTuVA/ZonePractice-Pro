@@ -33,10 +33,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class PartySplitGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis().getGuis().getParty().getPartySplit().getIcons().getFillerItem())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getParty().getPartySplit().getIcons().getFillerItem())
+        .get();
+  }
 
   private static final int BACK_SLOT = 45;
   private static final int RANDOM_SPLIT_SLOT = 49;
@@ -70,7 +71,7 @@ public class PartySplitGui extends Gui {
   @Override
   public void build() {
     for (int i = 0; i < gui.get(1).getSize(); i++) {
-      gui.get(1).setItem(i, FILLER_ITEM);
+      gui.get(1).setItem(i, fillerItem());
     }
 
     update();
@@ -81,7 +82,7 @@ public class PartySplitGui extends Gui {
     Inventory inventory = gui.get(1);
 
     for (int i = 0; i < 45; i++) {
-      inventory.setItem(i, FILLER_ITEM);
+      inventory.setItem(i, fillerItem());
     }
 
     inventory.setItem(

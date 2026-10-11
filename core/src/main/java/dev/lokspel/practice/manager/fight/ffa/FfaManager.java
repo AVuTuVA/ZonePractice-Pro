@@ -30,9 +30,15 @@ public class FfaManager {
     return instance;
   }
 
-  private final FfaArenaSelectorGui arenaSelectorGui;
+  private FfaArenaSelectorGui arenaSelectorGui;
 
   private FfaManager() {
+    this.arenaSelectorGui = new FfaArenaSelectorGui();
+    GuiManager.getInstance().addGui(this.arenaSelectorGui);
+  }
+
+  /** Re-creates the arena selector from the reloaded configuration. */
+  public void reloadGuis() {
     this.arenaSelectorGui = new FfaArenaSelectorGui();
     GuiManager.getInstance().addGui(this.arenaSelectorGui);
   }

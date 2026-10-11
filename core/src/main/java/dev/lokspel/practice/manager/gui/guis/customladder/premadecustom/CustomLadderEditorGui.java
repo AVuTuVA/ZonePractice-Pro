@@ -43,16 +43,16 @@ import org.jetbrains.annotations.Nullable;
 
 public class CustomLadderEditorGui extends Gui {
 
-  @Getter
-  private static final ItemStack fillerItem =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getKitEditor()
-                  .getKitEditor()
-                  .getIcons()
-                  .getFillerItem())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getKitEditor()
+                .getKitEditor()
+                .getIcons()
+                .getFillerItem())
+        .get();
+  }
 
   @Getter private final Profile profile;
   @Getter private final NormalLadder ladder;
@@ -170,7 +170,7 @@ public class CustomLadderEditorGui extends Gui {
 
     // Frame
     for (int i : new int[] {1, 3, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 28, 37, 46}) {
-      inventory.setItem(i, GuiManager.getFILLER_ITEM());
+      inventory.setItem(i, GuiManager.fillerItem());
     }
 
     inventory.setItem(2, getRankedItem());
@@ -234,7 +234,7 @@ public class CustomLadderEditorGui extends Gui {
 
     for (int i = 0; i < inventory.getSize(); i++) {
       if (inventory.getItem(i) == null && !NULL_SLOTS.contains(i)) {
-        inventory.setItem(i, fillerItem);
+        inventory.setItem(i, fillerItem());
       }
     }
 
@@ -352,7 +352,7 @@ public class CustomLadderEditorGui extends Gui {
         || (29 <= slot && slot <= 35)
         || (38 <= slot && slot <= 44)
         || (47 <= slot && slot <= 53)) {
-      if (item != null && !item.getType().equals(Material.AIR) && !item.equals(fillerItem)) {
+      if (item != null && !item.getType().equals(Material.AIR) && !item.equals(fillerItem())) {
         player.setItemOnCursor(item);
       }
     }
@@ -380,26 +380,26 @@ public class CustomLadderEditorGui extends Gui {
       if (boots != null
           && (boots.getType().equals(Material.AIR)
               || boots.equals(GuiManager.getDUMMY_ITEM())
-              || boots.equals(fillerItem))) {
+              || boots.equals(fillerItem()))) {
         boots = null;
       }
       if (leggings != null
           && (leggings.getType().equals(Material.AIR)
               || leggings.equals(GuiManager.getDUMMY_ITEM())
-              || leggings.equals(fillerItem))) {
+              || leggings.equals(fillerItem()))) {
         leggings = null;
       }
       if (chestplate != null
           && (chestplate.getType().equals(Material.AIR)
               || chestplate.equals(GuiManager.getDUMMY_ITEM())
-              || chestplate.equals(fillerItem))) {
+              || chestplate.equals(fillerItem()))) {
         chestplate = null;
       }
       ItemStack helmet = guiInventory.getItem(18);
       if (helmet != null
           && (helmet.getType().equals(Material.AIR)
               || helmet.equals(GuiManager.getDUMMY_ITEM())
-              || helmet.equals(fillerItem))) {
+              || helmet.equals(fillerItem()))) {
         helmet = null;
       }
 
@@ -410,7 +410,7 @@ public class CustomLadderEditorGui extends Gui {
       if (extraItem != null
           && (extraItem.getType().equals(Material.AIR)
               || extraItem.equals(GuiManager.getDUMMY_ITEM())
-              || extraItem.equals(fillerItem))) {
+              || extraItem.equals(fillerItem()))) {
         extraItem = null;
       }
       customKit.setExtra(new ItemStack[] {extraItem});
@@ -463,7 +463,7 @@ public class CustomLadderEditorGui extends Gui {
   private @Nullable ItemStack getRankedItem() {
     switch (ladder.getWeightClass()) {
       case UNRANKED, RANKED:
-        return GuiManager.getFILLER_ITEM();
+        return GuiManager.fillerItem();
       case UNRANKED_AND_RANKED:
         if (this.ranked) {
           return BackendUtil.getGuiItem(
@@ -490,7 +490,7 @@ public class CustomLadderEditorGui extends Gui {
       default:
         break;
     }
-    return GuiManager.getFILLER_ITEM();
+    return GuiManager.fillerItem();
   }
 
   private ItemStack getEffectItem() {

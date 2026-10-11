@@ -37,29 +37,45 @@ public class ArmorTrimMainGui extends Gui {
   private static final int INFO_SLOT = 30;
   private static final int APPLY_ALL_SLOT = 32;
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
-  private static final GuiItem HELMET_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getHelmetIcon());
-  private static final GuiItem CHESTPLATE_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getChestplateIcon());
-  private static final GuiItem LEGGINGS_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getLeggingsIcon());
-  private static final GuiItem BOOTS_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBootsIcon());
-  private static final GuiItem INFO_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getInfoIcon());
-  private static final GuiItem APPLY_ALL_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getCosmetics().getIcons().getApplyAllTiers());
-  private static final ItemStack BACK_TO_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  }
+
+  private static GuiItem helmetItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getCosmetics().getIcons().getHelmetIcon());
+  }
+
+  private static GuiItem chestplateItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getCosmetics().getIcons().getChestplateIcon());
+  }
+
+  private static GuiItem leggingsItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getCosmetics().getIcons().getLeggingsIcon());
+  }
+
+  private static GuiItem bootsItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBootsIcon());
+  }
+
+  private static GuiItem infoItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getCosmetics().getIcons().getInfoIcon());
+  }
+
+  private static GuiItem applyAllItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getCosmetics().getIcons().getApplyAllTiers());
+  }
+
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+        .get();
+  }
 
   private static final ArmorSlot[] ARMOR_TYPE_SLOTS = {
     ArmorSlot.HELMET, ArmorSlot.CHESTPLATE, ArmorSlot.LEGGINGS, ArmorSlot.BOOTS
@@ -91,7 +107,7 @@ public class ArmorTrimMainGui extends Gui {
     inventory.clear();
 
     for (int i = 0; i < inventory.getSize(); i++) {
-      inventory.setItem(i, FILLER_ITEM);
+      inventory.setItem(i, fillerItem());
     }
 
     ArmorTrimTier activeTier = profile.getCosmeticsData().getActiveTier();
@@ -107,17 +123,17 @@ public class ArmorTrimMainGui extends Gui {
     }
 
     inventory.setItem(
-        HELMET_SLOT, buildArmorPreviewItem(HELMET_ITEM, activeTier, ArmorSlot.HELMET));
+        HELMET_SLOT, buildArmorPreviewItem(helmetItem(), activeTier, ArmorSlot.HELMET));
     inventory.setItem(
-        CHESTPLATE_SLOT, buildArmorPreviewItem(CHESTPLATE_ITEM, activeTier, ArmorSlot.CHESTPLATE));
+        CHESTPLATE_SLOT, buildArmorPreviewItem(chestplateItem(), activeTier, ArmorSlot.CHESTPLATE));
     inventory.setItem(
-        LEGGINGS_SLOT, buildArmorPreviewItem(LEGGINGS_ITEM, activeTier, ArmorSlot.LEGGINGS));
-    inventory.setItem(BOOTS_SLOT, buildArmorPreviewItem(BOOTS_ITEM, activeTier, ArmorSlot.BOOTS));
+        LEGGINGS_SLOT, buildArmorPreviewItem(leggingsItem(), activeTier, ArmorSlot.LEGGINGS));
+    inventory.setItem(BOOTS_SLOT, buildArmorPreviewItem(bootsItem(), activeTier, ArmorSlot.BOOTS));
     inventory.setItem(INFO_SLOT, buildTierToggleItem(activeTier));
     inventory.setItem(APPLY_ALL_SLOT, buildApplyToAllTiersItem());
 
     if (backToGui != null) {
-      ItemStack backItem = BACK_TO_ITEM == null ? new ItemStack(Material.ARROW) : BACK_TO_ITEM;
+      ItemStack backItem = backToItem() == null ? new ItemStack(Material.ARROW) : backToItem();
       inventory.setItem(BACK_SLOT, backItem);
     }
 
@@ -228,7 +244,7 @@ public class ArmorTrimMainGui extends Gui {
   }
 
   private ItemStack buildTierToggleItem(ArmorTrimTier activeTier) {
-    GuiItem guiItem = INFO_ITEM.cloneItem();
+    GuiItem guiItem = infoItem().cloneItem();
     guiItem.setMaterial(
         guiItem.getMaterial() == null ? Material.NETHER_STAR : guiItem.getMaterial());
 
@@ -274,7 +290,7 @@ public class ArmorTrimMainGui extends Gui {
   }
 
   private ItemStack buildApplyToAllTiersItem() {
-    GuiItem guiItem = APPLY_ALL_ITEM.cloneItem();
+    GuiItem guiItem = applyAllItem().cloneItem();
     guiItem.setMaterial(
         guiItem.getMaterial() == null ? Material.SMITHING_TABLE : guiItem.getMaterial());
 

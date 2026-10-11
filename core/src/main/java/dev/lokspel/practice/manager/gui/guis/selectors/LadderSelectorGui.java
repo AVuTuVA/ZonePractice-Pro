@@ -46,23 +46,27 @@ public class LadderSelectorGui extends Gui {
   private final int spaces = 45;
   private final Map<Integer, Map<Integer, Ladder>> ladderSlots = new HashMap<>();
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSelectors()
-                  .getLadderSelector()
-                  .getIcons()
-                  .getFillerItem())
-          .get();
-  private static final GuiItem CUSTOM_PLAYER_KIT_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getSelectors()
-              .getLadderSelector()
-              .getIcons()
-              .getBaseCustomPlayerKitIcon());
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSelectors()
+                .getLadderSelector()
+                .getIcons()
+                .getFillerItem())
+        .get();
+  }
+
+  private static GuiItem customPlayerKitItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getSelectors()
+            .getLadderSelector()
+            .getIcons()
+            .getBaseCustomPlayerKitIcon());
+  }
+
   private static final int CUSTOM_KIT_SLOT = 53;
   private static final int PAGE_LEFT_SLOT = 45;
   private static final int PAGE_RIGHT_SLOT = 49;
@@ -110,7 +114,7 @@ public class LadderSelectorGui extends Gui {
       newGui.put(page, inventory);
 
       for (int i = 45; i < 54; i++) {
-        inventory.setItem(i, FILLER_ITEM);
+        inventory.setItem(i, fillerItem());
       }
 
       Map<Integer, Ladder> pageSlots = new HashMap<>();
@@ -153,13 +157,13 @@ public class LadderSelectorGui extends Gui {
       }
 
       if (profile.getSelectedCustomLadder() != null || isPartyCustomKitSelector()) {
-        GuiItem customPlayerKitItem = CUSTOM_PLAYER_KIT_ITEM.cloneItem();
+        GuiItem customPlayerKitItem = customPlayerKitItem().cloneItem();
         CustomLadder selectedCustomLadder = profile.getSelectedCustomLadder();
         ItemStack ladderIcon = selectedCustomLadder != null ? selectedCustomLadder.getIcon() : null;
         if (ladderIcon != null) {
           // TODO: Custom ladder icon with name
           if (customPlayerKitItem.getName() == null) {
-            customPlayerKitItem.setName(CUSTOM_PLAYER_KIT_ITEM.getName());
+            customPlayerKitItem.setName(customPlayerKitItem().getName());
           }
 
           customPlayerKitItem.setBaseItem(ladderIcon);
@@ -176,7 +180,7 @@ public class LadderSelectorGui extends Gui {
 
       ItemStack left =
           page == 1
-              ? FILLER_ITEM
+              ? fillerItem()
               : BackendUtil.getGuiItem(
                       PracticeConfig.guis()
                           .getGuis()
@@ -199,7 +203,7 @@ public class LadderSelectorGui extends Gui {
                           .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
-              : FILLER_ITEM;
+              : fillerItem();
       inventory.setItem(PAGE_RIGHT_SLOT, right);
     }
 
@@ -224,7 +228,7 @@ public class LadderSelectorGui extends Gui {
     if (currentItem == null) {
       return;
     }
-    if (currentItem.equals(FILLER_ITEM)) {
+    if (currentItem.equals(fillerItem())) {
       return;
     }
 

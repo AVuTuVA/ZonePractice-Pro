@@ -46,7 +46,7 @@ public class ServerSaveGui extends Gui {
               Inventory inventory = gui.get(1);
 
               for (int i : new int[] {1, 2}) {
-                inventory.setItem(i, GuiManager.getFILLER_ITEM());
+                inventory.setItem(i, GuiManager.fillerItem());
               }
               inventory.setItem(
                   0,

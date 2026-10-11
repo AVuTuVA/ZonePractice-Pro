@@ -72,7 +72,7 @@ public class ProfileLadderStats extends Gui {
       newGui.put(page, inventory);
 
       for (int i = 45; i < 54; i++) {
-        inventory.setItem(i, GuiManager.getFILLER_ITEM());
+        inventory.setItem(i, GuiManager.fillerItem());
       }
 
       Map<Integer, NormalLadder> pageSlots = new HashMap<>();
@@ -113,7 +113,7 @@ public class ProfileLadderStats extends Gui {
                           .getPageLeft())
                   .replace("%page%", String.valueOf(page - 1))
                   .get()
-              : GuiManager.getFILLER_ITEM());
+              : GuiManager.fillerItem());
       inventory.setItem(
           47,
           PageUtil.isPageValid(ladders.size(), page + 1, spaces)
@@ -126,7 +126,7 @@ public class ProfileLadderStats extends Gui {
                           .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
-              : GuiManager.getFILLER_ITEM());
+              : GuiManager.fillerItem());
 
       inventory.setItem(
           49,

@@ -28,24 +28,24 @@ public class PotionsGui extends Gui {
 
   @Override
   public void build() {
-    Inventory drinkableInv = InventoryUtil.createInventory(StaticItems.POTIONS_GUI_TITLE, 6);
+    Inventory drinkableInv = InventoryUtil.createInventory(StaticItems.potionsGuiTitle(), 6);
     this.gui.put(1, drinkableInv);
     setIcons(
         drinkableInv,
-        StaticItems.POTIONS_GUI_SWITCH_SPLASH_ICON,
-        StaticItems.POTIONS_GUI_DRINKABLE_POTIONS);
+        StaticItems.potionsGuiSwitchSplashIcon(),
+        StaticItems.potionsGuiDrinkablePotions());
 
-    Inventory splashInv = InventoryUtil.createInventory(StaticItems.POTIONS_GUI_TITLE, 6);
+    Inventory splashInv = InventoryUtil.createInventory(StaticItems.potionsGuiTitle(), 6);
     this.gui.put(2, splashInv);
     setIcons(
         splashInv,
-        StaticItems.POTIONS_GUI_SWITCH_DRINKABLE_ICON,
-        StaticItems.POTIONS_GUI_SPLASH_POTIONS);
+        StaticItems.potionsGuiSwitchDrinkableIcon(),
+        StaticItems.potionsGuiSplashPotions());
   }
 
   private static void setIcons(
       final Inventory inventory, final ItemStack switchItem, final List<ItemStack> potionItems) {
-    inventory.setItem(45, StaticItems.POTIONS_GUI_BACK_ICON);
+    inventory.setItem(45, StaticItems.potionsGuiBackIcon());
     inventory.setItem(49, switchItem);
 
     for (ItemStack itemStack : potionItems) {

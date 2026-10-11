@@ -32,24 +32,27 @@ import org.bukkit.inventory.ItemStack;
 
 public class ArenaSelectorGui extends MatchStarterGui {
 
-  private static final ItemStack BACK_TO_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSelectors()
-                  .getArenaSelector()
-                  .getIcons()
-                  .getBackToSelector())
-          .get();
-  private static final ItemStack RANDOM_ARENA_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getSelectors()
-                  .getArenaSelector()
-                  .getIcons()
-                  .getRandomArena())
-          .get();
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSelectors()
+                .getArenaSelector()
+                .getIcons()
+                .getBackToSelector())
+        .get();
+  }
+
+  private static ItemStack randomArenaItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getSelectors()
+                .getArenaSelector()
+                .getIcons()
+                .getRandomArena())
+        .get();
+  }
 
   private final int spaces = 45;
   private final Map<Integer, Map<Integer, Arena>> arenaIcons = new HashMap<>();
@@ -93,7 +96,7 @@ public class ArenaSelectorGui extends MatchStarterGui {
 
       // Frame
       for (int i : new int[] {45, 46, 47, 48, 49, 50, 51, 52, 53}) {
-        inventory.setItem(i, GuiManager.getFILLER_ITEM());
+        inventory.setItem(i, GuiManager.fillerItem());
       }
 
       Map<Integer, Arena> pageSlots = new HashMap<>();
@@ -138,7 +141,7 @@ public class ArenaSelectorGui extends MatchStarterGui {
 
       ItemStack left =
           page == 1
-              ? BACK_TO_ITEM
+              ? backToItem()
               : BackendUtil.getGuiItem(
                       PracticeConfig.guis()
                           .getGuis()
@@ -150,7 +153,7 @@ public class ArenaSelectorGui extends MatchStarterGui {
                   .get();
       inventory.setItem(45, left);
 
-      inventory.setItem(49, RANDOM_ARENA_ITEM);
+      inventory.setItem(49, randomArenaItem());
 
       ItemStack right =
           PageUtil.isPageValid(arenas.size(), page + 1, spaces)
@@ -163,7 +166,7 @@ public class ArenaSelectorGui extends MatchStarterGui {
                           .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
-              : GuiManager.getFILLER_ITEM();
+              : GuiManager.fillerItem();
       inventory.setItem(53, right);
     }
 
@@ -186,7 +189,7 @@ public class ArenaSelectorGui extends MatchStarterGui {
     if (currentItem == null) {
       return;
     }
-    if (currentItem.equals(GuiManager.getFILLER_ITEM())) {
+    if (currentItem.equals(GuiManager.fillerItem())) {
       return;
     }
 

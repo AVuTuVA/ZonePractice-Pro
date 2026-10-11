@@ -23,15 +23,16 @@ import org.bukkit.inventory.ItemStack;
 
 public class LbSelectorGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getStatistics()
-                  .getSelector()
-                  .getIcons()
-                  .getFillerItem())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getStatistics()
+                .getSelector()
+                .getIcons()
+                .getFillerItem())
+        .get();
+  }
 
   @Getter private static LbEloGui sharedLbEloGui;
   @Getter private static LbWinGui sharedLbWinGui;
@@ -40,6 +41,12 @@ public class LbSelectorGui extends Gui {
   private final Profile profile;
 
   private final LbProfileStatGui lbProfileStatGui;
+
+  /** Drops the shared leaderboards, the next selector creates them from the current files. */
+  public static void resetSharedGuis() {
+    sharedLbEloGui = null;
+    sharedLbWinGui = null;
+  }
 
   public LbSelectorGui(Player opener, Profile profile) {
     super(GuiType.Leaderboard_Selector);
@@ -68,7 +75,7 @@ public class LbSelectorGui extends Gui {
     Inventory inventory = gui.get(1);
 
     for (int i = 0; i < inventory.getSize(); i++) {
-      inventory.setItem(i, FILLER_ITEM);
+      inventory.setItem(i, fillerItem());
     }
 
     update();

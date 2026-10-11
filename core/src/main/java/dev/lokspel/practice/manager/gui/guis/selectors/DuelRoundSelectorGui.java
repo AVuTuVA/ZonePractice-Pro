@@ -40,52 +40,63 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
     }
   }
 
-  private static final ItemStack BACK_TO_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getKitEditor()
-                  .getDuelRoundSelector()
-                  .getIcons()
-                  .getBackTo())
-          .get();
-  private static final GuiItem ROUND_SELECTOR =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getKitEditor()
-              .getDuelRoundSelector()
-              .getIcons()
-              .getRoundSelector());
-  private static final GuiItem SHOW_LADDER =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getKitEditor()
-              .getDuelRoundSelector()
-              .getIcons()
-              .getShowLadder());
-  private static final GuiItem SHOW_ARENA =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis()
-              .getGuis()
-              .getKitEditor()
-              .getDuelRoundSelector()
-              .getIcons()
-              .getShowArena());
-  private static final ItemStack START_MATCH_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getKitEditor()
-                  .getDuelRoundSelector()
-                  .getIcons()
-                  .getStartMatch())
-          .get();
-  private static final ItemStack TEAM_SETUP_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis().getGuis().getParty().getPartySplit().getIcons().getTeamSetup())
-          .get();
+  private static ItemStack backToItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getKitEditor()
+                .getDuelRoundSelector()
+                .getIcons()
+                .getBackTo())
+        .get();
+  }
+
+  private static GuiItem roundSelector() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getKitEditor()
+            .getDuelRoundSelector()
+            .getIcons()
+            .getRoundSelector());
+  }
+
+  private static GuiItem showLadder() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getKitEditor()
+            .getDuelRoundSelector()
+            .getIcons()
+            .getShowLadder());
+  }
+
+  private static GuiItem showArena() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis()
+            .getGuis()
+            .getKitEditor()
+            .getDuelRoundSelector()
+            .getIcons()
+            .getShowArena());
+  }
+
+  private static ItemStack startMatchItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getKitEditor()
+                .getDuelRoundSelector()
+                .getIcons()
+                .getStartMatch())
+        .get();
+  }
+
+  private static ItemStack teamSetupItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getParty().getPartySplit().getIcons().getTeamSetup())
+        .get();
+  }
 
   private final Party party;
   private Arena arena;
@@ -111,9 +122,9 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
   public void build() {
     Inventory inventory = gui.get(1);
 
-    inventory.setItem(0, BACK_TO_ITEM);
+    inventory.setItem(0, backToItem());
 
-    GuiItem ladderIconItem = SHOW_LADDER.cloneItem();
+    GuiItem ladderIconItem = showLadder().cloneItem();
     if (ladder.getIcon() != null) {
       ladderIconItem.setBaseItem(ladder.getIcon());
     }
@@ -121,7 +132,7 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
     inventory.setItem(5, ladderIconItem.replace("%ladder%", ladder.getDisplayName()).get());
 
     if (arena != null) {
-      GuiItem arenaIconItem = SHOW_ARENA.cloneItem();
+      GuiItem arenaIconItem = showArena().cloneItem();
       if (arena.getIcon() != null) {
         arenaIconItem.setBaseItem(arena.getIcon());
       }
@@ -132,8 +143,8 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
     inventory.setItem(
         8,
         matchType.equals(MatchType.PARTY_SPLIT) && party != null && party.getMembers().size() > 2
-            ? TEAM_SETUP_ITEM
-            : START_MATCH_ITEM);
+            ? teamSetupItem()
+            : startMatchItem());
 
     update();
   }
@@ -143,7 +154,7 @@ public class DuelRoundSelectorGui extends MatchStarterGui {
     gui.get(1)
         .setItem(
             3,
-            ROUND_SELECTOR
+            roundSelector()
                 .cloneItem()
                 .replace("%rounds%", String.valueOf(rounds))
                 .replace("%recommended_rounds%", String.valueOf(ladder.getRounds()))

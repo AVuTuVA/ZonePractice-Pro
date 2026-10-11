@@ -32,6 +32,7 @@ import dev.lokspel.practice.manager.fight.event.interfaces.EventListenerInterfac
 import dev.lokspel.practice.manager.fight.event.setup.EventWandSetupManager;
 import dev.lokspel.practice.manager.fight.match.util.TitleUtil;
 import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.guis.EventHostGui;
 import dev.lokspel.practice.manager.gui.setup.event.EventSetupManager;
 import dev.lokspel.practice.manager.profile.Profile;
@@ -134,6 +135,19 @@ public class EventManager {
 
     // Initialize the wand-based setup manager
     EventWandSetupManager.getInstance();
+  }
+
+  /**
+   * Re-creates the host GUI and the event setup GUIs from the reloaded configuration. Does nothing
+   * while the event data is still loading, the GUIs are created once it is done.
+   */
+  public void reloadGuis() {
+    if (GuiManager.getInstance().searchGui(GuiType.Event_Host) == null) {
+      return;
+    }
+
+    GuiManager.getInstance().addGui(new EventHostGui());
+    EventSetupManager.getInstance().reloadGuis();
   }
 
   public void endEvents() {

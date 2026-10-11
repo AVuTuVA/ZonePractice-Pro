@@ -35,11 +35,17 @@ public class SpectatorManager {
 
   private static final Random random = new Random();
   private final Map<Player, Spectatable> spectators = new HashMap<>();
-  private final SpectatorMenuGui spectatorMenuGui;
+  private SpectatorMenuGui spectatorMenuGui;
 
   private SpectatorManager() {
     Bukkit.getPluginManager().registerEvents(new SpectatorListener(), AstralPractice.getInstance());
 
+    this.spectatorMenuGui =
+        (SpectatorMenuGui) GuiManager.getInstance().addGui(new SpectatorMenuGui());
+  }
+
+  /** Re-creates the spectator menu from the reloaded configuration. */
+  public void reloadGuis() {
     this.spectatorMenuGui =
         (SpectatorMenuGui) GuiManager.getInstance().addGui(new SpectatorMenuGui());
   }

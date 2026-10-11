@@ -33,11 +33,15 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ShieldLayoutListGui extends Gui {
 
-  private static final ItemStack FILLER =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
-  private static final ItemStack BACK =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
-          .get();
+  private static ItemStack filler() {
+    return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  }
+
+  private static ItemStack backItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+        .get();
+  }
 
   private static final int ROWS = 6;
   private static final int BACK_SLOT = 45;
@@ -75,7 +79,7 @@ public class ShieldLayoutListGui extends Gui {
       if (isLayoutSlot(i)) {
         continue;
       }
-      inv.setItem(i, FILLER);
+      inv.setItem(i, filler());
     }
 
     List<ShieldLayout> layouts = profile.getCosmeticsData().getShieldLayouts();
@@ -108,7 +112,7 @@ public class ShieldLayoutListGui extends Gui {
     newItem.setLore(newLore);
     inv.setItem(NEW_SLOT, newItem.get());
 
-    inv.setItem(BACK_SLOT, BACK != null ? BACK : new ItemStack(Material.ARROW));
+    inv.setItem(BACK_SLOT, backItem() != null ? backItem() : new ItemStack(Material.ARROW));
     updatePlayers();
   }
 

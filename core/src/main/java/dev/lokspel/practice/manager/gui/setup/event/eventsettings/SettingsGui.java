@@ -46,7 +46,7 @@ public class SettingsGui extends Gui {
   public void build() {
     // Frame
     for (int i = 0; i < gui.get(1).getSize(); i++) {
-      gui.get(1).setItem(i, GuiManager.getFILLER_ITEM());
+      gui.get(1).setItem(i, GuiManager.fillerItem());
     }
 
     // Back to Ladder Gui Icon
@@ -107,7 +107,7 @@ public class SettingsGui extends Gui {
     if (item == null) {
       return;
     }
-    if (item.equals(GuiManager.getFILLER_ITEM())) {
+    if (item.equals(GuiManager.fillerItem())) {
       return;
     }
 

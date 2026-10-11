@@ -5,14 +5,24 @@ import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.util.ArenaWorldUtil;
 import dev.lokspel.practice.manager.backend.BackendManager;
 import dev.lokspel.practice.manager.division.DivisionManager;
+import dev.lokspel.practice.manager.fight.event.EventManager;
+import dev.lokspel.practice.manager.fight.ffa.FfaManager;
 import dev.lokspel.practice.manager.fight.match.util.EloMode;
+import dev.lokspel.practice.manager.gui.GuiManager;
+import dev.lokspel.practice.manager.gui.guis.leaderboard.LbSelectorGui;
+import dev.lokspel.practice.manager.gui.setup.arena.ArenaGuiSetupManager;
+import dev.lokspel.practice.manager.gui.setup.hologram.HologramSetupManager;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
+import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.nametag.NametagManager;
+import dev.lokspel.practice.manager.party.PartyManager;
+import dev.lokspel.practice.manager.playerkit.PlayerKitManager;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
 import dev.lokspel.practice.manager.queue.QueueManager;
 import dev.lokspel.practice.manager.sidebar.SidebarManager;
+import dev.lokspel.practice.manager.spectator.SpectatorManager;
 import dev.lokspel.practice.util.CombatLogUtil;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.GoldenHead;
@@ -281,12 +291,41 @@ public class ServerManager implements Listener {
       SidebarManager.getInstance().reloadSidebarConfig();
       goldenHead.reload();
       NametagManager.getInstance().reload();
+      // A failed configuration reload keeps the GUIs built from the previous values.
+      if (configurationReloaded) {
+        reloadGuis();
+      }
+
       return configurationReloaded;
     } catch (Exception e) {
       Common.sendConsoleMmMessage(
           "<red>Failed to reload practice files: " + PracticeConfig.describeFailure(e));
       return false;
     }
+  }
+
+  /**
+   * Re-creates the GUIs that live across opens, so they show the reloaded files. Open GUIs are
+   * closed for their viewers. Skipped while the plugin is still starting, the GUIs are created from
+   * the reloaded files once their data has loaded.
+   */
+  private void reloadGuis() {
+    if (!AstralPractice.isFullyLoaded()) {
+      return;
+    }
+
+    // Runs first: it needs to know which kit editors are open.
+    PlayerKitManager.getInstance().reloadGuis();
+    GuiManager.getInstance().reload();
+    LbSelectorGui.resetSharedGuis();
+    LadderManager.getInstance().reloadGuis();
+    ArenaGuiSetupManager.getInstance().reloadGuis();
+    HologramSetupManager.getInstance().reloadGuis();
+    EventManager.getInstance().reloadGuis();
+    FfaManager.getInstance().reloadGuis();
+    PartyManager.getInstance().reloadGuis();
+    SpectatorManager.getInstance().reloadGuis();
+    ProfileManager.getInstance().reloadSettingsGuis();
   }
 
   public void onPlayerQuit(Player player) {

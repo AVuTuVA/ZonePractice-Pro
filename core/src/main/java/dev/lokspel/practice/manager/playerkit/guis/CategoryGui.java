@@ -22,9 +22,17 @@ import org.bukkit.inventory.ItemStack;
 
 public class CategoryGui extends Gui {
 
-  private static final int ITEMS_PER_PAGE = (StaticItems.CATEGORY_GUI_PAGE_SIZE - 1) * 9;
-  private static final int LEFT_NAV_SLOT = (StaticItems.CATEGORY_GUI_PAGE_SIZE - 1) * 9;
-  private static final int RIGHT_NAV_SLOT = (StaticItems.CATEGORY_GUI_PAGE_SIZE * 9) - 1;
+  private static int itemsPerPage() {
+    return (StaticItems.categoryGuiPageSize() - 1) * 9;
+  }
+
+  private static int leftNavSlot() {
+    return (StaticItems.categoryGuiPageSize() - 1) * 9;
+  }
+
+  private static int rightNavSlot() {
+    return (StaticItems.categoryGuiPageSize() * 9) - 1;
+  }
 
   private final String title;
   private final List<ItemStack> items = new ArrayList<>();
@@ -50,20 +58,19 @@ public class CategoryGui extends Gui {
   public void update() {
     int page = 1;
     do {
-      Inventory inventory =
-          InventoryUtil.createInventory(title, StaticItems.CATEGORY_GUI_PAGE_SIZE);
+      Inventory inventory = InventoryUtil.createInventory(title, StaticItems.categoryGuiPageSize());
       this.gui.put(page, inventory);
-      List<ItemStack> pageItems = PageUtil.getPageItems(items, page, ITEMS_PER_PAGE);
+      List<ItemStack> pageItems = PageUtil.getPageItems(items, page, itemsPerPage());
 
       if (page == 1) {
-        inventory.setItem(LEFT_NAV_SLOT, StaticItems.CATEGORY_GUI_PAGE_BACK_ICON.get());
+        inventory.setItem(leftNavSlot(), StaticItems.categoryGuiPageBackIcon().get());
       } else {
-        inventory.setItem(LEFT_NAV_SLOT, StaticItems.CATEGORY_GUI_PAGE_PREVIOUS_ICON.get());
+        inventory.setItem(leftNavSlot(), StaticItems.categoryGuiPagePreviousIcon().get());
       }
 
-      if (PageUtil.getMaxPage(items, ITEMS_PER_PAGE) > 1
-          && PageUtil.isPageValid(items, page + 1, ITEMS_PER_PAGE)) {
-        inventory.setItem(RIGHT_NAV_SLOT, StaticItems.CATEGORY_GUI_PAGE_NEXT_ICON.get());
+      if (PageUtil.getMaxPage(items, itemsPerPage()) > 1
+          && PageUtil.isPageValid(items, page + 1, itemsPerPage())) {
+        inventory.setItem(rightNavSlot(), StaticItems.categoryGuiPageNextIcon().get());
       }
 
       for (int i = 0; i < pageItems.size(); i++) {
@@ -71,7 +78,7 @@ public class CategoryGui extends Gui {
       }
 
       page++;
-    } while (PageUtil.isPageValid(items, page, ITEMS_PER_PAGE));
+    } while (PageUtil.isPageValid(items, page, itemsPerPage()));
 
     updatePlayers();
   }
@@ -91,11 +98,11 @@ public class CategoryGui extends Gui {
       return;
     }
 
-    if (slot == LEFT_NAV_SLOT && page == 1) {
+    if (slot == leftNavSlot() && page == 1) {
       GuiManager.getInstance().searchGui(GuiType.PlayerCustom_Category).open(player);
-    } else if (slot == RIGHT_NAV_SLOT && gui.containsKey(page + 1)) {
+    } else if (slot == rightNavSlot() && gui.containsKey(page + 1)) {
       open(player, page + 1);
-    } else if (slot == LEFT_NAV_SLOT && gui.containsKey(page - 1)) {
+    } else if (slot == leftNavSlot() && gui.containsKey(page - 1)) {
       open(player, page - 1);
     } else {
       ItemStack item = gui.get(page).getItem(slot);

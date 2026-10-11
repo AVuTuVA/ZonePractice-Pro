@@ -19,13 +19,16 @@ import org.bukkit.inventory.ItemStack;
 
 public class LadderSelector extends Gui {
 
-  private static final GuiItem LADDER_ITEM =
-      BackendUtil.getGuiItem(
-          PracticeConfig.guis().getGuis().getFfa().getLadderSelector().getIcons().getLadder());
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis().getGuis().getFfa().getLadderSelector().getIcons().getFiller())
-          .get();
+  private static GuiItem ladderItem() {
+    return BackendUtil.getGuiItem(
+        PracticeConfig.guis().getGuis().getFfa().getLadderSelector().getIcons().getLadder());
+  }
+
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getFfa().getLadderSelector().getIcons().getFiller())
+        .get();
+  }
 
   private final Ffa ffa;
   private final FfaArena ffaArena;
@@ -55,7 +58,7 @@ public class LadderSelector extends Gui {
     ladderSlots.clear();
 
     for (NormalLadder ladder : ffaArena.getAssignedLadders()) {
-      GuiItem guiItem = LADDER_ITEM.cloneItem().replace("%ladder%", ladder.getDisplayName());
+      GuiItem guiItem = ladderItem().cloneItem().replace("%ladder%", ladder.getDisplayName());
 
       if (ladder.getIcon() != null) {
         guiItem.setBaseItem(ladder.getIcon());
@@ -70,7 +73,7 @@ public class LadderSelector extends Gui {
 
     for (int i = 0; i < inventory.getSize(); i++) {
       if (inventory.getItem(i) == null) {
-        inventory.setItem(i, FILLER_ITEM);
+        inventory.setItem(i, fillerItem());
       }
     }
 

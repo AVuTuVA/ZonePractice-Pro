@@ -50,7 +50,7 @@ public abstract class LeaderboardGui extends Gui {
               inventory.clear();
 
               for (int i = 45; i < 54; i++) {
-                inventory.setItem(i, GuiManager.getFILLER_ITEM());
+                inventory.setItem(i, GuiManager.fillerItem());
               }
 
               for (NormalLadder ladder : LadderManager.getInstance().getLadders()) {

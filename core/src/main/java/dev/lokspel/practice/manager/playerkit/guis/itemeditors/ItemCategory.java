@@ -33,7 +33,7 @@ public class ItemCategory extends ItemEditor {
     this.gui.put(
         1,
         InventoryUtil.createInventory(
-            StaticItems.CATEGORY_GUI_TITLE, StaticItems.CATEGORY_GUI_SIZE));
+            StaticItems.categoryGuiTitle(), StaticItems.categoryGuiSize()));
     this.build();
   }
 
@@ -42,14 +42,14 @@ public class ItemCategory extends ItemEditor {
     List<EditorIcon> icons =
         new ArrayList<>(
             Arrays.asList(
-                StaticItems.CATEGORY_GUI_BACK_ICON,
-                StaticItems.CATEGORY_GUI_NONE_ICON,
+                StaticItems.categoryGuiBackIcon(),
+                StaticItems.categoryGuiNoneIcon(),
                 // Fixed-type categories
-                StaticItems.CATEGORY_GUI_ARMOR_ICON,
-                StaticItems.CATEGORY_GUI_WEAPON_TOOLS_ICON,
-                StaticItems.CATEGORY_GUI_BOWS_ICON,
-                StaticItems.CATEGORY_GUI_POTIONS_ICON,
-                StaticItems.CATEGORY_GUI_SHULKER_ICON));
+                StaticItems.categoryGuiArmorIcon(),
+                StaticItems.categoryGuiWeaponToolsIcon(),
+                StaticItems.categoryGuiBowsIcon(),
+                StaticItems.categoryGuiPotionsIcon(),
+                StaticItems.categoryGuiShulkerIcon()));
 
     // Dynamic categories (loaded from config)
     for (DynamicCategory cat : PlayerKitManager.getInstance().getDynamicCategories()) {
@@ -67,14 +67,14 @@ public class ItemCategory extends ItemEditor {
     Inventory source = gui.get(1);
     Inventory contextual =
         InventoryUtil.createInventory(
-            StaticItems.CATEGORY_GUI_TITLE, StaticItems.CATEGORY_GUI_SIZE);
+            StaticItems.categoryGuiTitle(), StaticItems.categoryGuiSize());
 
     if (source != null) {
       contextual.setContents(source.getContents().clone());
     }
 
     if (isShulkerCategoryHidden(player)) {
-      contextual.setItem(StaticItems.CATEGORY_GUI_SHULKER_ICON.getSlot(), null);
+      contextual.setItem(StaticItems.categoryGuiShulkerIcon().getSlot(), null);
     }
 
     return contextual;
@@ -110,8 +110,7 @@ public class ItemCategory extends ItemEditor {
     }
 
     int slot = e.getRawSlot();
-    if (slot == StaticItems.CATEGORY_GUI_SHULKER_ICON.getSlot()
-        && isShulkerCategoryHidden(player)) {
+    if (slot == StaticItems.categoryGuiShulkerIcon().getSlot() && isShulkerCategoryHidden(player)) {
       return;
     }
 
@@ -124,7 +123,7 @@ public class ItemCategory extends ItemEditor {
     Gui mainGui = editing.getCustomLadder().getMainGui();
 
     // Back
-    if (icon.equals(StaticItems.CATEGORY_GUI_BACK_ICON)) {
+    if (icon.equals(StaticItems.categoryGuiBackIcon())) {
       if (editing.isEditingShulker()) {
         ShulkerBoxEditorGui editor = editing.getShulkerEditor();
         editor.update(true);
@@ -136,30 +135,30 @@ public class ItemCategory extends ItemEditor {
     }
 
     // None
-    if (icon.equals(StaticItems.CATEGORY_GUI_NONE_ICON)) {
+    if (icon.equals(StaticItems.categoryGuiNoneIcon())) {
       kitItem.reset();
       editing.returnToEditor(player, null);
       return;
     }
 
     // Fixed categories
-    if (icon.equals(StaticItems.CATEGORY_GUI_ARMOR_ICON)) {
+    if (icon.equals(StaticItems.categoryGuiArmorIcon())) {
       GuiManager.getInstance().searchGui(GuiType.PlayerCustom_Armor).open(player);
       return;
     }
-    if (icon.equals(StaticItems.CATEGORY_GUI_WEAPON_TOOLS_ICON)) {
+    if (icon.equals(StaticItems.categoryGuiWeaponToolsIcon())) {
       GuiManager.getInstance().searchGui(GuiType.PlayerCustom_Weapons_Tools).open(player);
       return;
     }
-    if (icon.equals(StaticItems.CATEGORY_GUI_BOWS_ICON)) {
+    if (icon.equals(StaticItems.categoryGuiBowsIcon())) {
       GuiManager.getInstance().searchGui(GuiType.PlayerCustom_Bows).open(player);
       return;
     }
-    if (icon.equals(StaticItems.CATEGORY_GUI_POTIONS_ICON)) {
+    if (icon.equals(StaticItems.categoryGuiPotionsIcon())) {
       GuiManager.getInstance().searchGui(GuiType.PlayerCustom_Potions).open(player);
       return;
     }
-    if (icon.equals(StaticItems.CATEGORY_GUI_SHULKER_ICON)) {
+    if (icon.equals(StaticItems.categoryGuiShulkerIcon())) {
       GuiManager.getInstance().searchGui(GuiType.PlayerCustom_Shulker).open(player);
       return;
     }

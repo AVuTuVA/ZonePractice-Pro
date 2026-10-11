@@ -28,26 +28,29 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public class ArenaSummaryGui extends Gui {
 
-  private static final String STATUS_ENABLED =
-      PracticeConfig.guis()
-          .getGuis()
-          .getSetup()
-          .getArena()
-          .getArenaManager()
-          .getIcons()
-          .getArenaIcon()
-          .getStatusNames()
-          .getEnabled();
-  private static final String STATUS_DISABLED =
-      PracticeConfig.guis()
-          .getGuis()
-          .getSetup()
-          .getArena()
-          .getArenaManager()
-          .getIcons()
-          .getArenaIcon()
-          .getStatusNames()
-          .getDisabled();
+  private static String statusEnabled() {
+    return PracticeConfig.guis()
+        .getGuis()
+        .getSetup()
+        .getArena()
+        .getArenaManager()
+        .getIcons()
+        .getArenaIcon()
+        .getStatusNames()
+        .getEnabled();
+  }
+
+  private static String statusDisabled() {
+    return PracticeConfig.guis()
+        .getGuis()
+        .getSetup()
+        .getArena()
+        .getArenaManager()
+        .getIcons()
+        .getArenaIcon()
+        .getStatusNames()
+        .getDisabled();
+  }
 
   private final int spaces = 36;
   private final Map<Integer, Map<Integer, DisplayArena>> slots = new HashMap<>();
@@ -98,7 +101,7 @@ public class ArenaSummaryGui extends Gui {
 
         // Frame
         for (int i : new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 45, 46, 47, 48, 49, 50, 51, 52, 53}) {
-          inv.setItem(i, GuiManager.getFILLER_ITEM());
+          inv.setItem(i, GuiManager.fillerItem());
         }
 
         // Arena icons
@@ -156,7 +159,7 @@ public class ArenaSummaryGui extends Gui {
                   .replace("%page%", String.valueOf(page + 1))
                   .get();
         } else {
-          right = GuiManager.getFILLER_ITEM();
+          right = GuiManager.fillerItem();
         }
         inv.setItem(53, right);
       }
@@ -271,8 +274,8 @@ public class ArenaSummaryGui extends Gui {
     guiItem
         .replace("%arenaName%", arena.getName())
         .replace("%type%", arena.getType().getName())
-        .replace("%state%", (arena.isEnabled() ? STATUS_ENABLED : STATUS_DISABLED))
-        .replace("%build%", (arena.isBuild() ? STATUS_ENABLED : STATUS_DISABLED));
+        .replace("%state%", (arena.isEnabled() ? statusEnabled() : statusDisabled()))
+        .replace("%build%", (arena.isBuild() ? statusEnabled() : statusDisabled()));
 
     return guiItem.get();
   }
@@ -311,7 +314,7 @@ public class ArenaSummaryGui extends Gui {
     guiItem
         .replace("%arenaName%", arena.getName())
         .replace("%type%", arena.getType().getName())
-        .replace("%state%", (arena.isEnabled() ? STATUS_ENABLED : STATUS_DISABLED))
+        .replace("%state%", (arena.isEnabled() ? statusEnabled() : statusDisabled()))
         .replace("%assigned_ladders%", String.valueOf(arena.getAssignedLadders().size()))
         .replace("%assignable_ladders%", String.valueOf(arena.getAssignableLadders().size()));
 

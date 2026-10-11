@@ -25,11 +25,15 @@ import org.bukkit.inventory.ItemStack;
 
 public class LobbyItemsGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
-  private static final ItemStack BACK_ITEM =
-      BackendUtil.getGuiItem(PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
+  }
+
+  private static ItemStack backItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getCosmetics().getIcons().getBackTo())
+        .get();
+  }
 
   private static final int ROWS = 3;
   private static final int BACK_SLOT = 18;
@@ -59,7 +63,7 @@ public class LobbyItemsGui extends Gui {
     inv.clear();
 
     for (int i = 0; i < inv.getSize(); i++) {
-      inv.setItem(i, FILLER_ITEM);
+      inv.setItem(i, fillerItem());
     }
 
     CosmeticsData.LobbyItemType selected = profile.getCosmeticsData().getLobbyItemType();
@@ -71,7 +75,7 @@ public class LobbyItemsGui extends Gui {
       inv.setItem(OPTION_SLOTS[i], buildOptionItem(type, selected, online));
     }
 
-    inv.setItem(BACK_SLOT, BACK_ITEM == null ? new ItemStack(Material.ARROW) : BACK_ITEM);
+    inv.setItem(BACK_SLOT, backItem() == null ? new ItemStack(Material.ARROW) : backItem());
     updatePlayers();
   }
 

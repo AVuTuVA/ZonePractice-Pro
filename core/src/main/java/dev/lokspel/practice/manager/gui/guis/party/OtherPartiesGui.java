@@ -29,15 +29,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 @Getter
 public class OtherPartiesGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getParty()
-                  .getOtherParties()
-                  .getIcons()
-                  .getFillerItem())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis().getGuis().getParty().getOtherParties().getIcons().getFillerItem())
+        .get();
+  }
+
   private final Map<Integer, Party> partySlots = new HashMap<>();
 
   public OtherPartiesGui() {
@@ -80,7 +77,7 @@ public class OtherPartiesGui extends Gui {
 
               for (int i = 0; i < inventory.getSize(); i++) {
                 if (inventory.getItem(i) == null) {
-                  inventory.setItem(i, FILLER_ITEM);
+                  inventory.setItem(i, fillerItem());
                 }
               }
 

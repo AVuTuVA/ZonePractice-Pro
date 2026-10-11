@@ -27,15 +27,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 @Getter
 public class PublicPartiesGui extends Gui {
 
-  private static final ItemStack FILLER_ITEM =
-      BackendUtil.getGuiItem(
-              PracticeConfig.guis()
-                  .getGuis()
-                  .getParty()
-                  .getPublicParties()
-                  .getIcons()
-                  .getFillerItem())
-          .get();
+  private static ItemStack fillerItem() {
+    return BackendUtil.getGuiItem(
+            PracticeConfig.guis()
+                .getGuis()
+                .getParty()
+                .getPublicParties()
+                .getIcons()
+                .getFillerItem())
+        .get();
+  }
 
   private final int spaces = 45;
   private final Map<Integer, Map<Integer, Party>> partySlots = new HashMap<>();
@@ -86,7 +87,7 @@ public class PublicPartiesGui extends Gui {
       newGui.put(page, inventory);
 
       for (int i = 45; i < 54; i++) {
-        inventory.setItem(i, FILLER_ITEM);
+        inventory.setItem(i, fillerItem());
       }
 
       Map<Integer, Party> pageSlots = new HashMap<>();
@@ -101,13 +102,13 @@ public class PublicPartiesGui extends Gui {
       }
 
       for (int i = slot; i < spaces; i++) {
-        inventory.setItem(i, FILLER_ITEM);
+        inventory.setItem(i, fillerItem());
       }
       newPartySlots.put(page, pageSlots);
 
       ItemStack left =
           page == 1
-              ? FILLER_ITEM
+              ? fillerItem()
               : BackendUtil.getGuiItem(
                       PracticeConfig.guis()
                           .getGuis()
@@ -130,7 +131,7 @@ public class PublicPartiesGui extends Gui {
                           .getPageRight())
                   .replace("%page%", String.valueOf(page + 1))
                   .get()
-              : FILLER_ITEM;
+              : fillerItem();
       inventory.setItem(53, right);
     }
 

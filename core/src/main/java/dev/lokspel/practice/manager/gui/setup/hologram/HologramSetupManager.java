@@ -48,6 +48,12 @@ public class HologramSetupManager implements Listener {
     }
   }
 
+  /** Re-creates the summary and every hologram's setup GUIs from the reloaded configuration. */
+  public void reloadGuis() {
+    hologramSetupGuis.clear();
+    loadGuis();
+  }
+
   public void removeHologramGuis(Hologram hologram) {
     for (Gui gui : hologramSetupGuis.get(hologram).values()) {
       for (Player player : gui.getInGuiPlayers().keySet()) {
