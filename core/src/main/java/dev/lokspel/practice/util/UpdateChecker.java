@@ -27,15 +27,13 @@ public final class UpdateChecker {
               String current = plugin.getPluginMeta().getVersion().split("-")[0];
 
               if (version.equals(current)) {
-                Common.sendConsoleMmMessage(
-                    "<gray><green>You are using the latest version");
+                Common.sendConsoleMmMessage("<gray><green>You are using the latest version");
                 return;
               }
 
               Common.sendConsoleMmMessage(
                   "<gray>[<yellow>A new version is available: <green>" + version);
-              Common.sendConsoleMmMessage(
-                  "<gray><yellow>Download: <aqua>" + DOWNLOAD_URL);
+              Common.sendConsoleMmMessage("<gray><yellow>Download: <aqua>" + DOWNLOAD_URL);
             })
         .exceptionally(
             e -> {
