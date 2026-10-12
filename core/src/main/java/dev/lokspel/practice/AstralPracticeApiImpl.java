@@ -2,6 +2,7 @@ package dev.lokspel.practice;
 
 import dev.lokspel.api.AstralPracticeApi;
 import dev.lokspel.api.enums.DivisionName;
+import dev.lokspel.api.enums.PlayerState;
 import dev.lokspel.api.enums.WeightClass;
 import dev.lokspel.api.interfaces.Event;
 import dev.lokspel.api.interfaces.Ffa;
@@ -22,6 +23,7 @@ import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.group.Group;
 import dev.lokspel.practice.manager.queue.QueueManager;
 import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
@@ -297,5 +299,33 @@ public class AstralPracticeApiImpl extends AstralPracticeApi {
     }
 
     return profile.getStats().getLadderStat(ladder).getDeaths();
+  }
+
+  @Override
+  public PlayerState getPlayerState(Player player) {
+    if (player == null || !player.isOnline()) {
+      return PlayerState.OFFLINE;
+    }
+
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null || profile.getStatus() == null) {
+      return PlayerState.OFFLINE;
+    }
+
+    return profile.getStatus().toPlayerState();
+  }
+
+  @Override
+  public PlayerState getPlayerState(UUID uuid) {
+    if (uuid == null) {
+      return PlayerState.OFFLINE;
+    }
+
+    Player player = Bukkit.getPlayer(uuid);
+    if (player == null || !player.isOnline()) {
+      return PlayerState.OFFLINE;
+    }
+
+    return getPlayerState(player);
   }
 }

@@ -1,5 +1,6 @@
 package dev.lokspel.practice.manager.profile;
 
+import dev.lokspel.api.event.PlayerStateChangeEvent;
 import dev.lokspel.practice.event.ProfileStatusChangeEvent;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
 import dev.lokspel.practice.manager.fight.match.util.CustomKit;
@@ -346,6 +347,13 @@ public class Profile {
     this.status = status;
 
     Bukkit.getPluginManager().callEvent(new ProfileStatusChangeEvent(this, previous, status));
+
+    Player player = getOnlinePlayer();
+    if (player != null && previous != status) {
+      Bukkit.getPluginManager()
+          .callEvent(
+              new PlayerStateChangeEvent(player, previous.toPlayerState(), status.toPlayerState()));
+    }
 
     invalidateRematchIfLeftLobby(previous, status);
   }

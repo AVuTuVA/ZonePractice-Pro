@@ -94,6 +94,10 @@ Query what a player is currently participating in or spectating:
 ```java
 AstralPracticeApi api = AstralPracticeApi.getInstance();
 
+// Current practice state (OFFLINE, LOBBY, EDITOR, CUSTOM_EDITOR, QUEUE, MATCH, FFA, EVENT, SPECTATE, STAFF_MODE)
+PlayerState state = api.getPlayerState(player);
+PlayerState stateByUuid = api.getPlayerState(uuid);
+
 // Current active match (returns null if not in a match)
 Match match = api.getMatch(player);
 
@@ -257,6 +261,29 @@ AstralPractice provides Bukkit events under `dev.lokspel.api.event.*` that your 
 | `FfaRemovePlayerEvent` | `dev.lokspel.api.event` | Fired when a player leaves an FFA arena | No |
 | `SpectateStartEvent` | `dev.lokspel.api.event.spectate.start` | Fired when a player starts spectating | Yes |
 | `SpectateEndEvent` | `dev.lokspel.api.event.spectate.end` | Fired when a player stops spectating | No |
+| `PlayerStateChangeEvent` | `dev.lokspel.api.event` | Fired when a player's practice state changes (e.g. lobby, queue, match) | No |
+
+### Listening to `PlayerStateChangeEvent`
+
+```java
+import dev.lokspel.api.enums.PlayerState;
+import dev.lokspel.api.event.PlayerStateChangeEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class PlayerStateListener implements Listener {
+
+    @EventHandler
+    public void onPlayerStateChange(PlayerStateChangeEvent event) {
+        Player player = event.getPlayer();
+        PlayerState oldState = event.getOldState();
+        PlayerState newState = event.getNewState();
+
+        player.sendMessage("State updated from " + oldState + " to " + newState);
+    }
+}
+```
 
 ### Listening to `EloChangeEvent`
 

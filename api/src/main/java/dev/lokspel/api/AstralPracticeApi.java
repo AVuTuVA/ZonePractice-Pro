@@ -1,6 +1,7 @@
 package dev.lokspel.api;
 
 import dev.lokspel.api.enums.DivisionName;
+import dev.lokspel.api.enums.PlayerState;
 import dev.lokspel.api.enums.WeightClass;
 import dev.lokspel.api.interfaces.Event;
 import dev.lokspel.api.interfaces.Ffa;
@@ -9,6 +10,7 @@ import dev.lokspel.api.interfaces.Party;
 import dev.lokspel.api.interfaces.Queue;
 import dev.lokspel.api.utilities.PlayerNametag;
 import java.util.List;
+import java.util.UUID;
 import org.bukkit.entity.Player;
 
 public abstract class AstralPracticeApi {
@@ -212,4 +214,20 @@ public abstract class AstralPracticeApi {
    * @return The death count, or -1 if unavailable
    */
   public abstract int getLadderDeaths(Player player, String ladderName);
+
+  /**
+   * Get the player's current practice state.
+   *
+   * @param player The player
+   * @return The player's current state
+   */
+  public abstract PlayerState getPlayerState(Player player);
+
+  /**
+   * Get the player's current practice state by UUID.
+   *
+   * @param uuid The player UUID
+   * @return The player's current state
+   */
+  public abstract PlayerState getPlayerState(UUID uuid);
 }
