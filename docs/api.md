@@ -87,6 +87,24 @@ AstralPracticeApi api = Bukkit.getServicesManager().load(AstralPracticeApi.class
 
 ---
 
+## API Structure
+
+`AstralPracticeApi` provides modular access to 9 dedicated sub-APIs:
+
+| Section | Method | Description |
+|---|---|---|
+| **Players** | `api.getPlayers()` | Practice states, nametags, divisions, daily match limits |
+| **Statistics** | `api.getStats()` | Elo ratings, experience, ladder wins/losses, kills, deaths |
+| **Matches** | `api.getMatches()` | Live matches, spectator matches, match termination |
+| **Parties** | `api.getParties()` | Party membership and leader queries |
+| **Queues** | `api.getQueues()` | Matchmaking queue inspection |
+| **Ladders** | `api.getLadders()` | Registered ladder names |
+| **FFA** | `api.getFfa()` | Free-For-All arena sessions |
+| **Events** | `api.getEvents()` | Tournament event sessions |
+| **Cosmetics** | `api.getCosmetics()` | Custom cosmetic categories and menu navigation |
+
+---
+
 ## Player API (`api.getPlayers()`)
 
 Query practice state, nametags, divisions, and daily match limits:
