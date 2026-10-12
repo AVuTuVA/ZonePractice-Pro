@@ -3,7 +3,17 @@ package dev.lokspel.practice;
 import com.github.retrooper.packetevents.PacketEvents;
 import dev.faststats.ErrorTracker;
 import dev.faststats.bukkit.BukkitContext;
+import dev.lokspel.api.AstralPracticeApi;
+import dev.lokspel.api.AstralPracticeApiImpl;
 import dev.lokspel.api.event.AstralPracticeReadyEvent;
+import dev.lokspel.practice.api.EventApiImpl;
+import dev.lokspel.practice.api.FfaApiImpl;
+import dev.lokspel.practice.api.LadderApiImpl;
+import dev.lokspel.practice.api.MatchApiImpl;
+import dev.lokspel.practice.api.PartyApiImpl;
+import dev.lokspel.practice.api.PlayerApiImpl;
+import dev.lokspel.practice.api.QueueApiImpl;
+import dev.lokspel.practice.api.StatsApiImpl;
 import dev.lokspel.practice.command.arena.ArenaCommand;
 import dev.lokspel.practice.command.event.EventCommand;
 import dev.lokspel.practice.command.ffa.FfaCommand;
@@ -105,6 +115,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class AstralPractice extends JavaPlugin {
@@ -212,7 +223,7 @@ public final class AstralPractice extends JavaPlugin {
     ArenaWorldUtil.createArenaWorld();
     CosmeticsPermissionManager.registerAllPermissions();
 
-    AstralPracticeApiImpl.setup();
+    this.registerApi();
     StartUpUtil.loadStartUpProgressMap();
 
     this.registerCommands(Bukkit.getServer());
@@ -317,6 +328,7 @@ public final class AstralPractice extends JavaPlugin {
     SidebarManager.getInstance().close();
     InventoryManager.getInstance().setData();
     CosmeticsCategoryManager.getInstance().clear();
+    AstralPracticeApiImpl.setInstance(null);
     if (metrics != null) {
       metrics.shutdown();
     }
@@ -325,6 +337,23 @@ public final class AstralPractice extends JavaPlugin {
       database.close();
     }
     BackendManager.save();
+  }
+
+  private void registerApi() {
+    AstralPracticeApi api =
+        new AstralPracticeApiImpl(
+            new PlayerApiImpl(),
+            new StatsApiImpl(),
+            new MatchApiImpl(),
+            new PartyApiImpl(),
+            new QueueApiImpl(),
+            new LadderApiImpl(),
+            new FfaApiImpl(),
+            new EventApiImpl(),
+            CosmeticsCategoryManager.getInstance());
+    AstralPracticeApiImpl.setInstance(api);
+    Bukkit.getServicesManager()
+        .register(AstralPracticeApi.class, api, this, ServicePriority.Normal);
   }
 
   /** On 26.2 and newer, a server without a ladders folder starts with the bundled ladders. */

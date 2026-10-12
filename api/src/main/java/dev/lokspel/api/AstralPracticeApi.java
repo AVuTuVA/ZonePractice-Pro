@@ -14,17 +14,15 @@ import dev.lokspel.api.stats.StatsApi;
  * Main entry point for the AstralPractice developer API. Provides modular access to specific
  * sub-API sections.
  */
-public abstract class AstralPracticeApi {
-
-  public static AstralPracticeApi instance = null;
+public interface AstralPracticeApi {
 
   /**
    * Get the singleton instance of the AstralPractice API.
    *
    * @return The API instance, or null if AstralPractice is not enabled
    */
-  public static AstralPracticeApi getInstance() {
-    return instance;
+  static AstralPracticeApi getInstance() {
+    return AstralPracticeApiImpl.getInstance();
   }
 
   /**
@@ -32,8 +30,8 @@ public abstract class AstralPracticeApi {
    *
    * @return true if available, false otherwise
    */
-  public static boolean isAvailable() {
-    return instance != null;
+  static boolean isAvailable() {
+    return AstralPracticeApiImpl.getInstance() != null;
   }
 
   /**
@@ -41,61 +39,61 @@ public abstract class AstralPracticeApi {
    *
    * @return The player API
    */
-  public abstract PlayerApi getPlayers();
+  PlayerApi getPlayers();
 
   /**
    * Statistics API section (Elo, experience, wins, losses, kills, deaths).
    *
    * @return The statistics API
    */
-  public abstract StatsApi getStats();
+  StatsApi getStats();
 
   /**
    * Match API section (live matches, spectating, match termination).
    *
    * @return The match API
    */
-  public abstract MatchApi getMatches();
+  MatchApi getMatches();
 
   /**
    * Party API section (player parties).
    *
    * @return The party API
    */
-  public abstract PartyApi getParties();
+  PartyApi getParties();
 
   /**
    * Matchmaking queue API section.
    *
    * @return The queue API
    */
-  public abstract QueueApi getQueues();
+  QueueApi getQueues();
 
   /**
    * Practice ladder API section.
    *
    * @return The ladder API
    */
-  public abstract LadderApi getLadders();
+  LadderApi getLadders();
 
   /**
    * Free-for-all (FFA) arena API section.
    *
    * @return The FFA API
    */
-  public abstract FfaApi getFfa();
+  FfaApi getFfa();
 
   /**
    * Tournament event API section.
    *
    * @return The event API
    */
-  public abstract EventApi getEvents();
+  EventApi getEvents();
 
   /**
    * Cosmetics API section (categories, menu).
    *
    * @return The cosmetics API
    */
-  public abstract CosmeticsApi getCosmetics();
+  CosmeticsApi getCosmetics();
 }
