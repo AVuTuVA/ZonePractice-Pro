@@ -127,9 +127,11 @@ AstralPracticeApi api = AstralPracticeApi.getInstance();
 
 // Current active match (returns null if not in a match)
 Match match = api.getMatches().getMatch(player);
+Match liveMatch = api.getMatches().getLiveMatchByPlayer(player);
 
 // Spectated match (returns null if not spectating)
 Match spectating = api.getMatches().getSpectatingMatch(player);
+Match spectatedLiveMatch = api.getMatches().getLiveMatchBySpectator(player);
 
 // Force-end a player's match with a MiniMessage-formatted reason
 api.getMatches().endMatch(player, "<red>Match ended by an admin");

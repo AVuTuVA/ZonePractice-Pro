@@ -13,7 +13,17 @@ public class MatchApiImpl implements MatchApi {
   }
 
   @Override
+  public Match getLiveMatchByPlayer(Player player) {
+    return MatchManager.getInstance().getLiveMatchByPlayer(player);
+  }
+
+  @Override
   public Match getSpectatingMatch(Player player) {
+    return MatchManager.getInstance().getLiveMatchBySpectator(player);
+  }
+
+  @Override
+  public Match getLiveMatchBySpectator(Player player) {
     return MatchManager.getInstance().getLiveMatchBySpectator(player);
   }
 

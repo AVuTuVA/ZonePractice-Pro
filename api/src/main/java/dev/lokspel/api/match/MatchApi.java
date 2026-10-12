@@ -15,12 +15,32 @@ public interface MatchApi {
   Match getMatch(Player player);
 
   /**
+   * Get the live match the player is participating in.
+   *
+   * @param player The player
+   * @return The live match instance, or null if not in a match
+   */
+  default Match getLiveMatchByPlayer(Player player) {
+    return getMatch(player);
+  }
+
+  /**
    * Get the match the player is spectating.
    *
    * @param player The player
    * @return The spectated match, or null if not spectating
    */
   Match getSpectatingMatch(Player player);
+
+  /**
+   * Get the match the player is spectating.
+   *
+   * @param player The player
+   * @return The spectated match, or null if not spectating
+   */
+  default Match getLiveMatchBySpectator(Player player) {
+    return getSpectatingMatch(player);
+  }
 
   /**
    * End the match for the player with a custom end message.
