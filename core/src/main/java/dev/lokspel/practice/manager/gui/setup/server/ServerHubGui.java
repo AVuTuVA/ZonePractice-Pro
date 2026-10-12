@@ -152,6 +152,7 @@ public class ServerHubGui extends Gui {
           }
           break;
         case 14:
+          serverArmorLobbyGui.update();
           serverArmorLobbyGui.open(player);
           break;
         case 15:

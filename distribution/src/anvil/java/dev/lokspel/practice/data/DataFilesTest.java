@@ -130,7 +130,8 @@ class DataFilesTest {
 
   /** A profile records its latest join. */
   private static boolean isUpdatedOnJoin(String file, Object path) {
-    return file.startsWith("profiles/") && String.valueOf(path).endsWith("join/latest");
+    return file.replace('\\', '/').startsWith("profiles/")
+        && String.valueOf(path).endsWith("join/latest");
   }
 
   /** The plugin folder 7.9 left after a player joined and an owner created a few things. */

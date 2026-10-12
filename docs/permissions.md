@@ -43,6 +43,17 @@ The full list is in [`plugin.yml`](../core/src/main/resources/plugin.yml). Below
 | `ap.cosmetics.shield.layouts.<1-21>`    | Use up to that many shield layouts |
 | `ap.cosmetics.shield.layouts.unlimited` | Use unlimited shield layouts       |
 
+## Lobby items
+
+| Permission                       | Usage                                 |
+|----------------------------------|---------------------------------------|
+| `ap.cosmetics.lobby.none`        | Clear active lobby cosmetic           |
+| `ap.cosmetics.lobby.wind_charge` | Use wind charge lobby cosmetic        |
+| `ap.cosmetics.lobby.trident`     | Use trident lobby cosmetic            |
+| `ap.cosmetics.lobby.spear`       | Use spear lobby cosmetic              |
+| `ap.cosmetics.lobby.elytra`      | Use elytra & fireworks lobby cosmetic |
+| `ap.cosmetics.lobby.*`           | Use all lobby item cosmetics          |
+
 ## Groups
 
 | Permission        | Usage                                          |

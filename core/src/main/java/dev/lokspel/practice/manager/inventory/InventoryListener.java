@@ -1,8 +1,10 @@
 package dev.lokspel.practice.manager.inventory;
 
+import com.destroystokyo.paper.event.player.PlayerElytraBoostEvent;
 import dev.lokspel.practice.AstralPractice;
 import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
+import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.inventory.inventories.StaffInventory;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
 import dev.lokspel.practice.manager.inventory.inventoryitem.lobbyitems.QueueInvItem;
@@ -22,6 +24,7 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
@@ -35,6 +38,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -58,8 +62,9 @@ public class InventoryListener implements Listener {
       if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
         ItemStack offHand = e.getPlayer().getInventory().getItemInOffHand();
         if (isTaggedCosmetic(offHand)
-            && InventoryManager.getInstance().getLobbyCosmeticType(offHand)
-                == CosmeticsData.LobbyItemType.WIND_CHARGE) {
+            && InventoryManager.getInstance()
+                .isOffhandElytraCosmetic(
+                    InventoryManager.getInstance().getLobbyCosmeticType(offHand))) {
           ItemStack mainHand = e.getPlayer().getInventory().getItemInMainHand();
           if (!mainHand.getType().isAir() && !isTaggedCosmetic(mainHand)) {
             e.setCancelled(true);
@@ -327,6 +332,11 @@ public class InventoryListener implements Listener {
   @EventHandler
   public void onInventoryClick(InventoryClickEvent e) {
     Player player = (Player) e.getWhoClicked();
+
+    if (GuiManager.getInstance().getOpenGui().containsKey(player)) {
+      return;
+    }
+
     Profile profile = ProfileManager.getInstance().getProfile(player);
     ProfileStatus profileStatus = profile.getStatus();
 
@@ -568,8 +578,52 @@ public class InventoryListener implements Listener {
   }
 
   @EventHandler(ignoreCancelled = true)
+  public void onLobbyFireworkLaunch(EntitySpawnEvent e) {
+    if (!(e.getEntity() instanceof Firework firework)) {
+      return;
+    }
+    if (!(firework.getShooter() instanceof Player player)) {
+      return;
+    }
+
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null || !InventoryManager.getInstance().shouldRenderLobbyCosmetics(profile)) {
+      return;
+    }
+
+    if (profile.getCosmeticsData().getLobbyItemType() != CosmeticsData.LobbyItemType.ELYTRA) {
+      return;
+    }
+
+    Bukkit.getScheduler()
+        .runTask(
+            AstralPractice.getInstance(),
+            () -> InventoryManager.getInstance().applyLobbyCosmetics(player));
+  }
+
+  @EventHandler(ignoreCancelled = true)
+  public void onLobbyElytraBoost(PlayerElytraBoostEvent e) {
+    Player player = e.getPlayer();
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null || !InventoryManager.getInstance().shouldRenderLobbyCosmetics(profile)) {
+      return;
+    }
+
+    if (profile.getCosmeticsData().getLobbyItemType() != CosmeticsData.LobbyItemType.ELYTRA) {
+      return;
+    }
+
+    e.setShouldConsume(false);
+  }
+
+  @EventHandler(ignoreCancelled = true)
   public void onLobbyWindChargeExplosion(EntityExplodeEvent e) {
     if (!isLobbyWorld(e.getLocation().getWorld())) {
+      return;
+    }
+
+    if (e.getEntity() instanceof Firework) {
+      e.blockList().clear();
       return;
     }
 

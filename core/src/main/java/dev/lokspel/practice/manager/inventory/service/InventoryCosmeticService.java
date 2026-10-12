@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -46,7 +47,14 @@ public final class InventoryCosmeticService {
 
       clearLobbyCosmeticItems(player);
 
-      if (type == CosmeticsData.LobbyItemType.WIND_CHARGE) {
+      if (isOffhandElytraCosmetic(type)) {
+        ItemStack currentOffHand = player.getInventory().getItemInOffHand();
+        if (currentOffHand != null
+            && !currentOffHand.getType().isAir()
+            && !isLobbyCosmeticItem(currentOffHand)
+            && !storedOffhandItems.containsKey(player.getUniqueId())) {
+          storedOffhandItems.put(player.getUniqueId(), currentOffHand);
+        }
         player.getInventory().setChestplate(createLobbyElytra());
         player.getInventory().setItemInOffHand(createLobbyMovementItem(type));
       } else {
@@ -56,6 +64,11 @@ public final class InventoryCosmeticService {
     }
 
     clearLobbyCosmeticItems(player);
+  }
+
+  public boolean isOffhandElytraCosmetic(CosmeticsData.LobbyItemType type) {
+    return type == CosmeticsData.LobbyItemType.WIND_CHARGE
+        || type == CosmeticsData.LobbyItemType.ELYTRA;
   }
 
   public boolean shouldRenderLobbyCosmetics(Profile profile) {
@@ -190,6 +203,7 @@ public final class InventoryCosmeticService {
           case WIND_CHARGE -> new ItemStack(Material.WIND_CHARGE, 64);
           case TRIDENT -> new ItemStack(Material.TRIDENT, 1);
           case SPEAR -> new ItemStack(Material.NETHERITE_SPEAR, 1);
+          case ELYTRA -> new ItemStack(Material.FIREWORK_ROCKET, 64);
           case NONE -> new ItemStack(Material.AIR);
         };
 
@@ -204,6 +218,7 @@ public final class InventoryCosmeticService {
             case WIND_CHARGE -> "<aqua>Wind Charge";
             case TRIDENT -> "<dark_aqua>Riptide Trident";
             case SPEAR -> "<dark_purple>Lunge Spear";
+            case ELYTRA -> "<light_purple>Firework Rocket";
             default -> throw new IllegalStateException("Unexpected value: " + type);
           };
 
@@ -215,6 +230,10 @@ public final class InventoryCosmeticService {
         meta.addEnchant(Enchantment.RIPTIDE, 3, true);
       } else if (type == CosmeticsData.LobbyItemType.SPEAR) {
         meta.addEnchant(Enchantment.LUNGE, 6, true);
+      } else if (type == CosmeticsData.LobbyItemType.ELYTRA) {
+        if (meta instanceof FireworkMeta fireworkMeta) {
+          fireworkMeta.setPower(1);
+        }
       }
 
       tagAsLobbyCosmetic(meta, type);

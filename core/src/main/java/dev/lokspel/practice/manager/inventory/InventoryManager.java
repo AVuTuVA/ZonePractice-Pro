@@ -23,11 +23,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 @Getter
 public class InventoryManager {
@@ -157,6 +157,10 @@ public class InventoryManager {
     return cosmeticService.getLobbyCosmeticType(itemStack);
   }
 
+  public boolean isOffhandElytraCosmetic(CosmeticsData.LobbyItemType type) {
+    return cosmeticService.isOffhandElytraCosmetic(type);
+  }
+
   public void setEventQueueInventory(Player player) {
     transitionService.setEventQueueInventory(player);
   }
@@ -194,16 +198,19 @@ public class InventoryManager {
     }
 
     for (Map.Entry<String, String> entry : invArmors.entrySet()) {
-      Inventory inventory = this.inventories.get(Inventory.InventoryType.valueOf(entry.getKey()));
-      if (inventory == null) {
-        continue;
-      }
+      try {
+        Inventory inventory = this.inventories.get(Inventory.InventoryType.valueOf(entry.getKey()));
+        if (inventory == null) {
+          continue;
+        }
 
-      inventory
-          .getInvArmor()
-          .setArmorContent(
-              Objects.requireNonNull(
-                  ItemSerializationUtil.itemStackArrayFromBase64(entry.getValue())));
+        ItemStack[] items = ItemSerializationUtil.itemStackArrayFromBase64(entry.getValue());
+        if (items != null) {
+          inventory.getInvArmor().setArmorContent(items);
+        }
+      } catch (IllegalArgumentException ignored) {
+        // Skip unknown inventory types in old data
+      }
     }
   }
 }

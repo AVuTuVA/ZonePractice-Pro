@@ -404,6 +404,7 @@ permissions:
       ap.cosmetics.lobby.wind_charge: true
       ap.cosmetics.lobby.trident: true
       ap.cosmetics.lobby.spear: true
+      ap.cosmetics.lobby.elytra: true
   ap.cosmetics.lobby.none:
     description: Select no lobby movement cosmetic.
   ap.cosmetics.lobby.wind_charge:
@@ -412,6 +413,8 @@ permissions:
     description: Select the lobby trident cosmetic.
   ap.cosmetics.lobby.spear:
     description: Select the lobby spear cosmetic.
+  ap.cosmetics.lobby.elytra:
+    description: Select the lobby elytra cosmetic.
 
   # Note: ap.cosmetics.pattern.* and ap.cosmetics.material.* permissions are
   # dynamically registered at runtime by ArmorTrimPermissionManager based on

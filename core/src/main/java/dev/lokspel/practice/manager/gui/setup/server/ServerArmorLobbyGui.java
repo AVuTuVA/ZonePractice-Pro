@@ -4,6 +4,7 @@ import static dev.lokspel.practice.manager.inventory.Inventory.InventoryType;
 
 import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.backend.BackendUtil;
+import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
@@ -14,7 +15,6 @@ import dev.lokspel.practice.util.InventoryUtil;
 import java.util.Arrays;
 import java.util.List;
 import lombok.Getter;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -151,44 +151,44 @@ public class ServerArmorLobbyGui extends Gui {
   @Override
   public void handleClickEvent(InventoryClickEvent e) {
     Player player = (Player) e.getWhoClicked();
-    ClickType clickType = e.getClick();
     int slot = e.getRawSlot();
     org.bukkit.inventory.Inventory clickedInv = e.getClickedInventory();
 
     if (slot == 45) {
       e.setCancelled(true);
+      this.save();
       backTo.open(player);
+      return;
+    }
+
+    if (clickedInv != null && clickedInv.equals(e.getView().getBottomInventory())) {
+      return;
+    }
+
+    if (!helmetSlots.contains(slot)
+        && !chestplateSlots.contains(slot)
+        && !leggingsSlots.contains(slot)
+        && !bootsSlots.contains(slot)) {
+      e.setCancelled(true);
+      return;
+    }
+
+    ClickType clickType = e.getClick();
+    if (clickType.equals(ClickType.LEFT) || clickType.equals(ClickType.RIGHT)) {
+      ItemStack cursor = player.getItemOnCursor();
+      if (cursor != null && !cursor.getType().isAir()) {
+        if (helmetSlots.contains(slot) && !ArmorUtil.isHelmet(cursor)) {
+          e.setCancelled(true);
+        } else if (chestplateSlots.contains(slot) && !ArmorUtil.isChestplate(cursor)) {
+          e.setCancelled(true);
+        } else if (leggingsSlots.contains(slot) && !ArmorUtil.isLeggings(cursor)) {
+          e.setCancelled(true);
+        } else if (bootsSlots.contains(slot) && !ArmorUtil.isBoots(cursor)) {
+          e.setCancelled(true);
+        }
+      }
     } else {
-      if (!helmetSlots.contains(slot)
-          && !chestplateSlots.contains(slot)
-          && !leggingsSlots.contains(slot)
-          && !bootsSlots.contains(slot)) {
-        if (clickedInv == null || clickedInv.getSize() <= slot) {
-          return;
-        }
-
-        e.setCancelled(true);
-        return;
-      }
-
-      if (clickType.equals(ClickType.LEFT) || clickType.equals(ClickType.RIGHT)) {
-        if (!player.getItemOnCursor().getType().equals(Material.AIR)) {
-          if (helmetSlots.contains(slot) && !ArmorUtil.isHelmet(player.getItemOnCursor())) {
-            e.setCancelled(true);
-          }
-          if (chestplateSlots.contains(slot) && !ArmorUtil.isChestplate(player.getItemOnCursor())) {
-            e.setCancelled(true);
-          }
-          if (leggingsSlots.contains(slot) && !ArmorUtil.isLeggings(player.getItemOnCursor())) {
-            e.setCancelled(true);
-          }
-          if (bootsSlots.contains(slot) && !ArmorUtil.isBoots(player.getItemOnCursor())) {
-            e.setCancelled(true);
-          }
-        }
-      } else {
-        e.setCancelled(true);
-      }
+      e.setCancelled(true);
     }
   }
 
@@ -203,32 +203,46 @@ public class ServerArmorLobbyGui extends Gui {
 
   public void save() {
     org.bukkit.inventory.Inventory inventory = this.gui.get(1);
+    if (inventory == null) {
+      return;
+    }
 
     for (ArmorStatusType type : ArmorStatusType.values()) {
       Inventory inv = InventoryManager.getInstance().getInventories().get(type.getInventoryType());
+      if (inv == null) {
+        continue;
+      }
       int column = type.getColumn();
 
       for (int c = 0; c < 6; c++) {
         int slot = column + (c * 9);
-        switch (c) {
-          case 1:
-            inv.getInvArmor().setHelmet(inventory.getItem(slot));
-            break;
-          case 2:
-            inv.getInvArmor().setChestplate(inventory.getItem(slot));
-            break;
-          case 3:
-            inv.getInvArmor().setLeggings(inventory.getItem(slot));
-            break;
-          case 4:
-            inv.getInvArmor().setBoots(inventory.getItem(slot));
-            break;
+        ItemStack item = inventory.getItem(slot);
+        ItemStack cleaned = cleanItem(item);
 
-          default:
-            break;
+        switch (c) {
+          case 1 -> inv.getInvArmor().setHelmet(cleaned);
+          case 2 -> inv.getInvArmor().setChestplate(cleaned);
+          case 3 -> inv.getInvArmor().setLeggings(cleaned);
+          case 4 -> inv.getInvArmor().setBoots(cleaned);
+          default -> {}
         }
       }
+
+      for (Player player : inv.getPlayers()) {
+        PlayerUtil.clearArmor(player);
+        inv.setArmor(player);
+        if (inv.getType() == InventoryType.LOBBY) {
+          InventoryManager.getInstance().applyLobbyCosmetics(player);
+        }
+        player.updateInventory();
+      }
     }
+
+    InventoryManager.getInstance().setData();
+  }
+
+  private static ItemStack cleanItem(ItemStack item) {
+    return item == null || item.getType().isAir() ? null : item.clone();
   }
 
   @Getter
