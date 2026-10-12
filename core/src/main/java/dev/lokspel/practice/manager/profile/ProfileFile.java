@@ -439,7 +439,9 @@ public class ProfileFile {
       cosmeticsData.setDeathEffect(
           DeathEffect.fromId(orDefault(cosmetics.getDeathEffect(), "none")));
       cosmeticsData.setLobbyItemType(
-          CosmeticsData.LobbyItemType.fromString(cosmetics.getLobbyItem()));
+          CosmeticsData.LobbyItemType.valueOf(
+              orDefault(cosmetics.getLobbyItem(), CosmeticsData.LobbyItemType.NONE.name())
+                  .toUpperCase(Locale.ROOT)));
 
       List<ShieldLayout> shieldLayouts = new ArrayList<>();
       if (shield.getLayouts() != null) {

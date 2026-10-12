@@ -28,21 +28,6 @@ public class CosmeticsData {
     public String getPermissionNode() {
       return "ap.cosmetics.lobby." + name().toLowerCase(Locale.ROOT);
     }
-
-    public static LobbyItemType fromString(String name) {
-      if (name == null || name.isBlank()) {
-        return NONE;
-      }
-      String upper = name.trim().toUpperCase(Locale.ROOT);
-      if ("FIREWORK".equals(upper) || "FIREWORKS".equals(upper)) {
-        return ELYTRA;
-      }
-      try {
-        return valueOf(upper);
-      } catch (IllegalArgumentException ignored) {
-        return NONE;
-      }
-    }
   }
 
   private ArmorTrimTier activeTier = ArmorTrimTier.LEATHER;

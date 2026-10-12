@@ -8,6 +8,7 @@ import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsPermissionManager
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
 import dev.lokspel.practice.util.Common;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Material;
@@ -100,7 +101,15 @@ public final class InventoryCosmeticService {
             .get(
                 InventoryManager.getInstance().getLobbyCosmeticTypeKey(),
                 PersistentDataType.STRING);
-    return CosmeticsData.LobbyItemType.fromString(typeName);
+    if (typeName == null || typeName.isBlank()) {
+      return CosmeticsData.LobbyItemType.NONE;
+    }
+
+    try {
+      return CosmeticsData.LobbyItemType.valueOf(typeName.toUpperCase(Locale.ROOT));
+    } catch (IllegalArgumentException ignored) {
+      return CosmeticsData.LobbyItemType.NONE;
+    }
   }
 
   private void setMovementItemDynamic(Player player, ItemStack movementItem) {
