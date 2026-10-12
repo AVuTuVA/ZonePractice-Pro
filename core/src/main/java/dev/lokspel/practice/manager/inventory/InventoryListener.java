@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerElytraBoostEvent;
 import dev.lokspel.practice.AstralPractice;
 import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
+import dev.lokspel.practice.manager.gui.GuiManager;
 import dev.lokspel.practice.manager.inventory.inventories.StaffInventory;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
 import dev.lokspel.practice.manager.inventory.inventoryitem.lobbyitems.QueueInvItem;
@@ -331,6 +332,11 @@ public class InventoryListener implements Listener {
   @EventHandler
   public void onInventoryClick(InventoryClickEvent e) {
     Player player = (Player) e.getWhoClicked();
+
+    if (GuiManager.getInstance().getOpenGui().containsKey(player)) {
+      return;
+    }
+
     Profile profile = ProfileManager.getInstance().getProfile(player);
     ProfileStatus profileStatus = profile.getStatus();
 

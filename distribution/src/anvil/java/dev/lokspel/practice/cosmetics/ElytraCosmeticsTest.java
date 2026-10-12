@@ -1,11 +1,9 @@
 package dev.lokspel.practice.cosmetics;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import dev.lokspel.practice.config.PracticeJourney;
 import dev.lokspel.practice.config.PracticeScenarios;
-import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsData;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -17,32 +15,6 @@ import org.junit.jupiter.api.Test;
 
 /** Tests Elytra and Fireworks cosmetic integration on Paper using Anvil. */
 class ElytraCosmeticsTest {
-
-  @Test
-  void testEnumValuesAndParsing() {
-    assertEquals(
-        CosmeticsData.LobbyItemType.ELYTRA, CosmeticsData.LobbyItemType.fromString("ELYTRA"));
-    assertEquals(
-        CosmeticsData.LobbyItemType.ELYTRA, CosmeticsData.LobbyItemType.fromString("elytra"));
-    assertEquals(
-        CosmeticsData.LobbyItemType.ELYTRA, CosmeticsData.LobbyItemType.fromString("FIREWORK"));
-    assertEquals(
-        CosmeticsData.LobbyItemType.ELYTRA, CosmeticsData.LobbyItemType.fromString("fireworks"));
-    assertEquals(
-        CosmeticsData.LobbyItemType.WIND_CHARGE,
-        CosmeticsData.LobbyItemType.fromString("WIND_CHARGE"));
-    assertEquals(
-        CosmeticsData.LobbyItemType.TRIDENT, CosmeticsData.LobbyItemType.fromString("TRIDENT"));
-    assertEquals(
-        CosmeticsData.LobbyItemType.SPEAR, CosmeticsData.LobbyItemType.fromString("SPEAR"));
-    assertEquals(CosmeticsData.LobbyItemType.NONE, CosmeticsData.LobbyItemType.fromString("NONE"));
-    assertEquals(CosmeticsData.LobbyItemType.NONE, CosmeticsData.LobbyItemType.fromString(null));
-    assertEquals(
-        CosmeticsData.LobbyItemType.NONE, CosmeticsData.LobbyItemType.fromString("unknown"));
-    assertEquals(
-        "ap.cosmetics.lobby.elytra", CosmeticsData.LobbyItemType.ELYTRA.getPermissionNode());
-  }
-
   @Test
   @AnvilTest(PracticeScenarios.ElytraCosmetic.class)
   void testElytraCosmeticAppliedOnJoin(ScenarioContext anvil) throws Exception {

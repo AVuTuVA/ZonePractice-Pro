@@ -9,6 +9,7 @@ import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.CustomKitGui
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.DestroyableBlocksGui;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.InventoryGui;
 import dev.lokspel.practice.manager.gui.setup.ladder.laddersettings.SkyWarsLootGui;
+import dev.lokspel.practice.manager.gui.setup.server.ServerArmorLobbyGui;
 import dev.lokspel.practice.manager.server.sound.SoundEffect;
 import dev.lokspel.practice.manager.server.sound.SoundManager;
 import dev.lokspel.practice.manager.server.sound.SoundType;
@@ -191,7 +192,8 @@ public class GuiManager implements Listener {
         || gui instanceof DestroyableBlocksGui
         || gui instanceof InventoryGui
         || gui instanceof CustomKitGui
-        || gui instanceof SkyWarsLootGui;
+        || gui instanceof SkyWarsLootGui
+        || gui instanceof ServerArmorLobbyGui;
   }
 
   private GuiClickSoundIntent resolveClickSoundIntent(
