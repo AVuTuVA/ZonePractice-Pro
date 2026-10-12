@@ -75,6 +75,7 @@ import dev.lokspel.practice.manager.matchhistory.MatchHistoryManager;
 import dev.lokspel.practice.manager.nametag.NametagManager;
 import dev.lokspel.practice.manager.playerkit.PlayerKitManager;
 import dev.lokspel.practice.manager.profile.ProfileManager;
+import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsCategoryManager;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsPermissionManager;
 import dev.lokspel.practice.manager.server.ServerManager;
 import dev.lokspel.practice.manager.sidebar.SidebarManager;
@@ -315,6 +316,7 @@ public final class AstralPractice extends JavaPlugin {
     LadderManager.getInstance().saveLadders();
     SidebarManager.getInstance().close();
     InventoryManager.getInstance().setData();
+    CosmeticsCategoryManager.getInstance().clear();
     if (metrics != null) {
       metrics.shutdown();
     }

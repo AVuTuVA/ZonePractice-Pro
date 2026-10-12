@@ -1,6 +1,7 @@
 package dev.lokspel.practice;
 
 import dev.lokspel.api.AstralPracticeApi;
+import dev.lokspel.api.cosmetics.CosmeticCategory;
 import dev.lokspel.api.enums.DivisionName;
 import dev.lokspel.api.enums.PlayerState;
 import dev.lokspel.api.enums.WeightClass;
@@ -13,6 +14,7 @@ import dev.lokspel.api.utilities.PlayerNametag;
 import dev.lokspel.practice.manager.fight.event.EventManager;
 import dev.lokspel.practice.manager.fight.ffa.FfaManager;
 import dev.lokspel.practice.manager.fight.match.MatchManager;
+import dev.lokspel.practice.manager.gui.guis.cosmetics.CosmeticsHubGui;
 import dev.lokspel.practice.manager.inventory.InventoryUtil;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
@@ -20,6 +22,7 @@ import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
+import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsCategoryManager;
 import dev.lokspel.practice.manager.profile.group.Group;
 import dev.lokspel.practice.manager.queue.QueueManager;
 import java.util.List;
@@ -327,5 +330,39 @@ public class AstralPracticeApiImpl extends AstralPracticeApi {
     }
 
     return getPlayerState(player);
+  }
+
+  @Override
+  public void registerCosmeticCategory(CosmeticCategory category) {
+    CosmeticsCategoryManager.getInstance().registerCategory(category);
+  }
+
+  @Override
+  public boolean unregisterCosmeticCategory(String categoryId) {
+    return CosmeticsCategoryManager.getInstance().unregisterCategory(categoryId);
+  }
+
+  @Override
+  public List<CosmeticCategory> getCosmeticCategories() {
+    return CosmeticsCategoryManager.getInstance().getCategories();
+  }
+
+  @Override
+  public CosmeticCategory getCosmeticCategory(String categoryId) {
+    return CosmeticsCategoryManager.getInstance().getCategory(categoryId);
+  }
+
+  @Override
+  public void openCosmeticsMenu(Player player) {
+    if (player == null || !player.isOnline()) {
+      return;
+    }
+
+    Profile profile = ProfileManager.getInstance().getProfile(player);
+    if (profile == null) {
+      return;
+    }
+
+    new CosmeticsHubGui(profile).open(player);
   }
 }

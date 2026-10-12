@@ -1,5 +1,6 @@
 package dev.lokspel.api;
 
+import dev.lokspel.api.cosmetics.CosmeticCategory;
 import dev.lokspel.api.enums.DivisionName;
 import dev.lokspel.api.enums.PlayerState;
 import dev.lokspel.api.enums.WeightClass;
@@ -230,4 +231,51 @@ public abstract class AstralPracticeApi {
    * @return The player's current state
    */
   public abstract PlayerState getPlayerState(UUID uuid);
+
+  /**
+   * Register a custom cosmetic category in the cosmetics menu.
+   *
+   * @param category The cosmetic category to register
+   */
+  public abstract void registerCosmeticCategory(CosmeticCategory category);
+
+  /**
+   * Unregister a custom cosmetic category by its identifier.
+   *
+   * @param categoryId The ID of the category to unregister
+   * @return true if the category was removed, false otherwise
+   */
+  public abstract boolean unregisterCosmeticCategory(String categoryId);
+
+  /**
+   * Unregister a custom cosmetic category.
+   *
+   * @param category The category to unregister
+   * @return true if the category was removed, false otherwise
+   */
+  public boolean unregisterCosmeticCategory(CosmeticCategory category) {
+    return category != null && unregisterCosmeticCategory(category.getId());
+  }
+
+  /**
+   * Get all registered custom cosmetic categories.
+   *
+   * @return List of registered categories
+   */
+  public abstract List<CosmeticCategory> getCosmeticCategories();
+
+  /**
+   * Get a registered cosmetic category by its identifier.
+   *
+   * @param categoryId The category ID
+   * @return The cosmetic category, or null if not found
+   */
+  public abstract CosmeticCategory getCosmeticCategory(String categoryId);
+
+  /**
+   * Open the cosmetics menu for the specified player.
+   *
+   * @param player The player
+   */
+  public abstract void openCosmeticsMenu(Player player);
 }

@@ -187,6 +187,97 @@ int priority = nametag.getSortPriority();
 
 ---
 
+## Custom Cosmetics Categories
+
+Addons can register custom cosmetic categories in the main cosmetics hub menu (`/cosmetics`):
+
+### Registration Methods
+
+| Method | Return Type | Description |
+|---|---|---|
+| `api.registerCosmeticCategory(CosmeticCategory category)` | `void` | Registers a custom category in `/cosmetics` |
+| `api.unregisterCosmeticCategory(String categoryId)` | `boolean` | Unregisters a category by its ID |
+| `api.unregisterCosmeticCategory(CosmeticCategory category)` | `boolean` | Unregisters a category instance |
+| `api.getCosmeticCategories()` | `List<CosmeticCategory>` | Returns all registered custom categories |
+| `api.getCosmeticCategory(String categoryId)` | `CosmeticCategory` | Retrieves a category by ID (or `null`) |
+| `api.openCosmeticsMenu(Player player)` | `void` | Opens the main `/cosmetics` hub menu for the player |
+
+---
+
+### Quick Example: Register Category & Give Item On Click
+
+Here is a simple example that registers a category in `/cosmetics` and gives the player an item when clicked:
+
+```java
+import dev.lokspel.api.AstralPracticeApi;
+import dev.lokspel.api.cosmetics.CosmeticCategory;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+AstralPracticeApi api = AstralPracticeApi.getInstance();
+
+// 1. Build the category
+CosmeticCategory hatCategory = CosmeticCategory.builder("party_hat")
+    .icon(new ItemStack(Material.GOLDEN_HELMET)) // Icon shown in /cosmetics
+    .slot(20) // Preferred slot (or omit / set to -1 for auto-placement)
+    .onClick(player -> {
+        // Give the player a cosmetic item when clicked
+        player.getInventory().addItem(new ItemStack(Material.GOLDEN_HELMET));
+        player.sendMessage("§aYou received a Party Hat!");
+        player.closeInventory();
+    })
+    .build();
+
+// 2. Register the category
+api.registerCosmeticCategory(hatCategory);
+
+// 3. Unregister when your addon disables
+api.unregisterCosmeticCategory("party_hat");
+```
+
+### Alternative: Direct Interface Implementation
+
+You can also implement `CosmeticCategory` directly as a dedicated class:
+
+```java
+import dev.lokspel.api.cosmetics.CosmeticCategory;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+
+public class AurasCategory implements CosmeticCategory {
+
+    @Override
+    public String getId() {
+        return "auras";
+    }
+
+    @Override
+    public ItemStack getIcon(Player player) {
+        return new ItemStack(Material.BEACON);
+    }
+
+    @Override
+    public void onClick(Player player, InventoryClickEvent event) {
+        // Open your custom menu for the clicking player
+        aurasMenu.open(player);
+    }
+
+    @Override
+    public int getSlot() {
+        return -1; // -1 for automatic centered placement in the hub menu
+    }
+
+    @Override
+    public boolean isVisible(Player player) {
+        return player.hasPermission("addon.auras");
+    }
+}
+```
+
+---
+
 ## Interfaces
 
 ### `Match`
