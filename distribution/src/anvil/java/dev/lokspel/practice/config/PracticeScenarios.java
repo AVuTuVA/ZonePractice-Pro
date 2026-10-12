@@ -99,4 +99,12 @@ public final class PracticeScenarios {
       return paper("astralpractice-upgrade-from-7.9", fixture("upgrade-from-7.9"));
     }
   }
+
+  /** A plugin folder with a profile configured with the Elytra cosmetic. */
+  public static final class ElytraCosmetic implements AnvilScenarioDefinition {
+    @Override
+    public @NotNull AnvilScenario define() {
+      return paper("astralpractice-elytra-cosmetic", fixture("elytra-cosmetic"));
+    }
+  }
 }

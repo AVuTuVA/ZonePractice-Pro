@@ -37,7 +37,6 @@ public class LobbyItemsGui extends Gui {
 
   private static final int ROWS = 3;
   private static final int BACK_SLOT = 18;
-  private static final int[] OPTION_SLOTS = {10, 12, 14, 16};
 
   private final Profile profile;
   private final Gui backToGui;
@@ -69,10 +68,11 @@ public class LobbyItemsGui extends Gui {
     CosmeticsData.LobbyItemType selected = profile.getCosmeticsData().getLobbyItemType();
     CosmeticsData.LobbyItemType[] values = CosmeticsData.LobbyItemType.values();
     Player online = profile.getPlayer().getPlayer();
+    int[] optionSlots = getOptionSlots(values.length);
 
-    for (int i = 0; i < OPTION_SLOTS.length && i < values.length; i++) {
+    for (int i = 0; i < optionSlots.length && i < values.length; i++) {
       CosmeticsData.LobbyItemType type = values[i];
-      inv.setItem(OPTION_SLOTS[i], buildOptionItem(type, selected, online));
+      inv.setItem(optionSlots[i], buildOptionItem(type, selected, online));
     }
 
     inv.setItem(BACK_SLOT, backItem() == null ? new ItemStack(Material.ARROW) : backItem());
@@ -116,12 +116,24 @@ public class LobbyItemsGui extends Gui {
 
   private CosmeticsData.LobbyItemType getTypeBySlot(int slot) {
     CosmeticsData.LobbyItemType[] values = CosmeticsData.LobbyItemType.values();
-    for (int i = 0; i < OPTION_SLOTS.length && i < values.length; i++) {
-      if (OPTION_SLOTS[i] == slot) {
+    int[] optionSlots = getOptionSlots(values.length);
+    for (int i = 0; i < optionSlots.length && i < values.length; i++) {
+      if (optionSlots[i] == slot) {
         return values[i];
       }
     }
     return null;
+  }
+
+  private static int[] getOptionSlots(int count) {
+    return switch (count) {
+      case 1 -> new int[] {13};
+      case 2 -> new int[] {12, 14};
+      case 3 -> new int[] {11, 13, 15};
+      case 4 -> new int[] {10, 12, 14, 16};
+      case 5 -> new int[] {9, 11, 13, 15, 17};
+      default -> new int[] {9, 11, 13, 15, 17};
+    };
   }
 
   private ItemStack buildOptionItem(
@@ -133,6 +145,9 @@ public class LobbyItemsGui extends Gui {
     Map<String, ItemConfig> entries =
         PracticeConfig.guis().getGuis().getCosmetics().getLobbyItems().getEntries();
     ItemConfig entry = entries != null ? entries.get(type.name()) : null;
+    if (entry == null && entries != null && type == CosmeticsData.LobbyItemType.ELYTRA) {
+      entry = entries.get("FIREWORK");
+    }
     final String name =
         entry != null && entry.getName() != null ? entry.getName() : "<yellow>" + formatName(type);
     final Material material =
@@ -176,6 +191,7 @@ public class LobbyItemsGui extends Gui {
       case WIND_CHARGE -> safeMaterial("WIND_CHARGE", Material.FIRE_CHARGE);
       case TRIDENT -> safeMaterial("TRIDENT", Material.IRON_SWORD);
       case SPEAR -> safeMaterial("SPEAR", safeMaterial("TRIDENT", Material.IRON_SWORD));
+      case ELYTRA -> safeMaterial("ELYTRA", Material.FEATHER);
     };
   }
 

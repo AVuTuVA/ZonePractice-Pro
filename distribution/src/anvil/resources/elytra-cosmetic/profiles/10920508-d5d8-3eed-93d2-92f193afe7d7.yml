@@ -1,0 +1,69 @@
+uuid: 10920508-d5d8-3eed-93d2-92f193afe7d7
+join:
+  first: 1791718617861
+  latest: 1791718741629
+settings:
+  duelrequest: true
+  autoqueue: false
+  sidebar: true
+  hideplayers: false
+  partyinvites: true
+  allowspectate: true
+  flying: false
+  messages: true
+  worldtime: DAY
+  prefix-visibility: PREFIX_AND_SUFFIX
+player-custom-kit:
+  '0':
+    settings:
+      name: Kit 1
+      regen: true
+      hunger: true
+      build: true
+      rounds: 1
+      hit-delay: 1.0
+      knockback: DEFAULT
+      ep-cooldown: 13.0
+      ga-cooldown: 5.0
+      wind-charge-cooldown: 0.0
+      health-below-name: false
+stats:
+  ladder-stats:
+    sword:
+      unranked:
+        wins: 0
+        losses: 0
+        win-streak: 0
+        best-win-streak: 0
+        lose-streak: 0
+        best-lose-streak: 0
+      ranked:
+        wins: 0
+        losses: 0
+        win-streak: 0
+        best-win-streak: 0
+        lose-streak: 0
+        best-lose-streak: 0
+        elo: 1000
+      global:
+        kills: 0
+        deaths: 0
+    captureladder:
+      unranked:
+        wins: 0
+        losses: 0
+        win-streak: 0
+        best-win-streak: 0
+        lose-streak: 0
+        best-lose-streak: 0
+      global:
+        kills: 0
+        deaths: 0
+group: DEFAULT
+cosmetics:
+  active-tier: leather
+  death-effect: none
+  lobby-item: ELYTRA
+  shield:
+    active-layout-index: -1
+    layouts: []

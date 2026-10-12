@@ -157,6 +157,10 @@ public class InventoryManager {
     return cosmeticService.getLobbyCosmeticType(itemStack);
   }
 
+  public boolean isOffhandElytraCosmetic(CosmeticsData.LobbyItemType type) {
+    return cosmeticService.isOffhandElytraCosmetic(type);
+  }
+
   public void setEventQueueInventory(Player player) {
     transitionService.setEventQueueInventory(player);
   }

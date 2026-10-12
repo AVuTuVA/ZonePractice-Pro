@@ -1,0 +1,31 @@
+name: captureladder
+enabled: false
+type: BASIC
+settings:
+  regen: true
+  hunger: true
+  weightClass: UNRANKED
+  editable: true
+  drop-inventory: false
+  multiRoundStartCountdown: true
+  hitdelay: 1.0
+  rounds: 1
+  hearts: 10
+  maxduration: 600
+  epcooldown: 13.0
+  gacooldown: 0.0
+  fireworkcooldown: 1.0
+  windchargecooldown: 0.0
+  startcountdown: 3
+  startmove: true
+  matchtypes: []
+  knockback: DEFAULT
+  tntfusetime: 4
+  tntautoignite: false
+  pullplayerswithrod: true
+  healthbelowname: false
+  resetbuildafterround: false
+  breakallblocks: false
+  roundenddelay: 3
+  roundstatustitles: true
+  countdowntitles: true

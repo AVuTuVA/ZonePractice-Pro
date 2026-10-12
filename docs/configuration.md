@@ -64,8 +64,9 @@ Paths are JSON pointers. Never change or renumber a migration that has been rele
 
 `distribution/src/anvil` holds Anvil tests that start Paper
 with PacketEvents and the shaded plugin, join with a simulated player and check what the files do: a
-fresh install, and an upgrade of a 7.9 plugin folder (`src/anvil/resources/upgrade-from-7.9`) followed
-by `/practice reload` with an edited and then a broken `language.yml`. Run them with:
+fresh install, an upgrade of a 7.9 plugin folder (`src/anvil/resources/upgrade-from-7.9`) followed
+by `/practice reload` with an edited and then a broken `language.yml`, and cosmetics equipping and
+profile persistence (`src/anvil/resources/elytra-cosmetic`). Run them with:
 
 ```sh
 ./gradlew :distribution:anvilTest
@@ -91,4 +92,5 @@ Bukkit objects such as `ItemStack`, `Location` and `PotionEffect` are fields of 
 the format Bukkit's `YamlConfiguration` used, so files written by earlier versions load unchanged. A
 file that cannot be read is copied aside as `<name>.yml.broken-<time>` before anything can overwrite
 it. The Anvil test `DataFilesTest` loads data files written by 7.9 and checks that saving them keeps
-every value.
+every value, while `ElytraCosmeticsTest` checks that cosmetics in profile files are preserved when
+saved.

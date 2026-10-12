@@ -539,6 +539,17 @@ public class Cosmetics {
                   "",
                   "<gray>Status: %status%",
                   ""));
+      values.put(
+          "ELYTRA",
+          ItemConfig.of("ELYTRA")
+              .name("<light_purple>Elytra")
+              .lore(
+                  "",
+                  "<gray>Infinite lobby firework rockets",
+                  "<gray>and elytra to fly in lobby.",
+                  "",
+                  "<gray>Status: %status%",
+                  ""));
 
       return values;
     }

@@ -7,6 +7,7 @@ import dev.lokspel.practice.manager.profile.cosmetics.shield.ShieldLayout;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,10 +22,26 @@ public class CosmeticsData {
     NONE,
     WIND_CHARGE,
     TRIDENT,
-    SPEAR;
+    SPEAR,
+    ELYTRA;
 
     public String getPermissionNode() {
-      return "ap.cosmetics.lobby." + name().toLowerCase();
+      return "ap.cosmetics.lobby." + name().toLowerCase(Locale.ROOT);
+    }
+
+    public static LobbyItemType fromString(String name) {
+      if (name == null || name.isBlank()) {
+        return NONE;
+      }
+      String upper = name.trim().toUpperCase(Locale.ROOT);
+      if ("FIREWORK".equals(upper) || "FIREWORKS".equals(upper)) {
+        return ELYTRA;
+      }
+      try {
+        return valueOf(upper);
+      } catch (IllegalArgumentException ignored) {
+        return NONE;
+      }
     }
   }
 

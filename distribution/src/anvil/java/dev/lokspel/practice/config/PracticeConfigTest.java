@@ -42,6 +42,10 @@ class PracticeConfigTest {
     assertTrue(config.startsWith("_version: 1\n"), config.lines().findFirst().orElse(""));
     assertTrue(config.lines().anyMatch(line -> line.strip().startsWith("#")), "no comments");
 
+    String guis = Files.readString(data.resolve("guis.yml"));
+    assertTrue(guis.contains("ELYTRA:"), "guis.yml does not contain ELYTRA cosmetic");
+    assertTrue(guis.contains("firework"), "guis.yml does not contain firework description");
+
     SimulatedPlayer alice = PracticeJourney.join(anvil, "Alice");
     PracticeJourney.assertLobbyItems(alice);
     PracticeJourney.command(alice, "party disband", NO_PARTY);
