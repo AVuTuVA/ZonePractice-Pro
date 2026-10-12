@@ -87,120 +87,108 @@ AstralPracticeApi api = Bukkit.getServicesManager().load(AstralPracticeApi.class
 
 ---
 
-## Player State & Session Queries
+## Player API (`api.getPlayers()`)
 
-Query what a player is currently participating in or spectating:
+Query practice state, nametags, divisions, and daily match limits:
 
 ```java
 AstralPracticeApi api = AstralPracticeApi.getInstance();
 
 // Current practice state (OFFLINE, LOBBY, EDITOR, CUSTOM_EDITOR, QUEUE, MATCH, FFA, EVENT, SPECTATE, STAFF_MODE)
-PlayerState state = api.getPlayerState(player);
-PlayerState stateByUuid = api.getPlayerState(uuid);
+PlayerState state = api.getPlayers().getState(player);
+PlayerState stateByUuid = api.getPlayers().getState(uuid);
 
-// Current active match (returns null if not in a match)
-Match match = api.getMatch(player);
+// Player division name (SHORT or FULL)
+String divisionShort = api.getPlayers().getDivision(player, DivisionName.SHORT);
+String divisionFull = api.getPlayers().getDivision(player, DivisionName.FULL);
 
-// Spectated match (returns null if not spectating)
-Match spectating = api.getSpectatingMatch(player);
+// Nametag components (Adventure Component prefix/suffix, color, sort priority)
+PlayerNametag nametag = api.getPlayers().getNametag(player);
+Component prefix = nametag.getPrefix();
+NamedTextColor nameColor = nametag.getColorOfName();
+Component suffix = nametag.getSuffix();
+int priority = nametag.getSortPriority();
 
-// FFA game (returns null if not in FFA)
-Ffa ffa = api.getFfa(player);
-
-// Event instance (returns null if not in an event)
-Event event = api.getEvent(player);
-
-// Party instance (returns null if not in a party)
-Party party = api.getParty(player);
-
-// Waiting queue (returns null if not in a queue)
-Queue queue = api.getQueue(player);
+// Daily match limits
+int rankedLeft = api.getPlayers().getRankedLeft(player);
+int unrankedLeft = api.getPlayers().getUnRankedLeft(player);
+api.getPlayers().addRanked(player, 5);
+api.getPlayers().resetRanked(player);
 ```
 
 ---
 
-## Ladders & Statistics
+## Matches & Gameplay (`api.getMatches()`, `api.getFfa()`, etc.)
+
+Query ongoing gameplay instances and manage matches:
+
+```java
+AstralPracticeApi api = AstralPracticeApi.getInstance();
+
+// Current active match (returns null if not in a match)
+Match match = api.getMatches().getMatch(player);
+
+// Spectated match (returns null if not spectating)
+Match spectating = api.getMatches().getSpectatingMatch(player);
+
+// Force-end a player's match with a MiniMessage-formatted reason
+api.getMatches().endMatch(player, "<red>Match ended by an admin");
+
+// FFA game (returns null if not in FFA)
+Ffa ffa = api.getFfa().getFfa(player);
+
+// Event instance (returns null if not in an event)
+Event event = api.getEvents().getEvent(player);
+
+// Party instance (returns null if not in a party)
+Party party = api.getParties().getParty(player);
+
+// Waiting queue (returns null if not in a queue)
+Queue queue = api.getQueues().getQueue(player);
+```
+
+---
+
+## Ladders & Statistics (`api.getLadders()`, `api.getStats()`)
 
 ```java
 AstralPracticeApi api = AstralPracticeApi.getInstance();
 
 // List all registered ladder names
-List<String> ladders = api.getLadderNames();
+List<String> ladders = api.getLadders().getLadderNames();
 
 // Player ladder kills and deaths (-1 if unavailable)
-int kills = api.getLadderKills(player, "Nodebuff");
-int deaths = api.getLadderDeaths(player, "Nodebuff");
+int kills = api.getStats().getLadderKills(player, "Nodebuff");
+int deaths = api.getStats().getLadderDeaths(player, "Nodebuff");
 
 // Elo rating for a ladder
-int elo = api.getElo(player, "Nodebuff");
+int elo = api.getStats().getElo(player, "Nodebuff");
 
 // Ladder wins and losses by weight class
-int rankedWins = api.getLadderWins(player, "Nodebuff", WeightClass.RANKED);
-int unrankedLosses = api.getLadderLosses(player, "Nodebuff", WeightClass.UNRANKED);
+int rankedWins = api.getStats().getLadderWins(player, "Nodebuff", WeightClass.RANKED);
+int unrankedLosses = api.getStats().getLadderLosses(player, "Nodebuff", WeightClass.UNRANKED);
 
 // Global statistics
-int globalWins = api.getGlobalWins(player);
-int exp = api.getExperience(player);
+int globalWins = api.getStats().getGlobalWins(player);
+int exp = api.getStats().getExperience(player);
 ```
 
 ---
 
-## Match Management & Daily Limits
+## Cosmetics API (`api.getCosmetics()`)
 
-```java
-AstralPracticeApi api = AstralPracticeApi.getInstance();
+Addons can manage custom cosmetic categories in the main cosmetics hub menu (`/cosmetics`) through the dedicated `CosmeticsApi` section:
 
-// Check remaining daily matches
-int rankedLeft = api.getPlayerRankedLeft(player);
-int unrankedLeft = api.getPlayerUnRankedLeft(player);
-
-// Add daily matches
-api.addPlayerRanked(player, 5);
-api.addPlayerUnRanked(player, 5);
-
-// Reset daily matches
-api.resetPlayerRanked(player);
-api.resetPlayerUnRanked(player);
-
-// Force-end a player's match with a MiniMessage-formatted reason
-api.endMatch(player, "<red>Match ended by an admin");
-```
-
----
-
-## Divisions & Nametags
-
-```java
-AstralPracticeApi api = AstralPracticeApi.getInstance();
-
-// Player division name (SHORT or FULL)
-String divisionShort = api.getPlayerDivision(player, DivisionName.SHORT);
-String divisionFull = api.getPlayerDivision(player, DivisionName.FULL);
-
-// Nametag components (Adventure Component prefix/suffix, color, sort priority)
-PlayerNametag nametag = api.getPlayerNametag(player);
-Component prefix = nametag.getPrefix();
-NamedTextColor nameColor = nametag.getColorOfName();
-Component suffix = nametag.getSuffix();
-int priority = nametag.getSortPriority();
-```
-
----
-
-## Custom Cosmetics Categories
-
-Addons can register custom cosmetic categories in the main cosmetics hub menu (`/cosmetics`):
-
-### Registration Methods
+### Available Methods
 
 | Method | Return Type | Description |
 |---|---|---|
-| `api.registerCosmeticCategory(CosmeticCategory category)` | `void` | Registers a custom category in `/cosmetics` |
-| `api.unregisterCosmeticCategory(String categoryId)` | `boolean` | Unregisters a category by its ID |
-| `api.unregisterCosmeticCategory(CosmeticCategory category)` | `boolean` | Unregisters a category instance |
-| `api.getCosmeticCategories()` | `List<CosmeticCategory>` | Returns all registered custom categories |
-| `api.getCosmeticCategory(String categoryId)` | `CosmeticCategory` | Retrieves a category by ID (or `null`) |
-| `api.openCosmeticsMenu(Player player)` | `void` | Opens the main `/cosmetics` hub menu for the player |
+| `api.getCosmetics().registerCategory(CosmeticCategory category)` | `void` | Registers a custom category in `/cosmetics` |
+| `api.getCosmetics().unregisterCategory(String categoryId)` | `boolean` | Unregisters a category by its ID |
+| `api.getCosmetics().unregisterCategory(CosmeticCategory category)` | `boolean` | Unregisters a category instance |
+| `api.getCosmetics().getCategories()` | `List<CosmeticCategory>` | Returns all registered custom categories |
+| `api.getCosmetics().getCategory(String categoryId)` | `CosmeticCategory` | Retrieves a category by ID (or `null`) |
+| `api.getCosmetics().openMenu(Player player)` | `void` | Opens the main `/cosmetics` hub menu for the player |
 
 ---
 
@@ -228,11 +216,11 @@ CosmeticCategory hatCategory = CosmeticCategory.builder("party_hat")
     })
     .build();
 
-// 2. Register the category
-api.registerCosmeticCategory(hatCategory);
+// 2. Register the category via the dedicated Cosmetics section
+api.getCosmetics().registerCategory(hatCategory);
 
 // 3. Unregister when your addon disables
-api.unregisterCosmeticCategory("party_hat");
+api.getCosmetics().unregisterCategory("party_hat");
 ```
 
 ### Alternative: Direct Interface Implementation
