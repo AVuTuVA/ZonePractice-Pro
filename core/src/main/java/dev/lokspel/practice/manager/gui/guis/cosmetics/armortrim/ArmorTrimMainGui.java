@@ -81,10 +81,6 @@ public class ArmorTrimMainGui extends Gui {
         .get();
   }
 
-  private static final ArmorSlot[] ARMOR_TYPE_SLOTS = {
-    ArmorSlot.HELMET, ArmorSlot.CHESTPLATE, ArmorSlot.LEGGINGS, ArmorSlot.BOOTS
-  };
-
   private final Profile profile;
   private final Gui backToGui;
 
@@ -116,9 +112,9 @@ public class ArmorTrimMainGui extends Gui {
 
     ArmorTrimTier activeTier = profile.getCosmeticsData().getActiveTier();
     Player player = profile.getPlayer().getPlayer();
-    if (player != null && !player.hasPermission(activeTier.getPermissionNode())) {
+    if (player != null && !CosmeticsPermissionManager.hasBasePermission(player, activeTier)) {
       for (ArmorTrimTier tier : ArmorTrimTier.values()) {
-        if (player.hasPermission(tier.getPermissionNode())) {
+        if (CosmeticsPermissionManager.hasBasePermission(player, tier)) {
           activeTier = tier;
           profile.getCosmeticsData().setActiveTier(tier);
           break;
@@ -190,7 +186,7 @@ public class ArmorTrimMainGui extends Gui {
     ArmorSlot armorSlot = getArmorSlotFromSlot(slot);
     if (armorSlot != null) {
       ArmorTrimTier activeTier = profile.getCosmeticsData().getActiveTier();
-      if (!player.hasPermission(activeTier.getPermissionNode())) {
+      if (!CosmeticsPermissionManager.hasBasePermission(player, activeTier)) {
         String deniedMessage =
             PracticeConfig.guis().getGuis().getCosmetics().getPermissionDeniedMessage();
         Common.sendMmMessage(player, deniedMessage);
@@ -252,9 +248,7 @@ public class ArmorTrimMainGui extends Gui {
     guiItem.setLore(lore);
 
     ItemStack item = guiItem.get();
-    if (slot != ArmorSlot.SHIELD) {
-      applyTrimPreview(item, activePattern, activeMaterial);
-    }
+    applyTrimPreview(item, activePattern, activeMaterial);
     return item;
   }
 
@@ -271,13 +265,13 @@ public class ArmorTrimMainGui extends Gui {
 
     if (player != null) {
       for (TrimPattern pattern : CosmeticsPermissionManager.getRegisteredPatterns()) {
-        if (player.hasPermission("ap.cosmetics.armortrim.pattern." + getPermissionId(pattern))) {
+        if (CosmeticsPermissionManager.hasPatternPermission(player, pattern)) {
           playerPatternPermissions++;
         }
       }
 
       for (TrimMaterial material : CosmeticsPermissionManager.getRegisteredMaterials()) {
-        if (player.hasPermission("ap.cosmetics.armortrim.material." + getPermissionId(material))) {
+        if (CosmeticsPermissionManager.hasMaterialPermission(player, material)) {
           playerMaterialPermissions++;
         }
       }
@@ -335,7 +329,7 @@ public class ArmorTrimMainGui extends Gui {
     ArmorTrimTier nextTier = forward ? currentTier.next() : previousTier(currentTier);
 
     for (int i = 0; i < ArmorTrimTier.values().length; i++) {
-      if (player.hasPermission(nextTier.getPermissionNode())) {
+      if (CosmeticsPermissionManager.hasBasePermission(player, nextTier)) {
         profile.getCosmeticsData().setActiveTier(nextTier);
         profile.save();
         update(true);
@@ -353,7 +347,7 @@ public class ArmorTrimMainGui extends Gui {
   private void applyActiveTierToAllTiers(Player player) {
     ArmorTrimTier sourceTier = profile.getCosmeticsData().getActiveTier();
 
-    if (!player.hasPermission(sourceTier.getPermissionNode())) {
+    if (!CosmeticsPermissionManager.hasBasePermission(player, sourceTier)) {
       String deniedMessage =
           PracticeConfig.guis().getGuis().getCosmetics().getPermissionDeniedMessage();
       Common.sendMmMessage(player, deniedMessage);
@@ -361,7 +355,7 @@ public class ArmorTrimMainGui extends Gui {
     }
 
     for (ArmorTrimTier targetTier : ArmorTrimTier.values()) {
-      for (ArmorSlot slot : ARMOR_TYPE_SLOTS) {
+      for (ArmorSlot slot : ArmorSlot.values()) {
         TrimPattern sourcePattern = profile.getCosmeticsData().getPattern(sourceTier, slot);
         TrimMaterial sourceMaterial = profile.getCosmeticsData().getMaterial(sourceTier, slot);
 

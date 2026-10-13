@@ -128,16 +128,14 @@ public class MaterialSelectionGui extends Gui {
     }
 
     ArmorTrimTier tier = profile.getCosmeticsData().getActiveTier();
-    if (!player.hasPermission(tier.getPermissionNode())) {
+    if (!CosmeticsPermissionManager.hasBasePermission(player, tier)) {
       String tierPermDeniedMessage =
           PracticeConfig.guis().getGuis().getCosmetics().getTierPermissionDeniedMessage();
       Common.sendMmMessage(player, tierPermDeniedMessage);
       return;
     }
 
-    String permissionNode =
-        "ap.cosmetics.armortrim.material." + CosmeticsPermissionManager.getTrimId(material);
-    if (!player.hasPermission(permissionNode)) {
+    if (!CosmeticsPermissionManager.hasMaterialPermission(player, material)) {
       String permDeniedMessage =
           PracticeConfig.guis().getGuis().getCosmetics().getMaterialPermissionDeniedMessage();
       Common.sendMmMessage(player, permDeniedMessage);
@@ -152,7 +150,7 @@ public class MaterialSelectionGui extends Gui {
   private ItemStack buildMaterialItem(Player player, ArmorTrimTier tier, TrimMaterial material) {
     String materialId = CosmeticsPermissionManager.getTrimId(material);
     String permissionNode = "ap.cosmetics.armortrim.material." + materialId;
-    boolean hasPermission = player != null && player.hasPermission(permissionNode);
+    boolean hasPermission = CosmeticsPermissionManager.hasMaterialPermission(player, material);
 
     TrimMaterial activeMaterial = profile.getCosmeticsData().getMaterial(tier, armorSlot);
     boolean active =

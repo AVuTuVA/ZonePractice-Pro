@@ -18,10 +18,6 @@ import org.bukkit.inventory.meta.trim.TrimPattern;
 public record ArmorTrimPreset(
     String id, String name, Material icon, Map<ArmorSlot, ArmorTrim> trims) {
 
-  private static final ArmorSlot[] ARMOR_SLOTS = {
-    ArmorSlot.HELMET, ArmorSlot.CHESTPLATE, ArmorSlot.LEGGINGS, ArmorSlot.BOOTS
-  };
-
   public static ArmorTrimPreset fromConfig(String key, ConfigurationSection entry) {
     if (entry == null || !entry.getBoolean("ENABLED", true)) {
       return null;
@@ -30,7 +26,7 @@ public record ArmorTrimPreset(
     String id = key.toLowerCase(Locale.ROOT);
     Map<ArmorSlot, ArmorTrim> trims = new EnumMap<>(ArmorSlot.class);
 
-    for (ArmorSlot slot : ARMOR_SLOTS) {
+    for (ArmorSlot slot : ArmorSlot.values()) {
       String patternKey = entry.getString(slot.name() + ".PATTERN", entry.getString("PATTERN", ""));
       String materialKey =
           entry.getString(slot.name() + ".MATERIAL", entry.getString("MATERIAL", ""));

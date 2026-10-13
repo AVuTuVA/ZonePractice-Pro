@@ -30,7 +30,6 @@ public enum CosmeticsPermissionManager {
 
   private static final List<TrimPattern> REGISTERED_PATTERNS = new ArrayList<>();
   private static final List<TrimMaterial> REGISTERED_MATERIALS = new ArrayList<>();
-  private static final List<DeathEffect> REGISTERED_DEATH_EFFECTS = new ArrayList<>();
   private static final Map<TrimPattern, String> PATTERN_IDS = new HashMap<>();
   private static final Map<TrimMaterial, String> MATERIAL_IDS = new HashMap<>();
   private static final Pattern NAMESPACE_PATTERN =
@@ -110,10 +109,8 @@ public enum CosmeticsPermissionManager {
     REGISTERED_PATTERNS.sort(Comparator.comparing(CosmeticsPermissionManager::getTrimId));
     REGISTERED_MATERIALS.sort(Comparator.comparing(CosmeticsPermissionManager::getTrimId));
 
-    REGISTERED_DEATH_EFFECTS.clear();
     for (DeathEffect deathEffect : DeathEffect.values()) {
       String node = getDeathEffectPermissionNode(deathEffect);
-      REGISTERED_DEATH_EFFECTS.add(deathEffect);
       registerPermission(pluginManager, node, "Use death effect " + deathEffect.getId() + ".");
     }
 
@@ -128,17 +125,12 @@ public enum CosmeticsPermissionManager {
     return Collections.unmodifiableList(REGISTERED_MATERIALS);
   }
 
-  public static List<DeathEffect> getRegisteredDeathEffects() {
-    return Collections.unmodifiableList(REGISTERED_DEATH_EFFECTS);
-  }
-
   public static boolean hasBasePermission(Player player, ArmorTrimTier tier) {
     if (player == null || tier == null) {
       return false;
     }
 
-    return player.isOp()
-        || player.hasPermission("ap.cosmetics.armortrim.base.*")
+    return player.hasPermission("ap.cosmetics.armortrim.base.*")
         || player.hasPermission(tier.getPermissionNode());
   }
 
@@ -155,9 +147,7 @@ public enum CosmeticsPermissionManager {
       return false;
     }
 
-    return player.isOp()
-        || player.hasPermission("ap.cosmetics.armortrim.pattern.*")
-        || player.hasPermission(node);
+    return player.hasPermission("ap.cosmetics.armortrim.pattern.*") || player.hasPermission(node);
   }
 
   public static boolean hasMaterialPermission(Player player, TrimMaterial material) {
@@ -173,9 +163,7 @@ public enum CosmeticsPermissionManager {
       return false;
     }
 
-    return player.isOp()
-        || player.hasPermission("ap.cosmetics.armortrim.material.*")
-        || player.hasPermission(node);
+    return player.hasPermission("ap.cosmetics.armortrim.material.*") || player.hasPermission(node);
   }
 
   public static String getDeathEffectPermissionNode(DeathEffect deathEffect) {
@@ -192,8 +180,7 @@ public enum CosmeticsPermissionManager {
       return true;
     }
 
-    return player.isOp()
-        || player.hasPermission(DeathEffect.getPermissionNode("*"))
+    return player.hasPermission(DeathEffect.getPermissionNode("*"))
         || player.hasPermission(getDeathEffectPermissionNode(deathEffect));
   }
 
@@ -202,8 +189,7 @@ public enum CosmeticsPermissionManager {
       return false;
     }
 
-    return player.isOp()
-        || player.hasPermission("ap.cosmetics.shield.*")
+    return player.hasPermission("ap.cosmetics.shield.*")
         || player.hasPermission("ap.cosmetics.shield.use");
   }
 
@@ -217,8 +203,7 @@ public enum CosmeticsPermissionManager {
       return true;
     }
 
-    return player.isOp()
-        || player.hasPermission("ap.cosmetics.lobby.*")
+    return player.hasPermission("ap.cosmetics.lobby.*")
         || player.hasPermission(lobbyItemType.getPermissionNode());
   }
 
@@ -235,8 +220,7 @@ public enum CosmeticsPermissionManager {
       return false;
     }
 
-    return player.isOp()
-        || player.hasPermission("ap.cosmetics.preset.*")
+    return player.hasPermission("ap.cosmetics.preset.*")
         || player.hasPermission(getTrimPresetPermissionNode(id));
   }
 
@@ -249,8 +233,7 @@ public enum CosmeticsPermissionManager {
       return false;
     }
 
-    return player.isOp()
-        || player.hasPermission("ap.cosmetics.preset.*")
+    return player.hasPermission("ap.cosmetics.preset.*")
         || player.hasPermission(getShieldPresetPermissionNode(id));
   }
 
@@ -263,8 +246,7 @@ public enum CosmeticsPermissionManager {
       return 1;
     }
 
-    if (player.isOp()
-        || player.hasPermission("ap.cosmetics.shield.*")
+    if (player.hasPermission("ap.cosmetics.shield.*")
         || player.hasPermission("ap.cosmetics.shield.layouts.*")
         || player.hasPermission("ap.cosmetics.shield.layouts.unlimited")) {
       return MAX_SHIELD_LAYOUTS;

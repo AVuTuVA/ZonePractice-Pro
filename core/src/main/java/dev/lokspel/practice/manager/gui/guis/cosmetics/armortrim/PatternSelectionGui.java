@@ -129,16 +129,14 @@ public class PatternSelectionGui extends Gui {
     }
 
     ArmorTrimTier tier = profile.getCosmeticsData().getActiveTier();
-    if (!player.hasPermission(tier.getPermissionNode())) {
+    if (!CosmeticsPermissionManager.hasBasePermission(player, tier)) {
       String tierPermDeniedMessage =
           PracticeConfig.guis().getGuis().getCosmetics().getTierPermissionDeniedMessage();
       Common.sendMmMessage(player, tierPermDeniedMessage);
       return;
     }
 
-    String permissionNode =
-        "ap.cosmetics.armortrim.pattern." + CosmeticsPermissionManager.getTrimId(pattern);
-    if (!player.hasPermission(permissionNode)) {
+    if (!CosmeticsPermissionManager.hasPatternPermission(player, pattern)) {
       String permDeniedMessage =
           PracticeConfig.guis().getGuis().getCosmetics().getPatternPermissionDeniedMessage();
       Common.sendMmMessage(player, permDeniedMessage);
@@ -153,7 +151,7 @@ public class PatternSelectionGui extends Gui {
   private ItemStack buildPatternItem(Player player, ArmorTrimTier tier, TrimPattern pattern) {
     String patternId = CosmeticsPermissionManager.getTrimId(pattern);
     String permissionNode = "ap.cosmetics.armortrim.pattern." + patternId;
-    boolean hasPermission = player != null && player.hasPermission(permissionNode);
+    boolean hasPermission = CosmeticsPermissionManager.hasPatternPermission(player, pattern);
 
     TrimPattern activePattern = profile.getCosmeticsData().getPattern(tier, armorSlot);
     boolean active =

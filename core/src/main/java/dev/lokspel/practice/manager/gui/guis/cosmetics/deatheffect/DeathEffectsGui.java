@@ -114,10 +114,7 @@ public class DeathEffectsGui extends Gui {
 
   private void handleEffectClick(Player player, DeathEffect deathEffect) {
     // Permission check
-    if (deathEffect != DeathEffect.NONE
-        && !player.isOp()
-        && !player.hasPermission("ap.cosmetics.deatheffect.*")
-        && !CosmeticsPermissionManager.hasDeathEffectPermission(player, deathEffect)) {
+    if (!CosmeticsPermissionManager.hasDeathEffectPermission(player, deathEffect)) {
       String msg =
           PracticeConfig.guis().getGuis().getCosmetics().getDeathEffects().getNoPermissionMessage();
       Common.sendMmMessage(player, msg);
@@ -148,11 +145,7 @@ public class DeathEffectsGui extends Gui {
 
     boolean isActive = (deathEffect == active);
     boolean hasPerms =
-        player == null
-            || player.isOp()
-            || player.hasPermission("ap.cosmetics.deatheffect.*")
-            || CosmeticsPermissionManager.hasDeathEffectPermission(player, deathEffect)
-            || deathEffect == DeathEffect.NONE;
+        player == null || CosmeticsPermissionManager.hasDeathEffectPermission(player, deathEffect);
 
     Map<String, Cosmetics.DeathEffects.DeathEffectEntry> entries =
         PracticeConfig.guis().getGuis().getCosmetics().getDeathEffects().getEntries();

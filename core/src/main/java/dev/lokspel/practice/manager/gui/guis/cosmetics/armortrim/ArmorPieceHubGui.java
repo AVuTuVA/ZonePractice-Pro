@@ -169,8 +169,7 @@ public class ArmorPieceHubGui extends Gui {
             .getName());
 
     ItemStack itemStack = item.get();
-    if (armorSlot != ArmorSlot.SHIELD
-        && pattern != null
+    if (pattern != null
         && material != null
         && itemStack.getItemMeta() instanceof ArmorMeta armorMeta) {
       armorMeta.setTrim(new ArmorTrim(material, pattern));
@@ -271,7 +270,6 @@ public class ArmorPieceHubGui extends Gui {
       case CHESTPLATE -> GuiType.Cosmetics_Chestplate;
       case LEGGINGS -> GuiType.Cosmetics_Leggings;
       case BOOTS -> GuiType.Cosmetics_Boots;
-      case SHIELD -> GuiType.Cosmetics_Shield;
     };
   }
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.lokspel.practice.manager.ladder.abstraction.playercustom.CustomLadderData;
-import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorSlot;
 import dev.lokspel.practice.manager.profile.statistics.LadderStatsData;
 import dev.lokspel.practice.util.KitFileData;
 import java.util.LinkedHashMap;
@@ -156,43 +155,12 @@ public class ProfileData {
     /** Trim per tier id, then per slot id. */
     @JsonProperty("tiers")
     private Map<String, Map<String, Trim>> tiers;
-
-    @JsonProperty("helmet")
-    private Trim legacyHelmet;
-
-    @JsonProperty("chestplate")
-    private Trim legacyChestplate;
-
-    @JsonProperty("leggings")
-    private Trim legacyLeggings;
-
-    @JsonProperty("boots")
-    private Trim legacyBoots;
-
-    /**
-     * Returns the trim of a slot in the older layout without tiers.
-     *
-     * @param slot the armor slot
-     * @return the trim, or {@code null} if there is none
-     */
-    public Trim legacyTrim(ArmorSlot slot) {
-      return switch (slot) {
-        case HELMET -> legacyHelmet;
-        case CHESTPLATE -> legacyChestplate;
-        case LEGGINGS -> legacyLeggings;
-        case BOOTS -> legacyBoots;
-        case SHIELD -> shield;
-      };
-    }
   }
 
-  /**
-   * The shield cosmetics. {@code pattern} and {@code material} belong to the older trim layout
-   * without tiers, where the shield was a slot like the armor pieces.
-   */
+  /** The shield cosmetics. */
   @Getter
   @Setter
-  public static class Shield extends Trim {
+  public static class Shield {
 
     @JsonProperty("active-layout-index")
     private Integer activeLayoutIndex;

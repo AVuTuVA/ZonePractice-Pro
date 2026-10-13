@@ -8,8 +8,7 @@ public enum ArmorSlot {
   HELMET("helmet", "Helmet"),
   CHESTPLATE("chestplate", "Chestplate"),
   LEGGINGS("leggings", "Leggings"),
-  BOOTS("boots", "Boots"),
-  SHIELD("shield", "Shield");
+  BOOTS("boots", "Boots");
   private final String id;
   private final String displayName;
 

@@ -98,7 +98,6 @@ public enum ArmorTrimTier {
       case CHESTPLATE -> defaultChestplateMaterial;
       case LEGGINGS -> defaultLeggingsMaterial;
       case BOOTS -> defaultBootsMaterial;
-      case SHIELD -> Material.SHIELD;
     };
   }
 
@@ -115,8 +114,6 @@ public enum ArmorTrimTier {
       case CHESTPLATE -> config.getChestplateMaterial();
       case LEGGINGS -> config.getLeggingsMaterial();
       case BOOTS -> config.getBootsMaterial();
-      // The tiers have no shield material; the shield always uses the default.
-      case SHIELD -> null;
     };
   }
 

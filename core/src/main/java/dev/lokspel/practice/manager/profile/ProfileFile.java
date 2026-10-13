@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import lombok.Getter;
-import net.kyori.adventure.key.Key;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
@@ -188,10 +188,10 @@ public class ProfileFile {
     }
     for (ArmorTrimTier tier : ArmorTrimTier.values()) {
       Map<String, ProfileData.Trim> slots =
-          cosmetics.getTiers().computeIfAbsent(tier.getId(), id -> new LinkedHashMap<>());
+          cosmetics.getTiers().computeIfAbsent(tier.getId(), _ -> new LinkedHashMap<>());
 
       for (ArmorSlot slot : ArmorSlot.values()) {
-        ProfileData.Trim trim = slots.computeIfAbsent(slot.getId(), id -> new ProfileData.Trim());
+        ProfileData.Trim trim = slots.computeIfAbsent(slot.getId(), _ -> new ProfileData.Trim());
 
         TrimPattern pattern = cosmeticsData.getPattern(tier, slot);
         trim.setPattern(
@@ -251,8 +251,8 @@ public class ProfileFile {
       ProfileData.CustomKit stored =
           profileData
               .getCustomKits()
-              .computeIfAbsent(name, ladderName -> new LinkedHashMap<>())
-              .computeIfAbsent("kit" + i, kit -> new ProfileData.CustomKit());
+              .computeIfAbsent(name, _ -> new LinkedHashMap<>())
+              .computeIfAbsent("kit" + i, _ -> new ProfileData.CustomKit());
 
       ProfileData.KitContents contents = ranked ? stored.getRanked() : stored.getUnranked();
       if (contents == null) {
@@ -465,7 +465,6 @@ public class ProfileFile {
       }
       cosmeticsData.setActiveShieldLayoutIndex(activeShieldLayoutIndex);
 
-      boolean loadedTierData = false;
       for (ArmorTrimTier tier : ArmorTrimTier.values()) {
         Map<String, ProfileData.Trim> slots =
             cosmetics.getTiers() != null ? cosmetics.getTiers().get(tier.getId()) : null;
@@ -482,31 +481,11 @@ public class ProfileFile {
           TrimPattern pattern = getTrimPatternByName(trim.getPattern());
           if (pattern != null) {
             cosmeticsData.setPattern(tier, slot, pattern);
-            loadedTierData = true;
           }
 
           TrimMaterial material = getTrimMaterialByName(trim.getMaterial());
           if (material != null) {
             cosmeticsData.setMaterial(tier, slot, material);
-            loadedTierData = true;
-          }
-        }
-      }
-
-      if (!loadedTierData) {
-        for (ArmorSlot slot : ArmorSlot.values()) {
-          ProfileData.Trim legacy = cosmetics.legacyTrim(slot);
-          if (legacy == null) {
-            continue;
-          }
-
-          TrimPattern pattern = getTrimPatternByName(legacy.getPattern());
-          if (pattern != null) {
-            cosmeticsData.setPattern(ArmorTrimTier.LEATHER, slot, pattern);
-          }
-          TrimMaterial material = getTrimMaterialByName(legacy.getMaterial());
-          if (material != null) {
-            cosmeticsData.setMaterial(ArmorTrimTier.LEATHER, slot, material);
           }
         }
       }
@@ -637,25 +616,31 @@ public class ProfileFile {
   }
 
   private TrimPattern getTrimPatternByName(String name) {
-    if (name == null || name.isBlank()) {
+    NamespacedKey key = parseNamespacedKey(name);
+    if (key == null) {
       return null;
     }
-    return RegistryAccess.registryAccess()
-        .getRegistry(RegistryKey.TRIM_PATTERN)
-        .get(Key.key(normalizeKey(name)));
+    return RegistryAccess.registryAccess().getRegistry(RegistryKey.TRIM_PATTERN).get(key);
   }
 
   private TrimMaterial getTrimMaterialByName(String name) {
-    if (name == null || name.isBlank()) {
+    NamespacedKey key = parseNamespacedKey(name);
+    if (key == null) {
       return null;
     }
-    return RegistryAccess.registryAccess()
-        .getRegistry(RegistryKey.TRIM_MATERIAL)
-        .get(Key.key(normalizeKey(name)));
+    return RegistryAccess.registryAccess().getRegistry(RegistryKey.TRIM_MATERIAL).get(key);
   }
 
-  private String normalizeKey(String key) {
-    final String normalized = key.trim().toLowerCase();
-    return normalized.contains(":") ? normalized : "minecraft:" + normalized;
+  private NamespacedKey parseNamespacedKey(String raw) {
+    if (raw == null || raw.isBlank()) {
+      return null;
+    }
+
+    String normalized = raw.trim().toLowerCase(Locale.ROOT);
+    if (!normalized.contains(":")) {
+      normalized = "minecraft:" + normalized;
+    }
+
+    return NamespacedKey.fromString(normalized);
   }
 }

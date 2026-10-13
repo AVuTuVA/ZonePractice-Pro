@@ -4,7 +4,6 @@ import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsData;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsPermissionManager;
 import dev.lokspel.practice.manager.profile.cosmetics.deatheffect.DeathEffect;
-import java.util.EnumSet;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
@@ -19,13 +18,10 @@ public enum CosmeticsPermissionSanitizer {
 
     boolean changed = false;
 
-    EnumSet<ArmorSlot> supportedSlots =
-        EnumSet.of(ArmorSlot.HELMET, ArmorSlot.CHESTPLATE, ArmorSlot.LEGGINGS, ArmorSlot.BOOTS);
-
     for (ArmorTrimTier tier : ArmorTrimTier.values()) {
       boolean hasTierPermission = CosmeticsPermissionManager.hasBasePermission(player, tier);
 
-      for (ArmorSlot slot : supportedSlots) {
+      for (ArmorSlot slot : ArmorSlot.values()) {
         TrimPattern pattern = profile.getCosmeticsData().getPattern(tier, slot);
         TrimMaterial material = profile.getCosmeticsData().getMaterial(tier, slot);
 
