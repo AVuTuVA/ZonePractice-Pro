@@ -118,7 +118,7 @@ public class EnchantGui extends Gui {
     LinkedHashMap<ItemStack, Enchantment> sortedMap = new LinkedHashMap<>();
 
     map.entrySet().stream()
-        .sorted(Map.Entry.comparingByValue(Comparator.comparing(Enchantment::getName)))
+        .sorted(Map.Entry.comparingByValue(Comparator.comparing(e -> e.getKey().getKey())))
         .forEachOrdered(x -> sortedMap.put(x.getKey(), x.getValue()));
 
     return sortedMap;
@@ -148,7 +148,7 @@ public class EnchantGui extends Gui {
         new AnvilGUI.Builder()
             .plugin(AstralPractice.getInstance())
             .onClose(
-                stateSnapshot ->
+                _ ->
                     Bukkit.getScheduler()
                         .runTaskLater(AstralPractice.getInstance(), () -> backTo.open(player), 2L))
             .onClick(
@@ -247,7 +247,7 @@ public class EnchantGui extends Gui {
           StaticItems.enchantmentLevelMap()
               .get(i - 46)
               .cloneItem()
-              .replace("%enchantment%", StringUtil.getNormalizedName(enchantment.getName()))
+              .replace("%enchantment%", StringUtil.getNormalizedName(enchantment.getKey().getKey()))
               .get());
     }
   }
@@ -260,8 +260,7 @@ public class EnchantGui extends Gui {
         .runTaskLater(
             AstralPractice.getInstance(),
             () -> {
-              if (player.getOpenInventory() != null
-                  && player.getOpenInventory().getType().equals(InventoryType.ANVIL)) {
+              if (player.getOpenInventory().getType() == InventoryType.ANVIL) {
                 return;
               } else if (GuiManager.getInstance().getOpenGui().containsKey(player)) {
                 return;

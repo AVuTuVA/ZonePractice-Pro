@@ -121,10 +121,7 @@ public abstract class Gui {
     }
 
     for (Player player : inGuiPlayers.keySet()) {
-      if (player != null
-          && player.isOnline()
-          && player.getOpenInventory() != null
-          && inGuiPlayers.get(player) != -1) {
+      if (player != null && player.isOnline() && inGuiPlayers.get(player) != -1) {
         player.updateInventory();
       }
     }

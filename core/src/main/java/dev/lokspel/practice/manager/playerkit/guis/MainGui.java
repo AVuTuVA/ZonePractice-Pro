@@ -190,7 +190,7 @@ public class MainGui extends Gui {
           new AnvilGUI.Builder()
               .plugin(AstralPractice.getInstance())
               .onClose(
-                  stateSnapshot ->
+                  _ ->
                       Bukkit.getScheduler()
                           .runTaskLater(
                               AstralPractice.getInstance(),

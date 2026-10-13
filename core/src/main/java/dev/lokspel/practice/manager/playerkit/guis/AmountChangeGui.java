@@ -74,7 +74,7 @@ public class AmountChangeGui extends Gui {
         new AnvilGUI.Builder()
             .plugin(AstralPractice.getInstance())
             .onClose(
-                stateSnapshot ->
+                _ ->
                     Bukkit.getScheduler()
                         .runTaskLater(AstralPractice.getInstance(), () -> backTo.open(player), 2L))
             .onClick(
@@ -128,8 +128,7 @@ public class AmountChangeGui extends Gui {
         .runTaskLater(
             AstralPractice.getInstance(),
             () -> {
-              if (player.getOpenInventory() != null
-                  && player.getOpenInventory().getType().equals(InventoryType.ANVIL)) {
+              if (player.getOpenInventory().getType() == InventoryType.ANVIL) {
                 return;
               } else if (GuiManager.getInstance().getOpenGui().containsKey(player)) {
                 return;
