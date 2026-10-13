@@ -85,6 +85,7 @@ import dev.lokspel.practice.manager.matchhistory.MatchHistoryManager;
 import dev.lokspel.practice.manager.nametag.NametagManager;
 import dev.lokspel.practice.manager.playerkit.PlayerKitManager;
 import dev.lokspel.practice.manager.profile.ProfileManager;
+import dev.lokspel.practice.manager.profile.cosmetics.CosmeticPresets;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsCategoryManager;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsPermissionManager;
 import dev.lokspel.practice.manager.server.ServerManager;
@@ -214,6 +215,7 @@ public final class AstralPractice extends JavaPlugin {
       return;
     }
     saveDefaultLadders();
+    CosmeticPresets.load();
 
     EloMode.validateConfig();
     BackendManager.createFile(this);

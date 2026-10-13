@@ -122,6 +122,8 @@ public enum GuiType {
   Cosmetics_LobbyItems,
 
   Cosmetics_DeathEffects,
+  Cosmetics_TrimPresets,
+  Cosmetics_ShieldPresets,
 
   // Match History
   MatchHistory_Gui,

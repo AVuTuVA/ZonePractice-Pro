@@ -171,6 +171,8 @@ public class ProfileFile {
     cosmetics.setActiveTier(cosmeticsData.getActiveTier().getId());
     cosmetics.setDeathEffect(cosmeticsData.getDeathEffect().getId());
     cosmetics.setLobbyItem(cosmeticsData.getLobbyItemType().name());
+    cosmetics.setTrimPreset(cosmeticsData.getActiveTrimPreset());
+    cosmetics.setShieldPreset(cosmeticsData.getActiveShieldPreset());
 
     if (cosmetics.getShield() == null) {
       cosmetics.setShield(new ProfileData.Shield());
@@ -442,6 +444,8 @@ public class ProfileFile {
           CosmeticsData.LobbyItemType.valueOf(
               orDefault(cosmetics.getLobbyItem(), CosmeticsData.LobbyItemType.NONE.name())
                   .toUpperCase(Locale.ROOT)));
+      cosmeticsData.setActiveTrimPreset(cosmetics.getTrimPreset());
+      cosmeticsData.setActiveShieldPreset(cosmetics.getShieldPreset());
 
       List<ShieldLayout> shieldLayouts = new ArrayList<>();
       if (shield.getLayouts() != null) {

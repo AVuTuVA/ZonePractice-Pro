@@ -5,9 +5,12 @@ import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
+import dev.lokspel.practice.manager.gui.guis.cosmetics.CosmeticPresetsGui;
 import dev.lokspel.practice.manager.profile.Profile;
+import dev.lokspel.practice.manager.profile.cosmetics.CosmeticPresets;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsPermissionManager;
 import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorSlot;
+import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorTrimPreset;
 import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorTrimTier;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.InventoryUtil;
@@ -36,6 +39,7 @@ public class ArmorTrimMainGui extends Gui {
   private static final int BOOTS_SLOT = 16;
   private static final int INFO_SLOT = 30;
   private static final int APPLY_ALL_SLOT = 32;
+  private static final int PRESETS_SLOT = 40;
 
   private static ItemStack fillerItem() {
     return BackendUtil.getGuiItem(PracticeConfig.guis().getGeneralFillerItem()).get();
@@ -132,6 +136,12 @@ public class ArmorTrimMainGui extends Gui {
     inventory.setItem(INFO_SLOT, buildTierToggleItem(activeTier));
     inventory.setItem(APPLY_ALL_SLOT, buildApplyToAllTiersItem());
 
+    if (!CosmeticPresets.getTrimPresets().isEmpty()) {
+      ArmorTrimPreset activePreset =
+          CosmeticPresets.getTrimPreset(player, profile.getCosmeticsData());
+      inventory.setItem(PRESETS_SLOT, CosmeticPresets.createOpenButtonItem(activePreset));
+    }
+
     if (backToGui != null) {
       ItemStack backItem = backToItem() == null ? new ItemStack(Material.ARROW) : backToItem();
       inventory.setItem(BACK_SLOT, backItem);
@@ -149,6 +159,11 @@ public class ArmorTrimMainGui extends Gui {
 
     if (slot == BACK_SLOT && backToGui != null) {
       backToGui.open(player);
+      return;
+    }
+
+    if (slot == PRESETS_SLOT && !CosmeticPresets.getTrimPresets().isEmpty()) {
+      new CosmeticPresetsGui(profile, CosmeticPresetsGui.PresetType.TRIM, this).open(player);
       return;
     }
 

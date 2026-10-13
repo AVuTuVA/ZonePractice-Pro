@@ -1,0 +1,94 @@
+package dev.lokspel.practice.manager.profile.cosmetics.armortrim;
+
+import dev.lokspel.practice.util.Common;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import java.util.EnumMap;
+import java.util.Locale;
+import java.util.Map;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ArmorMeta;
+import org.bukkit.inventory.meta.trim.ArmorTrim;
+import org.bukkit.inventory.meta.trim.TrimMaterial;
+import org.bukkit.inventory.meta.trim.TrimPattern;
+
+public record ArmorTrimPreset(
+    String id, String name, Material icon, Map<ArmorSlot, ArmorTrim> trims) {
+
+  private static final ArmorSlot[] ARMOR_SLOTS = {
+    ArmorSlot.HELMET, ArmorSlot.CHESTPLATE, ArmorSlot.LEGGINGS, ArmorSlot.BOOTS
+  };
+
+  public static ArmorTrimPreset fromConfig(String key, ConfigurationSection entry) {
+    if (entry == null || !entry.getBoolean("ENABLED", true)) {
+      return null;
+    }
+
+    String id = key.toLowerCase(Locale.ROOT);
+    Map<ArmorSlot, ArmorTrim> trims = new EnumMap<>(ArmorSlot.class);
+
+    for (ArmorSlot slot : ARMOR_SLOTS) {
+      String patternKey = entry.getString(slot.name() + ".PATTERN", entry.getString("PATTERN", ""));
+      String materialKey =
+          entry.getString(slot.name() + ".MATERIAL", entry.getString("MATERIAL", ""));
+      ArmorTrim trim = resolveTrim(patternKey, materialKey);
+      if (trim != null) {
+        trims.put(slot, trim);
+      }
+    }
+
+    if (trims.isEmpty()) {
+      Common.sendConsoleMmMessage("<red>Armor trim preset '" + key + "' has no valid trims.");
+      return null;
+    }
+
+    Material icon = Material.matchMaterial(entry.getString("ICON", "DIAMOND_CHESTPLATE"));
+    return new ArmorTrimPreset(
+        id, entry.getString("NAME", key), icon != null ? icon : Material.DIAMOND_CHESTPLATE, trims);
+  }
+
+  public ItemStack createItem() {
+    ItemStack item = new ItemStack(icon != null ? icon : Material.DIAMOND_CHESTPLATE);
+    ArmorTrim trim =
+        trims.getOrDefault(ArmorSlot.CHESTPLATE, trims.values().stream().findFirst().orElse(null));
+    if (trim != null && item.getItemMeta() instanceof ArmorMeta armorMeta) {
+      armorMeta.setTrim(trim);
+      item.setItemMeta(armorMeta);
+    }
+    return item;
+  }
+
+  private static ArmorTrim resolveTrim(String patternStr, String materialStr) {
+    NamespacedKey patternKey = parseNamespacedKey(patternStr);
+    NamespacedKey materialKey = parseNamespacedKey(materialStr);
+    if (patternKey == null || materialKey == null) {
+      return null;
+    }
+
+    TrimPattern pattern =
+        RegistryAccess.registryAccess().getRegistry(RegistryKey.TRIM_PATTERN).get(patternKey);
+    TrimMaterial material =
+        RegistryAccess.registryAccess().getRegistry(RegistryKey.TRIM_MATERIAL).get(materialKey);
+    if (pattern == null || material == null) {
+      return null;
+    }
+
+    return new ArmorTrim(material, pattern);
+  }
+
+  private static NamespacedKey parseNamespacedKey(String raw) {
+    if (raw == null || raw.isBlank()) {
+      return null;
+    }
+
+    String normalized = raw.trim().toLowerCase(Locale.ROOT);
+    if (!normalized.contains(":")) {
+      normalized = "minecraft:" + normalized;
+    }
+
+    return NamespacedKey.fromString(normalized);
+  }
+}

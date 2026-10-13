@@ -2,7 +2,9 @@ package dev.lokspel.practice.manager.gui.guis.cosmetics.shield;
 
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
+import dev.lokspel.practice.manager.profile.cosmetics.CosmeticPresets;
 import dev.lokspel.practice.manager.profile.cosmetics.shield.ShieldLayout;
+import dev.lokspel.practice.manager.profile.cosmetics.shield.ShieldPreset;
 import java.util.ArrayList;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -31,7 +33,9 @@ public final class ShieldCosmeticsUtil {
       return;
     }
 
-    ShieldLayout active = profile.getCosmeticsData().getActiveShieldLayout();
+    ShieldPreset preset = CosmeticPresets.getShieldPreset(player, profile.getCosmeticsData());
+    ShieldLayout active =
+        preset != null ? preset.layout() : profile.getCosmeticsData().getActiveShieldLayout();
 
     for (ItemStack item : player.getInventory().getContents()) {
       if (item == null || item.getType() != Material.SHIELD) {

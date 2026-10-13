@@ -144,6 +144,12 @@ public class ProfileData {
     @JsonProperty("lobby-item")
     private String lobbyItem;
 
+    @JsonProperty("trim-preset")
+    private String trimPreset;
+
+    @JsonProperty("shield-preset")
+    private String shieldPreset;
+
     @JsonProperty("shield")
     private Shield shield;
 

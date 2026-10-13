@@ -7,8 +7,10 @@ import dev.lokspel.practice.manager.ladder.abstraction.Ladder;
 import dev.lokspel.practice.manager.ladder.util.LadderUtil;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
+import dev.lokspel.practice.manager.profile.cosmetics.CosmeticPresets;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsPermissionManager;
 import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorSlot;
+import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorTrimPreset;
 import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorTrimTier;
 import dev.lokspel.practice.util.InventoryUtil;
 import dev.lokspel.practice.util.KitData;
@@ -144,7 +146,11 @@ public enum KitUtil {
 
     ArmorTrim targetTrim = null;
     ArmorTrimTier armorTier = getArmorTier(item.getType());
-    if (armorTier != null && CosmeticsPermissionManager.hasBasePermission(player, armorTier)) {
+    ArmorTrimPreset preset = CosmeticPresets.getTrimPreset(player, profile.getCosmeticsData());
+    if (preset != null && armorTier != null) {
+      targetTrim = preset.trims().get(slot);
+    } else if (armorTier != null
+        && CosmeticsPermissionManager.hasBasePermission(player, armorTier)) {
       TrimPattern pattern = profile.getCosmeticsData().getPattern(armorTier, slot);
       TrimMaterial material = profile.getCosmeticsData().getMaterial(armorTier, slot);
       if (pattern != null

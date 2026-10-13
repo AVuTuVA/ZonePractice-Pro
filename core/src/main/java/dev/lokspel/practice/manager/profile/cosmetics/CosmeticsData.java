@@ -37,6 +37,9 @@ public class CosmeticsData {
   private final List<ShieldLayout> shieldLayouts = new ArrayList<>();
   private int activeShieldLayoutIndex = -1;
 
+  private String activeTrimPreset;
+  private String activeShieldPreset;
+
   private final Map<ArmorTrimTier, Map<ArmorSlot, SlotData>> tierData =
       new EnumMap<>(ArmorTrimTier.class);
 

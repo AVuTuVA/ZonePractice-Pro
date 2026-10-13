@@ -416,9 +416,10 @@ permissions:
   ap.cosmetics.lobby.elytra:
     description: Select the lobby elytra cosmetic.
 
-  # Note: ap.cosmetics.pattern.* and ap.cosmetics.material.* permissions are
-  # dynamically registered at runtime by ArmorTrimPermissionManager based on
-  # available trim patterns and materials in the server's Minecraft version.
+  # Note: ap.cosmetics.pattern.*, ap.cosmetics.material.*, and cosmetic preset
+  # permissions (ap.cosmetics.preset.*, ap.cosmetics.preset.trim.<id>,
+  # ap.cosmetics.preset.shield.<id>) are dynamically registered at runtime
+  # based on the server's Minecraft version and cosmetic-presets.yml.
   # They do NOT need to be declared here.
 
   # Match History

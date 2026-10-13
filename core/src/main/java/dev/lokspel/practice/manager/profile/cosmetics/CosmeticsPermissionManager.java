@@ -1,7 +1,9 @@
 package dev.lokspel.practice.manager.profile.cosmetics;
 
+import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorTrimPreset;
 import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorTrimTier;
 import dev.lokspel.practice.manager.profile.cosmetics.deatheffect.DeathEffect;
+import dev.lokspel.practice.manager.profile.cosmetics.shield.ShieldPreset;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
 import java.util.ArrayList;
@@ -114,6 +116,8 @@ public enum CosmeticsPermissionManager {
       REGISTERED_DEATH_EFFECTS.add(deathEffect);
       registerPermission(pluginManager, node, "Use death effect " + deathEffect.getId() + ".");
     }
+
+    CosmeticPresets.registerPermissions();
   }
 
   public static List<TrimPattern> getRegisteredPatterns() {
@@ -218,6 +222,42 @@ public enum CosmeticsPermissionManager {
         || player.hasPermission(lobbyItemType.getPermissionNode());
   }
 
+  public static String getTrimPresetPermissionNode(String id) {
+    return "ap.cosmetics.preset.trim." + (id == null ? "unknown" : id.toLowerCase(Locale.ROOT));
+  }
+
+  public static String getShieldPresetPermissionNode(String id) {
+    return "ap.cosmetics.preset.shield." + (id == null ? "unknown" : id.toLowerCase(Locale.ROOT));
+  }
+
+  public static boolean hasTrimPresetPermission(Player player, String id) {
+    if (player == null || id == null || id.isBlank()) {
+      return false;
+    }
+
+    return player.isOp()
+        || player.hasPermission("ap.cosmetics.preset.*")
+        || player.hasPermission(getTrimPresetPermissionNode(id));
+  }
+
+  public static boolean hasTrimPresetPermission(Player player, ArmorTrimPreset preset) {
+    return preset != null && hasTrimPresetPermission(player, preset.id());
+  }
+
+  public static boolean hasShieldPresetPermission(Player player, String id) {
+    if (player == null || id == null || id.isBlank()) {
+      return false;
+    }
+
+    return player.isOp()
+        || player.hasPermission("ap.cosmetics.preset.*")
+        || player.hasPermission(getShieldPresetPermissionNode(id));
+  }
+
+  public static boolean hasShieldPresetPermission(Player player, ShieldPreset preset) {
+    return preset != null && hasShieldPresetPermission(player, preset.id());
+  }
+
   public static int getMaxShieldLayouts(Player player) {
     if (player == null) {
       return 1;
@@ -294,7 +334,7 @@ public enum CosmeticsPermissionManager {
     return value.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]+", "");
   }
 
-  private static void registerPermission(
+  public static void registerPermission(
       PluginManager pluginManager, String node, String description) {
     if (pluginManager.getPermission(node) != null) {
       return;

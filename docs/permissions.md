@@ -43,6 +43,16 @@ The full list is in [`plugin.yml`](../core/src/main/resources/plugin.yml). Below
 | `ap.cosmetics.shield.layouts.<1-21>`    | Use up to that many shield layouts |
 | `ap.cosmetics.shield.layouts.unlimited` | Use unlimited shield layouts       |
 
+## Cosmetic presets
+
+| Permission                        | Usage                        |
+|-----------------------------------|------------------------------|
+| `ap.cosmetics.preset.trim.<id>`   | Use a specific trim preset   |
+| `ap.cosmetics.preset.shield.<id>` | Use a specific shield preset |
+| `ap.cosmetics.preset.*`           | Use all cosmetic presets     |
+
+`<id>` is the preset identifier defined in `cosmetic-presets.yml` (e.g. `paladin`, `gladiator`, `creeper`, `dragon`).
+
 ## Lobby items
 
 | Permission                       | Usage                                 |

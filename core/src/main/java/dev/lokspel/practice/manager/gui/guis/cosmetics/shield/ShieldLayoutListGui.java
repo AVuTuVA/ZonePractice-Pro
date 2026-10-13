@@ -6,9 +6,12 @@ import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
+import dev.lokspel.practice.manager.gui.guis.cosmetics.CosmeticPresetsGui;
 import dev.lokspel.practice.manager.profile.Profile;
+import dev.lokspel.practice.manager.profile.cosmetics.CosmeticPresets;
 import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsPermissionManager;
 import dev.lokspel.practice.manager.profile.cosmetics.shield.ShieldLayout;
+import dev.lokspel.practice.manager.profile.cosmetics.shield.ShieldPreset;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.InventoryUtil;
 import dev.lokspel.practice.util.ItemCreateUtil;
@@ -46,6 +49,7 @@ public class ShieldLayoutListGui extends Gui {
   private static final int ROWS = 6;
   private static final int BACK_SLOT = 45;
   private static final int NEW_SLOT = 49;
+  private static final int PRESETS_SLOT = 53;
 
   private static final int[] LAYOUT_SLOTS = {
     10, 11, 12, 13, 14, 15, 16,
@@ -113,6 +117,14 @@ public class ShieldLayoutListGui extends Gui {
     inv.setItem(NEW_SLOT, newItem.get());
 
     inv.setItem(BACK_SLOT, backItem() != null ? backItem() : new ItemStack(Material.ARROW));
+
+    Player player = profile.getPlayer().getPlayer();
+    if (!CosmeticPresets.getShieldPresets().isEmpty()) {
+      ShieldPreset activePreset =
+          CosmeticPresets.getShieldPreset(player, profile.getCosmeticsData());
+      inv.setItem(PRESETS_SLOT, CosmeticPresets.createOpenButtonItem(activePreset));
+    }
+
     updatePlayers();
   }
 
@@ -134,6 +146,11 @@ public class ShieldLayoutListGui extends Gui {
     if (slot == BACK_SLOT) {
       backToGui.update(true);
       backToGui.open(player);
+      return;
+    }
+
+    if (slot == PRESETS_SLOT && !CosmeticPresets.getShieldPresets().isEmpty()) {
+      new CosmeticPresetsGui(profile, CosmeticPresetsGui.PresetType.SHIELD, this).open(player);
       return;
     }
 

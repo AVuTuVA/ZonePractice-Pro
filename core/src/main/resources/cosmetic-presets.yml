@@ -1,0 +1,154 @@
+# Pre-made cosmetics players can pick in /cosmetics (Presets button in the armor trim and shield menus).
+# A selected preset overrides the player's own design.
+#
+# This file is created once and never updated by the plugin, so your edits are kept.
+# Add, edit or delete presets freely. Changes apply after a restart.
+#
+# Permissions: ap.cosmetics.preset.trim.<id>, ap.cosmetics.preset.shield.<id>, or ap.cosmetics.preset.* (default: op).
+#
+# ARMOR-TRIMS.<id>:
+#   NAME, ICON (item material), PATTERN and MATERIAL (trim ids) for every piece.
+#   Optional HELMET / CHESTPLATE / LEGGINGS / BOOTS sections override PATTERN and MATERIAL per piece.
+#   Patterns: sentry, dune, coast, wild, ward, eye, vex, tide, snout, rib, spire, wayfinder, shaper, silence, raiser, host, flow, bolt
+#   Materials: quartz, iron, netherite, redstone, copper, gold, emerald, diamond, lapis, amethyst, resin
+# SHIELDS.<id>:
+#   NAME, BASE-COLOR (dye color) and LAYERS as "COLOR:pattern", bottom to top (max 6).
+
+ARMOR-TRIMS:
+  gilded:
+    NAME: "<gold>Gilded"
+    ICON: GOLDEN_CHESTPLATE
+    PATTERN: eye
+    MATERIAL: gold
+  frost:
+    NAME: "<aqua>Frost"
+    ICON: DIAMOND_CHESTPLATE
+    PATTERN: snout
+    MATERIAL: diamond
+    HELMET:
+      PATTERN: eye
+      MATERIAL: quartz
+  abyss:
+    NAME: "<dark_blue>Abyss"
+    ICON: DIAMOND_CHESTPLATE
+    PATTERN: tide
+    MATERIAL: lapis
+  inferno:
+    NAME: "<red>Inferno"
+    ICON: NETHERITE_CHESTPLATE
+    PATTERN: rib
+    MATERIAL: redstone
+  verdant:
+    NAME: "<green>Verdant"
+    ICON: IRON_CHESTPLATE
+    PATTERN: wild
+    MATERIAL: emerald
+  amethyst_dream:
+    NAME: "<light_purple>Amethyst Dream"
+    ICON: DIAMOND_CHESTPLATE
+    PATTERN: spire
+    MATERIAL: amethyst
+  shadow:
+    NAME: "<dark_gray>Shadow"
+    ICON: DIAMOND_CHESTPLATE
+    PATTERN: silence
+    MATERIAL: netherite
+  pharaoh:
+    NAME: "<yellow>Pharaoh"
+    ICON: GOLDEN_CHESTPLATE
+    PATTERN: dune
+    MATERIAL: gold
+    HELMET:
+      PATTERN: eye
+      MATERIAL: lapis
+  tempest:
+    NAME: "<white>Tempest"
+    ICON: IRON_CHESTPLATE
+    PATTERN: flow
+    MATERIAL: quartz
+  copper_storm:
+    NAME: "<gold>Copper Storm"
+    ICON: IRON_CHESTPLATE
+    PATTERN: bolt
+    MATERIAL: copper
+  wayfinder:
+    NAME: "<#e6823a>Wayfinder"
+    ICON: NETHERITE_CHESTPLATE
+    PATTERN: wayfinder
+    MATERIAL: resin
+  warlord:
+    NAME: "<dark_red>Warlord"
+    ICON: NETHERITE_CHESTPLATE
+    PATTERN: sentry
+    MATERIAL: gold
+    HELMET:
+      PATTERN: ward
+      MATERIAL: redstone
+    BOOTS:
+      PATTERN: host
+      MATERIAL: redstone
+
+SHIELDS:
+  royal:
+    NAME: "<blue>Royal"
+    BASE-COLOR: BLUE
+    LAYERS:
+      - "YELLOW:border"
+      - "YELLOW:flower"
+  inferno:
+    NAME: "<red>Inferno"
+    BASE-COLOR: BLACK
+    LAYERS:
+      - "RED:gradient_up"
+      - "ORANGE:triangles_bottom"
+  crusader:
+    NAME: "<white>Crusader"
+    BASE-COLOR: WHITE
+    LAYERS:
+      - "RED:straight_cross"
+      - "RED:border"
+  tide:
+    NAME: "<aqua>Tide"
+    BASE-COLOR: CYAN
+    LAYERS:
+      - "BLUE:gradient_up"
+      - "LIGHT_BLUE:triangles_bottom"
+      - "WHITE:curly_border"
+  bastion:
+    NAME: "<gold>Bastion"
+    BASE-COLOR: BLACK
+    LAYERS:
+      - "GRAY:bricks"
+      - "YELLOW:piglin"
+      - "BLACK:gradient"
+  creeper:
+    NAME: "<green>Creeper"
+    BASE-COLOR: LIME
+    LAYERS:
+      - "GREEN:gradient"
+      - "BLACK:creeper"
+  jolly_roger:
+    NAME: "<gray>Jolly Roger"
+    BASE-COLOR: BLACK
+    LAYERS:
+      - "WHITE:skull"
+  sunset:
+    NAME: "<gold>Sunset"
+    BASE-COLOR: ORANGE
+    LAYERS:
+      - "PURPLE:gradient"
+      - "YELLOW:circle"
+      - "BLACK:half_horizontal_bottom"
+  ender:
+    NAME: "<dark_purple>Ender"
+    BASE-COLOR: BLACK
+    LAYERS:
+      - "PURPLE:gradient_up"
+      - "MAGENTA:circle"
+      - "BLACK:curly_border"
+  breeze:
+    NAME: "<aqua>Breeze"
+    BASE-COLOR: LIGHT_BLUE
+    LAYERS:
+      - "WHITE:guster"
+      - "CYAN:border"

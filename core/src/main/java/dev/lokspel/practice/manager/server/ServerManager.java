@@ -19,6 +19,7 @@ import dev.lokspel.practice.manager.party.PartyManager;
 import dev.lokspel.practice.manager.playerkit.PlayerKitManager;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
+import dev.lokspel.practice.manager.profile.cosmetics.CosmeticPresets;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
 import dev.lokspel.practice.manager.queue.QueueManager;
 import dev.lokspel.practice.manager.sidebar.SidebarManager;
@@ -289,6 +290,7 @@ public class ServerManager implements Listener {
 
     try {
       EloMode.validateConfig();
+      CosmeticPresets.load();
       InventoryManager.getInstance().reload();
       DivisionManager.getInstance().reloadRanks();
       BackendManager.reload();

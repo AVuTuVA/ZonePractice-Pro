@@ -87,6 +87,9 @@ public class Cosmetics {
   @JsonProperty("DEATH-EFFECTS")
   private DeathEffects deathEffects = new DeathEffects();
 
+  @JsonProperty("PRESETS")
+  private Presets presets = new Presets();
+
   @Comment("── Shield Cosmetics ──────────────────────────────────────────────────────")
   @JsonProperty("SHIELD")
   private Shield shield = new Shield();
@@ -772,6 +775,56 @@ public class Cosmetics {
         return value;
       }
     }
+  }
+
+  @Getter
+  public static class Presets {
+    @JsonProperty("TRIM-TITLE")
+    private String trimTitle = "<dark_gray>✦ Armor Trim Presets";
+
+    @JsonProperty("SHIELD-TITLE")
+    private String shieldTitle = "<dark_gray>✦ Shield Presets";
+
+    @JsonProperty("NONE")
+    private String none = "<red>None";
+
+    @JsonProperty("OPEN-BUTTON")
+    private ItemConfig openButton =
+        ItemConfig.of("BOOKSHELF")
+            .name("<light_purple>✦ Presets")
+            .lore(
+                "",
+                "<gray>Pick a pre-made design.",
+                "<gray>Active: %active%",
+                "",
+                "<yellow>Click to open.");
+
+    @JsonProperty("CUSTOM-BUTTON")
+    private ItemConfig customButton =
+        ItemConfig.of("ANVIL")
+            .name("<yellow>Use My Own Design")
+            .lore("", "<gray>Turn off the preset and use", "<gray>your own design again.");
+
+    @JsonProperty("PRESET-LORE")
+    private List<String> presetLore = List.of("", "<gray>Status: %status%");
+
+    @JsonProperty("STATUS-SELECTED")
+    private String statusSelected = "<green>Selected <gray>(click to turn off)";
+
+    @JsonProperty("STATUS-UNLOCKED")
+    private String statusUnlocked = "<yellow>Click to select";
+
+    @JsonProperty("STATUS-LOCKED")
+    private String statusLocked = "<red>Locked";
+
+    @JsonProperty("NO-PERMISSION-MESSAGE")
+    private String noPermissionMessage = "<red>You don't have permission for this preset!";
+
+    @JsonProperty("SELECTED-MESSAGE")
+    private String selectedMessage = "<green>Preset selected: %preset%";
+
+    @JsonProperty("CUSTOM-MESSAGE")
+    private String customMessage = "<gray>Using your own design again.";
   }
 
   @Getter
