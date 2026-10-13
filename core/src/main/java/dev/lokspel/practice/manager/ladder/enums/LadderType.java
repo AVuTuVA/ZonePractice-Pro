@@ -10,6 +10,7 @@ import dev.lokspel.practice.manager.ladder.type.BedWars;
 import dev.lokspel.practice.manager.ladder.type.Boxing;
 import dev.lokspel.practice.manager.ladder.type.Bridges;
 import dev.lokspel.practice.manager.ladder.type.Build;
+import dev.lokspel.practice.manager.ladder.type.Combo;
 import dev.lokspel.practice.manager.ladder.type.Creeper;
 import dev.lokspel.practice.manager.ladder.type.FireballFight;
 import dev.lokspel.practice.manager.ladder.type.MlgRush;
@@ -46,6 +47,14 @@ public enum LadderType {
           .withCommonSettings()
           .withPearlSettings()
           .withBuildSettings()),
+
+  COMBO(
+      LadderTypeConfig.builder(LadderTypes::getCombo, Material.PUFFERFISH, Combo.class)
+          .withMovementSettings()
+          .withTeamSettings()
+          .withRegenSettings()
+          .withCommonSettings()
+          .withPearlSettings()),
 
   SUMO(
       LadderTypeConfig.builder(LadderTypes::getSumo, Material.STICK, Sumo.class)

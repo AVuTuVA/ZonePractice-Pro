@@ -883,19 +883,17 @@ public class LadderTypeListener implements Listener {
 
     boolean shieldBlocked = isShieldBlockedHit(target);
 
-    if (!e.isCancelled()
-        && !match
-            .getLadder()
-            .getLadderKnockback()
-            .getKnockbackType()
-            .equals(KnockbackType.DEFAULT)) {
+    KnockbackType knockbackType =
+        match.getLadder() != null && match.getLadder().isCombo()
+            ? KnockbackType.COMBO
+            : match.getLadder().getLadderKnockback().getKnockbackType();
+
+    if (!e.isCancelled() && knockbackType != KnockbackType.DEFAULT) {
       if (shieldBlocked) {
         // Shield blocks should recoil the attacker, not launch the blocker forward.
-        KnockbackUtil.setPlayerKnockback(
-            attacker, target, match.getLadder().getLadderKnockback().getKnockbackType());
+        KnockbackUtil.setPlayerKnockback(attacker, target, knockbackType);
       } else {
-        KnockbackUtil.setPlayerKnockback(
-            target, attacker, match.getLadder().getLadderKnockback().getKnockbackType());
+        KnockbackUtil.setPlayerKnockback(target, attacker, knockbackType);
       }
     }
   }

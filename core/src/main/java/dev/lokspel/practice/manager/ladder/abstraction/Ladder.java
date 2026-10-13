@@ -3,6 +3,7 @@ package dev.lokspel.practice.manager.ladder.abstraction;
 import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.arena.arenas.Arena;
 import dev.lokspel.practice.manager.fight.match.enums.MatchType;
+import dev.lokspel.practice.manager.ladder.enums.KnockbackType;
 import dev.lokspel.practice.manager.ladder.enums.LadderType;
 import dev.lokspel.practice.manager.ladder.util.LadderKnockback;
 import dev.lokspel.practice.util.Common;
@@ -156,4 +157,10 @@ public abstract class Ladder {
   public abstract void getData();
 
   public abstract boolean isReadyToEnable();
+
+  public boolean isCombo() {
+    return this.type == LadderType.COMBO
+        || (this.ladderKnockback != null
+            && this.ladderKnockback.getKnockbackType() == KnockbackType.COMBO);
+  }
 }

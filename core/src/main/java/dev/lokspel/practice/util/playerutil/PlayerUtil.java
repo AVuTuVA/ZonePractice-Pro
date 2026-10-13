@@ -53,6 +53,8 @@ public final class PlayerUtil {
     }
 
     clearPotionEffects(player);
+    player.setMaximumNoDamageTicks(20);
+    player.setNoDamageTicks(0);
   }
 
   public static void setFightPlayer(Player player) {
@@ -79,6 +81,13 @@ public final class PlayerUtil {
               player.setFlying(false);
               player.setAllowFlight(false);
               setEntityCollision(player, true);
+
+              if (ladder != null && ladder.isCombo()) {
+                player.setMaximumNoDamageTicks(1);
+                player.setNoDamageTicks(0);
+              } else {
+                player.setMaximumNoDamageTicks(20);
+              }
             });
   }
 

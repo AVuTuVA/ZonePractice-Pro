@@ -499,6 +499,9 @@ public class LanguageConfig {
       @JsonProperty("BUILD")
       private LadderTypeMessages build = LadderTypeMessages.build();
 
+      @JsonProperty("COMBO")
+      private LadderTypeMessages combo = LadderTypeMessages.combo();
+
       @JsonProperty("SUMO")
       private LadderTypeMessages sumo = LadderTypeMessages.sumo();
 

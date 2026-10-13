@@ -179,17 +179,13 @@ public class DivisionManager implements Listener {
     }
 
     // Check wins requirement (only if wins are counted)
-    if (this.countByWins && wins < this.minimumForRanked.getWin()) {
-      return false;
-    }
+    return !this.countByWins || wins >= this.minimumForRanked.getWin();
 
     // NOTE: We deliberately do NOT check ELO here, because:
     // - Global ELO only comes from ranked matches
     // - Ranked is locked behind this check
     // - This would create an infinite loop
     // Players can unlock ranked with experience/wins, then earn ranked elo
-
-    return true;
   }
 
   public void sendRankedProgressMessage(

@@ -46,6 +46,20 @@ public class LadderTypeMessages {
     return value;
   }
 
+  static LadderTypeMessages combo() {
+    LadderTypeMessages value = new LadderTypeMessages();
+    value.name = "Combo";
+    value.description =
+        List.of(
+            "<dark_gray><st>----------------------------------",
+            "<gray>In this ladder, players can hit each other",
+            "<gray>with reduced hit delay and instant attacks,",
+            "<gray>allowing fast-paced combos and juggles.",
+            "<dark_gray><st>----------------------------------");
+
+    return value;
+  }
+
   static LadderTypeMessages sumo() {
     LadderTypeMessages value = new LadderTypeMessages();
     value.name = "Sumo";
