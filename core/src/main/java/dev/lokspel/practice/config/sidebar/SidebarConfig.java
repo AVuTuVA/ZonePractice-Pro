@@ -455,11 +455,10 @@ public class SidebarConfig {
     @JsonProperty("EVENT")
     private Map<String, List<String>> event = defaultEvent();
 
-    @Comment("Permission: astralpractice.admin.scoreboard")
+    @Comment("Permission: ap.admin.scoreboard")
     @JsonProperty("ADMIN-EXTENSION")
     private List<String> adminExtension =
         List.of(
-            "<white>TPS: <gold>%tps%",
             "<white>Arenas: <gold>%arenas%<gray>/<yellow>%enabledArenas%",
             "<gray><st>---------------------");
 

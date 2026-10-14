@@ -148,7 +148,7 @@ public class PracticeAdapter implements SidebarAdapter {
       default -> {}
     }
 
-    buildFooterLines(player, profile, sidebar);
+    buildFooterLines(player, config, profile, sidebar);
     return sidebar;
   }
 
@@ -192,7 +192,7 @@ public class PracticeAdapter implements SidebarAdapter {
                                 ? profile.getStats().getDivision().getComponentShortName()
                                 : Component.empty())
                         .build());
-        sidebar.add(component);
+        sidebar.add(AdapterUtil.replaceArenaPlaceholders(component));
       }
     } else {
       for (String line : orEmpty(config.getLobby().getParty())) {
@@ -250,7 +250,7 @@ public class PracticeAdapter implements SidebarAdapter {
                                 ? profile.getStats().getDivision().getComponentShortName()
                                 : Component.empty())
                         .build());
-        sidebar.add(component);
+        sidebar.add(AdapterUtil.replaceArenaPlaceholders(component));
       }
     }
   }
@@ -1472,18 +1472,37 @@ public class PracticeAdapter implements SidebarAdapter {
     }
   }
 
-  private void buildFooterLines(Player player, Profile profile, List<Component> sidebar) {
+  private void buildFooterLines(
+      Player player, SidebarConfig config, Profile profile, List<Component> sidebar) {
     Group group = profile.getGroup();
     if (group != null
         && group.getSidebarExtensionRaw() != null
         && !group.getSidebarExtensionRaw().isEmpty()) {
       for (String rawLine : group.getSidebarExtensionRaw()) {
-        Component extensionLine = PapiUtil.runThroughFormat(player, rawLine);
+        Component extensionLine =
+            AdapterUtil.replaceArenaPlaceholders(PapiUtil.runThroughFormat(player, rawLine));
         sidebar.add(
             NameFormatUtil.applyPlayerPlaceholders(
                 NameFormatUtil.applyDivisionPlaceholders(extensionLine, profile),
                 player.getName()));
       }
+    }
+
+    if (player.hasPermission("ap.admin.scoreboard")) {
+      buildAdminExtensionLines(player, config, sidebar);
+    }
+  }
+
+  private void buildAdminExtensionLines(
+      Player player, SidebarConfig config, List<Component> sidebar) {
+    List<String> adminLines = config.getSpectate().getAdminExtension();
+    if (adminLines == null || adminLines.isEmpty()) {
+      return;
+    }
+
+    for (String rawLine : adminLines) {
+      Component line = PapiUtil.runThroughFormat(player, rawLine);
+      sidebar.add(AdapterUtil.replaceArenaPlaceholders(line));
     }
   }
 }
