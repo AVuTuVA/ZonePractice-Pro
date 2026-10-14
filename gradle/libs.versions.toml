@@ -3,7 +3,7 @@
 # plugins & build tools
 shadow = "9.6.1"
 spotless = "8.10.4"
-anvil = "dev-ee5189c"
+anvil = "1.0.0"
 checkstyle = "14.3.0"
 google-java-format = "1.36.1"
 

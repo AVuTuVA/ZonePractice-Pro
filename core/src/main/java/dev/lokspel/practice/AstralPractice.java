@@ -91,7 +91,6 @@ import dev.lokspel.practice.manager.profile.cosmetics.CosmeticsPermissionManager
 import dev.lokspel.practice.manager.server.ServerManager;
 import dev.lokspel.practice.manager.sidebar.SidebarManager;
 import dev.lokspel.practice.util.Common;
-import dev.lokspel.practice.util.DataFolderMigrationUtil;
 import dev.lokspel.practice.util.MiniMessageTagResolver;
 import dev.lokspel.practice.util.SoftDependUtil;
 import dev.lokspel.practice.util.StartUpTypes;
@@ -204,7 +203,6 @@ public final class AstralPractice extends JavaPlugin {
       return;
     }
 
-    DataFolderMigrationUtil.migrate(this);
     try {
       PracticeConfig.load(getDataFolder().toPath());
       configurationLoaded = true;

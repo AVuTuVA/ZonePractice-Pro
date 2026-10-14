@@ -21,7 +21,10 @@ public class SoundEffect {
   public SoundEffect(@Nullable SettingsConfig.Sound config) {
     SettingsConfig.Sound settings = config != null ? config : new SettingsConfig.Sound();
     this.enabled = Boolean.TRUE.equals(settings.getEnabled());
-    this.sound = resolveSound(Objects.requireNonNullElse(settings.getSound(), ""));
+    this.sound =
+        this.enabled && settings.getSound() != null && !settings.getSound().isBlank()
+            ? resolveSound(settings.getSound())
+            : null;
     this.volume = (float) Objects.requireNonNullElse(settings.getVolume(), 0.0D).doubleValue();
     this.pitch = (float) Objects.requireNonNullElse(settings.getPitch(), 0.0D).doubleValue();
   }
@@ -34,7 +37,14 @@ public class SoundEffect {
   }
 
   private static Sound resolveSound(String soundName) {
-    Sound sound = Registry.SOUNDS.get(NamespacedKey.minecraft(soundName));
+    NamespacedKey key =
+        soundName.contains(":")
+            ? NamespacedKey.fromString(soundName.toLowerCase())
+            : NamespacedKey.minecraft(soundName.toLowerCase());
+    if (key == null) {
+      throw new IllegalArgumentException("Invalid sound key: " + soundName);
+    }
+    Sound sound = Registry.SOUNDS.get(key);
     if (sound == null) {
       throw new IllegalArgumentException("Unknown sound: " + soundName);
     }
@@ -42,26 +52,30 @@ public class SoundEffect {
   }
 
   public void play(Player player) {
-    if (enabled) {
+    if (enabled && sound != null) {
       player.playSound(player.getLocation(), sound, volume, pitch);
     }
   }
 
   public void play(List<Player> players) {
-    if (enabled) {
-      players.forEach(player -> player.playSound(player.getLocation(), sound, volume, pitch));
+    if (enabled && sound != null && players != null) {
+      for (Player player : players) {
+        player.playSound(player.getLocation(), sound, volume, pitch);
+      }
     }
   }
 
   public void play(Player player, Location location) {
-    if (enabled) {
+    if (enabled && sound != null && location != null) {
       player.playSound(location, sound, volume, pitch);
     }
   }
 
   public void play(List<Player> players, Location location) {
-    if (enabled) {
-      players.forEach(player -> player.playSound(location, sound, volume, pitch));
+    if (enabled && sound != null && players != null && location != null) {
+      for (Player player : players) {
+        player.playSound(location, sound, volume, pitch);
+      }
     }
   }
 }

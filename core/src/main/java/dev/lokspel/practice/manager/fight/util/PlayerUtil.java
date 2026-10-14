@@ -34,31 +34,31 @@ public class PlayerUtil {
   }
 
   public static boolean isItemInUse(Player player, Material material) {
-    ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
-    ItemStack itemInOffHand = player.getInventory().getItemInOffHand();
-
-    return itemInMainHand.getType().equals(material) || itemInOffHand.getType().equals(material);
+    PlayerInventory inv = player.getInventory();
+    return inv.getItemInMainHand().getType() == material
+        || inv.getItemInOffHand().getType() == material;
   }
 
   public static ItemStack getItemInUse(Player player, Material material) {
-    ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
-    ItemStack itemInOffHand = player.getInventory().getItemInOffHand();
-
-    if (itemInMainHand.getType().equals(material)) {
-      return itemInMainHand;
+    PlayerInventory inv = player.getInventory();
+    ItemStack main = inv.getItemInMainHand();
+    if (main.getType() == material) {
+      return main;
     }
-    if (itemInOffHand.getType().equals(material)) {
-      return itemInOffHand;
+    ItemStack off = inv.getItemInOffHand();
+    if (off.getType() == material) {
+      return off;
     }
     return null;
   }
 
   public static void setItemInUseIf(Player player, Material material, ItemStack itemStack) {
-    if (player.getInventory().getItemInMainHand().getType().equals(material)) {
-      player.getInventory().setItemInMainHand(itemStack);
+    PlayerInventory inv = player.getInventory();
+    if (inv.getItemInMainHand().getType() == material) {
+      inv.setItemInMainHand(itemStack);
     }
-    if (player.getInventory().getItemInOffHand().getType().equals(material)) {
-      player.getInventory().setItemInOffHand(itemStack);
+    if (inv.getItemInOffHand().getType() == material) {
+      inv.setItemInOffHand(itemStack);
     }
   }
 
@@ -217,16 +217,7 @@ public class PlayerUtil {
 
   public static void setAttackSpeed(Player player, double cooldownMultiplier) {
     AttributeInstance attackSpeed = player.getAttribute(Attribute.ATTACK_SPEED);
-    if (attackSpeed == null) {
-      return;
-    }
-
-    // Remove only our own modifier, keep sword/fist/item modifiers intact.
-    for (AttributeModifier modifier : attackSpeed.getModifiers()) {
-      if (ATTACK_COOLDOWN_MODIFIER_KEY.equals(modifier.getKey())) {
-        attackSpeed.removeModifier(modifier);
-      }
-    }
+    resetAttackSpeed(player);
 
     // Cooldown multiplier scales cooldown ticks, so ATTACK_SPEED must use inverse scale.
     double speedMultiplier;

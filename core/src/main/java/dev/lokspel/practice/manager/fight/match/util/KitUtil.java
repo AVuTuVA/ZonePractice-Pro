@@ -14,10 +14,8 @@ import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorTrimPreset;
 import dev.lokspel.practice.manager.profile.cosmetics.armortrim.ArmorTrimTier;
 import dev.lokspel.practice.util.InventoryUtil;
 import dev.lokspel.practice.util.KitData;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -42,51 +40,28 @@ public enum KitUtil {
     ItemStack[] inventoryCopy = InventoryUtil.cloneItems(inventory);
     ItemStack[] extraCopy = InventoryUtil.cloneItems(extra);
 
-    if (team == null) {
-      LadderUtil.loadInventory(player, armorCopy, inventoryCopy, extraCopy);
-    } else {
-      List<ItemStack> inventoryList = new ArrayList<>();
-      for (ItemStack item : new ArrayList<>(Arrays.asList(inventoryCopy))) {
-        if (item != null) {
-          item = LadderUtil.changeItemColor(item, team.getColor());
-          inventoryList.add(item);
-        } else {
-          inventoryList.add(null);
-        }
-      }
-
-      List<ItemStack> armorList = new ArrayList<>();
-      for (ItemStack item : new ArrayList<>(Arrays.asList(armorCopy))) {
-        if (item != null) {
-          item = LadderUtil.changeItemColor(item, team.getColor());
-          armorList.add(item);
-        } else {
-          armorList.add(null);
-        }
-      }
-
-      List<ItemStack> extraList = new ArrayList<>();
-      if (extraCopy != null) {
-        for (ItemStack item : new ArrayList<>(Arrays.asList(extraCopy))) {
-          if (item != null) {
-            item = LadderUtil.changeItemColor(item, team.getColor());
-            extraList.add(item);
-          } else {
-            extraList.add(null);
-          }
-        }
-      }
-
-      LadderUtil.loadInventory(
-          player,
-          armorList.toArray(new ItemStack[0]),
-          inventoryList.toArray(new ItemStack[0]),
-          extraCopy != null ? extraList.toArray(new ItemStack[0]) : null);
+    if (team != null) {
+      applyTeamColor(armorCopy, team.getColor());
+      applyTeamColor(inventoryCopy, team.getColor());
+      applyTeamColor(extraCopy, team.getColor());
     }
+
+    LadderUtil.loadInventory(player, armorCopy, inventoryCopy, extraCopy);
 
     applyArmorTrimCosmetics(player);
     applyShieldCosmetics(player);
     player.updateInventory();
+  }
+
+  private static void applyTeamColor(ItemStack[] items, Component color) {
+    if (items == null) {
+      return;
+    }
+    for (int i = 0; i < items.length; i++) {
+      if (items[i] != null) {
+        items[i] = LadderUtil.changeItemColor(items[i], color);
+      }
+    }
   }
 
   /**

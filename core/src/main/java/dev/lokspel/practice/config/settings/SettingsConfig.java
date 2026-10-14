@@ -996,8 +996,13 @@ public class SettingsConfig {
 
     @Getter
     public static class Nickname {
+      @Comment("Regex pattern for allowed characters and length in nicknames.")
       @JsonProperty("VALIDATION-PATTERN")
       private String validationPattern = "^[a-zA-Z0-9_]{3,16}$";
+
+      @Comment("Regex pattern for blocked characters or tags in nicknames. Set empty to disable.")
+      @JsonProperty("BLOCKED-PATTERN")
+      private String blockedPattern = "(?i)</?obf(?:uscated)?[^>]*>|[&§]k";
     }
 
     @Getter

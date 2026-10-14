@@ -14,14 +14,6 @@ public final class ChatFormatUtil {
 
   private ChatFormatUtil() {}
 
-  private static String normalizeStaticSpacing(String text) {
-    if (text == null || text.isEmpty()) {
-      return text;
-    }
-
-    return text.replaceAll(" {2,}", " ");
-  }
-
   public static String buildPartyChatMessage(Player player) {
     Profile profile = ProfileManager.getInstance().getProfile(player);
 
@@ -31,7 +23,7 @@ public final class ChatFormatUtil {
                 .serialize(NameFormatUtil.resolveFullName(profile, player.getName()))
             : player.getName();
 
-    return normalizeStaticSpacing(
+    return StringUtil.normalizeSpaces(
         PracticeConfig.language()
             .getGeneralChat()
             .getPartyChat()
@@ -47,7 +39,7 @@ public final class ChatFormatUtil {
                 .serialize(NameFormatUtil.resolveFullName(profile, player.getName()))
             : player.getName();
 
-    return normalizeStaticSpacing(
+    return StringUtil.normalizeSpaces(
         PracticeConfig.language()
             .getGeneralChat()
             .getStaffChat()
@@ -73,7 +65,7 @@ public final class ChatFormatUtil {
         AstralPractice.getMiniMessage()
             .serialize(NameFormatUtil.resolveFullName(profile, player.getName()));
 
-    return normalizeStaticSpacing(format.replace("%%player%%", decoratedPlayer));
+    return StringUtil.normalizeSpaces(format.replace("%%player%%", decoratedPlayer));
   }
 
   public static List<Player> getStaffRecipients() {

@@ -3,6 +3,7 @@ package dev.lokspel.practice.util;
 import dev.lokspel.practice.config.PracticeConfig;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -70,7 +71,7 @@ public final class StringUtil {
         if (code == '#' && i + 6 < text.length()) {
           String hex = text.substring(i + 1, i + 7);
 
-          if (hex.matches("[0-9a-fA-F]{6}")) {
+          if (isHex6(hex)) {
             out.append("<#").append(hex).append(">");
             i += 6;
             continue;
@@ -94,38 +95,70 @@ public final class StringUtil {
     return out.toString();
   }
 
-  public static String replaceSecondString(String string, double seconds) {
-    if ((seconds == Math.floor(seconds)) && !Double.isInfinite(seconds)) {
-      return string
-          .replace("%seconds%", String.valueOf(NumberUtil.doubleToInt(seconds)))
-          .replace(
-              "%secondName%",
-              (seconds < 2
-                  ? PracticeConfig.language().getSecondName().getOneSecond()
-                  : PracticeConfig.language().getSecondName().getUnderOneSecond()));
-    } else {
-      return string
-          .replace("%seconds%", String.valueOf(seconds))
-          .replace(
-              "%secondName%",
-              (seconds < 2
-                  ? PracticeConfig.language().getSecondName().getOneSecond()
-                  : PracticeConfig.language().getSecondName().getUnderOneSecond()));
+  private static boolean isHex6(String s) {
+    for (int j = 0; j < 6; j++) {
+      char ch = s.charAt(j);
+      if (!((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))) {
+        return false;
+      }
     }
+    return true;
   }
 
-  private static final Pattern OBFUSCATION_TAG_PATTERN =
-      Pattern.compile("(?i)</?obf(?:uscated)?[^>]*>|[&§]k");
+  public static String replaceSecondString(String string, double seconds) {
+    String secondsStr =
+        ((seconds == Math.floor(seconds)) && !Double.isInfinite(seconds))
+            ? String.valueOf(NumberUtil.doubleToInt(seconds))
+            : String.valueOf(seconds);
+    String secondName =
+        (seconds < 2
+            ? PracticeConfig.language().getSecondName().getOneSecond()
+            : PracticeConfig.language().getSecondName().getUnderOneSecond());
 
-  public static String stripObfuscationTags(String text) {
-    if (text == null || text.isEmpty()) {
-      return text;
-    }
-
-    return OBFUSCATION_TAG_PATTERN.matcher(text).replaceAll("");
+    return string.replace("%seconds%", secondsStr).replace("%secondName%", secondName);
   }
 
   public static String getNormalizedName(String name) {
-    return StringUtils.capitalize(name.replace("_", " ").toLowerCase());
+    return name == null
+        ? null
+        : StringUtils.capitalize(name.replace('_', ' ').toLowerCase(Locale.ROOT));
+  }
+
+  public static boolean containsBlockedFormatting(String text) {
+    String blockedPattern = PracticeConfig.settings().getPlayer().getNickname().getBlockedPattern();
+    return containsPattern(text, blockedPattern);
+  }
+
+  public static boolean containsPattern(String text, String regex) {
+    if (text == null || text.isEmpty() || regex == null || regex.isEmpty()) {
+      return false;
+    }
+    try {
+      return Pattern.compile(regex).matcher(text).find();
+    } catch (Exception ignored) {
+      return false;
+    }
+  }
+
+  public static String normalizeSpaces(String text) {
+    if (text == null || !text.contains("  ")) {
+      return text;
+    }
+
+    StringBuilder sb = new StringBuilder(text.length());
+    boolean lastWasSpace = false;
+    for (int i = 0; i < text.length(); i++) {
+      char c = text.charAt(i);
+      if (c == ' ') {
+        if (!lastWasSpace) {
+          sb.append(' ');
+          lastWasSpace = true;
+        }
+      } else {
+        sb.append(c);
+        lastWasSpace = false;
+      }
+    }
+    return sb.toString();
   }
 }

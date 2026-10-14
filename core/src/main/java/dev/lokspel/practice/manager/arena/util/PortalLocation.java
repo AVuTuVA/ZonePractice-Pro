@@ -27,21 +27,18 @@ public class PortalLocation {
   }
 
   public void setPortal() {
-    for (Block block : cuboid.getBlocks()) {
-      block.setBlockData(Material.END_PORTAL.createBlockData());
-      block.getState().update();
+    var portalData = Material.END_PORTAL.createBlockData();
+    for (Block block : cuboid) {
+      block.setBlockData(portalData);
     }
   }
 
   public boolean isOverlap(PortalLocation pl) {
-    for (Block block1 : cuboid.getBlocks()) {
-      for (Block block2 : pl.getCuboid().getBlocks()) {
-        if (block1.getX() == block2.getX() && block1.getZ() == block2.getZ()) {
-          return true;
-        }
-      }
-    }
-    return false;
+    Cuboid other = pl.getCuboid();
+    return this.cuboid.getLowerX() <= other.getUpperX()
+        && this.cuboid.getUpperX() >= other.getLowerX()
+        && this.cuboid.getLowerZ() <= other.getUpperZ()
+        && this.cuboid.getUpperZ() >= other.getLowerZ();
   }
 
   public boolean isIn(Player player) {

@@ -21,6 +21,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -28,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -287,7 +291,7 @@ public class FightChangeOptimized {
     return clone;
   }
 
-  private static boolean isVineLike(org.bukkit.Material material) {
+  private static boolean isVineLike(Material material) {
     String name = material.name();
     return name.equals("VINE") || name.contains("_VINE") || name.contains("_VINES");
   }
@@ -357,8 +361,8 @@ public class FightChangeOptimized {
     if (blocks.isEmpty()) {
       removeRollbackChunkTickets();
 
-      if (onComplete != null && !org.bukkit.Bukkit.isPrimaryThread()) {
-        org.bukkit.Bukkit.getScheduler()
+      if (onComplete != null && !Bukkit.isPrimaryThread()) {
+        Bukkit.getScheduler()
             .runTask(AstralPractice.getInstance(), () -> finishRollback(onComplete));
         return;
       }
@@ -394,11 +398,11 @@ public class FightChangeOptimized {
   /**
    * Closes a rollback that is already done restoring blocks.
    *
-   * <p>The single place where a rollback releases its fire guard, and the order matters: {@code
+   * <p>The single place where a rollback releases its fireguard, and the order matters: {@code
    * rollingBack} must stay {@code true} until {@code onComplete} has run, because {@code
    * onComplete} is what removes the fight from the active list. While the fight is still resolvable
    * by cuboid, a fire event would find a live fight and — seeing {@code isRollingBack() == false} —
-   * be let through. So the guard is dropped first and the arena is swept afterwards; once the fight
+   * be let through. So the guard is dropped first and the arena is swept afterward; once the fight
    * is gone nothing can resolve an owner any more, so the flag stops mattering.
    */
   private void finishRollback(@Nullable Runnable onComplete) {
@@ -442,7 +446,7 @@ public class FightChangeOptimized {
 
     for (int cx = minChunkX; cx <= maxChunkX; cx++) {
       for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-        org.bukkit.Chunk chunk = world.getChunkAt(cx, cz);
+        Chunk chunk = world.getChunkAt(cx, cz);
         for (Entity entity : chunk.getEntities()) {
           if (entity instanceof Player) {
             continue;
@@ -463,7 +467,7 @@ public class FightChangeOptimized {
   }
 
   private void addRollbackChunkTickets() {
-    org.bukkit.plugin.Plugin plugin = AstralPractice.getInstance();
+    Plugin plugin = AstralPractice.getInstance();
     if (!plugin.isEnabled()) {
       return;
     }
@@ -481,7 +485,7 @@ public class FightChangeOptimized {
   }
 
   private void removeRollbackChunkTickets() {
-    org.bukkit.plugin.Plugin plugin = AstralPractice.getInstance();
+    Plugin plugin = AstralPractice.getInstance();
     if (!plugin.isEnabled()) {
       rollbackChunkTickets.clear();
       return;
@@ -559,9 +563,9 @@ public class FightChangeOptimized {
 
     for (Long position : trackedFirePositions) {
       Block block = BlockPosition.getBlock(world, position);
-      String typeName = block.getType().name();
-      if (typeName.equals("FIRE") || typeName.equals("SOUL_FIRE")) {
-        block.setBlockData(org.bukkit.Material.AIR.createBlockData(), false);
+      Material type = block.getType();
+      if (type == Material.FIRE || type == Material.SOUL_FIRE) {
+        block.setBlockData(Material.AIR.createBlockData(), false);
         BlockUtil.clearMetadata(block, PLACED_IN_FIGHT);
       }
     }

@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -86,12 +86,14 @@ public class GuiItem {
 
     ItemMeta itemMeta = itemStack.getItemMeta();
     if (itemMeta != null) {
-      if (itemMeta.hasDisplayName() && itemMeta.displayName() != null) {
-        this.name = Common.serializeComponentToLegacyString(itemMeta.displayName());
+      Component displayName = itemMeta.displayName();
+      if (displayName != null) {
+        this.name = Common.serializeComponentToLegacyString(displayName);
       }
-      if (itemMeta.lore() != null) {
+      List<Component> itemLore = itemMeta.lore();
+      if (itemLore != null) {
         this.lore =
-            Objects.requireNonNull(itemMeta.lore()).stream()
+            itemLore.stream()
                 .map(Common::serializeComponentToLegacyString)
                 .collect(Collectors.toList());
       }
@@ -122,9 +124,9 @@ public class GuiItem {
    * color formats: legacy {@code <red>}, hex {@code &#RRGGBB}, Bungeecord hex {@code
    * &x<reset><reset>&G&G<aqua><aqua>}, and MiniMessage tags {@code <red>}.
    */
-  private static net.kyori.adventure.text.Component parseColor(String raw) {
+  private static Component parseColor(String raw) {
     if (raw == null || raw.isEmpty()) {
-      return net.kyori.adventure.text.Component.empty();
+      return Component.empty();
     }
     // Explicitly mark italic as false so Minecraft's default item-name italic doesn't apply.
     // Users can still opt back in by writing <italic> in their config.

@@ -137,6 +137,10 @@ public class Command {
     private String invalidName =
         "<red>Invalid name format. The name must be 3-16 characters long and contain only letters,"
             + " numbers, and underscores.";
+
+    @JsonProperty("BLOCKED-FORMATTING")
+    private String blockedFormatting =
+        "<red>Your nickname cannot contain blocked formatting tags or codes.";
   }
 
   @Getter

@@ -11,9 +11,8 @@ import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
 import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.util.Common;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,7 +34,7 @@ public class QueueManager implements Listener {
     return instance;
   }
 
-  private final List<Queue> queues = Collections.synchronizedList(new ArrayList<>());
+  private final List<Queue> queues = new CopyOnWriteArrayList<>();
 
   private QueueManager() {
     Bukkit.getPluginManager().registerEvents(this, AstralPractice.getInstance());

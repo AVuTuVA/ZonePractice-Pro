@@ -1,6 +1,7 @@
 package dev.lokspel.practice.manager.sidebar.adapter;
 
 import dev.lokspel.practice.config.PracticeConfig;
+import dev.lokspel.practice.manager.arena.ArenaManager;
 import dev.lokspel.practice.manager.fight.ffa.game.Ffa;
 import dev.lokspel.practice.manager.fight.match.Match;
 import dev.lokspel.practice.manager.fight.match.Round;
@@ -469,5 +470,15 @@ public enum AdapterUtil {
         replaceTeamPlaceholders(
             line, "team2", TeamEnum.TEAM2, partyVsParty, partyVsParty.getWinsNeeded());
     return line;
+  }
+
+  public static Component replaceArenaPlaceholders(Component line) {
+    int totalArenas = ArenaManager.getInstance().getArenaList().size();
+    int enabledArenas =
+        ArenaManager.getInstance().getEnabledArenas().size()
+            + ArenaManager.getInstance().getEnabledFfaArenas().size();
+
+    return line.replaceText(replace("%arenas%", String.valueOf(totalArenas)))
+        .replaceText(replace("%enabledArenas%", String.valueOf(enabledArenas)));
   }
 }

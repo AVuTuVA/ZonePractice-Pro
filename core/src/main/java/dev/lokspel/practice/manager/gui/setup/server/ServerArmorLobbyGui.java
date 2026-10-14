@@ -1,16 +1,13 @@
 package dev.lokspel.practice.manager.gui.setup.server;
 
-import static dev.lokspel.practice.manager.inventory.Inventory.InventoryType;
-
 import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.backend.BackendUtil;
 import dev.lokspel.practice.manager.fight.util.PlayerUtil;
 import dev.lokspel.practice.manager.gui.Gui;
 import dev.lokspel.practice.manager.gui.GuiItem;
 import dev.lokspel.practice.manager.gui.GuiType;
-import dev.lokspel.practice.manager.inventory.Inventory;
+import dev.lokspel.practice.manager.inventory.Inventory.InventoryType;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
-import dev.lokspel.practice.util.ArmorUtil;
 import dev.lokspel.practice.util.InventoryUtil;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +17,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class ServerArmorLobbyGui extends Gui {
@@ -91,7 +90,7 @@ public class ServerArmorLobbyGui extends Gui {
 
   @Override
   public void build() {
-    org.bukkit.inventory.Inventory inventory = this.gui.get(1);
+    Inventory inventory = this.gui.get(1);
 
     // Filler item
     for (int x : new int[] {1, 3, 5, 7}) {
@@ -108,10 +107,10 @@ public class ServerArmorLobbyGui extends Gui {
 
   @Override
   public void update() {
-    org.bukkit.inventory.Inventory inventory = this.gui.get(1);
+    Inventory inventory = this.gui.get(1);
 
     for (ArmorStatusType type : ArmorStatusType.values()) {
-      Inventory inv = InventoryManager.getInstance().getInventories().get(type.getInventoryType());
+      var inv = InventoryManager.getInstance().getInventories().get(type.getInventoryType());
       int column = type.getColumn();
 
       for (int c = 0; c < 6; c++) {
@@ -152,7 +151,7 @@ public class ServerArmorLobbyGui extends Gui {
   public void handleClickEvent(InventoryClickEvent e) {
     Player player = (Player) e.getWhoClicked();
     int slot = e.getRawSlot();
-    org.bukkit.inventory.Inventory clickedInv = e.getClickedInventory();
+    Inventory clickedInv = e.getClickedInventory();
 
     if (slot == 45) {
       e.setCancelled(true);
@@ -176,14 +175,19 @@ public class ServerArmorLobbyGui extends Gui {
     ClickType clickType = e.getClick();
     if (clickType.equals(ClickType.LEFT) || clickType.equals(ClickType.RIGHT)) {
       ItemStack cursor = player.getItemOnCursor();
-      if (cursor != null && !cursor.getType().isAir()) {
-        if (helmetSlots.contains(slot) && !ArmorUtil.isHelmet(cursor)) {
-          e.setCancelled(true);
-        } else if (chestplateSlots.contains(slot) && !ArmorUtil.isChestplate(cursor)) {
-          e.setCancelled(true);
-        } else if (leggingsSlots.contains(slot) && !ArmorUtil.isLeggings(cursor)) {
-          e.setCancelled(true);
-        } else if (bootsSlots.contains(slot) && !ArmorUtil.isBoots(cursor)) {
+      if (!cursor.getType().isAir()) {
+        EquipmentSlot requiredSlot = null;
+        if (helmetSlots.contains(slot)) {
+          requiredSlot = EquipmentSlot.HEAD;
+        } else if (chestplateSlots.contains(slot)) {
+          requiredSlot = EquipmentSlot.CHEST;
+        } else if (leggingsSlots.contains(slot)) {
+          requiredSlot = EquipmentSlot.LEGS;
+        } else if (bootsSlots.contains(slot)) {
+          requiredSlot = EquipmentSlot.FEET;
+        }
+
+        if (requiredSlot != null && cursor.getType().getEquipmentSlot() != requiredSlot) {
           e.setCancelled(true);
         }
       }
@@ -202,13 +206,13 @@ public class ServerArmorLobbyGui extends Gui {
   }
 
   public void save() {
-    org.bukkit.inventory.Inventory inventory = this.gui.get(1);
+    Inventory inventory = this.gui.get(1);
     if (inventory == null) {
       return;
     }
 
     for (ArmorStatusType type : ArmorStatusType.values()) {
-      Inventory inv = InventoryManager.getInstance().getInventories().get(type.getInventoryType());
+      var inv = InventoryManager.getInstance().getInventories().get(type.getInventoryType());
       if (inv == null) {
         continue;
       }
@@ -255,10 +259,9 @@ public class ServerArmorLobbyGui extends Gui {
 
     private final String name;
     private final int column;
-    private final Inventory.InventoryType inventoryType;
+    private final InventoryType inventoryType;
 
-    ArmorStatusType(
-        final String name, final int column, final Inventory.InventoryType inventoryType) {
+    ArmorStatusType(final String name, final int column, final InventoryType inventoryType) {
       this.name = name;
       this.column = column;
       this.inventoryType = inventoryType;

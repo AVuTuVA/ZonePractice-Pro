@@ -49,6 +49,8 @@ public class PlayerQuit implements Listener {
 
     if (profile != null) {
       profile.getActionBar().resetForReconnect();
+      profile.setStaffMode(false);
+      profile.setHideFromPlayers(false);
 
       profile.setLastJoin(System.currentTimeMillis());
 

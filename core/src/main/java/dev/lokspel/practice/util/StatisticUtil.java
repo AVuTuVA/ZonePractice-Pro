@@ -5,21 +5,15 @@ public final class StatisticUtil {
   private StatisticUtil() {}
 
   public static String getProgressBar(final double progress) {
-    int numberOfColoredBars = (int) Math.floor(progress / 10.0);
+    int numberOfColoredBars = Math.clamp((int) Math.floor(progress / 10.0), 0, 10);
     int numberOfEmptyBars = 10 - numberOfColoredBars;
 
-    String progressBar = "<bold>";
-    for (int i = 0; i < numberOfColoredBars; i++) {
-      progressBar = progressBar.concat("┃");
-    }
-
     if (numberOfEmptyBars > 0) {
-      progressBar = progressBar.concat("<gray><bold>");
-      for (int i = 0; i < numberOfEmptyBars; i++) {
-        progressBar = progressBar.concat("┃");
-      }
+      return "<bold>"
+          + "┃".repeat(numberOfColoredBars)
+          + "<gray><bold>"
+          + "┃".repeat(numberOfEmptyBars);
     }
-
-    return progressBar;
+    return "<bold>" + "┃".repeat(numberOfColoredBars);
   }
 }

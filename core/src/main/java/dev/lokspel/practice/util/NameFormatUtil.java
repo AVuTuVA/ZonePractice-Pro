@@ -130,7 +130,6 @@ public final class NameFormatUtil {
     if (rawTemplate == null || rawTemplate.isEmpty()) {
       return rawTemplate;
     }
-    rawTemplate = StringUtil.stripObfuscationTags(rawTemplate);
     boolean hasPlayerPlaceholder =
         rawTemplate.contains("%player%") || rawTemplate.contains("%%player%%");
     if (hasPlayerPlaceholder) {

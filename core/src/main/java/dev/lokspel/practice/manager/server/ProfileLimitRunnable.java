@@ -24,9 +24,10 @@ public class ProfileLimitRunnable extends BukkitRunnable {
             .atZone(TimeZone.getDefault().toZoneId());
 
     long i2 = zdt.toInstant().toEpochMilli() - System.currentTimeMillis();
-    long i3 = (i2 / 1000) * 20;
+    long delayTicks = Math.max(1L, (i2 / 1000) * 20);
+    long periodTicks = 20L * 60 * 60 * 24;
 
-    this.runTaskTimerAsynchronously(AstralPractice.getInstance(), i3, 86400000L);
+    this.runTaskTimerAsynchronously(AstralPractice.getInstance(), delayTicks, periodTicks);
   }
 
   @Override
