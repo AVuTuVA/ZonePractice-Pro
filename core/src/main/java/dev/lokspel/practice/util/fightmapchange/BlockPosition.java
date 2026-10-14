@@ -70,7 +70,9 @@ public final class BlockPosition {
 
   /** Decodes the Y coordinate from an encoded position. */
   public static int getY(long encoded) {
-    return (int) ((encoded >> Y_SHIFT) & Y_MASK);
+    int value = (int) ((encoded >> Y_SHIFT) & Y_MASK);
+    // Sign extension for negative coordinates
+    return value > (Y_MASK >> 1) ? value - (int) Y_MASK - 1 : value;
   }
 
   /** Decodes the Z coordinate from an encoded position. */
@@ -89,18 +91,6 @@ public final class BlockPosition {
    */
   public static Block getBlock(World world, long encoded) {
     return world.getBlockAt(getX(encoded), getY(encoded), getZ(encoded));
-  }
-
-  /**
-   * Creates a Location from an encoded position. Note: Only use when absolutely necessary, prefer
-   * getBlock() to avoid Location allocation.
-   *
-   * @param world The world
-   * @param encoded The encoded position
-   * @return New Location object
-   */
-  public static Location toLocation(World world, long encoded) {
-    return new Location(world, getX(encoded), getY(encoded), getZ(encoded));
   }
 
   /** Format encoded position as a human-readable string for debugging. */

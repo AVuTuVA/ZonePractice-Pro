@@ -8,8 +8,8 @@ import dev.lokspel.practice.manager.sidebar.adapter.PracticeAdapter;
 import dev.lokspel.practice.manager.sidebar.adapter.SidebarAdapter;
 import dev.lokspel.practice.util.Common;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
 import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
@@ -35,7 +35,7 @@ public class SidebarManager implements Listener {
 
   @Getter private ScoreboardLibrary scoreboardLibrary;
 
-  private final Map<Player, PracticeSidebar> boards = new HashMap<>();
+  private final Map<Player, PracticeSidebar> boards = new ConcurrentHashMap<>();
   @Getter private final SidebarAdapter sidebarAdapter;
   private BukkitTask updateTask;
 
@@ -87,7 +87,7 @@ public class SidebarManager implements Listener {
             .runTaskTimerAsynchronously(
                 AstralPractice.getInstance(),
                 () -> {
-                  for (PracticeSidebar practiceSidebar : new ArrayList<>(boards.values())) {
+                  for (PracticeSidebar practiceSidebar : boards.values()) {
                     if (practiceSidebar == null
                         || practiceSidebar.getSidebar() == null
                         || practiceSidebar.getSidebar().closed()) {
@@ -161,9 +161,9 @@ public class SidebarManager implements Listener {
     }
 
     // If sidebar already exists, ensure it's still open before returning
-    if (boards.containsKey(player)) {
-      PracticeSidebar sidebar = boards.get(player);
-      if (sidebar != null && sidebar.getSidebar() != null && !sidebar.getSidebar().closed()) {
+    PracticeSidebar existing = boards.get(player);
+    if (existing != null) {
+      if (existing.getSidebar() != null && !existing.getSidebar().closed()) {
         return;
       }
       // If the sidebar was closed, remove it so we can recreate it
@@ -176,14 +176,9 @@ public class SidebarManager implements Listener {
   }
 
   public void unLoadSidebar(Player player) {
-    if (!boards.containsKey(player)) {
-      return;
-    }
-
-    PracticeSidebar sidebar = boards.get(player);
-    if (sidebar.getSidebar() != null) {
+    PracticeSidebar sidebar = boards.remove(player);
+    if (sidebar != null && sidebar.getSidebar() != null) {
       sidebar.getSidebar().close();
-      boards.remove(player);
     }
   }
 
@@ -195,10 +190,6 @@ public class SidebarManager implements Listener {
    */
   public void updatePlayerSidebar(Player player) {
     if (!isSidebarGloballyEnabled()) {
-      return;
-    }
-
-    if (!boards.containsKey(player)) {
       return;
     }
 

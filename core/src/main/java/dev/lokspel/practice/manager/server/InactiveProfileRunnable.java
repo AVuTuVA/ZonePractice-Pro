@@ -31,8 +31,12 @@ public class InactiveProfileRunnable extends BukkitRunnable {
       long timeDiff = Math.abs(System.currentTimeMillis() - profile.getLastJoin());
       long daysDiff = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
 
+      if (profile.getPlayer() != null && profile.getPlayer().isOnline()) {
+        continue;
+      }
+
       if (daysDiff > deleteAfter) {
-        if (profile.getFile().delete()) {
+        if (profile.getFile() != null && profile.getFile().delete()) {
           ProfileManager.getInstance().getProfiles().remove(profile.getUuid());
           deleteStatsFromMariadb(profile);
 

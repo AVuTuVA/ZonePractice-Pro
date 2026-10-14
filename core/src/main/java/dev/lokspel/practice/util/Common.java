@@ -12,6 +12,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -50,7 +51,7 @@ public final class Common {
   }
 
   public static void playDeathEffect(
-      Profile killerProfile, org.bukkit.Location location, java.util.List<Player> viewers) {
+      Profile killerProfile, Location location, List<Player> viewers) {
     try {
       if (killerProfile == null || killerProfile.getCosmeticsData() == null) {
         return;
@@ -113,26 +114,25 @@ public final class Common {
   }
 
   public static Component legacyToComponent(String message) {
-    if (message == null) {
-      return Component.empty();
-    }
-    return AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(message));
+    return deserializeMiniMessage(message);
   }
 
   public static String stripLegacyColor(String message) {
     if (message == null || message.isEmpty()) {
       return "";
     }
-    Component component =
-        AstralPractice.getMiniMessage().deserialize(StringUtil.legacyToMiniMessage(message));
-    return PlainTextComponentSerializer.plainText().serialize(component);
+    return PlainTextComponentSerializer.plainText().serialize(deserializeMiniMessage(message));
   }
 
   public static String getItemDisplayName(ItemMeta itemMeta) {
-    if (itemMeta == null || !itemMeta.hasDisplayName() || itemMeta.displayName() == null) {
+    if (itemMeta == null) {
       return "";
     }
-    return serializeComponentToLegacyString(itemMeta.displayName());
+    Component displayName = itemMeta.displayName();
+    if (displayName == null) {
+      return "";
+    }
+    return serializeComponentToLegacyString(displayName);
   }
 
   public static String getItemDisplayName(ItemStack itemStack) {
@@ -143,10 +143,14 @@ public final class Common {
   }
 
   public static String getItemDisplayNameMiniMessage(ItemMeta itemMeta) {
-    if (itemMeta == null || !itemMeta.hasDisplayName() || itemMeta.displayName() == null) {
+    if (itemMeta == null) {
       return "";
     }
-    return AstralPractice.getMiniMessage().serialize(itemMeta.displayName());
+    Component displayName = itemMeta.displayName();
+    if (displayName == null) {
+      return "";
+    }
+    return AstralPractice.getMiniMessage().serialize(displayName);
   }
 
   public static String getItemDisplayNameMiniMessage(ItemStack itemStack) {
@@ -176,21 +180,9 @@ public final class Common {
       return null;
     }
 
-    String normalized = enchantmentName.trim().toLowerCase(Locale.ROOT).replace("minecraft:", "");
-    Enchantment enchantment =
-        RegistryAccess.registryAccess()
-            .getRegistry(RegistryKey.ENCHANTMENT)
-            .get(NamespacedKey.minecraft(normalized));
-    if (enchantment != null) {
-      return enchantment;
-    }
-
-    for (Enchantment value : getAllEnchantments()) {
-      String key = value.getKey().getKey();
-      if (key.equalsIgnoreCase(enchantmentName) || key.equalsIgnoreCase(normalized)) {
-        return value;
-      }
-    }
-    return null;
+    NamespacedKey key = NamespacedKey.fromString(enchantmentName.trim().toLowerCase(Locale.ROOT));
+    return key != null
+        ? RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT).get(key)
+        : null;
   }
 }

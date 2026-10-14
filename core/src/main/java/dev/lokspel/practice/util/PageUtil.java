@@ -9,48 +9,35 @@ public final class PageUtil {
   private PageUtil() {}
 
   public static List<ItemStack> getPageItems(List<ItemStack> items, int page, int spaces) {
-    int upperBound = page * spaces;
-    int lowerBound = upperBound - spaces;
-
-    List<ItemStack> newItems = new ArrayList<>();
-    for (int i = lowerBound; i < upperBound; i++) {
-      try {
-        newItems.add(items.get(i));
-      } catch (IndexOutOfBoundsException x) {
-        break;
-      }
+    if (items == null || page <= 0 || spaces <= 0) {
+      return new ArrayList<>();
+    }
+    int lowerBound = (page - 1) * spaces;
+    int upperBound = Math.min(page * spaces, items.size());
+    if (lowerBound >= items.size()) {
+      return new ArrayList<>();
     }
 
-    return newItems;
+    return new ArrayList<>(items.subList(lowerBound, upperBound));
   }
 
   public static boolean isPageValid(List<ItemStack> items, int page, int spaces) {
-    if (page <= 0) {
-      return false;
-    }
-
-    int upperBound = page * spaces;
-    int lowerBound = upperBound - spaces;
-
-    return items.size() > lowerBound;
+    return items != null && isPageValid(items.size(), page, spaces);
   }
 
   public static boolean isPageValid(int size, int page, int spaces) {
-    if (page <= 0) {
+    if (page <= 0 || spaces <= 0) {
       return false;
     }
 
-    int upperBound = page * spaces;
-    int lowerBound = upperBound - spaces;
-
+    int lowerBound = (page - 1) * spaces;
     return size > lowerBound;
   }
 
   public static int getMaxPage(List<ItemStack> icons, int spaces) {
-    int maxPage = 1;
-    do {
-      maxPage++;
-    } while (PageUtil.isPageValid(icons, maxPage, spaces));
-    return maxPage - 1;
+    if (icons == null || icons.isEmpty() || spaces <= 0) {
+      return 1;
+    }
+    return Math.max(1, (int) Math.ceil((double) icons.size() / spaces));
   }
 }

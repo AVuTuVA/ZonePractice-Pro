@@ -18,18 +18,7 @@ public enum DivisionUtil {
 
     Division previous = DivisionManager.getInstance().getPreviousDivision(division);
     int base = (previous != null) ? previous.getExperience() : 0;
-    int target = division.getExperience();
-    int current = profile.getStats().getExperience();
-
-    if (current >= target) {
-      return 100.0;
-    }
-    if (current <= base || target <= base) {
-      return 0.0;
-    }
-
-    double progress = (double) (current - base) / (target - base) * 100.0;
-    return NumberUtil.roundDouble(Math.min(progress, 100.0));
+    return calculateProgress(profile.getStats().getExperience(), base, division.getExperience());
   }
 
   /**
@@ -44,18 +33,7 @@ public enum DivisionUtil {
 
     Division previous = DivisionManager.getInstance().getPreviousDivision(division);
     int base = (previous != null) ? previous.getWin() : 0;
-    int target = division.getWin();
-    int current = profile.getStats().getGlobalWins();
-
-    if (current >= target) {
-      return 100.0;
-    }
-    if (current <= base || target <= base) {
-      return 0.0;
-    }
-
-    double progress = (double) (current - base) / (target - base) * 100.0;
-    return NumberUtil.roundDouble(Math.min(progress, 100.0));
+    return calculateProgress(profile.getStats().getGlobalWins(), base, division.getWin());
   }
 
   /**
@@ -70,9 +48,10 @@ public enum DivisionUtil {
 
     Division previous = DivisionManager.getInstance().getPreviousDivision(division);
     int base = (previous != null) ? previous.getElo() : 0;
-    int target = division.getElo();
-    int current = profile.getStats().getGlobalElo();
+    return calculateProgress(profile.getStats().getGlobalElo(), base, division.getElo());
+  }
 
+  private static double calculateProgress(int current, int base, int target) {
     if (current >= target) {
       return 100.0;
     }

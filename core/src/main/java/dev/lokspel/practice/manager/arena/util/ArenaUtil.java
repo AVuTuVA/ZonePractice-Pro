@@ -35,8 +35,9 @@ import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public enum ArenaUtil {
-  ;
+public final class ArenaUtil {
+
+  private ArenaUtil() {}
 
   public static World createEmptyWorld(String worldName) {
     WorldCreator wc = new WorldCreator(worldName);
@@ -90,19 +91,11 @@ public enum ArenaUtil {
   }
 
   public static List<String> getLadderTypeNames(Arena arena) {
-    List<String> names = new ArrayList<>();
-    for (LadderType ladderType : arena.getAssignedLadderTypes()) {
-      names.add(ladderType.name());
-    }
-    return names;
+    return arena.getAssignedLadderTypes().stream().map(Enum::name).toList();
   }
 
   public static List<String> getLadderNames(DisplayArena arena) {
-    List<String> ladderStrings = new ArrayList<>();
-    for (Ladder ladder : arena.getAssignedLadders()) {
-      ladderStrings.add(ladder.getName());
-    }
-    return ladderStrings;
+    return arena.getAssignedLadders().stream().map(Ladder::getName).toList();
   }
 
   public static boolean changeStatus(Player player, DisplayArena arena) {
@@ -250,12 +243,15 @@ public enum ArenaUtil {
   }
 
   public static boolean turnsToDirt(Block block) {
+    if (block == null) {
+      return false;
+    }
     Material type = block.getType();
-    return type.equals(Material.GRASS_BLOCK)
-        || type.equals(Material.MYCELIUM)
-        || type.equals(Material.DIRT_PATH)
-        || type.equals(Material.FARMLAND)
-        || type.equals(Material.WARPED_NYLIUM);
+    return type == Material.GRASS_BLOCK
+        || type == Material.MYCELIUM
+        || type == Material.DIRT_PATH
+        || type == Material.FARMLAND
+        || type == Material.WARPED_NYLIUM;
   }
 
   public static boolean containsDestroyableBlock(Ladder ladder, Block block) {
@@ -274,7 +270,7 @@ public enum ArenaUtil {
     }
 
     for (BasicItem basicItem : normalLadder.getDestroyableBlocks()) {
-      if (block.getType().equals(basicItem.material())) {
+      if (block.getType() == basicItem.material()) {
         return true;
       }
     }
@@ -282,33 +278,45 @@ public enum ArenaUtil {
   }
 
   public static boolean requiresSupport(Block block) {
+    if (block == null) {
+      return false;
+    }
     Material type = block.getType();
-    return Tag.FLOWERS.isTagged(type)
+    if (Tag.FLOWERS.isTagged(type)
         || Tag.SAPLINGS.isTagged(type)
         || Tag.CROPS.isTagged(type)
-        || Tag.WALL_POST_OVERRIDE.isTagged(type) // torches, signs on walls, etc.
-        || type == Material.DEAD_BUSH
-        || type == Material.SHORT_GRASS
-        || type == Material.TALL_GRASS
-        || type == Material.FERN
-        || type == Material.LARGE_FERN
-        || type.name().equals("VINE")
-        || type.name().contains("_VINE")
-        || type.name().contains("_VINES")
-        || type == Material.SUGAR_CANE
-        || type == Material.CACTUS
-        || type == Material.SNOW
-        || type == Material.TORCH
-        || type == Material.SOUL_TORCH
-        || type == Material.REDSTONE_WIRE
-        || type == Material.REDSTONE_TORCH
-        || type == Material.LEVER
-        || type == Material.COMPARATOR
-        || type == Material.REPEATER
-        || type == Material.TRIPWIRE_HOOK
-        || type == Material.TRIPWIRE
-        || type == Material.LILY_PAD
-        || type == Material.NETHER_WART;
+        || Tag.WALL_POST_OVERRIDE.isTagged(type)) {
+      return true;
+    }
+
+    return switch (type) {
+      case DEAD_BUSH,
+          SHORT_GRASS,
+          TALL_GRASS,
+          FERN,
+          LARGE_FERN,
+          SUGAR_CANE,
+          CACTUS,
+          SNOW,
+          TORCH,
+          SOUL_TORCH,
+          REDSTONE_WIRE,
+          REDSTONE_TORCH,
+          LEVER,
+          COMPARATOR,
+          REPEATER,
+          TRIPWIRE_HOOK,
+          TRIPWIRE,
+          LILY_PAD,
+          NETHER_WART,
+          VINE,
+          WEEPING_VINES,
+          TWISTING_VINES,
+          CAVE_VINES,
+          CAVE_VINES_PLANT ->
+          true;
+      default -> type.name().contains("VINE");
+    };
   }
 
   public static void loadArenaChunks(BasicArena arena) {

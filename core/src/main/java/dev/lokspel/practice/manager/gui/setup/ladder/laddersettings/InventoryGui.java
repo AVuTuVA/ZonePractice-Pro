@@ -10,7 +10,6 @@ import dev.lokspel.practice.manager.gui.GuiType;
 import dev.lokspel.practice.manager.gui.setup.ladder.LadderSetupManager;
 import dev.lokspel.practice.manager.ladder.LadderManager;
 import dev.lokspel.practice.manager.ladder.abstraction.normal.NormalLadder;
-import dev.lokspel.practice.util.ArmorUtil;
 import dev.lokspel.practice.util.Common;
 import dev.lokspel.practice.util.InventoryUtil;
 import dev.lokspel.practice.util.KitData;
@@ -22,12 +21,12 @@ import java.util.Objects;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -152,17 +151,17 @@ public class InventoryGui extends Gui {
       } else {
         if (!ladder.isEnabled()) {
           if (click.equals(ClickType.LEFT) || click.equals(ClickType.RIGHT)) {
-            if (!player.getItemOnCursor().getType().equals(Material.AIR)) {
-              if (slot == 50 && !ArmorUtil.isBoots(player.getItemOnCursor())) {
-                e.setCancelled(true);
-              }
-              if (slot == 51 && !ArmorUtil.isLeggings(player.getItemOnCursor())) {
-                e.setCancelled(true);
-              }
-              if (slot == 52 && !ArmorUtil.isChestplate(player.getItemOnCursor())) {
-                e.setCancelled(true);
-              }
-              if (slot == 53 && !ArmorUtil.isHelmet(player.getItemOnCursor())) {
+            ItemStack cursor = player.getItemOnCursor();
+            if (!cursor.getType().isAir()) {
+              EquipmentSlot requiredSlot =
+                  switch (slot) {
+                    case 50 -> EquipmentSlot.FEET;
+                    case 51 -> EquipmentSlot.LEGS;
+                    case 52 -> EquipmentSlot.CHEST;
+                    case 53 -> EquipmentSlot.HEAD;
+                    default -> null;
+                  };
+              if (requiredSlot != null && cursor.getType().getEquipmentSlot() != requiredSlot) {
                 e.setCancelled(true);
               }
             }

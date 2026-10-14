@@ -64,8 +64,7 @@ public class NickCommand implements CommandExecutor, TabCompleter {
   }
 
   private static String getPlainName(String rawTemplate, String playerName) {
-    String normalizedTemplate =
-        NameFormatUtil.normalizePlayerNameTemplate(StringUtil.stripObfuscationTags(rawTemplate));
+    String normalizedTemplate = NameFormatUtil.normalizePlayerNameTemplate(rawTemplate);
     return PLAIN_TEXT_SERIALIZER
         .serialize(
             NameFormatUtil.applyPlayerPlaceholders(
@@ -180,6 +179,15 @@ public class NickCommand implements CommandExecutor, TabCompleter {
       Common.sendMmMessage(
           player,
           PracticeConfig.language().getCommand().getNick().getHelp().replace("%label%", label));
+      return false;
+    }
+
+    if (StringUtil.containsBlockedFormatting(nameTemplate)) {
+      String msg = PracticeConfig.language().getCommand().getNick().getBlockedFormatting();
+      if (msg == null || msg.isEmpty()) {
+        msg = PracticeConfig.language().getCommand().getNick().getInvalidName();
+      }
+      Common.sendMmMessage(player, msg);
       return false;
     }
 

@@ -289,27 +289,13 @@ public class GoldenHead implements Listener {
     }
 
     for (PotionEffect effect : effects) {
-      boolean activate = true;
-
-      for (PotionEffect active : player.getActivePotionEffects()) {
-        if (!effect.getType().equals(active.getType())) {
-          continue;
-        }
-
-        if (effect.getAmplifier() < active.getAmplifier()) {
-          activate = false;
-          break;
-        }
-
-        if (effect.getDuration() < active.getDuration()) {
-          activate = false;
-          break;
-        }
+      PotionEffect active = player.getPotionEffect(effect.getType());
+      if (active != null
+          && (effect.getAmplifier() < active.getAmplifier()
+              || effect.getDuration() < active.getDuration())) {
+        continue;
       }
-
-      if (activate) {
-        player.addPotionEffect(effect);
-      }
+      player.addPotionEffect(effect);
     }
   }
 }

@@ -38,11 +38,13 @@ public class EventQueueInventory extends Inventory {
 
         ItemStack item = invItem.getItem().clone();
         ItemMeta itemMeta = item.getItemMeta();
-        String displayName = Common.serializeComponentToLegacyString(itemMeta.displayName());
-        itemMeta.displayName(
-            Common.legacyToComponent(
-                StringUtil.cc(displayName.replace("%event%", event.getType().getName()))));
-        item.setItemMeta(itemMeta);
+        if (itemMeta != null) {
+          String displayName = Common.getItemDisplayName(itemMeta);
+          itemMeta.displayName(
+              Common.legacyToComponent(
+                  StringUtil.cc(displayName.replace("%event%", event.getType().getName()))));
+          item.setItemMeta(itemMeta);
+        }
 
         playerInventory.setItem(slot, item);
       }

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,7 +33,6 @@ public class SpectatorManager {
     return instance;
   }
 
-  private static final Random random = new Random();
   private final Map<Player, Spectatable> spectators = new HashMap<>();
   private SpectatorMenuGui spectatorMenuGui;
 
@@ -106,26 +105,20 @@ public class SpectatorManager {
       return;
     }
 
-    Spectatable match = null;
-    if (spectatables.size() > 1) {
-      boolean found = false;
-      do {
-        Spectatable randomMatch = spectatables.get(random.nextInt(spectatables.size()));
-        if (!randomMatch.getSpectators().contains(player)) {
-          found = true;
-          match = randomMatch;
-        }
-      } while (!found);
-    } else {
-      match = spectatables.getFirst();
+    List<Spectatable> available = new ArrayList<>(spectatables.size());
+    for (Spectatable spectatable : spectatables) {
+      if (!spectatable.getSpectators().contains(player)) {
+        available.add(spectatable);
+      }
     }
 
-    if (match.getSpectators().contains(player)) {
+    if (available.isEmpty()) {
       Common.sendMmMessage(
           player, PracticeConfig.language().getSpectate().getMatch().getOnlyOneToSpectate());
       return;
     }
 
+    Spectatable match = available.get(ThreadLocalRandom.current().nextInt(available.size()));
     match.addSpectator(player, null, true, false);
   }
 }

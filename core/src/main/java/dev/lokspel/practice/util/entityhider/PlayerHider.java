@@ -285,7 +285,7 @@ public class PlayerHider implements Listener {
   public void toggleLobbyVisibility(Player player) {
     Profile profile = ProfileManager.getInstance().getProfile(player);
 
-    if (!ServerManager.getInstance().getInWorld().get(player).equals(WorldEnum.LOBBY)) {
+    if (ServerManager.getInstance().getInWorld().get(player) != WorldEnum.LOBBY) {
       return;
     }
 
@@ -293,7 +293,7 @@ public class PlayerHider implements Listener {
       if (player.equals(online)) {
         continue;
       }
-      if (!ServerManager.getInstance().getInWorld().get(online).equals(WorldEnum.LOBBY)) {
+      if (ServerManager.getInstance().getInWorld().get(online) != WorldEnum.LOBBY) {
         continue;
       }
 
