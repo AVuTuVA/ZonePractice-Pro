@@ -161,11 +161,14 @@ public class PlayerHider implements Listener {
                     showPlayer(online, player);
                     showTabEntry(online, player);
                   } else if (profile.isHideFromPlayers()
-                      || !online.hasPermission("ap.staffmode.see")) {
+                      && !online.hasPermission("ap.staffmode.see")) {
                     hidePlayer(online, player);
                   }
-                } else if (!PracticeConfig.settings().getMatchSettings().isShowPlayersInTab()) {
-                  hidePlayer(player, online);
+                } else {
+                  hidePlayer(online, player, false);
+                  if (!PracticeConfig.settings().getMatchSettings().isShowPlayersInTab()) {
+                    hidePlayer(player, online, false);
+                  }
                 }
               }
             },
@@ -358,25 +361,20 @@ public class PlayerHider implements Listener {
       }
 
       if (profile.isHideFromPlayers()) {
-        if (online.hasPermission("ap.staffmode.see")) {
-          continue;
+        if (!online.hasPermission("ap.staffmode.see")) {
+          hidePlayer(online, player, false);
         }
-
-        hidePlayer(online, player);
       } else {
-        if (ServerManager.getInstance().getInWorld().get(online) != WorldEnum.LOBBY) {
-          continue;
-        }
-
-        Profile onlineProfile = ProfileManager.getInstance().getProfile(online);
-
-        if (!onlineProfile.isHidePlayers()) {
-          showPlayer(online, player);
-        } else {
-          hidePlayer(online, player);
+        if (online.getWorld().equals(player.getWorld())) {
+          Profile onlineProfile = ProfileManager.getInstance().getProfile(online);
+          if (onlineProfile == null || !onlineProfile.isHidePlayers()) {
+            showPlayer(online, player);
+          }
         }
       }
     }
+
+    NametagManager.getInstance().onVisibilityStateChange(player);
   }
 
   public void hidePlayer(Player observer, Player target) {
@@ -396,10 +394,19 @@ public class PlayerHider implements Listener {
    *     still counts as a lobby player at that point.
    */
   public void hidePlayer(Player observer, Player target, boolean keepInLobbyTab) {
+    Profile targetProfile = ProfileManager.getInstance().getProfile(target);
+    boolean isTargetVanished =
+        targetProfile != null
+            && targetProfile.isHideFromPlayers()
+            && !observer.hasPermission("ap.staffmode.see");
+
     boolean inLobby =
-        keepInLobbyTab && PracticeConfig.settings().getMatchSettings().isShowPlayersInLobbyTab();
+        !isTargetVanished
+            && keepInLobbyTab
+            && PracticeConfig.settings().getMatchSettings().isShowPlayersInLobbyTab();
     boolean showPlayersInTab =
-        PracticeConfig.settings().getMatchSettings().isShowPlayersInTab() || inLobby;
+        !isTargetVanished
+            && (PracticeConfig.settings().getMatchSettings().isShowPlayersInTab() || inLobby);
 
     observer.hidePlayer(AstralPractice.getInstance(), target);
 
@@ -454,6 +461,7 @@ public class PlayerHider implements Listener {
 
   public void showPlayer(Player observer, Player target) {
     observer.showPlayer(AstralPractice.getInstance(), target);
+    showTabEntry(observer, target);
   }
 
   /**
@@ -462,7 +470,7 @@ public class PlayerHider implements Listener {
    * kept.
    */
   public void showTabEntry(Player observer, Player target) {
-    showTabEntry(observer, target, null);
+    showTabEntry(observer, target, NametagManager.getInstance().getTabListName(target));
   }
 
   /**

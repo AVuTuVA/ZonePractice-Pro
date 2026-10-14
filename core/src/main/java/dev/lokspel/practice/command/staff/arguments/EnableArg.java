@@ -6,6 +6,7 @@ import dev.lokspel.practice.manager.profile.Profile;
 import dev.lokspel.practice.manager.profile.ProfileManager;
 import dev.lokspel.practice.manager.profile.enums.ProfileStatus;
 import dev.lokspel.practice.util.Common;
+import dev.lokspel.practice.util.entityhider.PlayerHider;
 import org.bukkit.entity.Player;
 
 public final class EnableArg {
@@ -45,7 +46,7 @@ public final class EnableArg {
       return;
     }
 
-    profile.setStaffMode(true);
-    InventoryManager.getInstance().setLobbyInventory(player, false);
+    InventoryManager.getInstance().setStaffModeInventory(player);
+    PlayerHider.getInstance().toggleStaffVisibility(player);
   }
 }

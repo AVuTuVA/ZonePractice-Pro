@@ -274,6 +274,8 @@ public class ServerManager implements Listener {
 
     if (lobby == null) {
       inWorld.put(player, WorldEnum.OTHER);
+    } else {
+      inWorld.put(player, WorldEnum.LOBBY);
     }
   }
 

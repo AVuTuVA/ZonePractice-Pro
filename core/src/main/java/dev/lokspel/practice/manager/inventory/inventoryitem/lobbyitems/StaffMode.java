@@ -3,7 +3,7 @@ package dev.lokspel.practice.manager.inventory.inventoryitem.lobbyitems;
 import dev.lokspel.practice.config.PracticeConfig;
 import dev.lokspel.practice.manager.inventory.InventoryManager;
 import dev.lokspel.practice.manager.inventory.inventoryitem.InvItem;
-import dev.lokspel.practice.manager.profile.ProfileManager;
+import dev.lokspel.practice.util.entityhider.PlayerHider;
 import org.bukkit.entity.Player;
 
 public class StaffMode extends InvItem {
@@ -14,7 +14,7 @@ public class StaffMode extends InvItem {
 
   @Override
   public void handleClickEvent(Player player) {
-    ProfileManager.getInstance().getProfile(player).setStaffMode(true);
-    InventoryManager.getInstance().setLobbyInventory(player, false);
+    InventoryManager.getInstance().setStaffModeInventory(player);
+    PlayerHider.getInstance().toggleStaffVisibility(player);
   }
 }
